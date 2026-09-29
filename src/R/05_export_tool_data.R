@@ -25,7 +25,7 @@ acs_county_vars <- c(
 )
 
 get_acs_nc <- function(geography) {
-  path <- file.path(DIR_CACHE_API, paste0("acs_", ACS_YEAR, "_nc_", geography, ".rds"))
+  path <- file.path(DIR_CACHE_API, paste0("acs_", ACS_YEAR, "_nc_", gsub(" ", "_", geography), ".rds"))
   # The committed cache is enough; a Census key is only needed to fetch it the first time.
   if (file.exists(path)) return(readRDS(path))
   if (!nzchar(CENSUS_API_KEY)) return(NULL)
@@ -175,6 +175,72 @@ build_populations <- function(ci) {
     system_level = list(n = NA_real_, source = "No direct beneficiaries; per-person cost not meaningful")
   )
   imap(counts, ~ c(list(id = .y, label = POPULATIONS[[.y]]), .x))
+}
+
+# ---- Where each population lives: counties, rurality, congressional districts -----------------
+
+# NC Rural Center definition: rural = 250 people per square mile or fewer; urban = more than
+# 750; regional city / suburban in between. Applied here to ACS population and TIGER land area.
+RURALITY_CUTS <- c(rural = 250, urban = 750)
+
+county_rurality <- function(acs) {
+  cty <- readRDS(file.path(DIR_CACHE_GEO, "nc_county_2023.rds")) |> sf::st_drop_geometry() |>
+    transmute(fips = GEOID, sq_mi = as.numeric(ALAND) / 2589988.11)
+  acs |> transmute(fips = GEOID, pop) |> inner_join(cty, by = "fips") |>
+    mutate(density = pop / sq_mi,
+           rurality = case_when(density <= RURALITY_CUTS[["rural"]] ~ "rural",
+                                density > RURALITY_CUTS[["urban"]] ~ "urban",
+                                TRUE ~ "suburban"))
+}
+
+# Primary care shortage-area residents by county. A designation spanning several counties has
+# its population split evenly across them (an approximation; HRSA does not publish the split).
+hrsa_county_population <- function(file) {
+  hrsa_designated(file) |> distinct(hpsa_id, fips, .keep_all = TRUE) |>
+    mutate(pop = as.numeric(hpsa_designation_population)) |>
+    group_by(hpsa_id) |> mutate(pop = pop / n()) |> ungroup() |>
+    group_by(fips) |> summarise(n = sum(pop, na.rm = TRUE), .groups = "drop")
+}
+
+# Adds county (and, where the ACS publishes it, congressional-district) counts to each
+# population, so the tool can show where the people an opportunity serves live.
+add_population_geography <- function(populations, ci) {
+  acs <- get_acs_nc("county")
+  cd <- get_acs_nc("congressional district")
+  if (is.null(acs)) return(populations)
+  acs_var <- c(all_residents = "pop", children = "under18", older_adults = "age65",
+               people_with_disability = "disab", people_in_poverty = "pov_total", uninsured = "uninsured",
+               snap_households = "snap_hh", recent_births = "births", veterans = "veterans")
+  hz_cut <- quantile(ci$fema_declarations, 0.75, na.rm = TRUE)
+  other <- list(
+    adults_mental_distress = setNames(ci$mhlth / 100 * ci$adults, ci$fips),
+    shortage_area_residents = with(hrsa_county_population("hrsa_pc.rds"), setNames(n, fips)),
+    hazard_exposed = setNames(ifelse(ci$fema_declarations >= hz_cut, ci$pop_places, 0), ci$fips))
+  as_counts <- function(v) as.list(round(v[!is.na(v)]))
+  imap(populations, function(p, id) {
+    if (id %in% names(acs_var)) {
+      p$county <- as_counts(setNames(acs[[acs_var[[id]]]], acs$GEOID))
+      if (!is.null(cd)) p$district <- as_counts(setNames(cd[[acs_var[[id]]]], cd$GEOID))
+    } else if (id %in% names(other)) {
+      p$county <- as_counts(other[[id]])
+    }
+    p
+  })
+}
+
+community_context <- function() {
+  acs <- get_acs_nc("county")
+  cd <- get_acs_nc("congressional district")
+  if (is.null(acs)) return(NULL)
+  r <- county_rurality(acs)
+  list(
+    county_pop = as.list(setNames(acs$pop, acs$GEOID)),
+    county_rurality = as.list(setNames(r$rurality, r$fips)),
+    rurality_rule = "NC Rural Center definition applied to ACS 2023 population and Census land area: rural = 250 people per square mile or fewer; urban = more than 750; regional city or suburban in between.",
+    district_names = if (!is.null(cd)) as.list(setNames(str_remove(cd$NAME, " \\(.*$"), cd$GEOID)) else NULL,
+    district_note = "Congressional districts as drawn for the 118th Congress (2023-2024), matching the ACS 2019-2023 estimates. North Carolina redrew its districts for the 2024 election, so current districts differ.",
+    caveat = "Where the people this opportunity serves live, not where the money would be spent. Most awards are statewide."
+  )
 }
 
 # ---- Geography ----------------------------------------------------------------------------
@@ -361,7 +427,7 @@ build_payload <- function() {
   reqs <- extract_requirements(grants)
   merged <- merge_labels(reqs, labels)
   ci <- build_county_indicators()
-  populations <- build_populations(ci)
+  populations <- add_population_geography(build_populations(ci), ci)
   opps <- c(opportunity_records(merged, alignment, enrich, populations), out_of_scope_records(grants))
   profiles <- build_capability_profiles()
   pr <- load_priorities()
@@ -383,6 +449,7 @@ build_payload <- function() {
     county_names = as.list(setNames(ci$county, ci$fips)),
     priorities = split(pr, pr$agency) |> map(~ setNames(map(.x$text, ~ .x), .x$priority_id)),
     populations = populations,
+    community = community_context(),
     opportunities = opps,
     geo = build_geo(),
     golden = list(fact_universe_count = 296L, fact_nih_count = 272L)

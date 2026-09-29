@@ -9,9 +9,12 @@
 </head>
 <body>
 <header class="app">
-  <div>
-    <h1>NC Grant Triage</h1>
-    <div class="sub">Federal opportunities sorted by whose signature you need, not by a score.</div>
+  <div class="brand">
+    <span class="logo" aria-hidden="true"><i style="background:var(--tier1)"></i><i style="background:var(--tier2)"></i><i style="background:var(--tier3)"></i></span>
+    <div>
+      <h1>NC Grant Triage</h1>
+      <div class="sub">Federal opportunities sorted by whose signature you need, not by a score.</div>
+    </div>
   </div>
   <div class="ctl" style="margin:0;min-width:160px">
     <label for="agency">Agency</label>
@@ -19,18 +22,20 @@
   </div>
   <div class="spacer"></div>
   <div class="data-note" id="data-note"></div>
+  <button class="btn" type="button" id="present-toggle" aria-pressed="false" title="Enlarge everything for a projector or screen share">Larger text</button>
 </header>
 
 <div class="scenario">
   <div>
-    <label for="scenario-text" class="small secondary" style="font-weight:600">Describe your situation in plain English</label>
-    <textarea id="scenario-text" placeholder="e.g. I have about one month, no matching funds, two staff, focused on rural behavioral health"></textarea>
+    <label for="scenario-text" class="scenario-label">Describe your situation in plain English</label>
+    <textarea id="scenario-text" placeholder="e.g. I have about one month, no matching funds, two staff, awards of at least $250k, rural behavioral health, reach the most people"></textarea>
   </div>
   <div class="row" style="align-self:end">
     <button class="btn primary" id="apply-text">Apply</button>
     <span class="small muted">Presets:</span>
     <span id="presets" class="row"></span>
   </div>
+  <div class="examples"><span class="small muted">Try an example:</span><span id="examples" class="row"></span></div>
   <div class="chips" id="chips"></div>
 </div>
 
@@ -136,11 +141,9 @@
     </section>
 
     <section id="tab-map" class="hidden" role="tabpanel">
-      <div class="callout"><strong>What this map shows:</strong> relative need for a <em>program domain</em> across NC counties,
-        not where any grant would be spent. Nearly every opportunity here is statewide, so an opportunity inherits its
-        domain's map. Color is the county's average percentile rank across the indicators listed below.</div>
+      <div class="callout" id="map-callout"></div>
       <div class="map-controls">
-        <div class="ctl"><label for="map-domain">Program domain</label><select id="map-domain"></select></div>
+        <div class="ctl"><label for="map-domain">Map layer</label><select id="map-domain"></select></div>
         <div class="ctl"><label for="map-boundary">Boundary overlay</label><select id="map-boundary"></select></div>
       </div>
       <div id="map"></div>

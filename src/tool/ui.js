@@ -197,6 +197,19 @@
     ["D08", /\b(disaster|hurricane|flood|emergency|preparedness|outbreak|infectious)\b/i]
   ];
 
+  var MONEY_UNIT = "(k|m|mil|million|thousand)";
+  var AWARD_RE = new RegExp(
+    "\\$\\s?(\\d+(?:\\.\\d+)?)\\s?" + MONEY_UNIT + "?\\b" +
+    "|\\b(?:at least|minimum(?: of)?|min|over|above|more than|no less than|awards? (?:of|over|above|at least))\\s+(\\d+(?:\\.\\d+)?)\\s?" + MONEY_UNIT + "\\b" +
+    "|\\b(\\d+(?:\\.\\d+)?)\\s?" + MONEY_UNIT + "\\b(?!\\s*(?:people|residents|persons|veterans|children|adults|kids|families|fte|staff))");
+  var IMPACT_WORDS = [
+    ["reach", /\b(reach(es|ing)? (the )?most|most people|many people|people reached|broad(est)? reach|widest reach|reach more|statewide reach|reach)\b/],
+    ["depth", /\b(per[- ]person|per capita|deep(er|est)? impact|intensity|depth|help per person|intensive)\b/],
+    ["award", /\b((big|bigg|larg)\w* (awards?|grants?|money|dollars|funding)|award size|most money|most funding|big money)\b/],
+    ["alignment", /\b(strategic plan|plan fit|fits? (the |our )?plan|align\w*)\b/],
+    ["priority", /\b(my (program )?priorit\w*|program priorit\w*|our priorit\w*)\b/]
+  ];
+
   function parseScenario(text) {
     var t = " " + text.toLowerCase() + " ", out = [], m;
     function set(key, value, label, from) { out.push({ key: key, value: value, label: label, from: from }); }
@@ -220,9 +233,24 @@
     } else if ((m = t.match(/\b(no staff|nobody|by myself|just me|only me|alone)\b/))) {
       set("staff_fte", m[0].indexOf("no staff") >= 0 || m[0] === "nobody" ? 0 : 1, "Staff: " + (m[0].indexOf("no staff") >= 0 || m[0] === "nobody" ? 0 : 1) + " FTE", m[0].trim());
     }
-    if ((m = t.match(/\$\s?(\d+(?:\.\d+)?)\s?(k|m|million|thousand)?/))) {
-      var v = parseFloat(m[1]) * (/^(m|million)$/.test(m[2] || "") ? 1e6 : /^(k|thousand)$/.test(m[2] || "") ? 1e3 : 1);
+    // Minimum award: "$500k", "at least 250 thousand", "awards over 1 million", "2m".
+    // An amount followed by people words ("10 million residents") is reach, not money.
+    if ((m = t.match(AWARD_RE))) {
+      var amt = m[1] || m[3] || m[5], unit = (m[2] || m[4] || m[6] || "").trim();
+      var v = parseFloat(amt) * (/^(m|mil|million)$/.test(unit) ? 1e6 : /^(k|thousand)$/.test(unit) ? 1e3 : 1);
       set("min_award_usd", Math.max(R.min_award_usd[0], Math.min(R.min_award_usd[1], v)), "Minimum award: " + usd(v), m[0].trim());
+    }
+    // What matters most for the impact score. Each phrase raises one part's weight to 3.
+    IMPACT_WORDS.forEach(function (iw) {
+      var mm = t.match(iw[1]);
+      if (mm) set("iw:" + iw[0], 3, "Impact weight up: " + IMPACT_LABEL[iw[0]], mm[0].trim());
+    });
+    if ((m = t.match(/\b(soonest|closing soon|closes soon|by deadline|deadline first|sort by deadline|most urgent)\b/))) {
+      set("sort_by", "deadline", "Order piles by: deadline", m[0].trim());
+    } else if ((m = t.match(/\b(most|highest|biggest|greatest|max(imum)?) impact\b|\bimpact (first|matters)\b/)) ||
+               out.some(function (o) { return o.key.indexOf("iw:") === 0; })) {
+      var from = m ? m[0].trim() : out.filter(function (o) { return o.key.indexOf("iw:") === 0; })[0].from;
+      set("sort_by", "impact", "Order piles by: impact score", from);
     }
     if ((m = t.match(/\b(forecast\w*|upcoming|next year|plan(ning)? ahead|not yet open)\b/))) {
       set("include_forecasts", true, "Include forecasts", m[0].trim());
@@ -243,14 +271,32 @@
     found.forEach(function (f) {
       var prev;
       if (f.key.indexOf("domain:") === 0) { var d = f.key.slice(7); prev = S.domain_weights[d]; S.domain_weights[d] = f.value; }
+      else if (f.key.indexOf("iw:") === 0) { var k = f.key.slice(3); prev = S.impact_weights[k]; S.impact_weights[k] = f.value; }
       else { prev = S[f.key]; S[f.key] = f.value; }
       f.prev = prev; textSet.push(f);
     });
-    if (!found.length) textSet = [{ key: "none", label: "Nothing recognized. Try phrases like \"one month\", \"no match\", \"two staff\", \"rural\"." }];
+    if (!found.length) textSet = [{ key: "none", label: "Nothing recognized. Try phrases like \"one month\", \"no match\", \"two staff\", \"rural\", \"at least $500k\", \"reach the most people\"." }];
     activePreset = null;
     update();
   }
   $("apply-text").addEventListener("click", applyText);
+  // Example scenarios: one click fills the box and applies it (useful for a live demo).
+  [["No match, half an FTE", "Two weeks, no matching funds, half an FTE, rural behavioral health"],
+   ["Big-picture planning", "Planning ahead three months, forecasts, supervisor approves match, two staff, reach the most people"],
+   ["Worth the effort", "One month, match with approval, one staff, awards of at least $1 million, biggest grants first"]]
+    .forEach(function (ex) {
+      $("examples").appendChild(el("button", { class: "btn ghost", type: "button", title: ex[1], text: ex[0], onclick: function () {
+        // Start each example from the opening scenario so examples don't stack on each other.
+        S = clone(CFG.opening); activePreset = null;
+        $("scenario-text").value = ex[1]; applyText();
+      } }));
+    });
+  // Larger text for projecting the tool in a meeting.
+  $("present-toggle").addEventListener("click", function () {
+    var on = document.documentElement.classList.toggle("present");
+    $("present-toggle").setAttribute("aria-pressed", on ? "true" : "false");
+    $("present-toggle").textContent = on ? "Normal text" : "Larger text";
+  });
   $("scenario-text").addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); applyText(); } });
 
   function renderChips() {
@@ -260,7 +306,9 @@
       c.appendChild(el("span", { class: "chip", title: 'From your text: "' + f.from + '"' }, [
         f.label + '  ← "' + f.from + '"',
         el("button", { type: "button", "aria-label": "Undo " + f.label, text: "×", onclick: function () {
-          if (f.key.indexOf("domain:") === 0) S.domain_weights[f.key.slice(7)] = f.prev; else S[f.key] = f.prev;
+          if (f.key.indexOf("domain:") === 0) S.domain_weights[f.key.slice(7)] = f.prev;
+          else if (f.key.indexOf("iw:") === 0) S.impact_weights[f.key.slice(3)] = f.prev;
+          else S[f.key] = f.prev;
           textSet.splice(i, 1); update();
         } })
       ]));
@@ -291,7 +339,7 @@
         statusBadge(o)
       ]),
       item.impact && item.impact.score !== null ? el("div", { class: "meta", title: "Impact score: used only to order this pile" }, [
-        el("span", { class: "badge", text: "Impact " + item.impact.score }),
+        el("span", { class: "impact-pill" }, [el("span", { class: "impact-bar" }, [el("span", { style: "width:" + Math.max(4, Math.min(100, item.impact.score)) + "%" })]), "Impact " + item.impact.score]),
         el("span", { text: item.impact.top.length ? "led by " + item.impact.top.map(function (k) { return IMPACT_SHORT[k]; }).join(" and ") : "" })
       ]) : null,
       el("div", { class: "reason", text: item.tier_reason })
@@ -316,15 +364,25 @@
       ]));
     });
 
+    // Summary: one tile per pile, then a single line accounting for everything else.
     $("summary").innerHTML = "";
-    var rows = [["Writer can act", res.counts.tier1], ["Needs supervisor", res.counts.tier2],
-                ["Needs secretary / legislature", res.counts.tier3]];
-    if (S.show_screened) rows.push(["Partner-led research", res.counts.tier4]);
-    rows = rows.concat([["Doesn't fit this cycle", res.counts.not_this_cycle],
+    var tiles = el("div", { class: "stat-tiles" });
+    [[1, "Writer can act", res.counts.tier1], [2, "Needs supervisor", res.counts.tier2],
+     [3, "Needs secretary or legislature", res.counts.tier3]].concat(S.show_screened ? [[4, "Partner-led research", res.counts.tier4]] : [])
+      .forEach(function (x) {
+        tiles.appendChild(el("div", { class: "stat", style: "--tier-color:" + TIERS[x[0]].color }, [
+          el("div", { class: "stat-label" }, [el("span", { class: "tier-mark t" + x[0] }), "Tier " + x[0]]),
+          el("div", { class: "stat-num", text: String(x[2]) }),
+          el("div", { class: "stat-sub", text: x[1] })
+        ]));
+      });
+    $("summary").appendChild(tiles);
+    var rest = [["Doesn't fit this cycle", res.counts.not_this_cycle],
       [S.show_screened ? "Restricted (information only)" : "Screened as research or restricted", res.counts.screened],
-      ["Outside your scope", res.counts.out_of_scope]]);
-    rows.forEach(function (x) { $("summary").appendChild(el("span", {}, [x[0] + " ", el("strong", { text: String(x[1]) })])); });
-    $("summary").appendChild(el("span", { class: "muted" }, ["= all ", el("strong", { text: res.counts.total.toLocaleString() }), " opportunities in the file"]));
+      ["Outside your scope", res.counts.out_of_scope]];
+    $("summary").appendChild(el("div", { class: "stat-rest" }, rest.map(function (x) {
+      return el("span", {}, [x[0] + " ", el("strong", { text: x[1].toLocaleString() })]);
+    }).concat([el("span", { class: "muted" }, ["= all ", el("strong", { text: res.counts.total.toLocaleString() }), " opportunities in the file are accounted for"])])));
 
     drawer("drawer-cycle", "Doesn't fit this cycle", res.drawers.not_this_cycle,
       "Relevant to " + S.agency + " but the deadline or award size fails your settings.");
@@ -379,6 +437,80 @@
       : "NIH and research-mechanism awards need a university or research institution as the applicant. Turn on \"Include research awards\" to see them as Tier 4. Items marked \"check this\" align closely with the agency's plan.";
   }
   function al(o) { var a = o.alignment && o.alignment[S.agency]; return a && a.pct != null ? a.pct : 0; }
+
+  // ---- Where the people served live ---------------------------------------------------------------
+  var C = P.community || null;
+  var RURAL_LABEL = { rural: "Rural counties", suburban: "Regional city or suburban", urban: "Urban counties" };
+  function countyName(f) { return (P.county_names[f] || f) + " County"; }
+  function whereTheyLive(popId) {
+    var pop = P.populations[popId];
+    if (!C || !pop || !pop.county) return null;
+    var rows = Object.keys(pop.county).map(function (f) {
+      var n = pop.county[f], tot = C.county_pop[f];
+      return { fips: f, n: n, rate: tot ? n / tot : null, rurality: C.county_rurality[f] };
+    });
+    var total = rows.reduce(function (a, r) { return a + r.n; }, 0);
+    var byR = { rural: 0, suburban: 0, urban: 0 }, cntR = { rural: 0, suburban: 0, urban: 0 };
+    rows.forEach(function (r) { if (byR[r.rurality] != null) { byR[r.rurality] += r.n; cntR[r.rurality]++; } });
+    var districts = pop.district ? Object.keys(pop.district).map(function (g) {
+      return { id: g, name: (C.district_names || {})[g] || g, n: pop.district[g] };
+    }).sort(function (a, b) { return (+a.id) - (+b.id); }) : null;
+    return {
+      pop: pop, total: total, rows: rows, byRurality: byR, countiesByRurality: cntR,
+      topCount: rows.slice().sort(function (a, b) { return b.n - a.n; }).slice(0, 5),
+      topRate: rows.filter(function (r) { return r.rate != null && popId !== "all_residents"; })
+                   .sort(function (a, b) { return b.rate - a.rate; }).slice(0, 5),
+      districts: districts
+    };
+  }
+  function fmtPct(x) { return (x * 100).toFixed(x < 0.1 ? 1 : 0) + "%"; }
+
+  function reachSection(o) {
+    if (!o.target_population || o.target_population === "system_level") return null;
+    var w = whereTheyLive(o.target_population);
+    if (!w || !w.total) return el("section", {}, [el("h4", { text: "Who this reaches in NC" }),
+      el("div", { class: "small muted", text: "No county-level count is available for this population (" + (P.populations[o.target_population] || {}).label + ")." })]);
+    var seg = ["rural", "suburban", "urban"].map(function (k) {
+      var share = w.byRurality[k] / w.total;
+      return el("span", { class: "rur-seg rur-" + k, style: "width:" + (share * 100).toFixed(1) + "%",
+        title: RURAL_LABEL[k] + ": " + fmtNum(w.byRurality[k]) + " (" + fmtPct(share) + ")" });
+    });
+    var legend = el("div", { class: "rur-legend" }, ["rural", "suburban", "urban"].map(function (k) {
+      return el("span", {}, [el("i", { class: "rur-" + k }), RURAL_LABEL[k] + " (" + w.countiesByRurality[k] + "): ",
+        el("strong", { text: fmtPct(w.byRurality[k] / w.total) }), " · " + fmtNum(w.byRurality[k])]);
+    }));
+    function list(title, rows, val) {
+      return el("div", { class: "reach-list" }, [el("div", { class: "reach-list-h", text: title }),
+        el("ol", {}, rows.map(function (r) { return el("li", {}, [countyName(r.fips) + " ", el("span", { class: "muted", text: val(r) })]); }))]);
+    }
+    var maxD = w.districts ? Math.max.apply(null, w.districts.map(function (d) { return d.n; })) : 0;
+    return el("section", { class: "reach-section" }, [
+      el("h4", { text: "Who this reaches in NC" }),
+      el("div", { class: "small", text: w.pop.label + ": " + fmtNum(w.total) + " people statewide." }),
+      el("div", { class: "rur-bar", role: "img", "aria-label": "Share living in rural, suburban and urban counties" }, seg),
+      legend,
+      el("div", { class: "reach-lists" }, [
+        list("Most people", w.topCount, function (r) { return fmtNum(r.n); }),
+        w.topRate.length ? list("Highest share of residents", w.topRate, function (r) { return fmtPct(r.rate); }) : null
+      ]),
+      w.districts ? el("details", { class: "reach-districts" }, [el("summary", { text: "By congressional district" }),
+        el("table", { class: "gaps" }, w.districts.map(function (d) {
+          return el("tr", {}, [el("td", { text: d.name.replace("Congressional District", "District") }),
+            el("td", { class: "num", text: fmtNum(d.n) }),
+            el("td", { style: "width:45%" }, [el("span", { class: "dist-bar", style: "width:" + (d.n / maxD * 100).toFixed(0) + "%" })])]);
+        })),
+        el("div", { class: "small muted", text: C.district_note })]) :
+        el("div", { class: "small muted", text: "District counts are not published for this population." }),
+      el("div", { class: "reach-actions" }, [
+        el("button", { class: "btn", type: "button", text: "Show on the map", onclick: function () {
+          $("map-domain").value = "pop:" + o.target_population;
+          document.querySelector('[data-tab="map"]').click();
+          var d = $("detail-root"); d.innerHTML = "";
+          drawMap();
+        } })]),
+      el("div", { class: "small muted", text: C.caveat + " " + C.rurality_rule })
+    ]);
+  }
 
   // ---- Detail panel -------------------------------------------------------------------------------
   function openDetail(o) {
@@ -436,6 +568,7 @@
         el("dt", { text: "Serves" }), el("dd", { text: o.target_population ? P.populations[o.target_population].label + (o.people_est ? " (~" + fmtNum(o.people_est) + " in NC)" : "") : "Not labeled" }),
         el("dt", { text: "Full announcement" }), el("dd", { text: o.has_full_announcement ? "Read by the labeler" : "Not available; abstract only" })
       ])]),
+      reachSection(o),
       o.match_evidence && o.match_evidence !== "none" ? el("section", {}, [el("h4", { text: "Match evidence (quoted)" }), el("blockquote", { text: o.match_evidence })]) : null,
       el("section", {}, [el("h4", { text: "Alignment with the " + S.agency + " strategic plan" }),
         a.llm_level ? el("div", {}, [el("strong", { text: "Labeler: " + a.llm_level }),
@@ -458,7 +591,16 @@
   var SEQ = ["--seq-100", "--seq-200", "--seq-300", "--seq-400", "--seq-500", "--seq-600", "--seq-700"];
   function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
 
-  P.domains.forEach(function (d) { $("map-domain").appendChild(el("option", { value: d.id, text: d.label })); });
+  var needGroup = el("optgroup", { label: "Need by program area" });
+  P.domains.forEach(function (d) { needGroup.appendChild(el("option", { value: d.id, text: d.label })); });
+  $("map-domain").appendChild(needGroup);
+  if (C) {
+    var popGroup = el("optgroup", { label: "Where the people served live" });
+    Object.keys(P.populations).forEach(function (k) {
+      if (P.populations[k].county) popGroup.appendChild(el("option", { value: "pop:" + k, text: P.populations[k].label }));
+    });
+    $("map-domain").appendChild(popGroup);
+  }
   var BOUNDARY_LABEL = { county: "Counties", congressional_district: "Congressional districts", tract: "Census tracts", place: "Census places (cities and towns)" };
   Object.keys(P.geo).forEach(function (g) { $("map-boundary").appendChild(el("option", { value: g, text: BOUNDARY_LABEL[g] || g })); });
   $("map-domain").addEventListener("change", drawMap);
@@ -474,10 +616,15 @@
       }).addTo(map);
     }
     var dom = $("map-domain").value;
-    var need = P.domain_need[dom];
     if (choro) map.removeLayer(choro);
     if (overlay) map.removeLayer(overlay);
     var cols = SEQ.map(cssVar);
+    var isPop = dom.indexOf("pop:") === 0;
+    $("map-callout").innerHTML = isPop
+      ? "<strong>Where the people served live:</strong> each county is shaded by the share of its residents in this population (darker = higher share among NC counties). Open an opportunity and choose \u201cShow on the map\u201d to see the population it serves. This shows where people live, not where any grant would be spent."
+      : "<strong>What this map shows:</strong> relative need for a <em>program domain</em> across NC counties, not where any grant would be spent. Nearly every opportunity here is statewide, so an opportunity inherits its domain's map. Color is the county's average percentile rank across the indicators listed below.";
+    if (isPop) { drawPopulationMap(dom.slice(4), cols); return; }
+    var need = P.domain_need[dom];
     function color(v) { if (v == null) return cssVar("--surface-0"); return cols[Math.min(cols.length - 1, Math.floor(v * cols.length))]; }
     choro = L.geoJSON(P.geo.county, {
       style: function (f) { var v = need.index[f.properties.fips]; return { fillColor: color(v), fillOpacity: 0.85, color: cssVar("--surface-1"), weight: 1 }; },
@@ -503,6 +650,47 @@
     $("map-indicators").innerHTML = "<strong>Indicators averaged:</strong> " + need.indicators.map(function (i) { return esc(i.label); }).join("; ") +
       (need.missing_indicators && need.missing_indicators.length ? ". <em>Not available:</em> " + need.missing_indicators.join(", ") : "") +
       ". Boundary overlays other than counties are outlines only; the underlying data are county-level.";
+  }
+
+  // Population layer: county color = share of residents in the population (percentile rank
+  // among counties), tooltip = count, share and rurality; district outlines carry district counts.
+  function drawPopulationMap(popId, cols) {
+    var w = whereTheyLive(popId);
+    var rates = w.rows.filter(function (r) { return r.rate != null; }).map(function (r) { return r.rate; }).sort(function (a, b) { return a - b; });
+    function pct(v) { if (v == null) return null; var i = 0; while (i < rates.length && rates[i] < v) i++; return rates.length > 1 ? i / (rates.length - 1) : 0.5; }
+    var byF = {}; w.rows.forEach(function (r) { byF[r.fips] = r; });
+    function color(v) { if (v == null) return cssVar("--surface-0"); return cols[Math.min(cols.length - 1, Math.floor(v * cols.length))]; }
+    var share = popId === "all_residents";
+    choro = L.geoJSON(P.geo.county, {
+      style: function (f) { var r = byF[f.properties.fips]; var v = r ? (share ? pct(r.n) : pct(r.rate)) : null;
+        return { fillColor: color(v), fillOpacity: 0.85, color: cssVar("--surface-1"), weight: 1 }; },
+      onEachFeature: function (f, layer) {
+        var r = byF[f.properties.fips];
+        layer.bindTooltip("<strong>" + esc(countyName(f.properties.fips)) + "</strong><br>" + esc(w.pop.label) + ": " +
+          (r ? fmtNum(r.n) + (r.rate != null && !share ? " (" + fmtPct(r.rate) + " of residents)" : "") : "n/a") +
+          "<br>" + esc(RURAL_LABEL[C.county_rurality[f.properties.fips]] || ""), { sticky: true });
+      }
+    }).addTo(map);
+    var b = $("map-boundary").value;
+    if (b !== "county" && P.geo[b]) {
+      var dist = b === "congressional_district" && w.pop.district;
+      overlay = L.geoJSON(P.geo[b], {
+        style: { fill: !!dist, fillOpacity: 0, color: cssVar("--text-primary"), weight: b === "tract" ? 0.4 : 1.6, opacity: 0.8 },
+        interactive: !!dist,
+        onEachFeature: dist ? function (f, layer) {
+          var g = Object.keys(w.pop.district).filter(function (k) { return f.properties.name && f.properties.name.replace(/\D/g, "") === String(+k.slice(2)); })[0];
+          layer.bindTooltip("<strong>" + esc(f.properties.name) + "</strong><br>" + esc(w.pop.label) + ": " + (g ? fmtNum(w.pop.district[g]) : "n/a"), { sticky: true });
+        } : null
+      }).addTo(map);
+    }
+    map.fitBounds(choro.getBounds(), { padding: [10, 10] });
+    var lg = $("map-legend"); lg.innerHTML = "";
+    lg.appendChild(el("span", { class: "lab", text: share ? "Fewer people" : "Lower share" }));
+    cols.forEach(function (c) { lg.appendChild(el("span", { class: "sw", style: "background:" + c })); });
+    lg.appendChild(el("span", { class: "lab", text: share ? "More people (rank among NC counties)" : "Higher share of residents (rank among NC counties)" }));
+    var ru = ["rural", "suburban", "urban"].map(function (k) { return RURAL_LABEL[k].toLowerCase() + " " + fmtPct(w.byRurality[k] / w.total); }).join(", ");
+    $("map-indicators").innerHTML = "<strong>" + esc(w.pop.label) + ":</strong> " + fmtNum(w.total) + " people in NC (" + ru + "). Source: " +
+      esc(w.pop.source || "") + ". " + esc(C.caveat) + (b === "congressional_district" ? " " + esc(w.pop.district ? C.district_note + " Hover a district outline for its count." : "District counts are not published for this population.") : " Choose the congressional-district overlay to see counts by district.");
   }
 
   // ---- Reach vs intensity scatter ---------------------------------------------------------------------
@@ -606,13 +794,19 @@
       "mechanisms (unless included), are restricted to named applicants, have less runway than you need, or have an estimated award below your minimum.</p>" +
       "<h3>Ranking within a pile</h3><p>The piles answer whose signature you need. Within each pile, the impact score orders opportunities by what you say matters: fit with the strategic plan (the labeler's strong / partial / none), people reached, help per person, award size, and your program priorities. " +
       "Reach, per-person help and award are ranked against the opportunities currently in view. The score never moves an opportunity between piles, and every card shows which parts led its score.</p>" +
+      "<h3>Describe your situation</h3><p>The text box understands runway (\u201cone month\u201d), match authority (\u201cno matching funds\u201d, \u201csupervisor approves match\u201d), staff (\u201chalf an FTE\u201d), minimum award (\u201cat least $500k\u201d), program areas (\u201crural behavioral health\u201d), what matters most (\u201creach the most people\u201d, \u201chelp per person\u201d, \u201cbiggest grants\u201d) and order (\u201cclosing soon\u201d). " +
+      "Every setting it changes appears as a chip you can undo; nothing is changed silently. The example buttons under the box apply ready-made scenarios, and \u201cLarger text\u201d enlarges the page for a projector.</p>" +
+      "<h3>Who an opportunity reaches</h3><p>Open any opportunity to see where the people it serves live: the counties with the most of them and with the highest share of residents, the split between rural, suburban and urban counties, and counts by congressional district. \u201cShow on the map\u201d draws the same population on the Need map. " +
+      (P.community ? esc(P.community.rurality_rule) + " " + esc(P.community.district_note) + " " : "") +
+      "This shows where people live, not where a statewide award would be spent, and it is only as good as the population the labeler chose.</p>" +
       "<h3>" + esc(S.agency) + " capability profile</h3><table><tr><th>Capability</th><th>Control</th><th>Basis</th></tr>" + capRows + "</table>" +
       "<h3>Where the numbers come from</h3><ul>" +
       "<li>Opportunities: Grants.gov export pulled " + esc(P.meta.pull_date) + "; status re-checked against the Grants.gov API.</li>" +
       "<li>Estimated award = total program funding / expected number of awards; falls back to the stated ceiling. The national total is never shown as money NC could receive.</li>" +
       "<li>Requirements, domain, population, and plan alignment: labeled by a local model (" + esc(P.meta.llm_model) + ", prompt " + esc(P.meta.llm_prompt_version) +
       ") from the abstract and, where available, the full announcement. Validated against 60 hand labels in the project notebook.</li>" +
-      "<li>Match percentage is published in structured form almost nowhere; where the tool shows one, it was found in the text.</li></ul>";
+      "<li>Match percentage is published in structured form almost nowhere; where the tool shows one, it was found in the text.</li>" +
+      "<li>County and district counts: ACS 2019-2023 5-year estimates (Census API); CDC PLACES for adults in frequent mental distress; HRSA primary care shortage designations (multi-county designations split evenly); OpenFEMA declarations for hazard exposure. County need maps also use NCHS drug poisoning death rates.</li></ul>";
   }
 
   // ---- Export the current view -------------------------------------------------------------

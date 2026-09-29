@@ -8,6 +8,9 @@ the secretary's or legislature's, plus a fourth pile for research awards a unive
 Every opportunity shows the rule that put it there; within a pile, the writer ranks by an impact
 score whose weights they set. All 1,662 opportunities in the file are accounted for on screen.
 
+**Website:** https://kapollol.github.io/SolveAThon_2026/ (GitHub Pages, served from `docs/`). It has a landing page, the interactive tool
+(`tool.html`), the notebook (`notebook.html`) and the top-results downloads.
+
 ## Open the deliverables
 
 | What | Where | How |
@@ -42,6 +45,8 @@ Rscript R/05_export_tool_data.R    # data/processed/payload.json
 Rscript tool/build_tool.R          # outs/grant-triage-tool.html (runs 32 tests first)
 Rscript R/07_top_results.R         # outs/top_results.csv and .xlsx
 quarto render solveathon_project.qmd   # outs/solveathon_project.html
+python3 export_slide_figures.py        # outs/figures/ (slide charts)
+python3 build_site.py                  # docs/ (the GitHub Pages website)
 ```
 
 Requires R 4.5 with the packages loaded in `src/R/*.R` (including `V8`, `sf`, `tidycensus`,
@@ -59,4 +64,4 @@ reuse their caches and only call out for items not already cached.
 - Strategic plans used: DHHS 2023-2025 and DMVA 2025-2029, the versions on the OSBM site the
   competition provides.
 
-See `handoff.md` for the current status and open items.
+See `GUIDE.md` for where everything is and what it is, and `handoff.md` for the current status and open items.

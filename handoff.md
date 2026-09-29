@@ -1,6 +1,7 @@
 # Handoff: NC Grant Triage, final state
-Written Tuesday Sept 29, 2026, evening. Due Wednesday Sept 30, 11:59 p.m.
-Read time: about 6 minutes. Section 7 is for a coding agent; everyone else can stop at section 6.
+Written Tuesday Sept 29, 2026, evening; last updated late Tuesday night. Due Wednesday Sept 30, 11:59 p.m.
+Read time: about 7 minutes. Section 7 is for a coding agent; everyone else can stop at section 6.
+For where every file lives, see `GUIDE.md`.
 
 ---
 
@@ -11,8 +12,21 @@ notebook and the top results list agree with each other, because they all run th
 
 What is left:
 
-- **Record the 5-minute video.** The script has not been written yet (on purpose, per Kent).
-- **Commit and push.** Nothing has been committed. That waits for Kent's go.
+- **Build the slides and record the 5-minute video.**
+  - Paste `src/docs/presentation_brief.md` into Claude chat, with the images in `outs/figures/`.
+  - The brief has the judging criteria, verified numbers, a 7-slide plan, a click-by-click demo
+    script and the closing ask.
+- **Commit the latest changes.** Kent committed once (`833f08a`). Everything since is uncommitted:
+  - the tool redesign;
+  - "Who this reaches";
+  - the new charts;
+  - `GUIDE.md`;
+  - the slide brief and slide figures.
+- **Publish the website.**
+  - It is built in `docs/`.
+  - After pushing, turn on GitHub Pages: Settings → Pages → Deploy from a branch → `main` → `/docs`.
+  - The site will be https://kapollol.github.io/SolveAThon_2026/.
+  - The repo must be public on a free account.
 - **Optional:** double-click `outs/grant-triage-tool.html` on another laptop to confirm it opens offline.
 
 What we decided **not** to do, and say so openly in the notebook:
@@ -27,10 +41,38 @@ What we decided **not** to do, and say so openly in the notebook:
 | Competition item | File | Notes |
 |---|---|---|
 | 1. Top results list with a one-line rationale | `outs/top_results.xlsx` (and `.csv`); also notebook section 14 | 51 rows: DHHS 23 Tier 1, 23 Tier 2, 3 Tier 3; DMVA 2 Tier 3. Each rationale covers the five criteria. |
-| 2. Notebook: notes, AI tools, key prompts, where the AI was wrong | `outs/solveathon_project.html` (source `src/solveathon_project.qmd`) | 19 sections, 18 figures plus a process diagram, the full prompt and schema, validation, limitations, AI disclosure. The tool is embedded. About 16 MB, opens offline. |
-| 3. 5-minute video to leadership | not started | Outline in the team brief, section 8 |
-| Supporting: interactive tool | `outs/grant-triage-tool.html` | 3.3 MB, one file, offline |
+| 2. Notebook: notes, AI tools, key prompts, where the AI was wrong | `outs/solveathon_project.html` (source `src/solveathon_project.qmd`) | 19 sections, 29 figures plus a process diagram. Every dataset has at least one chart (inventory table in section 4); 18 green takeaway boxes explain the charts in plain language. Full prompt and schema, validation, limitations, AI disclosure. The tool is embedded. About 19 MB, opens offline. |
+| 3. 5-minute video to leadership | slides not built yet | Slide brief: `src/docs/presentation_brief.md`; chart images: `outs/figures/` (11 PNGs) |
+| Supporting: interactive tool | `outs/grant-triage-tool.html` | 3.4 MB, one file, offline. See "What the tool does now" below. |
+| Supporting: website | `docs/` → https://kapollol.github.io/SolveAThon_2026/ | Landing page, tool, notebook, downloads. Built by `src/build_site.py`. |
+| Supporting: project map | `GUIDE.md` | Where everything is, split into: what to submit, what to explain to the team, everything else |
 | Supporting: team brief | `outs/team_brief_v2.docx` (source `src/docs/team_brief.md`) | Updated with final numbers and a new "How confident are we?" section |
+
+### What the tool does now
+
+- **Four piles** (Tiers 1-4), shown as big color-coded tiles, plus a line accounting for all 1,662 opportunities.
+- **"Describe your situation" box.** It sets:
+  - runway, match authority, staff and minimum award;
+  - program priorities;
+  - what matters most for the impact score, and the sort order.
+
+  Each change shows as a chip you can undo.
+- **Example buttons** under the box ("No match, half an FTE", "Big-picture planning", "Worth the
+  effort"). Each applies a ready-made scenario in one click, starting from the opening scenario.
+- **Presets** for whole personas: Mid-level writer, Deadline crunch, Division-backed, Planning ahead.
+- **"Larger text" button** for projecting or screen sharing.
+- **Detail panel for each opportunity:**
+  - why this tier;
+  - capability gaps;
+  - impact breakdown;
+  - key facts;
+  - **"Who this reaches in NC"** (new): top counties, rural/suburban/urban split, counts by
+    congressional district, and a "Show on the map" button;
+  - quoted match evidence;
+  - plan alignment.
+- **Need map** with two layer groups: need by program area, and **where the people served live**
+  (new). Overlays: counties, congressional districts (hover shows the district count), tracts, places.
+- Reach vs intensity chart, a "How this works" tab, and CSV export.
 
 ---
 
@@ -70,6 +112,18 @@ What we decided **not** to do, and say so openly in the notebook:
 - v3.1 got 13 of 14 dev cases right, and was then frozen.
 - The model once wrote its own rule ("work happens outside the United States") into an evidence field.
 
+**Who an opportunity reaches** (new, from ACS 2019-2023)
+- Counties are grouped with the NC Rural Center density rule: 77 rural, 17 suburban / regional
+  city, 6 urban.
+- Example, veterans:
+  - 618,846 in NC;
+  - 39% live in rural counties;
+  - the highest shares are in Currituck, Onslow, Hoke and Cumberland counties;
+  - the most veterans are in districts 3 and 9.
+- Districts are those drawn for the 118th Congress. NC redrew them for 2024.
+- 170 of the 210 labeled opportunities are marked "all residents" or "system-level". The view is
+  most informative for the other ~40.
+
 **The research review**
 - The team read 27 flagged research awards.
 - They recommended a separate research tier for 23, marked 1 not relevant, and judged none to be DHHS-led.
@@ -96,14 +150,20 @@ What we decided **not** to do, and say so openly in the notebook:
 
 ## 5. What the team should do before submitting
 
-1. **Write and record the video** (outline in the brief, section 8). The strongest moments are:
-   - the NIH funnel;
-   - typing a scenario into the tool;
-   - DMVA's Veterans Home grant landing in Tier 3;
-   - the Title X match that the data file missed;
-   - the confidence table.
+1. **Build the slides and record the video** from `src/docs/presentation_brief.md`.
+   - Rehearse the demo script twice.
+   - Turn on "Larger text" before recording.
+   - Take the fallback screenshot.
+   - The strongest moments:
+     - the NIH funnel;
+     - "Deadline crunch" dropping Tier 1 to 0;
+     - typing a scenario;
+     - Title X's quoted match;
+     - DMVA's Veterans Home grant in Tier 3;
+     - the confidence chart;
+     - the three decisions.
 2. Open the notebook and the tool once each and skim them.
-3. Tell Kent when to commit and push.
+3. Kent: commit and push the latest changes (see section 7 for a note on `.DS_Store` files).
 4. Kent: rotate the Census API key when convenient. It was pasted in chat; it is not in any file
    except the gitignored `.Renviron`.
 
@@ -140,6 +200,8 @@ Rscript R/05_export_tool_data.R    # data/processed/payload.json
 Rscript tool/build_tool.R          # 32 tests (28 rule cases + ordering), then outs/grant-triage-tool.html
 Rscript R/07_top_results.R         # outs/top_results.csv/.xlsx
 quarto render solveathon_project.qmd
+python3 export_slide_figures.py    # outs/figures/*.png for the slides (matched by chart title)
+python3 build_site.py              # docs/ website for GitHub Pages (checks nothing contains the Census key)
 ```
 
 A clean-copy rebuild was verified:
@@ -161,10 +223,43 @@ A clean-copy rebuild was verified:
 - `06_spotcheck_sheet.R` never overwrites a template that already holds verdicts.
 - The team's research-review verdicts are in `data/manual/spotcheck_template.csv` and `spotcheck.csv`.
 
+### Added in the last session (all rebuilt and verified)
+- **Tool redesign** (`src/tool/styles.css`, "Visual refresh" block at the end):
+  - summary tiles (built in `renderPiles` in `ui.js`);
+  - example scenario buttons (reset to the opening state first);
+  - a "Larger text" presentation mode (`html.present { zoom }`);
+  - tinted pile headers, cards and impact bars;
+  - checked in light mode, dark mode and at 375px width.
+- **Scenario parser** (`parseScenario` in `ui.js`) also sets:
+  - minimum award (`AWARD_RE`);
+  - impact weights (`IMPACT_WORDS`);
+  - sort order.
+- **Who this reaches.**
+  - Data side (`05_export_tool_data.R`): `add_population_geography()` adds `county` (and, for ACS
+    populations, `district`) counts to each population; `community_context()` adds county
+    population, rurality, district names and caveats as `payload$community`.
+  - New cache: `data/cache/api/acs_2023_nc_congressional_district.rds`.
+  - Tool side (`ui.js`): `whereTheyLive()`, `reachSection()`, `drawPopulationMap()`.
+  - Checks: county counts sum exactly to the state totals, and district hover counts match the ACS.
+- **Notebook** (29 charts):
+  - §14 describes using the tool and the community view;
+  - two new charts (rural/suburban/urban share by population; populations by district);
+  - §4 sources and "where charted" tables list the district data and TIGER land area;
+  - §3 steps table and §16 limitations updated.
+- **Slide brief** `src/docs/presentation_brief.md`.
+- **Figure export** `src/export_slide_figures.py`. `outs/figures/` is now tracked in git.
+- `GUIDE.md` at the root.
+
 ### Not done / optional
+- **Git note.** `.DS_Store` files were committed in `833f08a` even though `.gitignore` lists them.
+  To stop tracking them: `git rm --cached .DS_Store data/.DS_Store src/.DS_Store`.
+- District counts use the 118th Congress districts. Current (2024) districts would need ACS 2024
+  1-year data by district plus the 2024 boundary file.
 - The video script (only when Kent asks).
 - Commit and push (only on Kent's explicit go; see `.gitignore` for which `outs/` files are tracked).
-- The notebook is about 16 MB because of embedded figures. Lowering `fig-dpi` would shrink it if needed.
+- The notebook is about 19 MB because of embedded figures (dpi already lowered to 120 in the setup chunk).
+- The tool now shows **who an opportunity reaches**. The detail panel has a "Who this reaches in NC" section: top counties by count and by share, a rural/suburban/urban split (NC Rural Center density rule), and counts by congressional district from ACS 2019-2023 by district (118th Congress, cached as `data/cache/api/acs_2023_nc_congressional_district.rds`). The map has a matching "Where the people served live" layer. Code: `add_population_geography()` and `community_context()` in `05_export_tool_data.R`; `whereTheyLive()`, `reachSection()` and `drawPopulationMap()` in `ui.js`. Limitation: 170 of 210 labeled opportunities serve all residents or are system-level, so the view is most useful for about 40.
+- The scenario box (`parseScenario` in `src/tool/ui.js`) now also sets the minimum award ("at least $500k", "awards over 1 million") and the impact weights and sort order ("reach the most people", "help per person", "biggest grants", "closing soon"). Each match shows as an undoable chip.
 - Orphans that are harmless to leave:
   - legacy `src/diagnostic.qmd`, `src/extra.Rmd` and `src/solveathon_project.Rmd`;
   - old files in `data/processed/`;

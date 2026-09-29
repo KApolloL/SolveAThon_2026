@@ -94,8 +94,9 @@ size. That produces a list nobody can act on.
 - We sort by **authority**, which is what actually blocks applications.
 - We name the **capability gaps** and what closing each would take.
 - The writer can **describe their situation in plain English** ("two weeks, no matching funds, half an
-  FTE, rural behavioral health") and the tool reconfigures itself, showing exactly which settings it
-  changed.
+  FTE, awards of at least $250k, rural behavioral health, reach the most people") and the tool
+  reconfigures itself (runway, match, staff, minimum award, what matters most for impact), showing
+  exactly which settings it changed.
 - A **second agency** (DMVA) proves the tool generalizes.
 - **[NEW]** We can show *why* keyword matching fails, with a real example (section 6).
 - **[NEW]** Nothing disappears silently: the summary always adds up to all 1,662, and a writer can
@@ -250,7 +251,9 @@ number we report.
 DMVA's own "Priority Questions"; past award history from USAspending; interviews with division staff to
 verify the capability profile; letting a supervisor pre-approve a match budget.
 
-*The full data dictionary is in section 4 of the notebook, with counts computed from the file.*
+*The full data dictionary is in section 4 of the notebook, with counts computed from the file. The
+notebook now has a chart for every dataset we used (27 in all), each followed by a one-line
+takeaway in plain language; section 4 lists which chart shows which dataset.*
 
 # 12. [NEW] How confident are we?
 

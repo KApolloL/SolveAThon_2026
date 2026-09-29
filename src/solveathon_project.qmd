@@ -36,6 +36,18 @@ h1, h2 { border-bottom: 2px solid var(--blue-light); padding-bottom: .35rem; mar
 .pending { background:#FFFAEB; border:1px dashed var(--orange); padding:12px 16px; border-radius:6px; margin:12px 0; }
 .dataTables_wrapper { font-size:.88em; }
 .prompt-text { max-height: 420px; overflow: auto; white-space: pre-wrap; font-size: .8em; }
+main.content p, main.content li, main.content blockquote { max-width: 60rem; line-height: 1.6; }
+main.content h1 { font-size: 1.75rem; color: var(--dark); }
+main.content h2 { font-size: 1.3rem; color: var(--dark); border-bottom-width: 1px; }
+.read-me { background:#F8FAFC; border:1px solid #E4E7EC; border-left:5px solid var(--blue); border-radius:6px; padding:12px 18px; margin:6px 0 22px 0; max-width:60rem; }
+.read-me p { margin:.25rem 0; }
+.read-me .lbl { font-weight:700; color:var(--blue); text-transform:uppercase; font-size:.75rem; letter-spacing:.05em; margin-right:.4rem; }
+.takeaway { border-left:4px solid var(--green); background:#F3FAF5; padding:8px 14px; margin:8px 0 26px 0; border-radius:4px; max-width:60rem; }
+.takeaway::before { content:"Takeaway  "; font-weight:700; color:var(--green); font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; }
+.cell-output-display img { border-radius:6px; }
+.cell-output-display { margin-bottom: .6rem; }
+table { font-size: .92em; }
+details.code-fold summary, .code-fold summary { color: var(--gray); font-size: .85em; }
 </style>
 
 ```{r setup}
@@ -47,7 +59,7 @@ for (f in c("01_load_clean", "01a_grantsgov_enrich", "01b_alignment", "02_capabi
   source(here::here("src", "R", paste0(f, ".R")))
 }
 suppressPackageStartupMessages({ library(ggplot2); library(scales); library(DT); library(htmltools); library(sf); library(forcats); library(lubridate) })
-knitr::opts_chunk$set(fig.align = "center", dpi = 150, out.width = "100%")
+knitr::opts_chunk$set(fig.align = "center", dpi = 120, out.width = "100%")
 set.seed(SEED)
 
 pal <- list(blue = "#2166AC", blue_light = "#D9EAF7", orange = "#E08214", red = "#B2182B",
@@ -138,6 +150,11 @@ state governments, but only `r fact_val("Of those, state-government-only")` are 
 them. The median application window is `r median(windows$application_window_days)` days, and
 `r pct_fmt(mean(windows$application_window_days <= 30), 1)` of windows are 30 days or shorter.
 
+::: {.read-me}
+<p><span class="lbl">How to read this notebook</span>Charts are followed by a green <b>takeaway</b> box that says, in one or two sentences, what the chart means for a grant writer. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted.</p>
+<p><span class="lbl">Tiers</span><span style="color:#2a78d6;font-weight:700">Tier 1</span> the writer can act · <span style="color:#eb6834;font-weight:700">Tier 2</span> needs a supervisor or division · <span style="color:#1baf7a;font-weight:700">Tier 3</span> needs the secretary or legislature · <span style="color:#77756f;font-weight:700">Tier 4</span> research a partner would lead.</p>
+:::
+
 # 2. The user and what "good" means
 
 We interviewed someone who writes grants. Their input reframed the project, and we checked it
@@ -204,6 +221,7 @@ flowchart LR
 | Validate | The team labeled 60 opportunities without seeing the model's answers | Hard facts agree over 90% of the time; judgment calls 45-67% (section 12) |
 | Review research items | The team read 27 research awards flagged as closely aligned | They recommended a separate research tier, which became Tier 4 |
 | Build the tool | Rules in one JavaScript file, tested on every build, all 1,662 opportunities accounted for | The notebook runs the same rules, so the two can never disagree |
+| Show who is reached | Added county, rural / urban and congressional-district counts for each population an opportunity serves | Leadership can see which communities an opportunity reaches, labeled as where people live, not where money goes |
 
 # 4. Data provenance and data dictionary
 
@@ -213,10 +231,28 @@ flowchart LR
 | Grants.gov public API | Current status for every opportunity; full announcements for `r n_fmt(nofo_n)` of `r n_fmt(cand_n)` candidates | Free, no key; cached with access dates |
 | NC DHHS Strategic Plan 2023-2025 | Goals, objectives, strategies, priority questions (`r nrow(load_priorities() |> filter(agency == "DHHS"))` rows) | [OSBM agency plans](https://www.osbm.nc.gov/strategic-plan-ncdhhs/open), the competition's source |
 | NC DMVA Strategic Plan 2025-2029 | Goals, objectives, priority questions (`r nrow(load_priorities() |> filter(agency == "DMVA"))` rows) | [OSBM agency plans](https://www.osbm.nc.gov/operational-excellence/strategic-planning/agency-strategic-plans) |
-| ACS 2023 5-year | County and state population counts | Census API |
+| ACS 2023 5-year | County, state and congressional-district population counts (districts as drawn for the 118th Congress) | Census API |
+| Census TIGER boundaries | County land area (for the rural / suburban / urban grouping) and map outlines | Census, via `tigris` |
 | CDC PLACES | County health and social-need prevalence | CDC API |
 | HRSA HPSA | Shortage-area designations | HRSA data warehouse |
 | OpenFEMA | Disaster declarations since `r format(FEMA_DECLARATIONS_SINCE, "%Y")` | FEMA API |
+| NCHS drug poisoning mortality | Model-based county death rates, `r min(OVERDOSE_YEARS)`-`r max(OVERDOSE_YEARS)` average | CDC open data (`rpvx-m2md`) |
+| Capability profiles | 14 capabilities per agency, each with a control level and a source | Hand-built from public sources (`data/manual/agency_capabilities.csv`) |
+| Local-model labels | Requirements, domain, plan alignment and evidence for `r n_fmt(nrow(label_set(grants)))` candidates | `qwen2.5:14b` via Ollama, cached |
+| Team hand labels and reviews | 60 blind hand labels; review of 27 flagged research awards | `data/manual/handlabels_60.csv`, `spotcheck.csv` |
+
+**Where each dataset is charted.** Every source above has at least one figure:
+
+| Dataset | Figures |
+|---|---|
+| Grants.gov export | Funding types (4), funnel and issuers (6), eligibility (7), deadlines and forecasts (8), award size (9) |
+| Grants.gov API | Status six weeks later (6), full-announcement coverage (12) |
+| Strategic plans | Plan structure (4), plan rows the labeler cited (12), similarity vs judgment (15) |
+| Capability profiles | Capability heatmap (10) |
+| Local-model labels | Prompt iteration, capabilities found, plan rows cited (12); piles by scenario and domain (11) |
+| Hand labels and reviews | Accuracy by field and disagreement heatmaps (12) |
+| ACS, CDC PLACES, HRSA HPSA, OpenFEMA, NCHS | Every indicator mapped (13), need by domain (13), overdose (13), population sizes (14) |
+| ACS by congressional district, TIGER land area | Where each population lives: rural / suburban / urban split and counts by district (14) |
 
 ```{r plan-verify}
 #| code-summary: "Check every plan row against its PDF page"
@@ -225,6 +261,36 @@ plan_check <- verify_priorities_against_pdf()
 
 Every one of the `r nrow(plan_check)` strategic-plan rows is checked on each render: `r sum(plan_check$on_page)`
 appear word-for-word on the PDF page they cite.
+
+**What the strategic plans contain.** Each plan was turned into one row per goal, objective,
+strategy and priority question. Rows about how the department runs itself (staffing, pay,
+contracting, buildings) are marked *internal operations*; a federal program grant cannot align
+with those, so they are left out of alignment scoring.
+
+```{r plan-structure}
+#| fig-height: 4.6
+#| code-summary: "Strategic plan rows by goal"
+load_priorities() |>
+  mutate(goal = case_when(str_detect(priority_id, "^PQ") ~ "Priority questions",
+                          !is.na(goal_id) ~ paste("Goal", str_remove(goal_id, "^G")),
+                          TRUE ~ "Other"),
+         kind = if_else(alignable, "Program work (scored)", "Internal operations (not scored)"),
+         agency = paste(agency, if_else(agency == "DHHS", "2023-2025", "2025-2029"))) |>
+  count(agency, goal, kind) |>
+  ggplot(aes(n, fct_rev(goal), fill = kind)) +
+  geom_col(width = .7, color = "white", linewidth = .3) +
+  facet_wrap(~ agency, scales = "free_y") +
+  scale_fill_manual(values = c("Program work (scored)" = pal$blue, "Internal operations (not scored)" = "#C9D6E3"), name = NULL) +
+  labs(title = "DMVA's plan is a third internal operations; DHHS's a quarter",
+       subtitle = "Rows in each strategic plan table, by goal", x = "Plan rows", y = NULL) +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank(),
+        strip.text = element_text(face = "bold", hjust = 0))
+```
+
+::: {.takeaway}
+Only program rows can match a federal grant. Leaving internal-operations rows in let grant
+boilerplate about staff and budgets look "aligned" (section 15).
+:::
 
 The dictionary below is the team's written one (`data/manual/data_dictionary.csv`). The
 "filled" and example columns are computed from the file on every render.
@@ -283,6 +349,12 @@ bind_rows(
        x = "Opportunities", y = NULL) +
   theme(strip.text = element_text(face = "bold", hjust = 0), panel.grid.major.y = element_blank())
 ```
+
+::: {.takeaway}
+Almost everything is discretionary, which means competitive: an application costs staff weeks
+with no guarantee. About four in ten are cooperative agreements, where the federal agency stays
+involved and reporting takes more staff time.
+:::
 
 # 5. Preprocessing
 
@@ -376,6 +448,11 @@ grants |>
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
 
+::: {.takeaway}
+NIH issues about four times as many opportunities as any other agency, and most of its awards
+list state governments as eligible. "State-eligible" is therefore a weak filter.
+:::
+
 ```{r staleness}
 #| fig-height: 3.4
 #| code-summary: "Status of the file's posted opportunities when re-checked on Grants.gov"
@@ -393,6 +470,11 @@ enrich$status |>
        x = "Opportunities", y = NULL) +
   theme(panel.grid.major.y = element_blank())
 ```
+
+::: {.takeaway}
+A snapshot goes stale within weeks. The tool shows each opportunity's status as re-checked on
+Grants.gov and warns when the file and the live status disagree.
+:::
 
 # 7. Eligibility breadth
 
@@ -470,6 +552,11 @@ grants |>
         axis.text.x = element_text(angle = 40, hjust = 1))
 ```
 
+::: {.takeaway}
+Open deadlines over the next year are almost all NIH. The non-research work a DHHS writer can
+lead sits mostly in forecasts, which is why the tool includes forecasts by default.
+:::
+
 # 9. What an applicant actually receives
 
 The file's `estimated_total_program_funding` is the national pot. Summed across open
@@ -512,6 +599,11 @@ ggplot(implied, aes(implied_award_usd)) +
        x = "Implied award", y = "Opportunities")
 ```
 
+::: {.takeaway}
+Awards span four orders of magnitude, so a minimum-award setting matters: a $50K award rarely
+justifies the same staff weeks as a $5M one.
+:::
+
 # 10. The capability model
 
 Each agency has a hand-authored capability profile: fourteen capabilities, each with a control
@@ -528,6 +620,33 @@ load_capabilities() |>
   DT::datatable(rownames = FALSE, escape = FALSE, filter = "top", class = "cell-border stripe hover",
                 options = list(pageLength = 14, scrollX = TRUE))
 ```
+
+```{r capability-heatmap}
+#| fig-height: 5.2
+#| code-summary: "Capability profiles as a heatmap"
+lvl <- c(direct = "Runs it directly", contracted = "Through a contract", partner = "Needs a partner", none = "No route")
+load_capabilities() |>
+  mutate(control = factor(lvl[control_level], levels = lvl),
+         capability = fct_reorder(str_wrap(capability_label, 38), as.integer(factor(control_level, levels = names(lvl))), .fun = mean, .desc = TRUE)) |>
+  ggplot(aes(agency, capability, fill = control)) +
+  geom_tile(color = "white", linewidth = 1.2) +
+  geom_text(aes(label = control), size = 3, color = "white") +
+  scale_fill_manual(values = c("Runs it directly" = "#0d366b", "Through a contract" = "#2a78d6",
+                               "Needs a partner" = "#eb6834", "No route" = "#9a3412"), name = NULL, drop = FALSE) +
+  scale_x_discrete(position = "top") +
+  labs(title = "What each agency controls, and where it needs someone else",
+       subtitle = "Fourteen capabilities an opportunity can require; every cell is sourced in the table above",
+       x = NULL, y = NULL) +
+  theme(panel.grid = element_blank(), legend.position = "none", axis.text.x = element_text(face = "bold", size = 11))
+```
+
+::: {.takeaway}
+DHHS runs surveillance, labs, data systems and long-term care, and contracts clinical and
+behavioral health services, but needs partners for housing, research, workforce training,
+construction and emergency management. DMVA runs benefits eligibility and contracts its veterans
+homes; almost everything else needs a partner or has no route. Every orange or red cell is a gap
+that moves an opportunity to Tier 2 or Tier 3.
+:::
 
 Housing is the demonstration case. DHHS works on housing instability but does not control housing
 stock; it reaches affordable units through the NC Housing Finance Agency's Targeting Program. So
@@ -599,6 +718,11 @@ map_dfr(scen, function(sc) {
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
 
+::: {.takeaway}
+The piles depend on the writer's situation. The same file gives a well-backed writer dozens of
+options and a writer with no match authority almost none, which is why the tool asks first.
+:::
+
 ```{r tiers-by-domain}
 #| fig-height: 3.8
 #| code-summary: "Program areas in the opening scenario's piles"
@@ -615,6 +739,11 @@ opening |> filter(placement == "pile", tier <= 3) |>
        subtitle = "Opening scenario, Tiers 1-3, by program domain", x = "Opportunities", y = NULL) +
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
+
+::: {.takeaway}
+Preparedness and infectious disease dominate what DHHS can pursue now, mostly through CDC
+cooperative agreements with health departments. Other program areas depend on forecasts posting.
+:::
 
 ```{r rule-tests}
 #| code-summary: "The rule tests the build must pass"
@@ -644,6 +773,26 @@ if (labels_ok) {
 } else {
   cat('<div class="pending">Labeling has not finished; this section fills in when <code>data/processed/llm_labels.rds</code> exists.</div>')
 }
+```
+
+**What the labeler could read.** A full announcement usually exists only once an opportunity
+posts, so the model reads forecasts from their short abstracts alone.
+
+```{r nofo-coverage}
+#| fig-height: 3
+#| code-summary: "Full-announcement coverage among candidates"
+enrich$nofo |>
+  left_join(select(grants, opportunity_number, status_group), by = "opportunity_number") |>
+  mutate(read = if_else(!is.na(nofo_text), "Full announcement read", "Abstract only"),
+         status_group = coalesce(status_group, "Other")) |>
+  count(status_group, read) |>
+  ggplot(aes(n, status_group, fill = read)) +
+  geom_col(width = .6, color = "white", linewidth = .3) +
+  scale_fill_manual(values = c("Full announcement read" = pal$blue, "Abstract only" = "#C9D6E3"), name = NULL) +
+  labs(title = "Forecasts rarely have a full announcement yet",
+       subtitle = paste0(n_fmt(nofo_n), " of ", n_fmt(cand_n), " candidates had a full announcement to read"),
+       x = "Candidate opportunities", y = NULL) +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
 
 **How we tightened the labeler.** The first full prompt (v2) was reviewed after
@@ -708,6 +857,63 @@ if (labels_ok && file.exists(v2_path)) {
 }
 ```
 
+::: {.takeaway}
+The first prompt said "yes" too easily. Making the definitions strict cut the share called
+"aligned with DHHS" by about two-thirds, mostly by removing wildfire, international and
+research programs.
+:::
+
+**What the labeler found.** Across all labeled candidates, the capabilities it most often said an
+opportunity requires, and the DHHS plan rows it most often cited as the link:
+
+```{r label-capabilities}
+#| fig-height: 4.4
+#| code-summary: "Capabilities the labeler found"
+if (labels_ok) {
+  cap_lab <- setNames(map_chr(payload$capabilities$vocab, "label"), map_chr(payload$capabilities$vocab, "id"))
+  tibble(cap = unlist(filter(labels, labeled)$llm_capabilities)) |>
+    count(cap) |>
+    mutate(cap = coalesce(cap_lab[cap], cap)) |>
+    ggplot(aes(n, fct_reorder(cap, n))) +
+    geom_col(fill = pal$blue, width = .7) +
+    geom_text(aes(label = n), hjust = -.3, size = 3.3) +
+    scale_x_continuous(expand = expansion(mult = c(0, .1))) +
+    labs(title = "Surveillance and data systems are the most common requirements",
+         subtitle = paste0("Required capabilities found in ", sum(labels$labeled), " labeled candidates (an opportunity can need several)"),
+         x = "Opportunities", y = NULL) +
+    theme(panel.grid.major.y = element_blank())
+}
+```
+
+```{r label-plan-rows}
+#| fig-height: 4.4
+#| code-summary: "DHHS plan rows the labeler cited"
+if (labels_ok) {
+  pr_txt <- load_priorities() |> filter(agency == "DHHS") |> select(priority_id, text)
+  filter(labels, labeled, llm_align_dhhs %in% c("strong", "partial"), !is.na(llm_align_dhhs_row), llm_align_dhhs_row != "none") |>
+    count(priority_id = llm_align_dhhs_row, level = str_to_sentence(llm_align_dhhs)) |>
+    left_join(pr_txt, by = "priority_id") |>
+    group_by(priority_id) |> mutate(total = sum(n)) |> ungroup() |>
+    filter(dense_rank(desc(total)) <= 10) |>
+    mutate(row = fct_reorder(str_wrap(paste0(priority_id, ": ", str_trunc(coalesce(text, ""), 70)), 55), total),
+           level = factor(level, levels = c("Partial", "Strong"))) |>
+    ggplot(aes(n, row, fill = level)) +
+    geom_col(width = .7, color = "white", linewidth = .3) +
+    scale_fill_manual(values = c("Strong" = pal$blue, "Partial" = "#9DBFE3"), name = "Alignment") +
+    labs(title = "The plan rows opportunities connect to",
+         subtitle = "Ten DHHS plan rows most often cited as the link, among opportunities rated aligned",
+         x = "Opportunities citing the row", y = NULL) +
+    theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank(),
+          axis.text.y = element_text(size = 8.5))
+}
+```
+
+::: {.takeaway}
+The two most common requirements, surveillance and data systems, are ones DHHS runs directly.
+The third, research capacity, is one it reaches only through universities, which is what defines
+Tier 4.
+:::
+
 Two caveats. The v2 labels were scored against DHHS's 2024-2026 plan before we switched to the
 plan the competition provides, so plan-row citations differ between versions; the alignment
 *levels* are still comparable. And v3 still misses some research networks that do not use
@@ -754,6 +960,35 @@ if (is.null(validation)) {
   ))
 }
 ```
+
+```{r accuracy-dots}
+#| fig-height: 3.8
+#| code-summary: "Agreement with the team, by field"
+if (!is.null(validation)) {
+  facts_f <- c("match required", "capital project", "designation")
+  validation$summary |> filter(!is.na(accuracy)) |>
+    mutate(kind = if_else(field %in% facts_f, "Stated fact", "Judgment call"),
+           field = str_replace_all(str_to_sentence(field), c("Dmva" = "DMVA", "Dhhs" = "DHHS")),
+           field = fct_reorder(paste0(field, "  (n = ", n, ")"), accuracy)) |>
+    ggplot(aes(accuracy, field, color = kind)) +
+    geom_segment(aes(x = 0, xend = accuracy, yend = field), linewidth = .8, alpha = .5) +
+    geom_point(size = 3.4) +
+    geom_text(aes(label = pct_fmt(accuracy)), hjust = -.45, size = 3.4, color = pal$dark) +
+    scale_color_manual(values = c("Stated fact" = pal$blue, "Judgment call" = pal$orange), name = NULL) +
+    scale_x_continuous(labels = percent, limits = c(0, 1.08), breaks = seq(0, 1, .25)) +
+    labs(title = "Reliable on stated facts, weaker on judgment",
+         subtitle = "Share of the team's blind hand labels the model matched",
+         x = "Agreement", y = NULL) +
+    theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
+}
+```
+
+::: {.takeaway}
+The facts that put an opportunity in Tier 3 (match, construction, designation) agree over 90% of
+the time. Judgment calls (could a state lead it, how well it fits the plan) agree about half to
+two-thirds of the time, so the tool shows the model's evidence on every card. DMVA alignment scores
+high only because almost nothing in the file concerns veterans, so "none" is usually right.
+:::
 
 ```{r confusion-heatmaps}
 #| fig-height: 3.8
@@ -875,6 +1110,40 @@ counties |> select(GEOID) |> inner_join(need_long, by = c("GEOID" = "fips")) |>
         panel.spacing = unit(10, "pt"), plot.margin = margin(8, 8, 8, 8))
 ```
 
+::: {.takeaway}
+Need is not one map. Poverty-driven domains (food, children, maternal health) concentrate in the
+east and southeast; overdose concentrates in the mountains; preparedness follows the hurricane coast.
+:::
+
+**Every indicator behind those maps.** Each source is shown on its own, as a percentile rank
+across the 100 counties (darker = higher need), so a reader can see which dataset drives each domain.
+
+```{r indicator-maps}
+#| fig-height: 9.2
+#| fig-width: 10
+#| code-summary: "Each county indicator mapped"
+ind <- imap_dfr(domain_indicators(), ~ tibble(var = names(.x), label = unname(.x))) |> distinct(var, .keep_all = TRUE)
+ind <- bind_rows(ind, tibble(var = "veteran_share", label = "Veterans as a share of adults (ACS)"))
+counties |> select(GEOID) |>
+  inner_join(ci |> select(fips, any_of(ind$var)) |>
+               pivot_longer(-fips, names_to = "var", values_to = "value") |>
+               group_by(var) |> mutate(pct = percent_rank(value)) |> ungroup(),
+             by = c("GEOID" = "fips")) |>
+  left_join(ind, by = "var") |>
+  mutate(label = str_wrap(label, 34)) |>
+  ggplot() + geom_sf(aes(fill = pct), color = "white", linewidth = .05) +
+  scale_fill_gradient(low = "#e3eefb", high = "#0d366b", labels = percent, name = "County\npercentile", na.value = "#eeeeee") +
+  facet_wrap(~ label, ncol = 4) +
+  labs(title = "The raw indicators, one map each",
+       caption = "Sources in parentheses. FEMA counts declarations since 2016; HRSA counts designated shortage areas; PLACES values are model-based adult prevalence.") +
+  theme_void() +
+  theme(strip.text = element_text(size = 8, face = "bold", margin = margin(b = 3, t = 6)),
+        plot.title = element_text(face = "bold", size = 14, margin = margin(b = 10)),
+        plot.title.position = "plot", plot.caption.position = "plot",
+        plot.caption = element_text(hjust = 0, color = pal$gray, size = 8.5, margin = margin(t = 10)),
+        legend.position = "bottom", plot.margin = margin(8, 8, 8, 8))
+```
+
 ```{r need-indicators}
 #| code-summary: "Indicators behind each domain"
 imap_dfr(domain_indicators(), ~ tibble(domain = DOMAINS[[.y]], indicator = unname(.x))) |> dt(pageLength = 20)
@@ -894,6 +1163,11 @@ counties |> select(GEOID) |> left_join(select(ci, fips, overdose_rate), by = c("
         plot.title.position = "plot", plot.margin = margin(8, 8, 8, 8))
 ```
 
+::: {.takeaway}
+The western mountain counties and parts of the southeast coast have the highest overdose death
+rates, a different set of counties from where poverty-driven need is highest.
+:::
+
 ```{r need-correlation}
 #| fig-height: 5.4
 #| fig-width: 7
@@ -911,10 +1185,37 @@ as.data.frame(as.table(cm)) |>
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8), axis.text.y = element_text(size = 8), panel.grid = element_blank())
 ```
 
+::: {.takeaway}
+This is why the tool maps need per domain instead of ranking "high-need counties" once: a
+substance-use grant and a nutrition grant point a writer to different parts of the state.
+:::
+
 # 14. The tool
 
 The same file judges would open by double-click, embedded here. It recomputes every tier in the
 browser as settings change.
+
+**Using the tool.** A writer can describe their situation in plain English, for example "one month,
+match with approval, awards of at least $1 million, reach the most people". The tool then sets:
+- runway, match authority and staff;
+- minimum award;
+- program priorities;
+- what matters most for the impact score.
+
+Each setting it changes appears as a chip that can be undone. Example buttons apply ready-made
+scenarios in one click, presets set whole personas, and a "Larger text" button enlarges everything
+for a projector.
+
+**Who an opportunity reaches.** Each opportunity's detail panel has a "Who this reaches in NC"
+section, and the map has a matching layer. They show:
+- where the population it serves lives: the counties with the most people and with the highest share of residents;
+- the split between rural, suburban and urban counties (NC Rural Center density definition);
+- counts by congressional district (ACS 2019-2023, 118th Congress districts).
+
+This describes where people live, not where a statewide award would be spent. It is most informative
+for the opportunities labeled with a specific group (children, veterans, adults in mental distress,
+recent births and others). The labeler marked most opportunities as serving all residents or as
+system-level work with no direct beneficiaries.
 
 ```{r embed-tool}
 #| code-summary: "Embed outs/grant-triage-tool.html"
@@ -955,6 +1256,25 @@ actionable work is preparing for what is about to post.
 
 ## Reach and intensity
 
+"People reached" in the impact score comes from the population the labeler says an opportunity
+serves, counted for North Carolina from the ACS and CDC PLACES:
+
+```{r populations}
+#| fig-height: 4.4
+#| code-summary: "Size of each target population in NC"
+map_dfr(payload$populations, ~ tibble(label = .x$label, n = .x$n %||% NA_real_, source = .x$source %||% "")) |>
+  filter(!is.na(n), n > 0) |>
+  mutate(label = fct_reorder(label, n)) |>
+  ggplot(aes(n, label)) +
+  geom_col(fill = pal$blue, width = .7) +
+  geom_text(aes(label = label_number(scale_cut = cut_short_scale(), accuracy = .1)(n)), hjust = -.15, size = 3.3) +
+  scale_x_continuous(labels = label_number(scale_cut = cut_short_scale()), expand = expansion(mult = c(0, .16))) +
+  labs(title = "Who an opportunity can reach: from 127,000 to 10.6 million",
+       subtitle = "North Carolina population for each target group the labeler can choose",
+       x = "People in NC", y = NULL) +
+  theme(panel.grid.major.y = element_blank())
+```
+
 ```{r reach-static}
 #| fig-height: 4.6
 #| code-summary: "People served vs dollars per person, opening scenario"
@@ -981,6 +1301,63 @@ ggplot(rv, aes(people, per_person, color = tier, shape = tier)) +
 Opportunities serving the same population share a horizontal position, so they stack in columns; the
 estimate is only as good as the population the labeler chose, which the team could not score
 automatically (section 12).
+
+**Where each population lives.** The same counts, split by the NC Rural Center's density grouping
+(rural = 250 people per square mile or fewer; urban = more than 750) and by congressional district:
+
+```{r population-geography}
+#| fig-height: 4.6
+#| code-summary: "Rural, suburban and urban share of each target population"
+rur <- unlist(payload$community$county_rurality)
+rur_lab <- c(rural = "Rural", suburban = "Suburban / regional city", urban = "Urban")
+imap_dfr(payload$populations, function(p, id) if (is.null(p$county) || !length(p$county)) NULL else
+  tibble(label = p$label, fips = names(p$county), n = unlist(p$county))) |>
+  mutate(rurality = factor(rur_lab[rur[fips]], levels = rev(rur_lab))) |>
+  count(label, rurality, wt = n) |>
+  group_by(label) |> mutate(share = n / sum(n), rural_share = sum(share[rurality == "Rural"])) |> ungroup() |>
+  ggplot(aes(share, fct_reorder(label, rural_share), fill = rurality)) +
+  geom_col(width = .7, color = "white", linewidth = .3) +
+  scale_fill_manual(values = c("Rural" = "#1baf7a", "Suburban / regional city" = "#6da7ec", "Urban" = "#184f95"),
+                    breaks = unname(rur_lab), name = NULL) +
+  scale_x_continuous(labels = percent, expand = expansion(mult = c(0, .02))) +
+  labs(title = "Hazard-exposed and shortage-area residents are the most rural",
+       subtitle = paste0("Share of each target population living in NC's ", sum(rur == "rural"), " rural, ",
+                         sum(rur == "suburban"), " suburban and ", sum(rur == "urban"), " urban counties"),
+       x = "Share of the population", y = NULL) +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
+```
+
+```{r population-districts}
+#| fig-height: 4.4
+#| code-summary: "Target populations by congressional district"
+dn <- unlist(payload$community$district_names)
+imap_dfr(payload$populations, function(p, id) if (is.null(p$district) || id == "all_residents") NULL else
+  tibble(label = p$label, geoid = names(p$district), n = unlist(p$district))) |>
+  filter(label %in% c("Children under 18", "Adults 65 and older", "Veterans", "People below the poverty line")) |>
+  mutate(label = recode(label, "People below the poverty line" = "Below poverty", "Adults 65 and older" = "Adults 65+")) |>
+  mutate(district = factor(str_remove(dn[geoid], "Congressional "), levels = str_remove(dn[order(as.integer(names(dn)))], "Congressional "))) |>
+  ggplot(aes(n, fct_rev(district))) +
+  geom_col(fill = pal$blue, width = .7) +
+  facet_wrap(~ label, nrow = 1, scales = "free_x") +
+  scale_x_continuous(labels = label_number(scale_cut = cut_short_scale()), breaks = scales::breaks_extended(3), expand = expansion(mult = c(0, .12))) +
+  labs(title = "Districts hold roughly equal people, but not equal needs",
+       subtitle = str_wrap(paste0("ACS 2019-2023 counts by congressional district. ", payload$community$district_note), 78),
+       x = NULL, y = NULL) +
+  theme(strip.text = element_text(face = "bold", hjust = 0), panel.grid.major.y = element_blank(), axis.text.y = element_text(size = 8),
+        axis.text.x = element_text(size = 8), panel.spacing.x = unit(18, "pt"))
+```
+
+::: {.takeaway}
+Each district has about 750,000 residents, yet veterans are concentrated in districts 3 and 9
+and older adults in district 11. A grant for one population
+reaches very different parts of the state than a grant for another.
+:::
+
+::: {.takeaway}
+Large statewide programs spread cents per person across millions; a few small programs put
+$10-100 per person into a narrow group. The tool lets the writer choose which matters more instead
+of blending the two.
+:::
 
 # 15. Evaluation
 
@@ -1071,6 +1448,28 @@ full |> select(opportunity_number, pct_all_rows = emb_pct, best_all_rows = emb_b
   dt(dom = "t", pageLength = 12)
 ```
 
+```{r similarity-vs-judgment}
+#| fig-height: 3.6
+#| code-summary: "Text similarity against the model's alignment judgment"
+if (labels_ok) {
+  prog |> inner_join(filter(labels, labeled) |> select(opportunity_number, llm_align_dhhs), by = "opportunity_number") |>
+    mutate(level = factor(str_to_sentence(llm_align_dhhs), levels = c("None", "Partial", "Strong"))) |>
+    ggplot(aes(emb_pct, level)) +
+    geom_boxplot(width = .5, outlier.shape = NA, fill = pal$blue_light, color = pal$blue) +
+    geom_point(position = position_jitter(height = .12, width = 0, seed = SEED), alpha = .35, size = 1.4, color = pal$blue) +
+    scale_x_continuous(labels = percent) +
+    labs(title = "High similarity does not mean the model found a real link",
+         subtitle = str_wrap("Embedding-similarity percentile against DHHS program rows, by the model's alignment rating", 80),
+         x = "Similarity percentile", y = "Model's alignment") +
+    theme(panel.grid.major.y = element_blank())
+}
+```
+
+::: {.takeaway}
+Opportunities the model rated *none* reach the top similarity percentiles too. Similarity is a
+hint, never the decision.
+:::
+
 The table lists the opportunities whose ranking changed most when those rows were removed, with
 the plan row each one matched. Rows marked internal operations describe how the department
 runs itself (staffing, pay, contracting, buildings); grant boilerplate about staff, budgets and
@@ -1113,6 +1512,11 @@ agency sees an opportunity. Similarity scores remain only as a secondary hint.
 - **The DHHS plan is the one the competition provided (2023-2025, hosted by OSBM).** DHHS has
   since published 2024-2026 and 2026-2030 plans on its own site. The plan is an input table
   (`data/manual/dhhs_priorities.csv`), so updating it is a file swap followed by one re-labeling pass.
+- **Community reach depends on the labeler's population choice.** The tool can show where the people
+  an opportunity serves live, but 170 of the 210 labeled opportunities were marked "all residents" or
+  "system-level", and some of those choices are too broad (the Preschool Development Grant is marked
+  "all residents" rather than young children). District counts use the districts drawn for the 118th
+  Congress; North Carolina redrew them for the 2024 election.
 - **People-served estimates are upper bounds.** They count the population an opportunity serves in
   NC, not people an award would reach.
 
