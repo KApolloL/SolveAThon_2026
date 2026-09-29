@@ -1,1511 +1,1178 @@
 ---
-title: "Solve-A-Thon 2026: NC DHHS Federal Grant Opportunity Analysis"
-author: "Kent Lee"
+title: "NC Grant Triage: Sorting Federal Opportunities by Whose Signature You Need"
+subtitle: "Solve-A-Thon 2026 · NC's Hidden Treasure"
+author: "Kent Lee and team"
 date: today
 format:
   html:
-    self-contained: true
+    embed-resources: true
     toc: true
     toc-location: left
-    toc-depth: 3
+    toc-depth: 2
     code-fold: true
+    code-summary: "Show code"
     code-tools: true
     theme: cosmo
-    smooth-scroll: true
     page-layout: full
+    smooth-scroll: true
 execute:
+  echo: true
   warning: false
   message: false
-  echo: false
-params:
-  project_dir: "/Users/kentalee/Documents/KALProjects/UNCProjects/SolveAThon_2026"
-  data_dir: "data"
-  results_dir: "outs"
-  cache_dir: "cache"
-  grants_file: "grants-search-202608182008.csv"
-  census_api_key: ""
-  ref_date: "2026-09-30"
-  min_runway_days: 45
-  award_floor_usd: 250000
-  target_agencies: "DHHS"
-  nc_fips: "37"
 ---
 
 <style>
-:root {
-  --blue:#2166AC; --blue-light:#D9EAF7; --purple:#756BB1;
-  --orange:#E08214; --red:#B2182B; --green:#1B7837;
-  --gray:#667085; --dark:#1D2939; --light:#F4F6F8;
-}
-body { color:var(--dark); }
-h1,h2 { border-bottom:2px solid var(--blue-light); padding-bottom:.35rem; margin-top:2rem; }
-h3 { margin-top:1.5rem; }
-.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin:18px 0 28px 0; }
+:root { --blue:#2166AC; --blue-light:#D9EAF7; --orange:#E08214; --red:#B2182B; --green:#1B7837; --gray:#667085; --dark:#1D2939; }
+h1, h2 { border-bottom: 2px solid var(--blue-light); padding-bottom: .35rem; margin-top: 2rem; }
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin:18px 0 28px 0; }
 .kpi-card { background:white; border:1px solid #E4E7EC; border-left:5px solid var(--blue); border-radius:8px; padding:16px; min-height:100px; box-shadow:0 2px 7px rgba(16,24,40,.06); }
-.kpi-card.warning { border-left-color:var(--orange); }
-.kpi-card.danger  { border-left-color:var(--red); }
-.kpi-card.success { border-left-color:var(--green); }
+.kpi-card.warning { border-left-color:var(--orange); } .kpi-card.danger { border-left-color:var(--red); } .kpi-card.success { border-left-color:var(--green); }
+.kpi-card.t1 { border-left-color:#2a78d6; } .kpi-card.t2 { border-left-color:#eb6834; } .kpi-card.t3 { border-left-color:#1baf7a; }
 .kpi-label { color:var(--gray); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; }
 .kpi-value { color:var(--dark); font-size:1.8rem; font-weight:700; margin-top:5px; }
-.kpi-note  { color:var(--gray); font-size:.78rem; margin-top:5px; }
-.callout { background:#F8FAFC; border-left:5px solid var(--blue); padding:14px 18px; margin:18px 0; border-radius:4px; }
-.callout-warning { border-left-color:var(--orange); background:#FFFAEB; }
-.callout-green   { border-left-color:var(--green);  background:#EDF7ED; }
-.data-source-box { background:#F0F7F0; border-left:5px solid var(--green); padding:12px 16px; margin:14px 0; border-radius:4px; font-size:.88em; }
-.dataTables_wrapper { font-size:.88em; margin-top:15px; margin-bottom:30px; }
-table.dataTable thead th { background-color:#EEF4FA; }
-pre { border-radius:6px; }
+.kpi-note { color:var(--gray); font-size:.78rem; margin-top:5px; }
+.callout-box { background:#F8FAFC; border-left:5px solid var(--blue); padding:14px 18px; margin:18px 0; border-radius:4px; }
+.callout-box.warning { border-left-color:var(--orange); background:#FFFAEB; }
+.pending { background:#FFFAEB; border:1px dashed var(--orange); padding:12px 16px; border-radius:6px; margin:12px 0; }
+.dataTables_wrapper { font-size:.88em; }
+.prompt-text { max-height: 420px; overflow: auto; white-space: pre-wrap; font-size: .8em; }
 </style>
 
 ```{r setup}
-knitr::opts_chunk$set(
-  echo=FALSE, eval=TRUE, message=FALSE, warning=FALSE,
-  fig.align="center", dpi=150, out.width="100%"
-)
-project_dir <- params$project_dir
-data_dir    <- file.path(project_dir, params$data_dir)
-results_dir <- file.path(project_dir, params$results_dir)
-cache_dir   <- file.path(data_dir,    params$cache_dir)
-knitr::opts_knit$set(root.dir = project_dir)
-for (d in c(results_dir, cache_dir,
-            file.path(cache_dir, "api"),
-            file.path(cache_dir, "llm"),
-            file.path(data_dir, "raw", "boundaries"),
-            file.path(data_dir, "raw", "acs"),
-            file.path(data_dir, "raw", "hrsa"),
-            file.path(data_dir, "raw", "cdc_places"),
-            file.path(data_dir, "raw", "cdc_wonder"),
-            file.path(data_dir, "raw", "fema"),
-            file.path(data_dir, "raw", "usaspending"),
-            file.path(data_dir, "raw", "samhsa"),
-            file.path(data_dir, "processed"))) {
-  dir.create(d, showWarnings=FALSE, recursive=TRUE)
+#| code-summary: "Setup: load the pipeline"
+here::i_am("src/solveathon_project.qmd")
+source(here::here("src", "R", "00_config.R"))
+for (f in c("01_load_clean", "01a_grantsgov_enrich", "01b_alignment", "02_capabilities",
+            "03_llm_label", "04_validate", "05_export_tool_data", "07_top_results")) {
+  source(here::here("src", "R", paste0(f, ".R")))
 }
-options(bitmapType="cairo", tigris_use_cache=TRUE)
-```
+suppressPackageStartupMessages({ library(ggplot2); library(scales); library(DT); library(htmltools); library(sf); library(forcats); library(lubridate) })
+knitr::opts_chunk$set(fig.align = "center", dpi = 150, out.width = "100%")
+set.seed(SEED)
 
-```{r libraries}
-suppressPackageStartupMessages({
-  library(dplyr); library(tidyr); library(readr); library(stringr)
-  library(lubridate); library(janitor); library(purrr)
-  library(ggplot2); library(scales); library(DT)
-  library(plotly); library(forcats); library(htmltools)
-  # Spatial and census
-  library(sf); library(tigris); library(tidycensus)
-  # API calls
-  library(httr2); library(jsonlite)
-})
-```
-
-```{r config}
-ref_date_input                  <- params$ref_date
-min_runway_days                 <- params$min_runway_days
-award_floor_usd                 <- params$award_floor_usd
-target_agencies                 <- params$target_agencies
-include_forecasts               <- FALSE
-exclude_research_mechanisms     <- TRUE
-exclude_restricted_competitions <- TRUE
-keep_forecasts                  <- include_forecasts
-
-ref_date       <- ymd(ref_date_input)
-earliest_close <- ref_date + days(min_runway_days)
-
-nc_fips        <- params$nc_fips
-peer_fips      <- c("13","51","45","47")      # GA, VA, SC, TN
-peer_abbr      <- c("GA","VA","SC","TN","NC")
-
-# Census API key — set in params or call census_api_key() interactively
-if (nchar(params$census_api_key) > 0) {
-  tidycensus::census_api_key(params$census_api_key, install=FALSE)
-}
-
-pal <- list(
-  blue="#2166AC", blue_light="#D9EAF7", purple="#756BB1",
-  orange="#E08214", red="#B2182B", green="#1B7837",
-  gray="#667085", dark="#1D2939", light="#F4F6F8"
-)
-
-theme_g <- function(base_size=12) {
-  theme_minimal(base_size=base_size) +
-    theme(
-      plot.title    = element_text(face="bold", size=base_size+3, color=pal$dark),
-      plot.subtitle = element_text(color=pal$gray, margin=margin(b=12)),
-      plot.caption  = element_text(color=pal$gray, size=base_size-2, hjust=0),
-      axis.title    = element_text(color=pal$dark),
-      axis.text     = element_text(color="#475467"),
-      panel.grid.minor   = element_blank(),
-      panel.grid.major.y = element_blank(),
-      plot.margin   = margin(12,20,12,12)
-    )
+pal <- list(blue = "#2166AC", blue_light = "#D9EAF7", orange = "#E08214", red = "#B2182B",
+            green = "#1B7837", gray = "#667085", dark = "#1D2939",
+            tier1 = "#2a78d6", tier2 = "#eb6834", tier3 = "#1baf7a")
+theme_g <- function(base_size = 12) {
+  theme_minimal(base_size = base_size) +
+    theme(plot.title = element_text(face = "bold", size = base_size + 3, color = pal$dark),
+          plot.subtitle = element_text(color = pal$gray, margin = margin(b = 12)),
+          plot.caption = element_text(color = pal$gray, size = base_size - 2, hjust = 0),
+          panel.grid.minor = element_blank(), plot.margin = margin(12, 20, 12, 12),
+          plot.title.position = "plot", plot.caption.position = "plot")
 }
 theme_set(theme_g())
+n_fmt <- function(x) format(x, big.mark = ",", scientific = FALSE, trim = TRUE)
+pct_fmt <- function(x, d = 0) paste0(format(round(100 * x, d), nsmall = d), "%")
+usd_fmt <- function(x) dollar(x, scale_cut = cut_short_scale())
+dt <- function(d, ...) DT::datatable(d, rownames = FALSE, class = "cell-border stripe hover",
+                                     options = list(pageLength = 10, scrollX = TRUE, ...))
 ```
 
-```{r helper-functions, include=FALSE}
-is_unset    <- function(x) is.null(x) || length(x)==0L || all(is.na(x))
-safe_false  <- function(x) dplyr::coalesce(as.logical(x), FALSE)
+```{r load-results}
+#| code-summary: "Load cached pipeline outputs (no network, no model calls)"
+facts      <- compute_facts(grants)
+fact_val   <- function(label) facts$computed[facts$fact == label]
+enrich     <- readRDS(file.path(DIR_PROCESSED, "grantsgov_enrichment.rds"))
+alignment  <- readRDS(file.path(DIR_PROCESSED, "alignment.rds"))
+labels_path <- file.path(DIR_PROCESSED, "llm_labels.rds")
+labels     <- if (file.exists(labels_path)) readRDS(labels_path) else NULL
+labels_ok  <- !is.null(labels) && sum(labels$labeled) > 0
+payload    <- jsonlite::fromJSON(PAYLOAD_JSON, simplifyVector = FALSE)
+opps       <- payload$opportunities
+titles     <- select(grants, opportunity_number, opportunity_title, agency_code)
 
-# Cache helper — returns cached object or calls fetch_fn() and saves result
-get_cached <- function(path, fetch_fn) {
-  if (file.exists(path)) return(readRDS(path))
-  result <- tryCatch(fetch_fn(), error = function(e) {
-    message("Fetch failed: ", conditionMessage(e)); NULL
-  })
-  if (!is.null(result)) saveRDS(result, path)
-  result
+# The tier engine is src/tool/tiering.js; the notebook runs that same file through V8.
+opening <- run_tiering_js(opps, payload$capabilities$profiles, payload$config$opening) |>
+  left_join(titles, by = "opportunity_number")
+tier_n  <- function(k) sum(opening$placement == "pile" & opening$tier == k)
+
+handlabels <- load_handlabels()
+validation <- if (labels_ok && !is.null(handlabels)) validate_labels(labels, handlabels) else NULL
+
+cutoff_date <- FACT_REF_DATE + FACT_RUNWAY_DAYS
+open_state  <- grants |> filter(status_group == "Posted", state_eligible, !is.na(close_date), close_date >= cutoff_date)
+state_rows  <- grants |> filter(state_eligible)
+windows     <- grants |> filter(status_group == "Posted", !is.na(application_window_days),
+                                application_window_days >= 0, application_window_days <= WINDOW_MAX_DAYS)
+implied     <- grants |> filter(!is.na(implied_award_usd))
+closed_since <- sum(enrich$status$status_now %in% c("closed", "archived") &
+                      grants$status_group[match(enrich$status$opportunity_number, grants$opportunity_number)] == "Posted", na.rm = TRUE)
+nofo_n      <- sum(!is.na(enrich$nofo$nofo_text))
+cand_n      <- nrow(enrich$nofo)
+```
+
+# 1. Executive summary
+
+```{r kpis}
+#| results: asis
+#| code-summary: "KPI cards"
+kpi <- function(label, value, note, cls = "") {
+  sprintf('<div class="kpi-card %s"><div class="kpi-label">%s</div><div class="kpi-value">%s</div><div class="kpi-note">%s</div></div>',
+          cls, label, value, note)
 }
-```
-
-```{r load-and-clean}
-input_file <- file.path(data_dir, "raw", "grants", params$grants_file)
-# Also accept file directly in data_dir for backward compatibility
-if (!file.exists(input_file)) input_file <- file.path(data_dir, params$grants_file)
-if (!file.exists(input_file)) stop("Grants file not found: ", input_file)
-
-grants_raw <- readr::read_csv(input_file, show_col_types=FALSE,
-                               na=c("","NA","N/A","NULL")) |>
-  janitor::clean_names()
-
-# ── Date parser: base-R only (lubridate parse_date_time exceeds PCRE limits) ──
-parse_date_safe <- function(x) {
-  x <- trimws(as.character(x))
-  x[x %in% c("","NA","N/A","NULL","null")] <- NA_character_
-  x <- sub("T.*$", "", x, perl=TRUE)   # strip ISO 8601 time component
-  x <- sub(" .*$", "", x, perl=TRUE)   # strip space-separated time
-  result <- suppressWarnings(as.Date(x))
-  for (fmt in c("%m/%d/%Y", "%m/%d/%y", "%Y/%m/%d")) {
-    miss <- is.na(result) & !is.na(x)
-    if (!any(miss)) break
-    result[miss] <- suppressWarnings(as.Date(x[miss], format=fmt))
-  }
-  result
-}
-
-parse_numeric_safe <- function(x) {
-  suppressWarnings(as.numeric(str_replace_all(as.character(x), "[$,]", "")))
-}
-
-# Compile patterns once
-research_pattern <- paste(c(
-  "investigator initiated","investigator-initiated","research project grant",
-  "clinical trial","research grant","\\br01\\b","\\br03\\b","\\br21\\b",
-  "\\br34\\b","\\bu01\\b","\\bp01\\b","\\bp20\\b","\\bp30\\b","\\bp50\\b",
-  "\\bk01\\b","\\bk08\\b","\\bk23\\b","\\bt32\\b","\\bf31\\b","\\bf32\\b"),
-  collapse="|")
-
-restricted_pattern <- regex(paste(c(
-  "only the following applicant","only the following entit",
-  "single source","sole source","invited applicant","not a competitive"),
-  collapse="|"), ignore_case=TRUE)
-
-date_cols <- intersect(
-  c("post_date","close_date","archive_date","forecasted_post_date",
-    "forecasted_close_date","forecasted_award_date","forecasted_project_start_date"),
-  names(grants_raw))
-num_cols  <- intersect(
-  c("award_floor","award_ceiling","estimated_total_program_funding",
-    "expected_number_of_awards"), names(grants_raw))
-
-grants <- grants_raw |>
-  mutate(across(all_of(date_cols), parse_date_safe),
-         across(all_of(num_cols),  parse_numeric_safe)) |>
-  mutate(
-    close_date  = if_else(close_date == as.Date("2099-01-01"), as.Date(NA), close_date),
-    is_forecast = safe_false(is_forecast),
-    across(any_of(c("opportunity_title","agency_name","top_level_agency_name",
-                    "summary_description","applicant_types","funding_instruments",
-                    "funding_categories","applicant_eligibility_description")),
-           ~ str_squish(as.character(.x))),
-
-    status_group = case_when(
-      is_forecast                        ~ "Forecasted",
-      opportunity_status == "forecasted" ~ "Forecasted",
-      TRUE                               ~ "Posted"),
-
-    agency_group = case_when(
-      top_level_agency_name == "Department of Health and Human Services" ~ "DHHS",
-      top_level_agency_name == "U.S. National Science Foundation"        ~ "NSF",
-      top_level_agency_name == "Department of Defense"                   ~ "DOD",
-      top_level_agency_name == "Department of Agriculture"               ~ "USDA",
-      top_level_agency_name == "Department of Labor"                     ~ "DOL",
-      top_level_agency_name == "Department of Homeland Security"         ~ "DHS",
-      top_level_agency_name == "Department of Transportation"            ~ "DOT",
-      TRUE                                                                ~ top_level_agency_name),
-
-    applicant_types_text = str_to_lower(coalesce(applicant_types,"")),
-    funding_text = str_to_lower(str_c(
-      coalesce(opportunity_title,""), coalesce(summary_description,""),
-      coalesce(applicant_eligibility_description,""),
-      coalesce(category,""), coalesce(category_explanation,""), sep=" | ")),
-
-    state_eligible            = str_detect(applicant_types_text, fixed("state_governments")),
-    is_nih = str_detect(str_to_lower(str_c(
-      coalesce(agency_name,""), coalesce(top_level_agency_name,""),
-      coalesce(opportunity_title,""), sep=" | ")),
-      "\\bnih\\b|national institutes of health|hhs-nih"),
-    is_research_mechanism     = str_detect(funding_text, research_pattern),
-    is_restricted_competition = str_detect(funding_text, restricted_pattern),
-
-    days_to_close = as.numeric(close_date - ref_date),
-    has_sufficient_runway = is.na(close_date) | days_to_close >= min_runway_days,
-    closes_soon = !is.na(days_to_close) & days_to_close >= 0 & days_to_close <= 30,
-
-    close_window = case_when(
-      is.na(close_date)    ~ "No stated deadline",
-      days_to_close < 0    ~ "Already closed",
-      days_to_close <= 30  ~ "0-30 days",
-      days_to_close <= 60  ~ "31-60 days",
-      days_to_close <= 120 ~ "61-120 days",
-      TRUE                 ~ "More than 120 days"),
-
-    award_size = coalesce(award_ceiling, award_floor),
-    award_size_group = case_when(
-      is.na(award_size)     ~ "Not reported",
-      award_size < 250000   ~ "Under $250K",
-      award_size < 1000000  ~ "$250K-$1M",
-      award_size < 5000000  ~ "$1M-$5M",
-      award_size < 25000000 ~ "$5M-$25M",
-      TRUE                  ~ "$25M+")
-  )
-```
-
-## Data quality
-
-```{r data-quality}
-tibble(
-  measure = c("Rows","Columns","Posted","Forecasted",
-              "With close date","With award ceiling",
-              "With applicant eligibility","With summary"),
-  value   = c(nrow(grants), ncol(grants),
-              sum(grants$status_group=="Posted",    na.rm=TRUE),
-              sum(grants$status_group=="Forecasted",na.rm=TRUE),
-              sum(!is.na(grants$close_date)),
-              sum(!is.na(grants$award_ceiling)),
-              sum(!is.na(grants$applicant_eligibility_description)),
-              sum(!is.na(grants$summary_description)))
-) |>
-  DT::datatable(rownames=FALSE, options=list(dom="t", pageLength=10))
-```
-# 1. Executive Summary
-
-```{r exec-summary, results='asis'}
-candidate_count <- grants |>
-  filter(status_group=="Posted", state_eligible, !is_research_mechanism,
-         !is_restricted_competition,
-         is.na(close_date) | close_date >= earliest_close,
-         is.na(award_size)  | award_size  >= award_floor_usd) |> nrow()
-
 cat('<div class="kpi-grid">',
-  '<div class="kpi-card"><div class="kpi-label">Total opportunities</div>',
-  '<div class="kpi-value">',comma(nrow(grants)),'</div>',
-  '<div class="kpi-note">Posted and forecasted</div></div>',
-  '<div class="kpi-card"><div class="kpi-label">Posted</div>',
-  '<div class="kpi-value">',comma(sum(grants$status_group=="Posted",na.rm=TRUE)),'</div>',
-  '<div class="kpi-note">In snapshot</div></div>',
-  '<div class="kpi-card success"><div class="kpi-label">State-eligible</div>',
-  '<div class="kpi-value">',comma(sum(grants$state_eligible,na.rm=TRUE)),'</div>',
-  '<div class="kpi-note">Initial screen only</div></div>',
-  '<div class="kpi-card danger"><div class="kpi-label">NIH tagged</div>',
-  '<div class="kpi-value">',comma(sum(grants$is_nih,na.rm=TRUE)),'</div>',
-  '<div class="kpi-note">Research-noise source</div></div>',
-  '<div class="kpi-card warning"><div class="kpi-label">Screened candidates</div>',
-  '<div class="kpi-value">',comma(candidate_count),'</div>',
-  '<div class="kpi-note">After all filters</div></div>',
-  '</div>')
+    kpi("Opportunities in the file", n_fmt(nrow(grants)), paste("Grants.gov export pulled", format(PULL_DATE, "%b %d, %Y"))),
+    kpi("Open and state-eligible", n_fmt(nrow(open_state)), paste("closing on or after", format(cutoff_date, "%b %d"))),
+    kpi("Of those, NIH research", pct_fmt(mean(open_state$is_nih)), paste(n_fmt(sum(open_state$is_nih)), "need a university investigator"), "danger"),
+    kpi("Writer can act today", tier_n(1), "Tier 1 in the opening scenario", "t1"),
+    kpi("Needs supervisor", tier_n(2), "Tier 2", "t2"),
+    kpi("Needs secretary or legislature", tier_n(3), "Tier 3", "t3"),
+    '</div>')
 ```
 
-<div class="callout">
-This dashboard is an initial screening view. Eligibility tags are broad; the
-research-mechanism screen is text-based and must be validated on a random sample
-before excluding any opportunity from a final shortlist.
-</div>
+A state agency grant writer does not need help *finding* federal opportunities; they need to
+know which ones they can *act on*. We built a tool that sorts every relevant opportunity into
+three piles by whose signature it requires: the writer's, a supervisor's, or the secretary's or
+legislature's. The sorting comes from written rules that compare each opportunity's
+requirements (match, capabilities, staff, subrecipients, construction, designations) against
+a sourced profile of what the agency actually controls. Every opportunity carries the reason
+it landed where it did, and every one of the `r n_fmt(nrow(grants))` is accounted for: research
+awards sit in a fourth, partner-led pile, and everything outside the writer's scope is listed with
+its reason. Within each pile, the writer can rank by an impact score whose weights they set.
 
-# 2. Screening Funnel
+The data explain why this matters. Of `r n_fmt(nrow(open_state))` open opportunities that list
+state governments as eligible, `r n_fmt(sum(open_state$is_nih))` are NIH research awards. Being
+"eligible" rarely means being the intended applicant: `r n_fmt(nrow(state_rows))` rows list
+state governments, but only `r fact_val("Of those, state-government-only")` are restricted to
+them. The median application window is `r median(windows$application_window_days)` days, and
+`r pct_fmt(mean(windows$application_window_days <= 30), 1)` of windows are 30 days or shorter.
 
-Each stage is applied only to rows that passed every previous stage.
+# 2. The user and what "good" means
 
-```{r funnel-prep}
-agency_pass     <- if (is_unset(target_agencies)) rep(TRUE,nrow(grants)) else
-                   grants$agency_group %in% target_agencies | grants$top_level_agency_name %in% target_agencies
-status_pass     <- if (keep_forecasts) rep(TRUE,nrow(grants)) else grants$status_group=="Posted"
-eligibility_pass<- safe_false(grants$state_eligible)
-research_pass   <- if (isTRUE(exclude_research_mechanisms))  !safe_false(grants$is_research_mechanism)  else rep(TRUE,nrow(grants))
-restricted_pass <- if (isTRUE(exclude_restricted_competitions)) !safe_false(grants$is_restricted_competition) else rep(TRUE,nrow(grants))
-runway_pass     <- if (is.null(min_runway_days)) rep(TRUE,nrow(grants)) else
-                   !is.na(grants$close_date) & !is.na(grants$days_to_close) & grants$days_to_close >= min_runway_days
-award_pass      <- if (is.null(award_floor_usd)) rep(TRUE,nrow(grants)) else
-                   is.na(grants$award_size) | grants$award_size >= award_floor_usd
+We interviewed someone who writes grants. Their input reframed the project, and we checked it
+against published sources before building on it.
 
-funnel_rules <- list(
-  `All opportunities`      = rep(TRUE,nrow(grants)),
-  `Selected agency`        = agency_pass,
-  `Posted`                 = status_pass,
-  `State eligible`         = eligibility_pass,
-  `Not research mechanism` = research_pass,
-  `Open competition`       = restricted_pass,
-  `Enough runway`          = runway_pass,
-  `Above award threshold`  = award_pass)
+**Our user** is a mid-level employee inside NC DHHS who writes and assembles federal
+applications. Not leadership, not an analyst. They review roughly a hundred postings a week,
+spend weeks on each application, and **cannot commit matching funds without a supervisor.**
 
-survivors <- rep(TRUE, nrow(grants))
-funnel_data <- purrr::imap_dfr(funnel_rules, function(rule, name) {
-  survivors <<- survivors & rule
-  tibble(stage=name, n=sum(survivors, na.rm=TRUE))
-}) |>
-  mutate(
-    dropped = c(0, head(n,-1) - tail(n,-1)),
-    pct_all = n / first(n),
-    stage   = factor(stage, levels=rev(stage)),
-    label   = paste0(comma(n)," (",percent(pct_all, accuracy=0.1),")")
-  )
-funnel_data
-```
+**Five criteria, stated before any data, drive every step of the workflow:**
 
-```{r funnel-chart, fig.width=11, fig.height=7}
-ggplot(funnel_data, aes(x=n, y=stage)) +
-  geom_col(fill=pal$blue, width=.68) +
-  geom_text(aes(label=label), hjust=-.08, size=4, color=pal$dark) +
-  scale_x_continuous(labels=comma, expand=expansion(mult=c(0,.18))) +
-  labs(title="Sequential Screening Funnel",
-       subtitle=paste("Reference date:", format(ref_date,"%B %d, %Y"),
-                      "| Minimum runway:", min_runway_days, "days"),
-       x="Opportunities remaining", y=NULL) +
-  theme(axis.text.y=element_text(face="bold"), panel.grid.major.y=element_blank())
-```
+1. **We can actually be the applicant.** Not a research grant that needs a university principal investigator.
+2. **We have the capabilities it requires,** or know which partner we would need. Needing housing when the agency does not control housing is a partnership problem, which is a calendar problem.
+3. **There is enough runway.** The bottleneck is internal sign-off, not writing.
+4. **The award justifies the staff weeks.** An application costs about the same effort at $200K as at $5M.
+5. **The match is survivable** at the writer's level of authority.
 
-```{r funnel-table}
-funnel_data |>
-  mutate(across(c(n,dropped), comma),
-         pct_all=percent(pct_all, accuracy=0.1),
-         stage=as.character(stage)) |>
-  select(stage, n, dropped, pct_all) |>
-  DT::datatable(rownames=FALSE,
-    colnames=c("Stage","Remaining","Removed at stage","% of original"),
-    options=list(dom="t", pageLength=10, ordering=FALSE),
-    class="cell-border stripe hover")
-```
+**Why sort by authority.** Three published sources support the framing:
 
-# 3. Opportunity Volume by Agency
+- Maryland's state grants office sorts go/no-go questions into deal-breakers (eligibility, core
+  capabilities, deadline, award amount), fit, and strategy (readiness, impact, competitiveness)
+  ([Maryland Governor's Grants Office, *Go or No-Go*](https://grants.maryland.gov/SiteAssets/Pages/Conference/Go%20or%20No-Go%20A%20Guide%20to%20Deciding%20Which%20Federal%20Grants%20are%20right%20for%20you.pdf)).
+- Standard federal evaluation criteria score "Overall Qualifications of Applicants": whether the
+  applicant has the facilities and administrative resources to do the work. Capacity is on the
+  scoresheet ([NOAA evaluation criteria](https://www.corporateservices.noaa.gov/grantsonline/Documents/FFO_Help_Pages/FFO_Help_Evaluation_Criteria.htm);
+  [OJP application guide](https://www.ojp.gov/funding/apply/ojp-grant-application-resource-guide)).
+- Under 2 CFR 200.306 the non-federal match generally cannot come from other federal funds, so a
+  match requirement needs someone with authority over state dollars
+  ([2 CFR 200.306](https://www.ecfr.gov/current/title-2/subtitle-A/chapter-II/part-200/subpart-D/section-200.306)).
 
-```{r agency-vol, fig.width=11, fig.height=8}
-agency_dat <- grants |>
-  count(agency_group, status_group, name="n") |>
-  group_by(agency_group) |> mutate(total=sum(n)) |> ungroup() |>
-  filter(total >= 5) |>
-  mutate(agency_group=fct_reorder(agency_group, total))
-
-ggplot(agency_dat, aes(x=n, y=agency_group, fill=status_group)) +
-  geom_col(position="stack", width=.72) +
-  geom_text(data=agency_dat |> group_by(agency_group) |>
-              summarise(total=first(total),.groups="drop"),
-            aes(x=total, y=agency_group, label=comma(total)),
-            inherit.aes=FALSE, hjust=-.12, size=3.5, color=pal$dark) +
-  scale_fill_manual(values=c(Posted=pal$blue, Forecasted=pal$purple)) +
-  scale_x_continuous(labels=comma, expand=expansion(mult=c(0,.14))) +
-  labs(title="Federal Opportunity Volume by Agency",
-       subtitle="Agencies with < 5 opportunities omitted",
-       x="Opportunities", y=NULL, fill=NULL) +
-  theme(legend.position="top", panel.grid.major.y=element_blank())
-```
-
-# 4. Application Deadline Urgency
-
-```{r deadline-urgency-data}
-deadline_dat <- grants |>
-  filter(status_group=="Posted", !is.na(close_date), close_date >= ref_date) |>
-  mutate(close_window = factor(case_when(
-    days_to_close <= 30  ~ "0-30 days",
-    days_to_close <= 60  ~ "31-60 days",
-    days_to_close <= 120 ~ "61-120 days",
-    TRUE                 ~ "More than 120 days"),
-    levels=c("0-30 days","31-60 days","61-120 days","More than 120 days"))) |>
-  count(close_window)
-```
-
-```{r deadline-urgency-plot, fig.width=10, fig.height=6}
-ggplot(deadline_dat, aes(x=close_window, y=n, fill=close_window)) +
-  geom_col(width=.7, show.legend=FALSE) +
-  geom_text(aes(label=comma(n)), vjust=-.35, size=4) +
-  scale_fill_manual(values=c("0-30 days"=pal$red,"31-60 days"=pal$orange,
-                              "61-120 days"=pal$blue,"More than 120 days"=pal$green)) +
-  scale_y_continuous(labels=comma, expand=expansion(mult=c(0,.12))) +
-  labs(title="Posted Opportunities by Remaining Application Window",
-       subtitle=paste("From", format(ref_date,"%B %d, %Y")),
-       x=NULL, y="Opportunities") +
-  theme(panel.grid.major.x=element_blank())
-```
-
-# 5. Award Amount Distribution
-
-Award values span orders of magnitude; the x-axis is logarithmic. A national program
-ceiling is **not** the amount North Carolina would receive — it is a total across all
-awardees nationwide.
-
-```{r award-dist, fig.width=11, fig.height=6}
-award_dist_dat <- grants |> filter(status_group=="Posted", !is.na(award_size), award_size > 0)
-
-ggplot(award_dist_dat, aes(x=award_size)) +
-  geom_histogram(bins=35, fill=pal$blue, color="white", alpha=.9) +
-  geom_vline(xintercept=award_floor_usd, color=pal$red, linetype="dashed", linewidth=1) +
-  annotate("text", x=award_floor_usd, y=Inf,
-           label=paste0("Threshold: ",dollar(award_floor_usd)),
-           hjust=-.05, vjust=1.5, color=pal$red, size=3.5) +
-  scale_x_log10(labels=dollar_format(scale_cut=cut_short_scale())) +
-  scale_y_continuous(labels=comma) +
-  labs(title="Distribution of Reported Award Amounts (Posted)",
-       subtitle="Uses award ceiling when available; award floor otherwise",
-       x="Award amount (log scale)", y="Opportunities") +
-  theme(panel.grid.minor.x=element_blank())
-```
-
-# 6. Funding Instruments
-
-A **cooperative agreement** carries ongoing federal involvement and is an early
-signal of higher administrative burden compared to a standard grant.
-
-```{r instruments, fig.width=10, fig.height=6}
-grants |>
-  filter(status_group=="Posted") |>
-  mutate(instrument = case_when(
-    str_detect(str_to_lower(coalesce(funding_instruments,"")), "cooperative") ~ "Cooperative agreement",
-    str_detect(str_to_lower(coalesce(funding_instruments,"")), "\\bgrant\\b")  ~ "Grant",
-    str_detect(str_to_lower(coalesce(funding_instruments,"")), "procurement|contract") ~ "Procurement contract",
-    str_detect(str_to_lower(coalesce(funding_instruments,"")), "other") ~ "Other",
-    TRUE ~ "Not reported")) |>
-  count(instrument, sort=TRUE) |>
-  mutate(instrument=fct_reorder(instrument,n)) |>
-  ggplot(aes(x=n, y=instrument, fill=instrument)) +
-  geom_col(width=.7, show.legend=FALSE) +
-  geom_text(aes(label=comma(n)), hjust=-.12, size=4) +
-  scale_x_continuous(labels=comma, expand=expansion(mult=c(0,.14))) +
-  labs(title="Posted Opportunities by Funding Instrument",
-       subtitle="Cooperative agreements imply ongoing federal oversight",
-       x="Posted opportunities", y=NULL) +
-  theme(panel.grid.major.y=element_blank())
-```
-
-# 7. State Eligibility and Research Noise
-
-<div class="callout callout-green">
-**What does "state_governments" eligibility mean?**
-Grants.gov uses a controlled vocabulary for applicant types. The code
-`state_governments` indicates that the posting explicitly lists state government
-entities as eligible applicants. This is one of approximately 15 applicant-type
-codes in the schema. **It does not mean the state is the sole or even primary
-intended recipient.** Of 887 state-eligible rows in this snapshot, only 12 are
-restricted to state governments alone. Most also include universities, hospitals,
-nonprofits, tribes, and for-profits — making eligibility alone a very weak
-discriminator. The research-mechanism screen below is needed to separate
-administrative grants from investigator-initiated research.
-</div>
-
-```{r eligibility-research-data}
-elig_res <- grants |>
-  mutate(
-    elig_grp     = if_else(safe_false(state_eligible), "State eligible","Not state eligible"),
-    research_grp = if_else(safe_false(is_research_mechanism),"Research screen","Not research screen")
-  ) |>
-  count(elig_grp, research_grp) |>
-  group_by(elig_grp) |> mutate(pct=n/sum(n)) |> ungroup()
-```
-
-```{r eligibility-research-plot, fig.width=10, fig.height=6}
-ggplot(elig_res, aes(x=elig_grp, y=n, fill=research_grp)) +
-  geom_col(position="stack", width=.68) +
-  geom_text(aes(label=paste0(comma(n),"\n",percent(pct,accuracy=0.1))),
-            position=position_stack(vjust=.5), color="white", fontface="bold", size=3.5) +
-  scale_fill_manual(values=c("Research screen"=pal$red,"Not research screen"=pal$blue)) +
-  scale_y_continuous(labels=comma) +
-  labs(title="State Eligibility Does Not Identify Administrative Fit",
-       subtitle="Research mechanism screen is preliminary and text-based only",
-       x=NULL, y="Opportunities", fill=NULL) +
-  theme(legend.position="top", panel.grid.major.x=element_blank())
-```
-
-<div class="callout callout-warning">
-Validate the research screen on a random hand-labelled sample of at least 60
-rows before using it to exclude opportunities from the final shortlist.
-</div>
-
-# 8. Shortlist After Screening
-
-```{r shortlist-data}
-shortlist <- grants |>
-  mutate(passed = survivors) |>
-  filter(passed) |>
-  mutate(
-    urgency = case_when(
-      is.na(days_to_close) ~ "No stated deadline",
-      days_to_close <= 30  ~ "Urgent: 0-30 days",
-      days_to_close <= 60  ~ "Near-term: 31-60 days",
-      days_to_close <= 120 ~ "Medium-term: 61-120 days",
-      TRUE                 ~ "Longer runway"),
-    award_display = case_when(
-      !is.na(award_ceiling) ~ paste0("Ceiling: ",dollar(award_ceiling)),
-      !is.na(award_floor)   ~ paste0("Floor: ",  dollar(award_floor)),
-      TRUE                  ~ "Not reported"),
-    desc_trunc = str_trunc(coalesce(summary_description,"No summary"), 280)
-  ) |>
-  arrange(days_to_close, desc(award_size)) |>
-  select(opportunity_number, opportunity_title, agency_group,
-         urgency, close_date, days_to_close, award_display,
-         state_eligible, is_nih, is_research_mechanism,
-         opportunity_assistance_listings, desc_trunc, additional_info_url)
-```
-
-```{r shortlist-table}
-shortlist |>
-  mutate(close_date=if_else(is.na(close_date),"No deadline",format(close_date,"%Y-%m-%d"))) |>
-  DT::datatable(rownames=FALSE, escape=FALSE, filter="top",
-    extensions=c("Buttons","FixedHeader"),
-    options=list(pageLength=15, scrollX=TRUE, fixedHeader=TRUE,
-                 dom="Bfrtip", buttons=c("copy","csv","excel"),
-                 searchHighlight=TRUE),
-    class="cell-border stripe hover") |>
-  DT::formatStyle("urgency", backgroundColor=DT::styleEqual(
-    c("Urgent: 0-30 days","Near-term: 31-60 days",
-      "Medium-term: 61-120 days","Longer runway","No stated deadline"),
-    c("#FDE2E2","#FFF0D5","#E7F0FA","#E6F4EA","#F2F4F7")))
-```
-
-# 9. Opportunities Closing Soon
-
-All posted opportunities closing within 30 days — regardless of whether they
-pass the full screening funnel.
-
-```{r urgent-table}
-grants |>
-  filter(status_group=="Posted", !is.na(close_date),
-         close_date >= ref_date, days_to_close <= 30) |>
-  mutate(
-    award_display = case_when(
-      !is.na(award_ceiling) ~ dollar(award_ceiling),
-      !is.na(award_floor)   ~ dollar(award_floor),
-      TRUE ~ "Not reported"),
-    desc_trunc = str_trunc(coalesce(summary_description,"No summary"), 220)
-  ) |>
-  arrange(days_to_close) |>
-  select(opportunity_number, opportunity_title, agency_group,
-         close_date, days_to_close, state_eligible, is_nih,
-         is_research_mechanism, award_display, desc_trunc) |>
-  DT::datatable(rownames=FALSE, filter="top",
-    extensions=c("Buttons","FixedHeader"),
-    options=list(pageLength=15, scrollX=TRUE, fixedHeader=TRUE,
-                 dom="Bfrtip", buttons=c("copy","csv","excel")),
-    class="cell-border stripe hover")
-```
-
-# 10. Close-Date vs Award Size
-
-Outliers above the 95th percentile of award size (mostly large national NIH and
-SAMHSA program totals) are removed to keep the scale informative for
-state-administrable grants.
-
-```{r runway-award-data}
-runway_award_dat <- grants |>
-  filter(status_group=="Posted", !is.na(close_date), close_date >= ref_date,
-         !is.na(award_size), award_size > 0) |>
-  mutate(
-    elig_disp = if_else(safe_false(state_eligible),"State eligible","Not state eligible"),
-    res_disp  = if_else(safe_false(is_research_mechanism),"Research screen","Not research screen")
-  )
-
-p95 <- quantile(runway_award_dat$award_size, .95, na.rm=TRUE)
-runway_award_trim <- runway_award_dat |> filter(award_size <= p95)
-```
-
-```{r runway-award-plot, fig.width=11, fig.height=7}
-ra_plot <- ggplot(runway_award_trim,
-  aes(x=days_to_close, y=award_size,
-      color=elig_disp, shape=res_disp, text=opportunity_title)) +
-  geom_point(alpha=.7, size=2.5) +
-  geom_vline(xintercept=min_runway_days,
-             linetype="dashed", color=pal$red, linewidth=.9) +
-  annotate("text", x=min_runway_days, y=Inf,
-           label=paste0(min_runway_days,"-day runway"),
-           hjust=1.05, vjust=1.5, color=pal$red, size=3.2) +
-  scale_x_continuous(labels=comma) +
-  scale_y_continuous(labels=dollar_format(scale_cut=cut_short_scale())) +
-  scale_color_manual(values=c("State eligible"=pal$green,"Not state eligible"=pal$gray)) +
-  scale_shape_manual(values=c("Research screen"=17,"Not research screen"=16)) +
-  labs(title="Remaining Runway vs Award Size (outliers removed)",
-       subtitle=paste0("Awards above the 95th percentile (>",dollar(round(p95))," ) excluded"),
-       x="Days until close date", y="Award size", color=NULL, shape=NULL) +
-  theme(legend.position="top")
-
-ggplotly(ra_plot, tooltip=c("x","y","colour","shape","text"))
-```
-
-# 11. Most Frequent Assistance Listings
-
-Assistance listings (CFDA numbers) are the join key for USAspending award history.
-Programs appearing repeatedly in the snapshot are the highest-priority lookup targets.
-
-```{r cfda-plot, fig.width=11, fig.height=9}
-grants |>
-  filter(!is.na(opportunity_assistance_listings),
-         str_squish(opportunity_assistance_listings) != "") |>
-  separate_rows(opportunity_assistance_listings, sep="\\s*;\\s*") |>
-  mutate(opportunity_assistance_listings=str_squish(opportunity_assistance_listings)) |>
-  filter(opportunity_assistance_listings != "") |>
-  count(opportunity_assistance_listings, sort=TRUE, name="n") |>
-  slice_head(n=25) |>
-  mutate(opportunity_assistance_listings=fct_reorder(opportunity_assistance_listings,n)) |>
-  ggplot(aes(x=n, y=opportunity_assistance_listings)) +
-  geom_col(fill=pal$purple, width=.7) +
-  geom_text(aes(label=comma(n)), hjust=-.12, size=3.3) +
-  scale_x_continuous(labels=comma, expand=expansion(mult=c(0,.15))) +
-  labs(title="Most Frequent Assistance Listings (top 25)",
-       subtitle="These CFDA numbers are the priority set for USAspending joins",
-       x="Opportunities in snapshot", y=NULL) +
-  theme(panel.grid.major.y=element_blank())
-```
-
-# 12. Preliminary Triage Quadrants
-
-This view plots every posted opportunity with a stated deadline and reported award
-amount against two observable axes: **days of runway** and **award size**. It is a
-workload and prioritisation diagnostic — not a measure of need, fit, or probability
-of winning.
-
-**How to read the quadrants:**
-
-| Quadrant | Description | Suggested action |
+| Tier | Label | Meaning |
 |---|---|---|
-| Large award, sufficient runway | High potential value, time to prepare | Assign owner; begin fit assessment |
-| Large award, short runway | High value but fast-closing | Leadership decision this week: pursue or formally decline |
-| Smaller award, sufficient runway | Lower ceiling; adequate time | Route to relevant division for optional review |
-| Smaller award, short runway | Limited time and ceiling | Only pursue if strong existing relationship with program |
+| 1 | Writer can act | Start today on their own authority |
+| 2 | Needs supervisor or division | Match approval, new staff, or a partner agency |
+| 3 | Needs secretary or legislature | Appropriation, capital project, statutory designation |
 
-Opportunities flagged green (initial fit screen: state-eligible and not a research
-mechanism) are the primary triage targets. The 95th-percentile cap removes large
-national-program totals that distort the scale.
+# 3. How we built this
 
-```{r quadrant-data}
-quad_dat <- grants |>
-  filter(status_group=="Posted", !is.na(close_date), close_date >= ref_date,
-         !is.na(award_size), award_size > 0) |>
-  mutate(
-    fit = case_when(
-      safe_false(state_eligible) & !safe_false(is_research_mechanism) ~ "Initial fit screen",
-      safe_false(state_eligible) &  safe_false(is_research_mechanism) ~ "Eligible; research screen",
-     !safe_false(state_eligible)                                       ~ "Not state eligible"),
-    quadrant = case_when(
-      days_to_close <= min_runway_days & award_size >= award_floor_usd ~ "Large award, short runway",
-      days_to_close >  min_runway_days & award_size >= award_floor_usd ~ "Large award, sufficient runway",
-      days_to_close <= min_runway_days & award_size <  award_floor_usd ~ "Smaller award, short runway",
-      TRUE                                                              ~ "Smaller award, sufficient runway")
-  )
+The project changed direction once, and the model and data were corrected several times along the
+way. This section records that path, because the corrections are part of why the results can be
+trusted.
 
-p95q <- quantile(quad_dat$award_size, .95, na.rm=TRUE)
-quad_trim <- quad_dat |> filter(award_size <= p95q)
+```{mermaid}
+%%| fig-width: 7
+flowchart LR
+  A["Grants.gov export<br/>1,662 opportunities"] --> B["Clean and verify<br/>24 facts checked"]
+  B --> C["Grants.gov API<br/>current status +<br/>full announcements"]
+  C --> D["Local AI labeler<br/>requirements, domain,<br/>plan alignment"]
+  P["DHHS and DMVA<br/>strategic plans"] --> D
+  K["Capability profiles<br/>(hand-built, sourced)"] --> T
+  D --> T["Tier rules<br/>tiering.js"]
+  T --> U["Interactive tool<br/>+ this notebook"]
+  H["60 blind<br/>hand labels"] -.validates.-> D
 ```
 
-```{r quadrant-plot, fig.width=11, fig.height=7}
-qp <- ggplot(quad_trim,
-  aes(x=days_to_close, y=award_size,
-      color=fit, shape=quadrant, text=opportunity_title)) +
-  geom_point(alpha=.7, size=2.5) +
-  geom_vline(xintercept=min_runway_days, linetype="dashed", linewidth=.9, color=pal$red) +
-  geom_hline(yintercept=award_floor_usd,  linetype="dashed", linewidth=.9, color=pal$orange) +
-  annotate("text", x=min_runway_days, y=Inf,
-           label=paste0(min_runway_days,"-day runway"),
-           hjust=1.05, vjust=1.5, color=pal$red, size=3.0) +
-  annotate("text", x=Inf, y=award_floor_usd,
-           label=paste0("Floor: ",dollar(award_floor_usd)),
-           hjust=1.05, vjust=-.5, color=pal$orange, size=3.0) +
-  scale_x_continuous(labels=comma, expand=expansion(mult=c(.02,.06))) +
-  scale_y_continuous(labels=dollar_format(scale_cut=cut_short_scale())) +
-  scale_color_manual(values=c("Initial fit screen"=pal$green,
-                               "Eligible; research screen"=pal$red,
-                               "Not state eligible"=pal$gray)) +
-  labs(title="Preliminary Triage: Runway vs Award Size (outliers removed)",
-       subtitle=paste("Reference date:", format(ref_date,"%B %d, %Y"),
-                      "| 95th pct cap:", dollar(round(p95q))),
-       x="Days until close date", y="Award size",
-       color="Initial screen", shape="Quadrant") +
-  theme(legend.position="bottom", legend.box="vertical")
+| Step | What we did | What changed as a result |
+|---|---|---|
+| Interview | Talked with a grant writer about how go / no-go decisions are really made | The output became piles sorted by whose signature is needed, not a ranked list |
+| Verify the data | Computed `r nrow(facts)` facts about the file before building anything; the pipeline must reproduce each | One fact was wrong in our own notes (match percentages appear in 6 rows, not 1) and was corrected after checking all six by hand |
+| Choose the plans | Used the strategic plans the competition provides (DHHS 2023-2025, DMVA 2025-2029), turned into tables with page numbers | Every plan row is re-checked against its PDF page on each render |
+| Build the capability model | Hand-built 14 capabilities per agency with a control level and a source | Two sources did not support their claim and were replaced; one level was changed (DMVA data systems to partner) |
+| Label with a local model | Prompt v2 labeled the first 118 candidates | Review showed it called most grants aligned with DHHS, including international and wildfire programs |
+| Tighten the prompt | Prompt v3 made the definitions strict and was tested on known cases | It over-corrected (it rejected Title X); v3.1 fixed that and was checked on 16 development cases before the full run |
+| Validate | The team labeled 60 opportunities without seeing the model's answers | Hard facts agree over 90% of the time; judgment calls 45-67% (section 12) |
+| Review research items | The team read 27 research awards flagged as closely aligned | They recommended a separate research tier, which became Tier 4 |
+| Build the tool | Rules in one JavaScript file, tested on every build, all 1,662 opportunities accounted for | The notebook runs the same rules, so the two can never disagree |
 
-ggplotly(qp, tooltip=c("x","y","colour","shape","text"))
+# 4. Data provenance and data dictionary
+
+| Source | What we used | Access |
+|---|---|---|
+| Grants.gov export `r basename(GRANTS_CSV)` | `r n_fmt(nrow(grants))` opportunities, `r ncol(grants_raw)` columns | Supplied by the competition; pulled `r format(PULL_DATE)` |
+| Grants.gov public API | Current status for every opportunity; full announcements for `r n_fmt(nofo_n)` of `r n_fmt(cand_n)` candidates | Free, no key; cached with access dates |
+| NC DHHS Strategic Plan 2023-2025 | Goals, objectives, strategies, priority questions (`r nrow(load_priorities() |> filter(agency == "DHHS"))` rows) | [OSBM agency plans](https://www.osbm.nc.gov/strategic-plan-ncdhhs/open), the competition's source |
+| NC DMVA Strategic Plan 2025-2029 | Goals, objectives, priority questions (`r nrow(load_priorities() |> filter(agency == "DMVA"))` rows) | [OSBM agency plans](https://www.osbm.nc.gov/operational-excellence/strategic-planning/agency-strategic-plans) |
+| ACS 2023 5-year | County and state population counts | Census API |
+| CDC PLACES | County health and social-need prevalence | CDC API |
+| HRSA HPSA | Shortage-area designations | HRSA data warehouse |
+| OpenFEMA | Disaster declarations since `r format(FEMA_DECLARATIONS_SINCE, "%Y")` | FEMA API |
+
+```{r plan-verify}
+#| code-summary: "Check every plan row against its PDF page"
+plan_check <- verify_priorities_against_pdf()
 ```
 
-```{r quadrant-counts}
-quad_dat |> count(quadrant, fit, sort=TRUE) |>
-  mutate(pct=percent(n/sum(n), accuracy=0.1)) |>
-  DT::datatable(rownames=FALSE,
-    colnames=c("Quadrant","Screen result","Opportunities","Share"),
-    options=list(dom="t", pageLength=15),
-    class="cell-border stripe hover")
+Every one of the `r nrow(plan_check)` strategic-plan rows is checked on each render: `r sum(plan_check$on_page)`
+appear word-for-word on the PDF page they cite.
+
+The dictionary below is the team's written one (`data/manual/data_dictionary.csv`). The
+"filled" and example columns are computed from the file on every render.
+
+```{r dictionary}
+#| code-summary: "Data dictionary"
+filled <- tibble(column = names(grants_raw),
+                 filled = map_int(grants_raw, ~ sum(!is.na(.x))),
+                 example = map_chr(grants_raw, ~ str_trunc(as.character(na.omit(.x)[1] %||% ""), 50)))
+readr::read_csv(file.path(DIR_MANUAL, "data_dictionary.csv"), col_types = readr::cols(.default = "c")) |>
+  full_join(filled, by = "column") |>
+  transmute(group = coalesce(group, "(not in written dictionary)"), column, filled,
+            `what it is` = what_it_is, `why it matters` = why_it_matters, example) |>
+  dt(pageLength = 40, dom = "ft")
 ```
 
-<div class="callout callout-warning">
-This chart does not measure need, capacity, or probability of success. It is a
-workload-planning tool only. Do not use award ceilings as estimates of what North
-Carolina would receive.
-</div>
+**What is missing from the structured data.** Counting opportunities whose text (title,
+abstract, eligibility and description fields) mentions each requirement shows how little of a
+go/no-go decision the export carries:
 
-# 13. Forecasted Opportunity Pipeline
+```{r missing-requirements}
+#| code-summary: "Requirement mentions across all opportunities"
+req_patterns <- c(
+  "A specific match percentage"    = MATCH_PCT_PATTERN,
+  "Non-federal share or match"     = "non-federal (share|match)",
+  "In-kind contribution"           = "in-kind",
+  "Letter of intent"               = "letters? of intent",
+  "Letters of support/commitment"  = "letters? of (support|commitment)",
+  "Evaluation plan"                = "evaluation plan",
+  "Memorandum of understanding"    = "memorand(um|a) of understanding|\\bmou\\b",
+  "Indirect cost terms"            = "indirect cost",
+  "Subrecipients or subawards"     = "sub-?recipient|sub-?award")
+tibble(requirement = names(req_patterns),
+       opportunities = map_int(req_patterns, ~ sum(str_detect(grants$match_text, regex(.x, ignore_case = TRUE))))) |>
+  dt(dom = "t")
+```
 
-Forecasted opportunities are not open for application. They support calendar
-planning and allow early internal review of likely requirements.
+**What kinds of funding are in the file.**
 
-```{r forecast-pipeline, fig.width=11, fig.height=6}
+```{r funding-types}
+#| fig-height: 4.2
+#| code-summary: "Funding instruments and categories"
+bind_rows(
+  tibble(value = unlist(grants$instrument_list), panel = "Funding instrument"),
+  tibble(value = grants$category, panel = "Category")) |>
+  mutate(value = str_replace_all(str_to_sentence(value), "_", " ")) |>
+  count(panel, value) |>
+  ggplot(aes(n, reorder(value, n))) +
+  geom_col(fill = pal$blue, width = .7) +
+  geom_text(aes(label = n_fmt(n)), hjust = -.15, size = 3.4) +
+  facet_wrap(~ panel, scales = "free", ncol = 2) +
+  scale_x_continuous(expand = expansion(mult = c(0, .28))) +
+  labs(title = "Mostly discretionary grants and cooperative agreements",
+       caption = NULL,
+       subtitle = str_wrap("An opportunity can list more than one instrument. Cooperative agreements mean ongoing federal involvement and more staff time.", 85),
+       x = "Opportunities", y = NULL) +
+  theme(strip.text = element_text(face = "bold", hjust = 0), panel.grid.major.y = element_blank())
+```
+
+# 5. Preprocessing
+
+Every column is read as text and converted explicitly. Letting the reader guess types from the
+first 1,000 rows silently turned `forecasted_close_date_description` into a logical column and
+dropped `r sum(!is.na(grants_raw$forecasted_close_date_description))` values. Dates outside
+`r format(DATE_MIN_VALID)` to `r format(DATE_MAX_VALID)` (including the 2099-01-01 sentinel)
+are kept in `*_raw` columns and removed from analysis. HTML is stripped from abstracts.
+
+```{r date-audit}
+#| code-summary: "Date outlier audit"
+tibble(
+  check = c("Close date is the 2099-01-01 sentinel", "Posted rows with no close date",
+            "Rows with any out-of-range date", "Close date before post date",
+            "Closed in the 60 days before the pull date"),
+  rows = c(sum(grants$close_date_raw >= as.Date("2099-01-01"), na.rm = TRUE),
+           sum(grants$status_group == "Posted" & is.na(grants$close_date)),
+           sum(grants$date_outlier_flag),
+           sum(grants$close_date < grants$post_date, na.rm = TRUE),
+           as.integer(fact_val("Rows closed in the 60 days before the pull date")))
+) |> dt(dom = "t")
+```
+
+**Verified facts.** Before building anything we computed 24 facts directly from the file. The
+pipeline must reproduce each one; the table below is recomputed on every render.
+
+```{r facts-table}
+#| code-summary: "Verified facts check"
+facts |> dt(dom = "t", pageLength = 30)
+```
+
+`r sum(facts$result == "PASS")` of `r nrow(facts)` rows pass. One row was corrected during the
+build: our original count of rows stating a match percentage was 1; the code found 6, all six
+were checked by hand, and the fact was changed to 6.
+
+# 6. The haystack
+
+```{r funnel}
+#| code-summary: "Funnel from the full file to the three piles"
+dhhs_view <- keep(opps, ~ "DHHS" %in% unlist(.x$audience))
+nonnih_open <- open_state |> filter(!is_nih)
+relevant <- nonnih_open |> filter(opportunity_number %in% map_chr(dhhs_view, "number"),
+  !map_lgl(opportunity_number, function(n) { o <- keep(opps, ~ .x$number == n)[[1]]
+    s <- o$screen; isTRUE(s$is_research_mechanism) || isTRUE(s$is_restricted) || isTRUE(s$not_administrable) }))
+funnel <- tibble(
+  stage = c("All opportunities", "Posted (not forecast)", "State governments eligible",
+            paste("Open through", format(cutoff_date, "%b %d")), "Not NIH research",
+            "Relevant to DHHS and administrable", "In Tiers 1-3 (tool's opening scenario)"),
+  n = c(nrow(grants), sum(grants$status_group == "Posted"),
+        sum(grants$status_group == "Posted" & grants$state_eligible), nrow(open_state),
+        nrow(nonnih_open), nrow(relevant), sum(opening$placement == "pile" & opening$tier <= 3))
+) |> mutate(stage = factor(stage, levels = rev(stage)))
+ggplot(funnel, aes(n, stage)) +
+  geom_col(fill = pal$blue, width = .7) +
+  geom_text(aes(label = n_fmt(n)), hjust = -.15, size = 3.8) +
+  scale_x_continuous(labels = comma, expand = expansion(mult = c(0, .12))) +
+  labs(title = "From 1,662 opportunities to the few a DHHS writer can act on",
+       subtitle = str_wrap("Each stage keeps only rows that passed every earlier stage. The last stage is the tool's opening scenario, which also includes forecasts.", 95),
+       x = "Opportunities", y = NULL)
+```
+
+The largest single drop is NIH. `r pct_fmt(mean(open_state$is_nih))` of open, state-eligible
+opportunities are NIH research awards that expect a university investigator. Of the
+`r nrow(nonnih_open)` that remain, most are not health and human services work at all:
+economic development, outdoor recreation, traffic safety, agriculture, museums.
+`r if (labels_ok) paste0("After the labeler's review, ", nrow(relevant), " are relevant to DHHS and administrable by a state agency.") else "The labeler's review of relevance is still running; this count updates when it finishes."`
+
+The file also ages quickly: `r n_fmt(closed_since)` opportunities listed as posted in the
+`r format(PULL_DATE, "%B %d")` export were closed or archived when we re-checked Grants.gov on
+`r str_sub(na.omit(enrich$status$status_checked)[1], 1, 10)`.
+
+```{r issuers}
+#| fig-height: 5.5
+#| code-summary: "Which federal agencies issue the opportunities"
 grants |>
-  filter(status_group=="Forecasted") |>
-  mutate(
-    fd = coalesce(forecasted_post_date, forecasted_close_date),
-    fq = if_else(!is.na(fd), paste0(year(fd)," Q",quarter(fd)), "Date missing")
-  ) |>
-  count(fq) |>
-  mutate(fq=factor(fq, levels=unique(fq))) |>
-  ggplot(aes(x=fq, y=n)) +
-  geom_col(fill=pal$purple, width=.7) +
-  geom_text(aes(label=comma(n)), vjust=-.35, size=4) +
-  scale_y_continuous(labels=comma, expand=expansion(mult=c(0,.12))) +
-  labs(title="Forecasted Opportunity Pipeline by Quarter",
-       subtitle="Forecasts support calendar planning before an opportunity posts",
-       x="Expected posting quarter", y="Forecasted opportunities") +
-  theme(axis.text.x=element_text(angle=35, hjust=1),
-        panel.grid.major.x=element_blank())
+  mutate(issuer = case_when(is_nih ~ "HHS: National Institutes of Health",
+                            str_detect(agency_name, "^Centers for Disease Control") ~ "HHS: Centers for Disease Control and Prevention",
+                            str_detect(agency_code, "^HHS") ~ paste0("HHS: ", str_remove(agency_name, " - .*$")),
+                            TRUE ~ coalesce(top_level_agency_name, agency_name)),
+         issuer = str_trunc(issuer, 55)) |>
+  count(issuer, state_eligible) |>
+  group_by(issuer) |> mutate(total = sum(n)) |> ungroup() |>
+  filter(dense_rank(desc(total)) <= 12) |>
+  mutate(issuer = fct_reorder(issuer, total),
+         state_eligible = if_else(state_eligible, "State governments eligible", "Not state-eligible")) |>
+  ggplot(aes(n, issuer, fill = state_eligible)) +
+  geom_col(width = .7) +
+  scale_fill_manual(values = c("State governments eligible" = pal$blue, "Not state-eligible" = "#C9D6E3"), name = NULL) +
+  labs(title = "NIH dominates the file, and most of it is open to states on paper",
+       subtitle = "Twelve largest issuing agencies", x = "Opportunities", y = NULL) +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
 
-# 14. NCDHHS-Relevant Domain Classification
-
-Each opportunity may match more than one domain. Unmatched rows should be reviewed,
-not assumed irrelevant.
-
-```{r domain-patterns}
-domain_patterns <- c(
-  "Behavioral health and crisis"          = "behavioral health|mental health|suicide|988|crisis|psychiatric|trauma",
-  "Opioid and substance use"              = "opioid|substance use|overdose|naloxone|addiction|recovery|syringe",
-  "Maternal, infant, reproductive health" = "maternal|infant|pregnan|prenatal|reproductive|family planning|title x",
-  "Child and family well-being"           = "child welfare|children|family|foster|early childhood|parenting|child care",
-  "Food and nutrition security"           = "food security|nutrition|wic|snap|fns|hunger|food insecurity",
-  "Health and direct-care workforce"      = "health workforce|workforce|nursing|direct care|recruitment|retention",
-  "Rural access and telehealth"           = "rural|telehealth|telemedicine|underserved|health access",
-  "Disaster recovery and resilience"      = "disaster|resilience|recovery|emergency|hurricane|flood|hazard"
-)
+```{r staleness}
+#| fig-height: 3.4
+#| code-summary: "Status of the file's posted opportunities when re-checked on Grants.gov"
+enrich$status |>
+  inner_join(select(grants, opportunity_number, status_group), by = "opportunity_number") |>
+  filter(status_group == "Posted") |>
+  mutate(status_now = str_to_sentence(coalesce(status_now, "not found on Grants.gov"))) |>
+  count(status_now) |>
+  ggplot(aes(n, reorder(status_now, n))) +
+  geom_col(fill = pal$blue, width = .6) +
+  geom_text(aes(label = n_fmt(n)), hjust = -.15, size = 3.6) +
+  scale_x_continuous(expand = expansion(mult = c(0, .15))) +
+  labs(title = "Six weeks later, a third of 'posted' items had closed",
+       subtitle = paste0("Posted opportunities in the ", format(PULL_DATE, "%B %d"), " file, by status when re-checked"),
+       x = "Opportunities", y = NULL) +
+  theme(panel.grid.major.y = element_blank())
 ```
 
-```{r domain-classification}
-domain_text_vec <- str_to_lower(str_c(
-  coalesce(grants$opportunity_title,""),
-  coalesce(grants$summary_description,""),
-  coalesce(grants$applicant_eligibility_description,""),
-  coalesce(grants$category,""), coalesce(grants$category_explanation,""),
-  sep=" | "))
+# 7. Eligibility breadth
 
-# FIX: use apply() — pmap_chr with select(.) fails inside mutate()
-domain_flags <- as.data.frame(purrr::map_dfc(
-  domain_patterns,
-  ~ str_detect(domain_text_vec, regex(.x, ignore_case=TRUE))
-))
-names(domain_flags) <- names(domain_patterns)
-
-matched_domains_vec <- apply(domain_flags, 1, function(row) {
-  m <- names(domain_patterns)[as.logical(row)]
-  if (length(m)==0) "No keyword match" else paste(m, collapse="; ")
-})
-
-grants_domains <- grants |>
-  bind_cols(domain_flags) |>
-  mutate(
-    n_domain_matches   = rowSums(across(all_of(names(domain_patterns))), na.rm=TRUE),
-    matched_domains    = matched_domains_vec,
-    domain_match_group = case_when(
-      n_domain_matches == 0 ~ "No keyword match",
-      n_domain_matches == 1 ~ "One domain match",
-      TRUE                  ~ "Multiple domain matches")
-  )
+```{r breadth}
+#| code-summary: "How many applicant types each opportunity lists"
+ggplot(grants, aes(n_applicant_types)) +
+  geom_bar(fill = pal$blue, width = .8) +
+  scale_x_continuous(breaks = 1:16) +
+  labs(title = "Eligibility is bimodal: one applicant type, or nearly all of them",
+       subtitle = paste0(n_fmt(sum(grants$n_applicant_types == 1)), " rows list one type; ",
+                         n_fmt(sum(grants$n_applicant_types == 15)), " list fifteen"),
+       x = "Applicant types listed", y = "Opportunities")
 ```
 
-```{r domain-volume, fig.width=11, fig.height=8}
-purrr::map_dfr(names(domain_patterns), function(dn) {
-  tibble(domain=dn,
-         Posted     = sum(grants_domains$status_group=="Posted"     & safe_false(grants_domains[[dn]])),
-         Forecasted = sum(grants_domains$status_group=="Forecasted" & safe_false(grants_domains[[dn]])))
+`r n_fmt(nrow(state_rows))` rows list state governments. Only
+`r sum(state_rows$state_only)` are restricted to state governments alone, and
+`r sum(state_rows$n_applicant_types <= 3)` list three or fewer applicant types. For everything
+else a state agency competes with universities, hospitals, nonprofits and companies.
+Eligibility is a floor, not a signal of fit.
+
+# 8. Deadline reality
+
+```{r windows}
+#| code-summary: "Application window distribution"
+ggplot(windows, aes(application_window_days)) +
+  geom_histogram(binwidth = 7, fill = pal$blue, color = "white") +
+  geom_vline(xintercept = WINDOW_CUTOFFS_DAYS, linetype = "dashed", color = pal$red) +
+  annotate("text", x = max(WINDOW_CUTOFFS_DAYS) + 6, y = Inf, vjust = c(1.6, 3.4), hjust = 0, color = pal$red, size = 3.4,
+           label = paste0(WINDOW_CUTOFFS_DAYS, " days or fewer: ",
+                          pct_fmt(c(mean(windows$application_window_days <= WINDOW_CUTOFFS_DAYS[1]),
+                                    mean(windows$application_window_days <= WINDOW_CUTOFFS_DAYS[2])), 1))) +
+  labs(title = "Most application windows are about two months",
+       subtitle = paste0("Posted opportunities with a 0-", WINDOW_MAX_DAYS, " day window, n = ", n_fmt(nrow(windows))),
+       x = "Days from posting to deadline", y = "Opportunities")
+```
+
+The median window is `r median(windows$application_window_days)` days; a quarter are
+`r quantile(windows$application_window_days, .25, names = FALSE)` days or shorter and a tenth
+`r quantile(windows$application_window_days, .10, names = FALSE)` or shorter. A writer who
+learns of a posting three weeks late has lost a third of a typical window, which is why runway
+is a user setting, not a fixed filter.
+
+```{r deadline-calendar}
+#| fig-height: 4
+#| code-summary: "When open, state-eligible opportunities close"
+open_state |>
+  mutate(month = floor_date(close_date, "month"), who = if_else(is_nih, "NIH research", "Everything else")) |>
+  filter(month <= REF_DATE_DEFAULT %m+% months(12)) |>
+  count(month, who) |>
+  ggplot(aes(month, n, fill = who)) +
+  geom_col(width = 25) +
+  scale_fill_manual(values = c("NIH research" = "#C9D6E3", "Everything else" = pal$blue), name = NULL) +
+  scale_x_date(date_labels = "%b %Y", date_breaks = "2 months") +
+  labs(title = "Deadlines over the next year: almost all NIH",
+       subtitle = paste0("Open, state-eligible opportunities closing on or after ", format(cutoff_date, "%b %d"), ", by month"),
+       x = NULL, y = "Opportunities closing") +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.x = element_blank())
+```
+
+```{r forecast-pipeline}
+#| fig-height: 3.8
+#| code-summary: "What is expected to post: state-eligible forecasts"
+grants |>
+  filter(status_group == "Forecasted", state_eligible, !is.na(forecasted_post_date)) |>
+  mutate(quarter = paste0(year(forecasted_post_date), " Q", quarter(forecasted_post_date)),
+         who = if_else(is_nih, "NIH research", "Everything else")) |>
+  count(quarter, who) |>
+  ggplot(aes(quarter, n, fill = who)) +
+  geom_col(width = .7) +
+  scale_fill_manual(values = c("NIH research" = "#C9D6E3", "Everything else" = pal$blue), name = NULL) +
+  labs(title = "The forecast pipeline is where the non-NIH work is",
+       subtitle = "State-eligible forecasts by expected posting quarter",
+       x = "Expected posting quarter", y = "Forecasts") +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.x = element_blank(),
+        axis.text.x = element_text(angle = 40, hjust = 1))
+```
+
+# 9. What an applicant actually receives
+
+The file's `estimated_total_program_funding` is the national pot. Summed across open
+state-eligible rows it reaches
+`r usd_fmt(sum(open_state$estimated_total_program_funding, na.rm = TRUE))`, a number with no
+meaning for one agency. We use the **implied per-award amount**: total funding divided by
+expected awards, available for `r n_fmt(nrow(implied))` rows.
+
+```{r implied}
+#| code-summary: "Implied award vs stated ceiling"
+cmp <- implied |> filter(!is.na(award_ceiling_clean))
+ggplot(cmp, aes(award_ceiling_clean, implied_award_usd)) +
+  geom_abline(slope = 1, intercept = 0, color = pal$gray, linetype = "dashed") +
+  geom_point(alpha = .45, color = pal$blue, size = 1.8) +
+  scale_x_log10(labels = usd_fmt, expand = expansion(mult = .05)) +
+  scale_y_log10(labels = usd_fmt, expand = expansion(mult = .06)) +
+  labs(title = "The implied award tracks the stated ceiling",
+       subtitle = paste0("n = ", n_fmt(nrow(cmp)), "; median implied / ceiling = ",
+                         number(median(cmp$implied_award_usd / cmp$award_ceiling_clean), .01)),
+       x = "Stated award ceiling (log)", y = "Implied award = total / expected awards (log)")
+```
+
+The median implied award is `r usd_fmt(median(implied$implied_award_usd))`. Where both exist,
+the median ratio of implied award to stated ceiling is
+`r number(median(cmp$implied_award_usd / cmp$award_ceiling_clean), .01)`, so the estimate
+is consistent with what agencies say they will award. Where the implied value is missing, the
+tool falls back to the ceiling and says so.
+
+```{r award-distribution}
+#| fig-height: 3.8
+#| code-summary: "Distribution of the implied award"
+ggplot(implied, aes(implied_award_usd)) +
+  geom_histogram(bins = 40, fill = pal$blue, color = "white") +
+  geom_vline(xintercept = median(implied$implied_award_usd), linetype = "dashed", color = pal$red) +
+  annotate("text", x = median(implied$implied_award_usd) * 1.3, y = Inf, vjust = 1.6, hjust = 0, color = pal$red, size = 3.4,
+           label = paste("Median", usd_fmt(median(implied$implied_award_usd)))) +
+  scale_x_log10(labels = usd_fmt) +
+  labs(title = "What one award is worth: from thousands to tens of millions",
+       subtitle = paste0("Implied award per recipient, n = ", n_fmt(nrow(implied)), " (log scale)"),
+       x = "Implied award", y = "Opportunities")
+```
+
+# 10. The capability model
+
+Each agency has a hand-authored capability profile: fourteen capabilities, each with a control
+level and a source. `direct` means the agency runs it; `contracted` means through a contract it
+controls; `partner` means another entity controls it and an agreement is needed; `none` means
+no route.
+
+```{r capability-table}
+#| code-summary: "Sourced capability profiles"
+load_capabilities() |>
+  mutate(source = sprintf('<a href="%s" target="_blank">source</a>', source_url)) |>
+  select(agency, capability = capability_label, control = control_level, basis = notes,
+         `what resolving a gap takes` = to_resolve, source) |>
+  DT::datatable(rownames = FALSE, escape = FALSE, filter = "top", class = "cell-border stripe hover",
+                options = list(pageLength = 14, scrollX = TRUE))
+```
+
+Housing is the demonstration case. DHHS works on housing instability but does not control housing
+stock; it reaches affordable units through the NC Housing Finance Agency's Targeting Program. So
+housing is `partner`, and any opportunity that requires housing is at least Tier 2.
+
+Each opportunity gets a requirement profile. For the `r n_fmt(nrow(label_set(grants)))`
+candidates it comes from the local labeler (section 12), which reads the abstract and, for
+`r n_fmt(nofo_n)` of them, the full announcement. For everything else it comes from
+deterministic rules: the structured cost-share flag, the funding instrument, and sentence-level
+patterns that ignore negated sentences ("funds may not be used for construction").
+
+# 11. Authority tiering
+
+The rules live in one file, `src/tool/tiering.js`. The notebook does not re-implement them: the
+tables below come from running that file through V8.
+
+- **Tier 3** if any of: cost share on an award at or above
+  `r usd_fmt(APPROPRIATION_THRESHOLD_USD)` (a stated assumption, adjustable in the tool);
+  cost share when the writer has no match authority; a capital construction project; a formal
+  state designation; a required capability the agency has no route to.
+- **Tier 2** if not Tier 3 and any of: a required capability reached only through a partner; cost
+  share that needs supervisor approval; funding and monitoring subrecipients; a cooperative
+  agreement with a required evaluation; more staff time than the writer has.
+- **Tier 4, partner-led research**: research awards (and programs a state agency is unlikely to
+  lead) get their own pile below the three authority tiers. A university, research institution or
+  other partner would be the applicant; the agency's role is partner. Any other rules that fire are
+  still listed on the card. The user can hide this pile.
+- **Tier 1** otherwise.
+
+Before tiering, an opportunity is set aside, visibly, if it is not relevant to the agency, is a
+forecast, has closed, is NIH or a research mechanism, is judged not administrable by a state
+agency, is restricted to named applicants, has less runway than the user needs, or is below the
+minimum award.
+
+**Ranking within a pile.** The piles answer *whose signature is needed*; they are never blended
+with anything else. Within each pile the tool orders opportunities by an impact score whose weights
+the user sets: fit with the strategic plan (the labeler's strong / partial / none), people reached,
+help per person, award size, and the user's program priorities. The user can pick the one that
+matters most or set each weight directly, and each card shows which parts led its score. Keeping
+the score *inside* the piles is deliberate: a large award the agency cannot staff should not
+outrank a small one it can run tomorrow, so authority is decided first and impact only orders what
+remains.
+
+```{r tier-table}
+#| code-summary: "Tiers in the tool's opening scenario (computed by tiering.js)"
+opening |> filter(placement == "pile", tier <= 3) |> arrange(tier) |>
+  transmute(tier, opportunity = opportunity_title, agency = agency_code, reason = tier_reason) |>
+  dt(pageLength = 15)
+```
+
+```{r tiers-by-scenario}
+#| fig-height: 4
+#| code-summary: "How the piles change with the writer's situation (tiering.js at each preset)"
+scen <- map(payload$config$presets, ~ list(label = paste0(.x$label, if (.x$id == payload$config$opening_preset) " (opening)" else ""),
+                                             settings = modifyList(payload$config$opening, .x$settings)))
+map_dfr(scen, function(sc) {
+  run_tiering_js(opps, payload$capabilities$profiles, sc$settings) |>
+    filter(placement == "pile", tier <= 3) |> count(tier) |> mutate(scenario = sc$label)
 }) |>
-  pivot_longer(c(Posted,Forecasted), names_to="status_group", values_to="n") |>
-  mutate(domain=fct_reorder(domain, n, .fun=sum)) |>
-  ggplot(aes(x=n, y=domain, fill=status_group)) +
-  geom_col(position="stack", width=.7) +
-  geom_text(data=~group_by(.,domain)|>summarise(total=sum(n),.groups="drop"),
-            aes(x=total,y=domain,label=comma(total)),
-            inherit.aes=FALSE, hjust=-.12, size=3.4) +
-  scale_fill_manual(values=c(Posted=pal$blue, Forecasted=pal$purple)) +
-  scale_x_continuous(labels=comma, expand=expansion(mult=c(0,.14))) +
-  labs(title="Keyword Match Volume by NCDHHS-Relevant Domain",
-       subtitle="An opportunity may match more than one domain",
-       x="Keyword matches", y=NULL, fill=NULL) +
-  theme(legend.position="top", panel.grid.major.y=element_blank())
-```
-# 15. County-Level Need: ACS Indicators
-
-ACS 2019-2023 5-year estimates provide the demographic and socioeconomic baseline
-for the need axis. County boundaries come from the Census TIGER/Line 2023 vintage
-via the `tigris` package.
-
-<div class="data-source-box">
-**Source:** U.S. Census Bureau, American Community Survey 5-year estimates (2023 vintage).
-Requires a free Census API key — set `census_api_key` in params or run
-`tidycensus::census_api_key("YOUR_KEY")` before rendering.
-**Access:** `tidycensus::get_acs()`
-**Cached to:** `data/cache/api/acs_nc_county.rds`
-</div>
-
-```{r acs-download}
-acs_cache <- file.path(cache_dir, "api", "acs_nc_county.rds")
-nc_counties_cache <- file.path(cache_dir, "api", "nc_counties_tigris.rds")
-
-# ACS variables — verified against 2023 5-year detailed tables
-acs_vars <- c(
-  total_pop        = "B01003_001",   # total population
-  poverty_below    = "B17001_002",   # below poverty level
-  poverty_universe = "B17001_001",   # poverty universe (denominator)
-  median_income    = "B19013_001",   # median household income
-  no_internet      = "B28002_013",   # no internet access (households)
-  pop_under18      = "B09001_001",   # population under 18
-  uninsured_male   = "B27001_006",   # male, under 6, uninsured (one component)
-  disability_total = "B18101_001"    # civilian non-inst. population (disability base)
-)
-
-acs_county <- get_cached(acs_cache, function() {
-  if (nchar(params$census_api_key) == 0) {
-    message("No Census API key provided — skipping ACS download.")
-    return(NULL)
-  }
-  tidycensus::get_acs(
-    geography = "county", state = "NC",
-    variables = acs_vars, year = 2023, survey = "acs5",
-    output = "wide", progress_bar = FALSE
-  ) |>
-    janitor::clean_names() |>
-    mutate(
-      county_name   = str_remove(name, ", North Carolina"),
-      poverty_rate  = poverty_below_e / pmax(poverty_universe_e, 1),
-      med_income    = median_income_e,
-      no_internet_n = no_internet_e,
-      pop           = total_pop_e
-    ) |>
-    filter(!is.na(poverty_rate))
-})
-
-nc_counties_sf <- get_cached(nc_counties_cache, function() {
-  tigris::counties(state = "NC", cb = TRUE, year = 2023, progress_bar = FALSE) |>
-    sf::st_transform(4326)
-})
-
-acs_available <- !is.null(acs_county) && nrow(acs_county) > 0
-geo_available <- !is.null(nc_counties_sf)
+  mutate(tier = factor(paste("Tier", tier), levels = paste("Tier", 3:1)),
+         scenario = factor(scenario, levels = rev(map_chr(scen, "label")))) |>
+  ggplot(aes(n, scenario, fill = tier)) +
+  geom_col(width = .65, color = "white", linewidth = .4) +
+  scale_fill_manual(values = c("Tier 1" = pal$tier1, "Tier 2" = pal$tier2, "Tier 3" = pal$tier3), name = NULL,
+                    breaks = paste("Tier", 1:3)) +
+  labs(title = "Same opportunities, different piles",
+       subtitle = str_wrap("Tiers 1-3 under each preset. The two presets that leave out forecasts have far fewer options; with no match authority (deadline crunch), nothing is left in Tier 1.", 90),
+       x = "Opportunities in Tiers 1-3", y = NULL) +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
 
-```{r acs-bar, fig.width=11, fig.height=7, eval=acs_available}
-# Top 20 counties by poverty rate
-acs_county |>
-  slice_max(poverty_rate, n=20) |>
-  mutate(county_name=fct_reorder(county_name, poverty_rate)) |>
-  ggplot(aes(x=poverty_rate, y=county_name)) +
-  geom_col(fill=pal$red, width=.72) +
-  geom_text(aes(label=percent(poverty_rate, accuracy=0.1)), hjust=-.1, size=3.5) +
-  geom_vline(xintercept=mean(acs_county$poverty_rate, na.rm=TRUE),
-             linetype="dashed", color=pal$dark, linewidth=.8) +
-  scale_x_continuous(labels=percent_format(), expand=expansion(mult=c(0,.15))) +
-  labs(title="Top 20 NC Counties by Poverty Rate (ACS 2023)",
-       subtitle="Dashed line = statewide average. Source: ACS 2019-2023 5-year.",
-       x="Population below poverty level", y=NULL) +
-  theme(panel.grid.major.y=element_blank())
+```{r tiers-by-domain}
+#| fig-height: 3.8
+#| code-summary: "Program areas in the opening scenario's piles"
+dom_of <- setNames(map_chr(opps, ~ .x$domain %||% NA_character_), map_chr(opps, "number"))
+opening |> filter(placement == "pile", tier <= 3) |>
+  mutate(domain = coalesce(unname(DOMAINS[dom_of[opportunity_number]]), "No domain assigned"),
+         tier = factor(paste("Tier", tier), levels = paste("Tier", 3:1))) |>
+  count(domain, tier) |>
+  ggplot(aes(n, fct_reorder(str_wrap(domain, 40), n, sum), fill = tier)) +
+  geom_col(width = .7, color = "white", linewidth = .4) +
+  scale_fill_manual(values = c("Tier 1" = pal$tier1, "Tier 2" = pal$tier2, "Tier 3" = pal$tier3), name = NULL,
+                    breaks = paste("Tier", 1:3)) +
+  labs(title = "What DHHS can pursue now is mostly public health preparedness",
+       subtitle = "Opening scenario, Tiers 1-3, by program domain", x = "Opportunities", y = NULL) +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
 
-```{r acs-map, fig.width=11, fig.height=7, eval=acs_available && geo_available}
-map_dat <- nc_counties_sf |>
-  left_join(acs_county |> select(geoid, poverty_rate, med_income),
-            by=c("GEOID"="geoid"))
-
-ggplot(map_dat) +
-  geom_sf(aes(fill=poverty_rate), color="white", linewidth=.3) +
-  scale_fill_distiller(palette="YlOrRd", direction=1,
-                       labels=percent_format(accuracy=1),
-                       na.value="gray90",
-                       name="Poverty\nrate") +
-  labs(title="NC County Poverty Rate (ACS 2023 5-year)",
-       subtitle="Source: Census ACS, B17001. Model-derived; county estimates carry substantial uncertainty.",
-       caption="Darker = higher poverty rate") +
-  theme_void() +
-  theme(legend.position="right",
-        plot.title=element_text(face="bold", size=14),
-        plot.subtitle=element_text(color=pal$gray))
+```{r rule-tests}
+#| code-summary: "The rule tests the build must pass"
+cases <- jsonlite::fromJSON(here::here("src", "tool", "tiering_cases.json"))
+tibble(test = cases$cases$name) |> dt(dom = "t", pageLength = 30)
 ```
 
-```{r acs-unavailable, results='asis', eval=!acs_available}
-cat('<div class="callout callout-warning">ACS data not yet downloaded.
-Set a Census API key in params (<code>census_api_key</code>) and re-render,
-or run <code>tidycensus::census_api_key("YOUR_KEY")</code> before rendering.
-</div>')
-```
+# 12. LLM labeling
 
-# 16. Provider Shortage Areas: HRSA HPSA
+**Method.** A local model (`r LLM_LABEL_MODEL`, run through Ollama; prompt `r LLM_PROMPT_VERSION`)
+labels each candidate from its abstract plus a fixed excerpt of its full announcement: the first
+`r n_fmt(LLM_NOFO_HEAD_CHARS)` characters, then sentences that mention match, subawards,
+evaluation, construction, designation or renewal. Output must match a JSON schema with closed
+vocabularies, at temperature 0 and a fixed seed, and evidence fields must quote the text.
 
-HRSA Health Professional Shortage Areas (HPSAs) are the federal government's own
-designation of inadequate delivery capacity. They are difficult to dispute in a
-grant application narrative.
+**Caching.** Each response is stored under a SHA-256 hash of the model digest, prompt version,
+and exact prompt. Rendering this notebook never calls the model; the labels below are read from
+that cache.
 
-<div class="data-source-box">
-**Source:** HRSA Bureau of Health Workforce — HPSA Find / Data Downloads.
-**Access:** Direct CSV from `data.hrsa.gov`
-**Disciplines downloaded:** Mental health, primary care
-**Cached to:** `data/cache/api/hrsa_mh.rds`, `hrsa_pc.rds`
-</div>
-
-```{r hrsa-download}
-hrsa_dl <- function(discipline_code, cache_name) {
-  get_cached(file.path(cache_dir, "api", cache_name), function() {
-    url <- paste0("https://data.hrsa.gov/DataDownload/DD_Files/",
-                  "BCD_HPSA_FCT_DET_", discipline_code, ".csv")
-    tryCatch(
-      readr::read_csv(url, show_col_types=FALSE, progress=FALSE) |>
-        janitor::clean_names(),
-      error = function(e) { message("HRSA download failed: ", e$message); NULL }
-    )
-  })
-}
-
-hrsa_mh <- hrsa_dl("MH", "hrsa_mh.rds")
-hrsa_pc <- hrsa_dl("PC", "hrsa_pc.rds")
-
-process_hrsa <- function(df, discipline) {
-  if (is.null(df)) return(NULL)
-  df |>
-    filter(str_to_upper(hpsa_status) == "DESIGNATED",
-           str_to_upper(common_state_name) == "NORTH CAROLINA") |>
-    mutate(
-      discipline        = discipline,
-      hpsa_score        = suppressWarnings(as.numeric(hpsa_score)),
-      county_name       = str_remove(coalesce(hpsa_county_equivalent_name,""),
-                                      " County| county"),
-      shortage_type     = coalesce(hpsa_type_name, "Unknown"),
-      rural_status      = coalesce(hpsa_rural_status_name, "Unknown")
-    ) |>
-    select(discipline, hpsa_id=hpsa_id, county_name, shortage_type,
-           rural_status, hpsa_score,
-           designation_date=hpsa_designation_date,
-           withdrawal_date=hpsa_withdrawal_date)
-}
-
-hrsa_nc <- bind_rows(
-  process_hrsa(hrsa_mh, "Mental health"),
-  process_hrsa(hrsa_pc, "Primary care")
-)
-hrsa_available <- !is.null(hrsa_nc) && nrow(hrsa_nc) > 0
-```
-
-```{r hrsa-county-bar, fig.width=11, fig.height=7, eval=hrsa_available}
-hrsa_county_summary <- hrsa_nc |>
-  group_by(county_name, discipline) |>
-  summarise(n_hpsa=n(), max_score=max(hpsa_score, na.rm=TRUE), .groups="drop")
-
-hrsa_county_summary |>
-  group_by(county_name) |>
-  mutate(total=sum(n_hpsa)) |> ungroup() |>
-  slice_max(total, n=40, with_ties=FALSE) |>
-  mutate(county_name=fct_reorder(county_name, total)) |>
-  ggplot(aes(x=n_hpsa, y=county_name, fill=discipline)) +
-  geom_col(position="stack", width=.72) +
-  scale_fill_manual(values=c("Mental health"=pal$purple, "Primary care"=pal$blue)) +
-  scale_x_continuous(labels=comma, expand=expansion(mult=c(0,.12))) +
-  labs(title="HRSA Shortage Area Designations by NC County (top 40)",
-       subtitle="Each row is one HPSA designation; a county may have several",
-       x="HPSA designations", y=NULL, fill="Discipline") +
-  theme(panel.grid.major.y=element_blank(), legend.position="top")
-```
-
-```{r hrsa-map, fig.width=11, fig.height=7, eval=hrsa_available && geo_available}
-hrsa_map_dat <- hrsa_nc |>
-  filter(discipline=="Mental health") |>
-  count(county_name, name="mh_hpsa_count") |>
-  mutate(county_name=str_squish(county_name))
-
-nc_map_hrsa <- nc_counties_sf |>
-  mutate(county_clean=str_remove(NAME," County| county")) |>
-  left_join(hrsa_map_dat, by=c("county_clean"="county_name"))
-
-ggplot(nc_map_hrsa) +
-  geom_sf(aes(fill=mh_hpsa_count), color="white", linewidth=.3) +
-  scale_fill_distiller(palette="Purples", direction=1,
-                       na.value="gray90", name="MH HPSA\ndesignations") +
-  labs(title="Mental Health HPSA Designations by NC County",
-       subtitle="Source: HRSA HPSA data. Gray = no current designation or county boundary mismatch.") +
-  theme_void() +
-  theme(plot.title=element_text(face="bold",size=14),
-        plot.subtitle=element_text(color=pal$gray))
-```
-
-```{r hrsa-table, eval=hrsa_available}
-hrsa_nc |>
-  arrange(discipline, desc(hpsa_score)) |>
-  DT::datatable(rownames=FALSE, filter="top",
-    options=list(pageLength=15, scrollX=TRUE, dom="Bfrtip",
-                 buttons=c("copy","csv")),
-    class="cell-border stripe hover")
-```
-
-```{r hrsa-unavailable, results='asis', eval=!hrsa_available}
-cat('<div class="callout callout-warning">HRSA data could not be downloaded.
-Check network access to <code>data.hrsa.gov</code> and re-render.</div>')
-```
-
-# 17. Local Health Outcomes: CDC PLACES
-
-CDC PLACES provides model-based estimates of health outcomes at county, place,
-tract, and ZCTA level. These are **modelled estimates**, not direct survey counts.
-
-<div class="data-source-box">
-**Source:** CDC PLACES 2025 release — County GIS-Friendly Format.
-**Access:** CDC Open Data Portal (Socrata API), dataset ID `i46a-9kgh`
-**Key measures used:** Frequent mental distress, depression prevalence
-**Cached to:** `data/cache/api/places_nc_county.rds`
-</div>
-
-```{r places-download}
-places_cache <- file.path(cache_dir, "api", "places_nc_county.rds")
-
-places_nc <- get_cached(places_cache, function() {
-  base_url <- "https://data.cdc.gov/resource/i46a-9kgh.csv"
-  query    <- "?StateDesc=North+Carolina&$limit=200"
-  tryCatch(
-    readr::read_csv(paste0(base_url, query), show_col_types=FALSE, progress=FALSE) |>
-      janitor::clean_names(),
-    error=function(e) { message("PLACES download failed: ", e$message); NULL }
-  )
-})
-
-places_available <- !is.null(places_nc) && nrow(places_nc) > 0
-
-if (places_available) {
-  # Select key mental-health-relevant measures
-  key_measures <- c("MHLTH","DEPRESSION","BINGE","CSMOKING","ACCESS2","BPHIGH")
-  places_long <- places_nc |>
-    select(county_name=locationname, any_of(str_to_lower(key_measures)),
-           matches("_crude(prev|value)")) |>
-    pivot_longer(-county_name, names_to="measure", values_to="value") |>
-    filter(!is.na(value), str_detect(measure, "crude"))
-}
-```
-
-```{r places-mental-bar, fig.width=11, fig.height=7, eval=places_available}
-# Mental distress or depression bar chart
-mhlth_col <- names(places_nc)[str_detect(str_to_lower(names(places_nc)), "mhlth") &
-                                str_detect(str_to_lower(names(places_nc)), "crude")][1]
-
-if (!is.na(mhlth_col)) {
-  places_nc |>
-    rename(mhlth_val=all_of(mhlth_col)) |>
-    mutate(mhlth_val=suppressWarnings(as.numeric(as.character(mhlth_val)))) |>
-    filter(!is.na(mhlth_val)) |>
-    slice_max(mhlth_val, n=20) |>
-    mutate(county_name=fct_reorder(county_name, mhlth_val)) |>
-    ggplot(aes(x=mhlth_val, y=county_name)) +
-    geom_col(fill=pal$purple, width=.72) +
-    geom_text(aes(label=paste0(round(mhlth_val,1),"%")), hjust=-.1, size=3.5) +
-    scale_x_continuous(expand=expansion(mult=c(0,.15))) +
-    labs(title="Top 20 NC Counties: Frequent Mental Distress Prevalence",
-         subtitle="CDC PLACES 2025 model-based estimate. These are smoothed estimates, not direct observations.",
-         x="% adults reporting frequent mental distress", y=NULL) +
-    theme(panel.grid.major.y=element_blank())
+```{r labeling-status}
+#| results: asis
+#| code-summary: "Labeling coverage"
+if (labels_ok) {
+  cat(sprintf("Labeled: **%s of %s** candidates; **%s** had a full announcement. Median model time per opportunity: %s seconds.\n",
+              n_fmt(sum(labels$labeled)), n_fmt(nrow(labels)), n_fmt(sum(labels$labeled & labels$has_nofo)),
+              round(median(labels$llm_seconds, na.rm = TRUE))))
 } else {
-  message("Mental distress column not found in PLACES data — check column names.")
+  cat('<div class="pending">Labeling has not finished; this section fills in when <code>data/processed/llm_labels.rds</code> exists.</div>')
 }
 ```
 
-```{r places-map, fig.width=11, fig.height=7, eval=places_available && geo_available && !is.na(mhlth_col)}
-places_map <- nc_counties_sf |>
-  left_join(places_nc |> rename(mhlth_val=all_of(mhlth_col)) |>
-              mutate(mhlth_val=suppressWarnings(as.numeric(as.character(mhlth_val)))) |>
-              select(locationname, mhlth_val),
-            by=c("NAME"="locationname"))
+**How we tightened the labeler.** The first full prompt (v2) was reviewed after
+`r if (file.exists(file.path(DIR_PROCESSED, "llm_labels_v2_partial.rds"))) nrow(readRDS(file.path(DIR_PROCESSED, "llm_labels_v2_partial.rds"))) else "some"`
+labels, before any hand labels existed. It was too generous: it rated most opportunities at least
+"partially" aligned with DHHS through generic objectives such as investing in partners' capacity,
+put wildfire and international programs into the preparedness domain, and marked nearly
+everything as something a state agency could run. Prompt v3 made the definitions strict (for
+example, "a link that rests only on general words such as capacity, partners, equity or
+disparities is none"; "work outside the United States is not administrable") and was checked on
+twelve known cases before the full run. The same opportunities, labeled by both versions:
 
-ggplot(places_map) +
-  geom_sf(aes(fill=mhlth_val), color="white", linewidth=.3) +
-  scale_fill_distiller(palette="Purples", direction=1,
-                       na.value="gray90", name="% frequent\nmental distress") +
-  labs(title="Frequent Mental Distress Prevalence by NC County",
-       subtitle="Source: CDC PLACES 2025. Model-based estimate.") +
-  theme_void() +
-  theme(plot.title=element_text(face="bold",size=14),
-        plot.subtitle=element_text(color=pal$gray))
+```{r prompt-iteration}
+#| code-summary: "Prompt v2 vs v3 on the same opportunities"
+v2_path <- file.path(DIR_PROCESSED, "llm_labels_v2_partial.rds")
+if (labels_ok && file.exists(v2_path)) {
+  v2 <- readRDS(v2_path) |> filter(labeled)
+  both <- inner_join(v2, filter(labels, labeled), by = "opportunity_number", suffix = c("_v2", "_v3"))
+  rate <- function(x) pct_fmt(mean(x, na.rm = TRUE))
+  tibble(
+    measure = c("Rated at least partially aligned with DHHS", "Judged administrable by a state agency",
+                "Placed in the preparedness / disaster domain (D08)", "Placed in no domain",
+                "Formal evaluation required", "Match required (with a quoted source)"),
+    `prompt v2` = c(rate(both$llm_align_dhhs_v2 %in% c("strong", "partial")), rate(both$llm_administrable_v2),
+                    rate(both$llm_domain_v2 == "D08"), rate(both$llm_domain_v2 == "none"),
+                    rate(both$llm_evaluation_v2), rate(both$llm_match_required_v2 %in% TRUE)),
+    `prompt v3` = c(rate(both$llm_align_dhhs_v3 %in% c("strong", "partial")), rate(both$llm_administrable_v3),
+                    rate(both$llm_domain_v3 == "D08"), rate(both$llm_domain_v3 == "none"),
+                    rate(both$llm_evaluation_v3), rate(both$llm_match_required_v3))
+  ) |> dt(dom = "t")
+} else HTML('<div class="pending">Fills in when the v3 labels exist.</div>')
 ```
 
-```{r places-unavailable, results='asis', eval=!places_available}
-cat('<div class="callout callout-warning">CDC PLACES data could not be downloaded.
-Check network access to <code>data.cdc.gov</code> and re-render.</div>')
-```
-
-# 18. Disaster Exposure: FEMA Declarations
-
-Federal disaster declarations identify counties with accumulated disaster exposure.
-Hurricane Helene (2024) and other recent events directly affect the disaster-recovery
-program domain.
-
-<div class="data-source-box">
-**Source:** FEMA OpenFEMA Disaster Declarations Summaries v2.
-**Access:** `https://www.fema.gov/api/open/v2/disasterDeclarationsSummaries`
-**Scope:** North Carolina, declarations since 2000
-**Cached to:** `data/cache/api/fema_nc.rds`
-</div>
-
-```{r fema-download}
-fema_cache <- file.path(cache_dir, "api", "fema_nc.rds")
-
-fema_nc <- get_cached(fema_cache, function() {
-  url <- paste0(
-    "https://www.fema.gov/api/open/v2/disasterDeclarationsSummaries",
-    "?$filter=state%20eq%20'NC'%20and%20declarationDate%20ge%20'2000-01-01'",
-    "&$orderby=declarationDate%20desc&$format=json&$top=2000"
-  )
-  resp <- tryCatch(
-    httr2::request(url) |>
-      httr2::req_timeout(30) |>
-      httr2::req_error(is_error=function(r) FALSE) |>
-      httr2::req_perform(),
-    error=function(e) { message("FEMA request failed: ", e$message); NULL }
-  )
-  if (is.null(resp) || httr2::resp_status(resp) != 200) return(NULL)
-
-  parsed <- httr2::resp_body_json(resp, simplifyVector=TRUE)
-  if (is.null(parsed[["DisasterDeclarationsSummaries"]])) return(NULL)
-
-  as_tibble(parsed[["DisasterDeclarationsSummaries"]]) |>
-    janitor::clean_names() |>
-    mutate(declaration_date=parse_date_safe(declaration_date),
-           decl_year=year(declaration_date))
-})
-
-fema_available <- !is.null(fema_nc) && nrow(fema_nc) > 0
-```
-
-```{r fema-by-year, fig.width=11, fig.height=6, eval=fema_available}
-fema_nc |>
-  filter(!is.na(decl_year), decl_year >= 2000) |>
-  count(decl_year, declaration_type) |>
-  ggplot(aes(x=decl_year, y=n, fill=declaration_type)) +
-  geom_col(width=.8, position="stack") +
-  scale_fill_manual(values=c(DR=pal$red, EM=pal$orange, FM=pal$blue),
-                    na.value=pal$gray) +
-  scale_x_continuous(breaks=seq(2000,2030,2)) +
-  scale_y_continuous(labels=comma, expand=expansion(mult=c(0,.12))) +
-  labs(title="Federal Disaster Declarations in NC by Year",
-       subtitle="DR = Major Disaster; EM = Emergency; FM = Fire Management",
-       x=NULL, y="Declarations", fill="Type") +
-  theme(panel.grid.major.x=element_blank(), legend.position="top",
-        axis.text.x=element_text(angle=35, hjust=1))
-```
-
-```{r fema-county-map, fig.width=11, fig.height=7, eval=fema_available && geo_available}
-fema_county <- fema_nc |>
-  filter(declaration_type=="DR", !is.na(decl_year), decl_year >= 2015,
-         !is.na(designated_area)) |>
-  mutate(county_clean=str_remove(designated_area," \\(County\\)| County| county")) |>
-  count(county_clean, name="dr_count")
-
-nc_fema_map <- nc_counties_sf |>
-  left_join(fema_county, by=c("NAME"="county_clean"))
-
-ggplot(nc_fema_map) +
-  geom_sf(aes(fill=dr_count), color="white", linewidth=.3) +
-  scale_fill_distiller(palette="OrRd", direction=1,
-                       na.value="gray90", name="Major disaster\ndeclarations\n(2015-present)") +
-  labs(title="NC County Major Disaster Declarations (2015-present)",
-       subtitle="Source: FEMA OpenFEMA v2. Includes Hurricane Helene 2024 and prior events.") +
-  theme_void() +
-  theme(plot.title=element_text(face="bold",size=14),
-        plot.subtitle=element_text(color=pal$gray))
-```
-
-```{r fema-recent-table, eval=fema_available}
-fema_nc |>
-  filter(!is.na(decl_year)) |>
-  arrange(desc(declaration_date)) |>
-  slice_head(n=50) |>
-  select(disaster_number, declaration_date, declaration_type,
-         incident_type, designated_area, fy_declared=fy_declared) |>
-  DT::datatable(rownames=FALSE, filter="top",
-    options=list(pageLength=15, scrollX=TRUE, dom="Bfrtip",
-                 buttons=c("copy","csv")),
-    class="cell-border stripe hover")
-```
-
-```{r fema-unavailable, results='asis', eval=!fema_available}
-cat('<div class="callout callout-warning">FEMA data could not be downloaded.
-Check network access to <code>www.fema.gov</code> and re-render.</div>')
-```
-
-# 19. Federal Award History: USAspending Peer-State Comparison
-
-For each CFDA program appearing in the grants snapshot, this section queries
-USAspending to find which states have received awards in the last five years.
-Programs where peer states (GA, VA, SC, TN) received funding but North Carolina
-did not are the highest-priority gap candidates.
-
-**Important caveat:** Award history reflects past applications, not eligibility.
-A gap may mean NC never applied, applied unsuccessfully, or is ineligible by
-practice but not by rule. Treat gaps as conversation starters, not proof of
-missed money.
-
-<div class="data-source-box">
-**Source:** USAspending.gov API v2 — `spending_by_geography` endpoint.
-**Access:** No authentication required.
-**Scope:** Top 30 CFDAs by frequency in grants snapshot; FY2021-2025; grants and cooperative agreements.
-**Cached to:** `data/cache/api/usa_cfda_*.rds`
-</div>
-
-```{r usaspending-download}
-# Extract top CFDAs from grants snapshot
-top_cfdas <- grants |>
-  filter(!is.na(opportunity_assistance_listings),
-         str_squish(opportunity_assistance_listings) != "") |>
-  separate_rows(opportunity_assistance_listings, sep="\\s*;\\s*") |>
-  mutate(cfda=str_extract(str_squish(opportunity_assistance_listings),
-                           "^[0-9]+\\.[0-9]+")) |>
-  filter(!is.na(cfda)) |>
-  count(cfda, sort=TRUE) |>
-  slice_head(n=30)
-
-# Fetch spending by state for one CFDA
-fetch_cfda_states <- function(cfda_num) {
-  cache_path <- file.path(cache_dir, "api",
-                           paste0("usa_", gsub("\\.","_",cfda_num), ".rds"))
-  get_cached(cache_path, function() {
-    body <- list(
-      scope="place_of_performance", geo_layer="state",
-      filters=list(
-        award_type_codes=list("02","03","04","05"),
-        time_period=list(list(start_date="2021-01-01", end_date="2025-12-31")),
-        program_numbers=list(cfda_num)))
-    resp <- tryCatch(
-      httr2::request("https://api.usaspending.gov/api/v2/search/spending_by_geography/") |>
-        httr2::req_body_json(body) |>
-        httr2::req_timeout(25) |>
-        httr2::req_error(is_error=function(r) FALSE) |>
-        httr2::req_perform(),
-      error=function(e) NULL)
-    if (is.null(resp) || httr2::resp_status(resp) != 200) return(NULL)
-    parsed <- httr2::resp_body_json(resp, simplifyVector=TRUE)
-    if (is.null(parsed$results) || length(parsed$results)==0) return(NULL)
-    as_tibble(parsed$results) |>
-      transmute(cfda=cfda_num,
-                state_code=shape_code,
-                state_name=display_name,
-                total_awards=aggregated_amount)
-  })
-}
-
-# Fetch with a small delay between calls to respect rate limits
-usa_results <- purrr::map(top_cfdas$cfda, function(c) {
-  Sys.sleep(.25)
-  fetch_cfda_states(c)
-})
-
-usa_df <- bind_rows(Filter(Negate(is.null), usa_results))
-usa_available <- nrow(usa_df) > 0
-```
-
-```{r usaspending-gap-analysis, eval=usa_available}
-focus_states <- c("NC","GA","VA","SC","TN")
-
-usa_pivot <- usa_df |>
-  filter(state_code %in% focus_states) |>
-  mutate(received=total_awards > 0) |>
-  select(cfda, state_code, received) |>
-  pivot_wider(names_from=state_code, values_from=received, values_fill=FALSE)
-
-# Gaps: peer received, NC did not
-nc_gaps <- usa_pivot |>
-  filter(!coalesce(NC, FALSE)) |>
-  rowwise() |>
-  mutate(n_peers_received=sum(c_across(any_of(c("GA","VA","SC","TN"))), na.rm=TRUE)) |>
-  ungroup() |>
-  filter(n_peers_received >= 1) |>
-  arrange(desc(n_peers_received)) |>
-  left_join(top_cfdas, by="cfda") |>
-  rename(snapshot_count=n)
-```
-
-```{r usaspending-heatmap, fig.width=11, fig.height=8, eval=usa_available}
-heat_dat <- usa_df |>
-  filter(state_code %in% focus_states) |>
-  mutate(
-    has_awards=if_else(total_awards > 0, "Received", "Not received"),
-    cfda=factor(cfda, levels=rev(sort(unique(cfda))))
-  )
-
-ggplot(heat_dat, aes(x=state_code, y=cfda, fill=has_awards)) +
-  geom_tile(color="white", linewidth=.4) +
-  scale_fill_manual(values=c("Received"=pal$green, "Not received"=pal$light),
-                    na.value=pal$light) +
-  labs(title="Federal Award Receipt by State and CFDA Program (FY 2021-2025)",
-       subtitle="Green = at least one award received. Top 30 CFDAs by frequency in snapshot.",
-       x="State", y="CFDA number", fill=NULL) +
-  theme(panel.grid=element_blank(), legend.position="top",
-        axis.text.y=element_text(size=8))
-```
-
-```{r usaspending-gap-table, eval=usa_available && nrow(nc_gaps) > 0}
-nc_gaps |>
-  select(cfda, n_peers_received, GA, VA, SC, TN, snapshot_count) |>
-  mutate(across(c(GA,VA,SC,TN), ~ if_else(.x, "Yes", "No"))) |>
-  DT::datatable(rownames=FALSE, filter="top",
-    colnames=c("CFDA","Peer states w/ award","GA","VA","SC","TN","In snapshot"),
-    options=list(pageLength=15, dom="Bfrtip", buttons=c("copy","csv")),
-    class="cell-border stripe hover")
-```
-
-```{r usaspending-unavailable, results='asis', eval=!usa_available}
-cat('<div class="callout callout-warning">USAspending data could not be retrieved.
-Check network access to <code>api.usaspending.gov</code> and re-render.
-Individual CFDA results are cached once retrieved.</div>')
-```
-
-# 20. Behavioral Health Capacity: SAMHSA Facilities
-
-SAMHSA's N-SUMHSS survey provides facility-level counts of substance-use and
-mental-health treatment capacity. Missing facilities in this dataset should not be
-interpreted as proof that no services exist — survey participation is voluntary.
-
-<div class="data-source-box">
-**Source:** SAMHSA National Survey of Substance Abuse Treatment Services (N-SUMHSS / NSSATS).
-**Download:** Visit `samhsa.gov/data` > N-SUMHSS > Download most recent public-use file.
-**Expected local path:** `data/raw/samhsa/nsumhss-latest.csv`
-**Note:** No unauthenticated public bulk download API exists. File must be downloaded manually.
-</div>
-
-```{r samhsa-load}
-samhsa_paths <- c(
-  file.path(data_dir, "raw", "samhsa", "nsumhss-latest.csv"),
-  file.path(data_dir, "raw", "samhsa", "nsumhss-2023.csv"),
-  file.path(data_dir, "raw", "samhsa", "nsumhss-2022.csv")
-)
-
-samhsa_file <- Filter(file.exists, samhsa_paths)[1]
-samhsa_available <- !is.na(samhsa_file) && length(samhsa_file) > 0
-
-samhsa_nc <- if (samhsa_available) {
-  tryCatch(
-    readr::read_csv(samhsa_file, show_col_types=FALSE) |>
-      janitor::clean_names() |>
-      filter(str_to_upper(coalesce(state,"")) == "NC"),
-    error=function(e) { samhsa_available <<- FALSE; NULL }
-  )
-} else NULL
-```
-
-```{r samhsa-bar, fig.width=11, fig.height=7, eval=samhsa_available && !is.null(samhsa_nc) && nrow(samhsa_nc)>0}
-county_col <- names(samhsa_nc)[str_detect(str_to_lower(names(samhsa_nc)), "county")][1]
-if (!is.na(county_col)) {
-  samhsa_nc |>
-    rename(county=all_of(county_col)) |>
-    count(county, sort=TRUE) |>
-    slice_head(n=20) |>
-    mutate(county=fct_reorder(county,n)) |>
-    ggplot(aes(x=n, y=county)) +
-    geom_col(fill=pal$purple, width=.72) +
-    geom_text(aes(label=comma(n)), hjust=-.1, size=3.5) +
-    scale_x_continuous(labels=comma, expand=expansion(mult=c(0,.14))) +
-    labs(title="SAMHSA Treatment Facilities by NC County (top 20)",
-         subtitle="Source: SAMHSA N-SUMHSS. Survey-based; absence does not equal no service.",
-         x="Facilities in dataset", y=NULL) +
-    theme(panel.grid.major.y=element_blank())
+```{r prompt-iteration-examples}
+#| code-summary: "Examples where v3 withdrew DHHS alignment"
+if (labels_ok && file.exists(v2_path)) {
+  both |> filter(llm_align_dhhs_v2 %in% c("strong", "partial"), llm_align_dhhs_v3 == "none") |>
+    left_join(titles, by = "opportunity_number") |>
+    transmute(opportunity = opportunity_title, agency = agency_code,
+              `v2 alignment` = llm_align_dhhs_v2, `v2 reason` = llm_align_dhhs_why_v2,
+              `v3 administrable` = llm_administrable_v3, `v3 domain` = llm_domain_v3) |>
+    dt(pageLength = 8)
 }
 ```
 
-```{r samhsa-unavailable, results='asis', eval=!samhsa_available}
-cat('<div class="callout callout-warning">
-SAMHSA N-SUMHSS file not found at any of the expected paths:
-<code>data/raw/samhsa/nsumhss-latest.csv</code><br>
-Download the most recent public-use file from
-<a href="https://www.samhsa.gov/data/data-we-collect/n-sumhss-national-substance-use-and-mental-health-services-survey/datafiles" target="_blank">samhsa.gov/data</a>
-and save it to that path, then re-render.
-</div>')
+```{r prompt-iteration-chart}
+#| fig-height: 3.6
+#| code-summary: "Prompt v2 vs v3.1, chart"
+if (labels_ok && file.exists(v2_path)) {
+  tibble(measure = c("Aligned with DHHS (partial or strong)", "Administrable by a state agency", "Preparedness / disaster domain", "Formal evaluation required"),
+         v2 = c(mean(both$llm_align_dhhs_v2 %in% c("strong", "partial")), mean(both$llm_administrable_v2), mean(both$llm_domain_v2 == "D08"), mean(both$llm_evaluation_v2)),
+         v3 = c(mean(both$llm_align_dhhs_v3 %in% c("strong", "partial")), mean(both$llm_administrable_v3), mean(both$llm_domain_v3 == "D08"), mean(both$llm_evaluation_v3))) |>
+    pivot_longer(c(v2, v3), names_to = "prompt", values_to = "share") |>
+    mutate(prompt = if_else(prompt == "v2", "Prompt v2", "Prompt v3.1")) |>
+    ggplot(aes(share, str_wrap(measure, 30), fill = prompt)) +
+    geom_col(position = position_dodge(width = .75), width = .7) +
+    scale_fill_manual(values = c("Prompt v2" = "#C9D6E3", "Prompt v3.1" = pal$blue), name = NULL) +
+    scale_x_continuous(labels = percent, limits = c(0, 1)) +
+    labs(title = "Tightening the prompt cut over-generous labels",
+         subtitle = paste0("Same ", nrow(both), " opportunities labeled by both versions"), x = "Share of opportunities", y = NULL) +
+    theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
+}
 ```
 
-# 21. Overdose Mortality: CDC WONDER
+Two caveats. The v2 labels were scored against DHHS's 2024-2026 plan before we switched to the
+plan the competition provides, so plan-row citations differ between versions; the alignment
+*levels* are still comparable. And v3 still misses some research networks that do not use
+activity codes like R01; the hand-label comparison below measures how often.
 
-County-level drug overdose death rates require a manual query from CDC WONDER
-because the system does not expose a public REST API. Small-county values are
-suppressed by NCHS and must remain missing — do not recode suppressed values as zero.
+**The prompt.** The full labeling prompt is generated by `prompt_prefix()` and `build_prompt()`
+in `src/R/03_llm_label.R`; the text below is produced from that code on every render, so it is
+exactly what the model received. The fixed part (instructions, definitions, both strategic plans)
+comes first; the opportunity's own text is appended at the end.
 
-<div class="data-source-box">
-**Source:** CDC WONDER Underlying Cause of Death (ICD-10 codes X40-X44, X60-X64, X85, Y10-Y14).
-**Download:** `wonder.cdc.gov` — Underlying Cause of Death 1999-2022 (or current year), group by county, NC only.
-**Expected local path:** `data/raw/cdc_wonder/overdose-mortality-county.txt` or `.csv`
-**Note:** CDC WONDER does not have a public REST API. Export the query result as a text file.
-</div>
-
-```{r wonder-load}
-wonder_paths <- c(
-  file.path(data_dir, "raw", "cdc_wonder", "overdose-mortality-county.txt"),
-  file.path(data_dir, "raw", "cdc_wonder", "overdose-mortality-county.csv")
-)
-wonder_file     <- Filter(file.exists, wonder_paths)[1]
-wonder_available <- !is.na(wonder_file) && length(wonder_file) > 0
-
-wonder_nc <- if (wonder_available) {
-  tryCatch({
-    raw <- readr::read_tsv(wonder_file[1], show_col_types=FALSE, comment="---") |>
-      janitor::clean_names()
-    # Normalize column names across WONDER export variants
-    if (!"county" %in% names(raw) && "county_1" %in% names(raw))
-      raw <- rename(raw, county=county_1)
-    raw |>
-      filter(!is.na(county), county != "Total") |>
-      mutate(
-        county_name = str_remove(county, ", NC$|, North Carolina$"),
-        deaths       = suppressWarnings(as.numeric(deaths)),
-        crude_rate   = suppressWarnings(as.numeric(crude_rate))
-      )
-  }, error=function(e) { wonder_available <<- FALSE; NULL })
-} else NULL
+```{r show-prompt}
+#| code-summary: "Print the prompt and the output schema"
+#| class-output: "prompt-text"
+pr_align <- alignable_priorities()
+example <- label_set(grants) |> filter(opportunity_number == "PA-FPH-27-001")
+example_nofo <- enrich$nofo$nofo_text[enrich$nofo$opportunity_number == "PA-FPH-27-001"]
+prompt_text <- build_prompt(example, nofo_excerpt(if (length(example_nofo)) example_nofo else NA_character_), pr_align)
+cat(str_trunc(prompt_text, 9000, side = "center", ellipsis = "\n[... middle of the example opportunity's text omitted here ...]\n"))
 ```
 
-```{r wonder-map, fig.width=11, fig.height=7, eval=wonder_available && geo_available && !is.null(wonder_nc)}
-wonder_map_dat <- nc_counties_sf |>
-  left_join(wonder_nc |> select(county_name, crude_rate),
-            by=c("NAME"="county_name"))
+<details><summary>Output schema the model must match (JSON Schema)</summary>
 
-ggplot(wonder_map_dat) +
-  geom_sf(aes(fill=crude_rate), color="white", linewidth=.3) +
-  scale_fill_distiller(palette="Reds", direction=1,
-                       na.value="gray90",
-                       name="Crude rate\nper 100k") +
-  labs(title="Drug Overdose Mortality Rate by NC County",
-       subtitle="Source: CDC WONDER. Gray = suppressed (<10 deaths) or data not matched.") +
+```{r show-schema}
+#| echo: false
+cat(jsonlite::toJSON(label_schema(pr_align), auto_unbox = TRUE, pretty = TRUE))
+```
+
+</details>
+
+**Validation against hand labels.** Sixty candidates were drawn at random, stratified by
+status, issuing agency family, and whether a full announcement exists, and labeled by team
+members who had not seen the model's answers.
+
+```{r validation}
+#| results: asis
+#| code-summary: "Accuracy, precision and recall"
+if (is.null(validation)) {
+  cat('<div class="pending">Waiting for <code>data/manual/handlabels_60.csv</code>. The comparison runs automatically once it exists.</div>')
+} else {
+  print(htmltools::tagList(
+    dt(validation$summary |> mutate(accuracy = pct_fmt(accuracy)), dom = "t", pageLength = 20),
+    dt(validation$capabilities |> mutate(across(c(precision, recall), pct_fmt)), dom = "t"),
+    dt(validation$by_class |> mutate(across(c(precision, recall), ~ ifelse(is.na(.x), "n/a", pct_fmt(.x)))), pageLength = 15)
+  ))
+}
+```
+
+```{r confusion-heatmaps}
+#| fig-height: 3.8
+#| code-summary: "Where the model and the team disagree"
+if (!is.null(validation)) {
+  map_dfr(c("administrable", "DHHS alignment"), function(f) {
+    as.data.frame(validation$confusion[[f]], stringsAsFactors = FALSE) |>
+      mutate(field = if (f == "administrable") "Administrable by a state agency" else "DHHS alignment")
+  }) |>
+    mutate(across(c(human, model), ~ str_to_sentence(.x))) |>
+    group_by(field) |> mutate(share = Freq / sum(Freq)) |> ungroup() |>
+    ggplot(aes(model, human, fill = Freq)) +
+    geom_tile(color = "white", linewidth = 1) +
+    geom_text(aes(label = Freq, color = Freq > max(Freq) / 2), size = 4, show.legend = FALSE) +
+    scale_color_manual(values = c(`TRUE` = "white", `FALSE` = pal$dark)) +
+    scale_fill_gradient(low = "#EEF4FA", high = pal$blue, guide = "none") +
+    facet_wrap(~ field, scales = "free") +
+    labs(title = "Where the model and the team disagree",
+         subtitle = "Rows: team's hand label. Columns: model. The diagonal is agreement.", x = "Model", y = "Team") +
+    theme(panel.grid = element_blank(), strip.text = element_text(face = "bold", hjust = 0))
+}
+```
+
+```{r error-examples}
+#| results: asis
+#| code-summary: "Where the model disagreed with the humans"
+if (!is.null(validation) && nrow(validation$disagreements) > 0) {
+  hl_notes <- handlabels |> select(opportunity_number, team_notes = notes)
+  validation$disagreements |>
+    filter(field %in% c("administrable", "DHHS alignment", "match required", "domain")) |>
+    left_join(select(grants, opportunity_number, opportunity_title, summary_text), by = "opportunity_number") |>
+    left_join(select(labels, opportunity_number, llm_administrable_evidence, llm_align_dhhs_why, llm_match_evidence), by = "opportunity_number") |>
+    left_join(hl_notes, by = "opportunity_number") |>
+    transmute(field, opportunity = opportunity_title, team = human, model,
+              `model's own evidence or reason` = case_when(
+                field == "administrable" ~ llm_administrable_evidence,
+                field == "DHHS alignment" ~ llm_align_dhhs_why,
+                field == "match required" ~ llm_match_evidence, TRUE ~ ""),
+              `team notes` = coalesce(team_notes, ""),
+              abstract = str_trunc(summary_text, 350)) |>
+    dt(pageLength = 6) |> print()
+} else {
+  cat('<div class="pending">Disagreement examples appear here once hand labels exist. We quote real errors only.</div>')
+}
+```
+
+```{r validation-caveats}
+#| results: asis
+#| code-summary: "Caveats on the comparison"
+if (!is.null(validation)) {
+  dev <- readr::read_csv(file.path(DIR_MANUAL, "prompt_dev_cases.csv"), show_col_types = FALSE)
+  dev_ids <- grants$opportunity_number[map_lgl(grants$opportunity_title, function(t) any(str_detect(t, fixed(dev$title_contains))))]
+  overlap <- intersect(dev_ids, handlabels$opportunity_number)
+  cat(sprintf("- **Tuning overlap.** Prompt v3.1 was checked against %d development cases chosen before the hand labels existed. %d of them are also in the 60-row hand-label sample%s. Their agreement could be slightly flattering; the rest of the sample was never used for tuning.\n",
+              nrow(dev), length(overlap), if (length(overlap)) paste0(" (", paste(overlap, collapse = ", "), ")") else ""))
+  if (length(validation$not_comparable))
+    cat(sprintf("- **Not comparable:** %s. The team described these in free text rather than choosing from the model's fixed categories, so agreement cannot be scored automatically.\n",
+                paste(validation$not_comparable, collapse = ", ")))
+  if (nrow(validation$out_of_taxonomy))
+    cat(sprintf("- **Outside the taxonomy:** %d hand labels use a domain that is not one of the eight (%s). The model cannot choose it, so these count as disagreements.\n",
+                nrow(validation$out_of_taxonomy), paste(unique(validation$out_of_taxonomy$human), collapse = "; ")))
+}
+```
+
+```{r match-disagreements}
+#| results: asis
+#| code-summary: "Check the match disagreements against the source text"
+if (!is.null(validation)) {
+  md <- validation$disagreements |> filter(field == "match required") |>
+    left_join(select(grants, opportunity_number, is_cost_sharing, summary_text), by = "opportunity_number") |>
+    left_join(select(labels, opportunity_number, llm_match_evidence), by = "opportunity_number") |>
+    left_join(select(enrich$nofo, opportunity_number, nofo_text), by = "opportunity_number") |>
+    mutate(quote_in_text = map2_lgl(llm_match_evidence, paste(summary_text, coalesce(nofo_text, "")), function(ev, hay)
+             nzchar(coalesce(ev, "")) && str_detect(str_squish(str_to_lower(hay)), fixed(str_sub(str_squish(str_to_lower(ev)), 1, 60)))))
+  backed <- sum(md$model == "TRUE" & md$is_cost_sharing & md$quote_in_text)
+  cat(sprintf("**Not every disagreement is a model error.** Of the %d disagreements on whether match is required, %d have the model saying *required* where the structured data's own cost-sharing flag also says required and the model's quote appears word for word in the announcement (for example: \"%s\"). Those are hand-label slips, not model errors; we report the raw agreement and leave the team's labels as written.\n",
+              nrow(md), backed, if (backed) md$llm_match_evidence[which(md$model == "TRUE" & md$is_cost_sharing & md$quote_in_text)[1]] else ""))
+}
+```
+
+```{r title-x-example}
+#| results: asis
+#| echo: false
+tx <- if (labels_ok) filter(labels, opportunity_number == "PA-FPH-27-001") else NULL
+if (!is.null(tx) && nrow(tx) && isTRUE(tx$llm_match_required) && !isTRUE(grants$is_cost_sharing[grants$opportunity_number == "PA-FPH-27-001"])) {
+  cat("One catch that needs no hand label: the Title X Family Planning Services opportunity is marked as having no cost sharing in the structured data, yet the labeler quoted its full announcement: \"", tx$llm_match_evidence, "\" The tool treats it as a match requirement.\n", sep = "")
+}
+```
+
+# 13. County need layers
+
+Almost every opportunity here is statewide, so joining county data straight to opportunities
+would give a near-constant column. Instead, county data describe **program domains**: each
+domain's need index is a county's average percentile rank across that domain's indicators, and
+an opportunity inherits its domain's map. The tool shows these with a boundary overlay for
+counties, congressional districts, census tracts, and places.
+
+```{r need-maps}
+#| fig-height: 8.5
+#| fig-width: 9
+#| code-summary: "Need index by domain"
+ci <- build_county_indicators()
+need <- build_domain_need(ci)
+counties <- readRDS(file.path(DIR_CACHE_GEO, "nc_county_2023.rds"))
+need_long <- imap_dfr(need, function(d, id) if (!isTRUE(d$available)) NULL else
+  tibble(fips = names(d$index), index = unlist(d$index), domain = DOMAINS[[id]]))
+counties |> select(GEOID) |> inner_join(need_long, by = c("GEOID" = "fips")) |>
+  ggplot() + geom_sf(aes(fill = index), color = "white", linewidth = .1) +
+  scale_fill_gradient(low = "#cde2fb", high = "#0d366b", labels = percent, name = "Need\npercentile") +
+  facet_wrap(~ str_wrap(domain, 40), ncol = 2) +
+  labs(title = "Relative need by program domain, NC counties",
+       caption = str_wrap(paste0("Indicators: CDC PLACES, ACS 2023 5-year, HRSA HPSA designations, OpenFEMA declarations, NCHS model-based drug poisoning death rates (",
+                        min(OVERDOSE_YEARS), "-", max(OVERDOSE_YEARS), "). Color is each county's average percentile rank across its domain's indicators."), 110)) +
   theme_void() +
-  theme(plot.title=element_text(face="bold",size=14),
-        plot.subtitle=element_text(color=pal$gray))
+  theme(strip.text = element_text(face = "bold", size = 9, margin = margin(b = 4)),
+        plot.title = element_text(face = "bold", size = 14, margin = margin(b = 10)),
+        plot.title.position = "plot", plot.caption.position = "plot",
+        plot.caption = element_text(hjust = 0, color = pal$gray, size = 8.5, margin = margin(t = 10)),
+        panel.spacing = unit(10, "pt"), plot.margin = margin(8, 8, 8, 8))
 ```
 
-```{r wonder-bar, fig.width=11, fig.height=7, eval=wonder_available && !is.null(wonder_nc)}
-wonder_nc |>
-  filter(!is.na(crude_rate)) |>
-  slice_max(crude_rate, n=20) |>
-  mutate(county_name=fct_reorder(county_name, crude_rate)) |>
-  ggplot(aes(x=crude_rate, y=county_name)) +
-  geom_col(fill=pal$red, width=.72) +
-  geom_text(aes(label=round(crude_rate,1)), hjust=-.1, size=3.5) +
-  scale_x_continuous(expand=expansion(mult=c(0,.14))) +
-  labs(title="Top 20 NC Counties by Drug Overdose Crude Mortality Rate",
-       subtitle="Source: CDC WONDER. Suppressed counties (< 10 deaths) excluded.",
-       x="Crude rate per 100,000", y=NULL) +
-  theme(panel.grid.major.y=element_blank())
+```{r need-indicators}
+#| code-summary: "Indicators behind each domain"
+imap_dfr(domain_indicators(), ~ tibble(domain = DOMAINS[[.y]], indicator = unname(.x))) |> dt(pageLength = 20)
 ```
 
-```{r wonder-unavailable, results='asis', eval=!wonder_available}
-cat('<div class="callout callout-warning">
-CDC WONDER file not found. CDC WONDER does not expose a public API.<br>
-<strong>To download:</strong>
-<ol>
-<li>Go to <a href="https://wonder.cdc.gov" target="_blank">wonder.cdc.gov</a></li>
-<li>Select <em>Underlying Cause of Death 1999-2020</em></li>
-<li>Group by: State (NC only), County</li>
-<li>ICD-10 codes: X40-X44, X60-X64, X85, Y10-Y14</li>
-<li>Export as Tab-delimited text and save to <code>data/raw/cdc_wonder/overdose-mortality-county.txt</code></li>
-</ol>
-</div>')
+```{r overdose-map}
+#| fig-height: 4
+#| fig-width: 9
+#| code-summary: "Drug poisoning death rates by county"
+counties |> select(GEOID) |> left_join(select(ci, fips, overdose_rate), by = c("GEOID" = "fips")) |>
+  ggplot() + geom_sf(aes(fill = overdose_rate), color = "white", linewidth = .15) +
+  scale_fill_gradient(low = "#cde2fb", high = "#0d366b", name = "Deaths per\n100,000") +
+  labs(title = "Overdose deaths concentrate in the mountains and along the coast",
+       subtitle = paste0("Drug poisoning death rate, ", min(OVERDOSE_YEARS), "-", max(OVERDOSE_YEARS), " average (NCHS model-based county estimates)")) +
+  theme_void() +
+  theme(plot.title = element_text(face = "bold", size = 13, margin = margin(b = 4)), plot.subtitle = element_text(color = pal$gray, margin = margin(b = 8)),
+        plot.title.position = "plot", plot.margin = margin(8, 8, 8, 8))
+```
+
+```{r need-correlation}
+#| fig-height: 5.4
+#| fig-width: 7
+#| code-summary: "Do the need layers point to the same counties?"
+nm <- need_long |> mutate(domain = str_wrap(domain, 24)) |> pivot_wider(names_from = domain, values_from = index)
+cm <- cor(select(nm, -fips), use = "pairwise.complete.obs")
+as.data.frame(as.table(cm)) |>
+  ggplot(aes(Var1, Var2, fill = Freq)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = sprintf("%.1f", Freq)), size = 3) +
+  scale_fill_gradient2(low = pal$red, mid = "#f5f5f3", high = pal$blue, midpoint = 0, limits = c(-1, 1), name = "Correlation") +
+  labs(title = "Most need layers point to the same counties; overdose does not",
+       subtitle = str_wrap("Correlation of county need indices between domains. Overdose need runs opposite to the poverty-driven layers, and behavioral health is largely independent, so one 'high-need county' list would mislead.", 80),
+       x = NULL, y = NULL) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8), axis.text.y = element_text(size = 8), panel.grid = element_blank())
+```
+
+# 14. The tool
+
+The same file judges would open by double-click, embedded here. It recomputes every tier in the
+browser as settings change.
+
+```{r embed-tool}
+#| code-summary: "Embed outs/grant-triage-tool.html"
+if (file.exists(TOOL_HTML_OUT)) {
+  tags$iframe(srcdoc = paste(readLines(TOOL_HTML_OUT, warn = FALSE, encoding = "UTF-8"), collapse = "\n"),
+              style = "width:100%; height:1100px; border:1px solid #E4E7EC; border-radius:8px;",
+              title = "NC Grant Triage tool")
+} else {
+  HTML('<div class="pending">Build the tool first: <code>Rscript src/tool/build_tool.R</code></div>')
+}
+```
+
+## Top results
+
+The competition asks for a top results list with a one-line rationale per opportunity tied to the
+match criteria. This is it: every opportunity in Tiers 1-3 of the tool's opening scenario (the
+interview persona: about a month of runway, supervisor approves match, one FTE, forecasts
+included), for DHHS and DMVA, ordered by tier and then by impact score with equal weights. Each
+line walks the five criteria in order: can we apply, do we have the capabilities, is there runway,
+what is the award, is the match survivable. Tier 4 (partner-led research) is excluded here; it is
+in the tool. Also saved as `outs/top_results.xlsx`.
+
+```{r top-results}
+#| code-summary: "Top results list (computed by tiering.js)"
+top_results <- bind_rows(build_top_results(payload, "DHHS"), build_top_results(payload, "DMVA"))
+top_results |>
+  transmute(agency, tier, impact = impact_score, opportunity = title, deadline, rationale) |>
+  dt(pageLength = 25)
+```
+
+`r nrow(filter(top_results, agency == "DHHS"))` opportunities make the DHHS list:
+`r sum(top_results$agency == "DHHS" & top_results$tier == 1)` the writer can start,
+`r sum(top_results$agency == "DHHS" & top_results$tier == 2)` that need a supervisor or division, and
+`r sum(top_results$agency == "DHHS" & top_results$tier == 3)` that need the secretary or legislature.
+`r sum(top_results$agency == "DHHS" & top_results$status == "forecasted")` of them are forecasts: the
+posted pipeline for a DHHS writer on `r format(REF_DATE_DEFAULT, "%B %d")` is thin, and most of the
+actionable work is preparing for what is about to post.
+
+## Reach and intensity
+
+```{r reach-static}
+#| fig-height: 4.6
+#| code-summary: "People served vs dollars per person, opening scenario"
+rv <- opening |> filter(placement == "pile") |>
+  mutate(o = map(opportunity_number, function(n) keep(opps, ~ .x$number == n)[[1]]),
+         people = map_dbl(o, ~ .x$people_est %||% NA_real_),
+         award = map_dbl(o, ~ .x$award_estimate_usd %||% NA_real_),
+         pop = map_chr(o, ~ .x$target_population %||% NA_character_)) |>
+  filter(!is.na(people), !is.na(award), people > 0) |>
+  mutate(per_person = award / people, tier = factor(paste("Tier", tier)))
+ggplot(rv, aes(people, per_person, color = tier, shape = tier)) +
+  geom_point(size = 2.4, alpha = .7, position = position_jitter(width = .06, height = 0, seed = SEED)) +
+  scale_x_log10(labels = label_number(scale_cut = cut_short_scale()), expand = expansion(mult = .08)) +
+  scale_y_log10(labels = label_dollar(accuracy = .001, drop0trailing = TRUE)) +
+  scale_color_manual(values = c("Tier 1" = pal$tier1, "Tier 2" = pal$tier2, "Tier 3" = pal$tier3, "Tier 4" = pal$gray), name = NULL) +
+  scale_shape_manual(values = c("Tier 1" = 16, "Tier 2" = 15, "Tier 3" = 17, "Tier 4" = 18), name = NULL) +
+  labs(title = "Reach and intensity are different axes, never one score",
+       subtitle = str_wrap(paste0(nrow(rv), " opportunities in the opening scenario with an estimated population. Horizontal: people in the population served (upper bound). Vertical: award divided by that population."), 95),
+       x = "People in the population served, NC (log)", y = "Dollars per person (log)",
+       caption = "Points are spread slightly sideways so overlapping values stay visible.") +
+  theme(legend.position = "top", legend.justification = "left")
+```
+
+Opportunities serving the same population share a horizontal position, so they stack in columns; the
+estimate is only as good as the population the labeler chose, which the team could not score
+automatically (section 12).
+
+# 15. Evaluation
+
+## What landed in the piles
+
+```{r spot-check}
+#| code-summary: "Opening-scenario results for hand spot-checking"
+opening |> filter(placement == "pile", tier <= 3) |>
+  left_join(labels %||% tibble(opportunity_number = character(), labeled = logical(), has_nofo = logical()), by = "opportunity_number") |>
+  transmute(tier, opportunity = opportunity_title,
+            `labeled by model` = coalesce(labeled, FALSE),
+            `full announcement read` = coalesce(has_nofo, FALSE), reason = tier_reason) |>
+  arrange(tier) |> dt()
+```
+
+```{r spot-check-results}
+#| results: asis
+#| code-summary: "Team spot-check results (data/manual/spotcheck.csv)"
+sc_path <- file.path(DIR_MANUAL, "spotcheck.csv")
+sc <- if (file.exists(sc_path)) readr::read_csv(sc_path, col_types = readr::cols(.default = "c"), show_col_types = FALSE) else NULL
+tier_rows <- if (is.null(sc)) NULL else sc |>
+  filter(str_detect(coalesce(section, ""), "^In "), coalesce(tool_tier, "") %in% c("1", "2", "3"),
+         str_to_lower(str_squish(coalesce(verdict, ""))) %in% c("right", "wrong", "unsure"))
+if (!is.null(tier_rows) && nrow(tier_rows) > 0) {
+  tier_rows <- mutate(tier_rows, verdict = str_to_lower(str_squish(verdict)))
+  cat(sprintf("**Tiers 1-3 spot-check:** the team checked %d opportunities by reading the announcements: %d right, %d wrong, %d unsure.\n",
+              nrow(tier_rows), sum(tier_rows$verdict == "right"), sum(tier_rows$verdict == "wrong"), sum(tier_rows$verdict == "unsure")))
+} else {
+  cat("**Tiers 1-3 were not hand spot-checked.** We ran out of time before the team could read each announcement in the table above. The evidence for these tiers is the blind comparison with 60 hand labels in section 12: the facts that decide Tier 3 (match, construction, designation) agree over 90% of the time, while the capability judgments that separate Tier 1 from Tier 2 are weaker, so a writer should confirm a Tier 1 result before committing staff.\n")
+}
+```
+
+## What the research rule may have killed
+
+The research and NIH screen removes most of the haystack. The risk is that it removes something a
+state agency could legitimately pursue. Among candidates the model labeled, these were flagged as
+research mechanisms by the keyword rule but judged administrable by a state agency:
+
+```{r research-killed}
+#| code-summary: "Research-screened but judged administrable"
+if (labels_ok) {
+  grants |> filter(is_research_mechanism) |>
+    inner_join(filter(labels, labeled, llm_administrable), by = "opportunity_number") |>
+    transmute(opportunity = opportunity_title, agency = agency_code,
+              `DHHS alignment` = llm_align_dhhs, evidence = llm_administrable_evidence) |> dt()
+} else HTML('<div class="pending">Fills in when labeling finishes.</div>')
+```
+
+The tool keeps research awards visible (Tier 4, or the screened list when research is hidden) and
+marks those in the top `r pct_fmt(1 - ALIGNMENT_RESCUE_PCT)` of plan alignment "check this".
+
+**The team's review of the flagged research items.**
+
+```{r research-review}
+#| results: asis
+#| code-summary: "What reviewers said about research items flagged 'check this'"
+if (!is.null(sc)) {
+  rr <- sc |> filter(!str_detect(coalesce(section, ""), "^In "))
+  said <- str_to_lower(paste(rr$verdict, rr$correct_tier))
+  n_tier <- sum(str_detect(said, "research tier|new tier"))
+  n_notrel <- sum(str_detect(said, "not relevant"))
+  n_eval <- sum(str_detect(str_to_lower(paste(rr$verdict, rr$correct_tier, rr$notes)), "research_and_rigorous_evaluation"))
+  cat(sprintf("Reviewers read %d research opportunities that the plan-alignment score flagged as worth a second look. For %d they recommended a separate research tier rather than treating them like program grants; %d %s judged not relevant; and %d were noted as requiring research and rigorous evaluation capacity, which DHHS reaches only through university partners. That is the design the tool uses: research awards form Tier 4, partner-led research, below the three authority tiers. None were judged to be programs DHHS could lead itself.\n",
+              nrow(rr), n_tier, n_notrel, if (n_notrel == 1) "was" else "were", n_eval))
+}
+```
+
+## Where the method misleads
+
+Text-similarity alignment rewards shared vocabulary, not shared purpose. Scored against every row
+of the DHHS plan, including rows about how the department runs itself, generic grant language
+matches the plan's language about stewardship and staffing:
+
+```{r misleads}
+#| code-summary: "Alignment with and without internal-operations plan rows"
+full <- compute_alignment(grants, load_priorities()) |> filter(agency == "DHHS")
+prog <- alignment |> filter(agency == "DHHS")
+cand <- grants |> filter(state_eligible, !is_nih, status_group == "Posted") |> pull(opportunity_number)
+full |> select(opportunity_number, pct_all_rows = emb_pct, best_all_rows = emb_best_id) |>
+  inner_join(select(prog, opportunity_number, pct_program_rows = emb_pct, best_program_rows = emb_best_id), by = "opportunity_number") |>
+  filter(opportunity_number %in% cand) |>
+  left_join(titles, by = "opportunity_number") |>
+  mutate(shift = pct_all_rows - pct_program_rows) |>
+  arrange(desc(shift)) |> slice_head(n = 10) |>
+  transmute(opportunity = opportunity_title, agency = agency_code,
+            `percentile, all plan rows` = pct_fmt(pct_all_rows), `best row` = best_all_rows,
+            `percentile, program rows only` = pct_fmt(pct_program_rows), `best row ` = best_program_rows) |>
+  dt(dom = "t", pageLength = 12)
+```
+
+The table lists the opportunities whose ranking changed most when those rows were removed, with
+the plan row each one matched. Rows marked internal operations describe how the department
+runs itself (staffing, pay, contracting, buildings); grant boilerplate about staff, budgets and
+partners resembles them closely, so opportunities with no health or human services content rose
+toward the top. We
+removed those rows from alignment scoring (`alignable = FALSE` in the plan tables) and made the
+model's judgment, which must cite a plan row and explain the link, the deciding signal for which
+agency sees an opportunity. Similarity scores remain only as a secondary hint.
+
+# 16. Limitations
+
+- **Match percentages are almost never published in structured form.** Only
+  `r fact_val("Rows stating a match percentage anywhere in text")` of `r n_fmt(nrow(grants))`
+  rows state one anywhere in the export, against `r fact_val("is_cost_sharing TRUE")` flagged as
+  requiring cost share. The labeler reads full announcements where they exist
+  (`r n_fmt(nofo_n)` of `r n_fmt(cand_n)` candidates); forecasts usually have none.
+- **The capability profiles describe real agencies from public sources**, not interviews with
+  agency staff. Every row is sourced and editable, but a division head would know better.
+- **The appropriation line (`r usd_fmt(APPROPRIATION_THRESHOLD_USD)`) is an assumption.** No
+  published NC rule sets it; the tool lets the user change it.
+- **The local model is reliable on stated facts and weaker on judgment.** Against 60 blind hand
+  labels it agrees on whether match is required `r pct_fmt(validation$summary$accuracy[validation$summary$field == "match required"])`
+  of the time, but on whether a state agency could lead the program only
+  `r pct_fmt(validation$summary$accuracy[validation$summary$field == "administrable"])`, on DHHS
+  alignment `r pct_fmt(validation$summary$accuracy[validation$summary$field == "DHHS alignment"])`, and it
+  finds only `r pct_fmt(validation$capabilities$recall)` of the capabilities the team listed. Missed
+  capabilities mean missed partner needs, so some Tier 1 results probably belong in Tier 2. It also
+  once wrote its own rule ("work happens outside the United States") into a field meant for a quote.
+  It never assigns a tier, and every label it contributes is shown with its evidence (section 12).
+- **Tiers 1-3 were not hand spot-checked.** The team reviewed the research awards but ran out of time
+  to read each Tier 1-3 announcement; the blind hand-label comparison is the evidence for those tiers.
+- **The eight domains have no veterans category.** Three hand labels used one; the model cannot
+  choose it, and they count as disagreements.
+- **Geography is domain-level.** County need describes where a program domain's need
+  concentrates, not where a statewide grant would be spent. County overdose data are NCHS
+  model-based estimates for `r min(OVERDOSE_YEARS)`-`r max(OVERDOSE_YEARS)`, the most recent years
+  published; CDC WONDER's county-level counts need its web form and data-use agreement.
+- **The snapshot ages.** `r n_fmt(closed_since)` posted opportunities had closed or been archived
+  six weeks after the pull.
+- **The DHHS plan is the one the competition provided (2023-2025, hosted by OSBM).** DHHS has
+  since published 2024-2026 and 2026-2030 plans on its own site. The plan is an input table
+  (`data/manual/dhhs_priorities.csv`), so updating it is a file swap followed by one re-labeling pass.
+- **People-served estimates are upper bounds.** They count the population an opportunity serves in
+  NC, not people an award would reach.
+
+# 17. What we would build with more time
+
+- Pull full announcements for every opportunity weekly and diff them, so match percentages and
+  deadlines update themselves.
+- Replace keyword and similarity alignment with the DMVA plan's own **Priority Questions**: an
+  opportunity that helps answer a question the agency itself posed is a stronger match than one
+  that shares vocabulary.
+- Interview division staff to verify each capability's control level.
+- Add past award history (USAspending) by assistance listing to estimate competitiveness.
+- Let a supervisor pre-approve a match budget so Tier 2 items can move to Tier 1 in bulk.
+- Add veterans as a cross-cutting flag rather than a ninth domain, so DMVA-relevant programs in any
+  domain surface together.
+- Improve capability extraction, the model's weakest measured field, by reading the full
+  announcement's program requirements section rather than an excerpt.
+
+# 18. AI usage disclosure
+
+```{r ai-usage}
+#| results: asis
+#| echo: false
+# The disclosure is maintained as src/docs/ai_usage.md; its own title line is dropped here.
+cat(readLines(here::here("src", "docs", "ai_usage.md"), warn = FALSE)[-1], sep = "\n")
+```
+
+# 19. Appendix: DMVA supplement
+
+DMVA is a contrast case, not a parallel analysis. Its entire universe in this file is
+`r sum(grants$is_va)` VA-issued opportunities, `r sum(grants$is_va & grants$status_group == "Forecasted")`
+of them forecasts.
+
+```{r dmva}
+#| code-summary: "DMVA's opportunities, tiered as DMVA"
+dmva_settings <- modifyList(payload$config$opening, list(agency = "DMVA", include_forecasts = TRUE))
+run_tiering_js(opps, payload$capabilities$profiles, dmva_settings) |>
+  inner_join(filter(grants, is_va) |> select(opportunity_number, opportunity_title, status_group,
+                                             award_ceiling_clean, is_cost_sharing, applicant_types), by = "opportunity_number") |>
+  transmute(opportunity = opportunity_title, status = status_group, ceiling = usd_fmt(award_ceiling_clean),
+            `cost share` = is_cost_sharing, eligible = applicant_types, placement, tier, reason = coalesce(tier_reason, placement_why)) |>
+  dt(dom = "t")
+```
+
+```{r dmva-goal}
+#| results: asis
+#| code-summary: "The DMVA plan objective it maps to"
+g <- load_priorities() |> filter(priority_id == "G2.O1", agency == "DMVA")
+cat("> **DMVA Goal 2, Objective 1 (p. ", g$page, "):** ", g$text, "\n", sep = "")
+```
+
+The one posted DMVA opportunity, the State Veterans Home Construction Grant Program, matches
+DMVA's own current goal of modernizing the veterans homes, and lands in Tier 3 because a capital
+construction project with cost share needs an appropriation. The agency's best match is the thing
+it cannot act on alone. The DMVA plan also lists explicit *Priority Questions*; aligning
+opportunities to those questions is the natural next feature (section 17).
+
+## Session info
+
+```{r session}
+#| code-summary: "R session"
+sessionInfo()
 ```
