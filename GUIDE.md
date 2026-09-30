@@ -322,7 +322,7 @@ reaches" (`add_population_geography()`, `community_context()`).
 
 | Path | What it is |
 |---|---|
-| `src/site/index.html` | Landing-page template (editorial style: Newsreader and Public Sans fonts, one green accent). The numbers, the sample of top results and the veterans figures are filled in from `payload.json` and `top_results.csv` at build time. |
+| `src/site/index.html` | Landing-page template ("signature ink" style: Libre Franklin font, ink-blue accent, a manila "routing slip" hero showing how many opportunities each signer gets). The numbers, the sample of top results and the veterans figures are filled in from `payload.json` and `top_results.csv` at build time. |
 | `src/build_site.py` | Copies the tool, notebook and top results into `docs/`, fills in the landing page, labels table cells so rows stack on phones, and adds `.nojekyll`. It refuses to publish if any file contains the Census key. |
 | `docs/` | The built website. **Do not edit it by hand**; rebuild it. |
 

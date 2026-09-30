@@ -238,7 +238,7 @@ Timings are targets. The demo is the anchor; protect its 90 seconds.
 
 ### Slide 3: The idea (1:00–1:30) · Framing, Solving
 - **Headline:** "We sort by whose signature you need, not by a score"
-- **Visual:** four colored columns (Tier 1 blue, Tier 2 orange, Tier 3 green, Tier 4 gray), each
+- **Visual:** a "routing slip": four rows, one per signer (Tier 1 ink blue, Tier 2 ochre, Tier 3 brick, Tier 4 gray), each
   with one line from section 4. Optionally a small capability-grid thumbnail
   (`03_capability_heatmap.png`).
 - **Say:** The written rules compare what an opportunity requires with what the agency actually
@@ -321,20 +321,30 @@ decisions, each with an owner and a date.
 
 ## 6. Visual design
 
+The deck should look like the tool, the notebook and the website. They share a "signature ink"
+look: a paperwork metaphor (a routing slip, a signature line) rather than a tech-startup look.
+
 **Colors.** Use these tier colors everywhere a tier appears, and the same order every time:
 
 | Element | Color |
 |---|---|
-| Tier 1 | blue `#2a78d6` |
-| Tier 2 | orange `#eb6834` |
-| Tier 3 | green `#1baf7a` |
-| Tier 4 | gray `#77756f` |
-| Body text | dark `#1D2939` |
-| Secondary text | gray `#667085` |
+| Tier 1 (the writer signs) | ink blue `#23408E` |
+| Tier 2 (a supervisor signs) | ochre `#B7791F` |
+| Tier 3 (secretary or legislature) | brick `#A63D2F` |
+| Tier 4 (a university leads) | gray `#6E7479` |
+| Page background | warm off-white `#F2F3F0` (slides may use white `#FFFFFF`) |
+| Accent panel ("routing slip", notes) | manila `#E6D6A8`, with an edge line in `#C9B57E` |
+| Body text | charcoal `#1E2226` |
+| Secondary text | gray `#4B5158` |
 
-- Use a white background, one sans-serif font, and large type (headline 32–40 pt, body at least
-  20 pt).
+- **Font:** Libre Franklin (free on Google Fonts) for everything, bold for headlines. If it is not
+  available, use Franklin Gothic or Arial.
+- **No** gradients, glows, 3D shapes, stock icons or rounded "cards with shadows". Use thin rules,
+  plain tables and square corners.
+- Large type: headlines 32–40 pt, body at least 20 pt.
 - Use one chart per slide at most. Show a big number only when the number is the point.
+- Slide 3 idea: redraw the website's manila "routing slip" (who signs, how many items). It is the
+  clearest single picture of the method.
 
 **Chart images to attach (all in `outs/figures/`, generated from the data):**
 

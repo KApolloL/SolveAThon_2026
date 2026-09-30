@@ -13,6 +13,9 @@ format:
     code-summary: "Show code"
     code-tools: true
     theme: cosmo
+    include-in-header:
+      text: |
+        <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
     page-layout: full
     smooth-scroll: true
 execute:
@@ -22,13 +25,18 @@ execute:
 ---
 
 <style>
-:root { --blue:#2166AC; --blue-light:#D9EAF7; --orange:#E08214; --red:#B2182B; --green:#1B7837; --gray:#667085; --dark:#1D2939; }
+:root { --blue:#23408E; --blue-light:#E3E8F4; --orange:#B7791F; --red:#A63D2F; --green:#23408E; --gray:#737980; --dark:#1E2226; --manila:#F3EAD0; --manila-line:#C9B57E; }
+body, .sidebar, #TOC, .quarto-title-meta, .table, .dataTables_wrapper { font-family: "Libre Franklin", "Franklin Gothic Book", "Franklin Gothic", "Helvetica Neue", Arial, sans-serif; }
+body { background:#F2F3F0; color:#1E2226; }
+main.content { background:#FFFFFF; padding:8px 32px 32px; border:1px solid #D9DCD6; }
+h1.title { font-weight:800; letter-spacing:-.02em; }
+a { color:#23408E; }
 h1, h2 { border-bottom: 2px solid var(--blue-light); padding-bottom: .35rem; margin-top: 2rem; }
 .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin:18px 0 28px 0; }
-.kpi-card { background:white; border:1px solid #E4E7EC; border-left:5px solid var(--blue); border-radius:8px; padding:16px; min-height:100px; box-shadow:0 2px 7px rgba(16,24,40,.06); }
-.kpi-card.warning { border-left-color:var(--orange); } .kpi-card.danger { border-left-color:var(--red); } .kpi-card.success { border-left-color:var(--green); }
-.kpi-card.t1 { border-left-color:#2a78d6; } .kpi-card.t2 { border-left-color:#eb6834; } .kpi-card.t3 { border-left-color:#1baf7a; }
-.kpi-label { color:var(--gray); font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; }
+.kpi-card { background:white; border:0; border-top:3px solid var(--blue); border-radius:0; padding:12px 4px 10px; min-height:100px; }
+.kpi-card.warning { border-top-color:var(--orange); } .kpi-card.danger { border-top-color:var(--red); } .kpi-card.success { border-top-color:var(--green); }
+.kpi-card.t1 { border-top-color:#23408E; } .kpi-card.t2 { border-top-color:#B7791F; } .kpi-card.t3 { border-top-color:#A63D2F; }
+.kpi-label { color:var(--gray); font-size:.85rem; }
 .kpi-value { color:var(--dark); font-size:1.8rem; font-weight:700; margin-top:5px; }
 .kpi-note { color:var(--gray); font-size:.78rem; margin-top:5px; }
 .callout-box { background:#F8FAFC; border-left:5px solid var(--blue); padding:14px 18px; margin:18px 0; border-radius:4px; }
@@ -39,10 +47,10 @@ h1, h2 { border-bottom: 2px solid var(--blue-light); padding-bottom: .35rem; mar
 main.content p, main.content li, main.content blockquote { max-width: 60rem; line-height: 1.6; }
 main.content h1 { font-size: 1.75rem; color: var(--dark); }
 main.content h2 { font-size: 1.3rem; color: var(--dark); border-bottom-width: 1px; }
-.read-me { background:#F8FAFC; border:1px solid #E4E7EC; border-left:5px solid var(--blue); border-radius:6px; padding:12px 18px; margin:6px 0 22px 0; max-width:60rem; }
+.read-me { background:var(--manila); border:1px solid var(--manila-line); border-left:5px solid var(--blue); border-radius:0; padding:12px 18px; margin:6px 0 22px 0; max-width:60rem; }
 .read-me p { margin:.25rem 0; }
 .read-me .lbl { font-weight:700; color:var(--blue); text-transform:uppercase; font-size:.75rem; letter-spacing:.05em; margin-right:.4rem; }
-.takeaway { border-left:4px solid var(--green); background:#F3FAF5; padding:8px 14px; margin:8px 0 26px 0; border-radius:4px; max-width:60rem; }
+.takeaway { border-left:4px solid var(--manila-line); background:var(--manila); padding:8px 14px; margin:8px 0 26px 0; border-radius:0; max-width:60rem; }
 .takeaway::before { content:"Takeaway  "; font-weight:700; color:var(--green); font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; }
 .cell-output-display img { border-radius:6px; }
 .cell-output-display { margin-bottom: .6rem; }
@@ -62,9 +70,11 @@ suppressPackageStartupMessages({ library(ggplot2); library(scales); library(DT);
 knitr::opts_chunk$set(fig.align = "center", dpi = 120, out.width = "100%")
 set.seed(SEED)
 
-pal <- list(blue = "#2166AC", blue_light = "#D9EAF7", orange = "#E08214", red = "#B2182B",
-            green = "#1B7837", gray = "#667085", dark = "#1D2939",
-            tier1 = "#2a78d6", tier2 = "#eb6834", tier3 = "#1baf7a")
+# Signature-ink palette, shared with the tool and the website: tiers are ink blue (writer),
+# ochre (supervisor) and brick (secretary or legislature); gray is "someone else leads".
+pal <- list(blue = "#23408E", blue_light = "#E3E8F4", orange = "#B7791F", red = "#A63D2F",
+            green = "#23408E", gray = "#737980", dark = "#1E2226",
+            tier1 = "#23408E", tier2 = "#B7791F", tier3 = "#A63D2F", tier4 = "#6E7479")
 theme_g <- function(base_size = 12) {
   theme_minimal(base_size = base_size) +
     theme(plot.title = element_text(face = "bold", size = base_size + 3, color = pal$dark),
@@ -152,7 +162,7 @@ them. The median application window is `r median(windows$application_window_days
 
 ::: {.read-me}
 <p><span class="lbl">How to read this notebook</span>Charts are followed by a green <b>takeaway</b> box that says, in one or two sentences, what the chart means for a grant writer. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted.</p>
-<p><span class="lbl">Tiers</span><span style="color:#2a78d6;font-weight:700">Tier 1</span> the writer can act · <span style="color:#eb6834;font-weight:700">Tier 2</span> needs a supervisor or division · <span style="color:#1baf7a;font-weight:700">Tier 3</span> needs the secretary or legislature · <span style="color:#77756f;font-weight:700">Tier 4</span> research a partner would lead.</p>
+<p><span class="lbl">Tiers</span><span style="color:#23408E;font-weight:700">Tier 1</span> the writer can act · <span style="color:#B7791F;font-weight:700">Tier 2</span> needs a supervisor or division · <span style="color:#A63D2F;font-weight:700">Tier 3</span> needs the secretary or legislature · <span style="color:#6E7479;font-weight:700">Tier 4</span> research a partner would lead.</p>
 :::
 
 # 2. The user and what "good" means
@@ -280,7 +290,7 @@ load_priorities() |>
   ggplot(aes(n, fct_rev(goal), fill = kind)) +
   geom_col(width = .7, color = "white", linewidth = .3) +
   facet_wrap(~ agency, scales = "free_y") +
-  scale_fill_manual(values = c("Program work (scored)" = pal$blue, "Internal operations (not scored)" = "#C9D6E3"), name = NULL) +
+  scale_fill_manual(values = c("Program work (scored)" = pal$blue, "Internal operations (not scored)" = "#CBD1DD"), name = NULL) +
   labs(title = "DMVA's plan is a third internal operations; DHHS's a quarter",
        subtitle = "Rows in each strategic plan table, by goal", x = "Plan rows", y = NULL) +
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank(),
@@ -442,7 +452,7 @@ grants |>
          state_eligible = if_else(state_eligible, "State governments eligible", "Not state-eligible")) |>
   ggplot(aes(n, issuer, fill = state_eligible)) +
   geom_col(width = .7) +
-  scale_fill_manual(values = c("State governments eligible" = pal$blue, "Not state-eligible" = "#C9D6E3"), name = NULL) +
+  scale_fill_manual(values = c("State governments eligible" = pal$blue, "Not state-eligible" = "#CBD1DD"), name = NULL) +
   labs(title = "NIH dominates the file, and most of it is open to states on paper",
        subtitle = "Twelve largest issuing agencies", x = "Opportunities", y = NULL) +
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
@@ -526,7 +536,7 @@ open_state |>
   count(month, who) |>
   ggplot(aes(month, n, fill = who)) +
   geom_col(width = 25) +
-  scale_fill_manual(values = c("NIH research" = "#C9D6E3", "Everything else" = pal$blue), name = NULL) +
+  scale_fill_manual(values = c("NIH research" = "#CBD1DD", "Everything else" = pal$blue), name = NULL) +
   scale_x_date(date_labels = "%b %Y", date_breaks = "2 months") +
   labs(title = "Deadlines over the next year: almost all NIH",
        subtitle = paste0("Open, state-eligible opportunities closing on or after ", format(cutoff_date, "%b %d"), ", by month"),
@@ -544,7 +554,7 @@ grants |>
   count(quarter, who) |>
   ggplot(aes(quarter, n, fill = who)) +
   geom_col(width = .7) +
-  scale_fill_manual(values = c("NIH research" = "#C9D6E3", "Everything else" = pal$blue), name = NULL) +
+  scale_fill_manual(values = c("NIH research" = "#CBD1DD", "Everything else" = pal$blue), name = NULL) +
   labs(title = "The forecast pipeline is where the non-NIH work is",
        subtitle = "State-eligible forecasts by expected posting quarter",
        x = "Expected posting quarter", y = "Forecasts") +
@@ -631,8 +641,8 @@ load_capabilities() |>
   ggplot(aes(agency, capability, fill = control)) +
   geom_tile(color = "white", linewidth = 1.2) +
   geom_text(aes(label = control), size = 3, color = "white") +
-  scale_fill_manual(values = c("Runs it directly" = "#0d366b", "Through a contract" = "#2a78d6",
-                               "Needs a partner" = "#eb6834", "No route" = "#9a3412"), name = NULL, drop = FALSE) +
+  scale_fill_manual(values = c("Runs it directly" = "#172a55", "Through a contract" = "#43609f",
+                               "Needs a partner" = "#B7791F", "No route" = "#A63D2F"), name = NULL, drop = FALSE) +
   scale_x_discrete(position = "top") +
   labs(title = "What each agency controls, and where it needs someone else",
        subtitle = "Fourteen capabilities an opportunity can require; every cell is sourced in the table above",
@@ -788,7 +798,7 @@ enrich$nofo |>
   count(status_group, read) |>
   ggplot(aes(n, status_group, fill = read)) +
   geom_col(width = .6, color = "white", linewidth = .3) +
-  scale_fill_manual(values = c("Full announcement read" = pal$blue, "Abstract only" = "#C9D6E3"), name = NULL) +
+  scale_fill_manual(values = c("Full announcement read" = pal$blue, "Abstract only" = "#CBD1DD"), name = NULL) +
   labs(title = "Forecasts rarely have a full announcement yet",
        subtitle = paste0(n_fmt(nofo_n), " of ", n_fmt(cand_n), " candidates had a full announcement to read"),
        x = "Candidate opportunities", y = NULL) +
@@ -849,7 +859,7 @@ if (labels_ok && file.exists(v2_path)) {
     mutate(prompt = if_else(prompt == "v2", "Prompt v2", "Prompt v3.1")) |>
     ggplot(aes(share, str_wrap(measure, 30), fill = prompt)) +
     geom_col(position = position_dodge(width = .75), width = .7) +
-    scale_fill_manual(values = c("Prompt v2" = "#C9D6E3", "Prompt v3.1" = pal$blue), name = NULL) +
+    scale_fill_manual(values = c("Prompt v2" = "#CBD1DD", "Prompt v3.1" = pal$blue), name = NULL) +
     scale_x_continuous(labels = percent, limits = c(0, 1)) +
     labs(title = "Tightening the prompt cut over-generous labels",
          subtitle = paste0("Same ", nrow(both), " opportunities labeled by both versions"), x = "Share of opportunities", y = NULL) +
@@ -899,7 +909,7 @@ if (labels_ok) {
            level = factor(level, levels = c("Partial", "Strong"))) |>
     ggplot(aes(n, row, fill = level)) +
     geom_col(width = .7, color = "white", linewidth = .3) +
-    scale_fill_manual(values = c("Strong" = pal$blue, "Partial" = "#9DBFE3"), name = "Alignment") +
+    scale_fill_manual(values = c("Strong" = pal$blue, "Partial" = "#8ea2d2"), name = "Alignment") +
     labs(title = "The plan rows opportunities connect to",
          subtitle = "Ten DHHS plan rows most often cited as the link, among opportunities rated aligned",
          x = "Opportunities citing the row", y = NULL) +
@@ -1004,7 +1014,7 @@ if (!is.null(validation)) {
     geom_tile(color = "white", linewidth = 1) +
     geom_text(aes(label = Freq, color = Freq > max(Freq) / 2), size = 4, show.legend = FALSE) +
     scale_color_manual(values = c(`TRUE` = "white", `FALSE` = pal$dark)) +
-    scale_fill_gradient(low = "#EEF4FA", high = pal$blue, guide = "none") +
+    scale_fill_gradient(low = "#EEF1F8", high = pal$blue, guide = "none") +
     facet_wrap(~ field, scales = "free") +
     labs(title = "Where the model and the team disagree",
          subtitle = "Rows: team's hand label. Columns: model. The diagonal is agreement.", x = "Model", y = "Team") +
@@ -1097,7 +1107,7 @@ need_long <- imap_dfr(need, function(d, id) if (!isTRUE(d$available)) NULL else
   tibble(fips = names(d$index), index = unlist(d$index), domain = DOMAINS[[id]]))
 counties |> select(GEOID) |> inner_join(need_long, by = c("GEOID" = "fips")) |>
   ggplot() + geom_sf(aes(fill = index), color = "white", linewidth = .1) +
-  scale_fill_gradient(low = "#cde2fb", high = "#0d366b", labels = percent, name = "Need\npercentile") +
+  scale_fill_gradient(low = "#dde3f1", high = "#172a55", labels = percent, name = "Need\npercentile") +
   facet_wrap(~ str_wrap(domain, 40), ncol = 2) +
   labs(title = "Relative need by program domain, NC counties",
        caption = str_wrap(paste0("Indicators: CDC PLACES, ACS 2023 5-year, HRSA HPSA designations, OpenFEMA declarations, NCHS model-based drug poisoning death rates (",
@@ -1132,7 +1142,7 @@ counties |> select(GEOID) |>
   left_join(ind, by = "var") |>
   mutate(label = str_wrap(label, 34)) |>
   ggplot() + geom_sf(aes(fill = pct), color = "white", linewidth = .05) +
-  scale_fill_gradient(low = "#e3eefb", high = "#0d366b", labels = percent, name = "County\npercentile", na.value = "#eeeeee") +
+  scale_fill_gradient(low = "#dde3f1", high = "#172a55", labels = percent, name = "County\npercentile", na.value = "#eeeeee") +
   facet_wrap(~ label, ncol = 4) +
   labs(title = "The raw indicators, one map each",
        caption = "Sources in parentheses. FEMA counts declarations since 2016; HRSA counts designated shortage areas; PLACES values are model-based adult prevalence.") +
@@ -1155,7 +1165,7 @@ imap_dfr(domain_indicators(), ~ tibble(domain = DOMAINS[[.y]], indicator = unnam
 #| code-summary: "Drug poisoning death rates by county"
 counties |> select(GEOID) |> left_join(select(ci, fips, overdose_rate), by = c("GEOID" = "fips")) |>
   ggplot() + geom_sf(aes(fill = overdose_rate), color = "white", linewidth = .15) +
-  scale_fill_gradient(low = "#cde2fb", high = "#0d366b", name = "Deaths per\n100,000") +
+  scale_fill_gradient(low = "#dde3f1", high = "#172a55", name = "Deaths per\n100,000") +
   labs(title = "Overdose deaths concentrate in the mountains and along the coast",
        subtitle = paste0("Drug poisoning death rate, ", min(OVERDOSE_YEARS), "-", max(OVERDOSE_YEARS), " average (NCHS model-based county estimates)")) +
   theme_void() +
@@ -1317,7 +1327,7 @@ imap_dfr(payload$populations, function(p, id) if (is.null(p$county) || !length(p
   group_by(label) |> mutate(share = n / sum(n), rural_share = sum(share[rurality == "Rural"])) |> ungroup() |>
   ggplot(aes(share, fct_reorder(label, rural_share), fill = rurality)) +
   geom_col(width = .7, color = "white", linewidth = .3) +
-  scale_fill_manual(values = c("Rural" = "#1baf7a", "Suburban / regional city" = "#6da7ec", "Urban" = "#184f95"),
+  scale_fill_manual(values = c("Rural" = "#b7c4e3", "Suburban / regional city" = "#6680bf", "Urban" = "#172a55"),
                     breaks = unname(rur_lab), name = NULL) +
   scale_x_continuous(labels = percent, expand = expansion(mult = c(0, .02))) +
   labs(title = "Hazard-exposed and shortage-area residents are the most rural",

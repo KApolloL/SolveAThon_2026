@@ -254,6 +254,18 @@ A clean-copy rebuild was verified:
   - 17 of 23 Tier 2 items wait on a partner, so decision 3 is now "line up standing partners for
     research evaluation (9) and workforce training (6)". Fixed in the site, the slide brief, the
     notebook §17 and the team brief.
+- **"Signature ink" redesign** (applied from `less-ai-redesign.patch`, Sept 30).
+  - Landing page: a manila routing-slip hero that adds up to all 1,662, plus funnel bars drawn to scale.
+  - Tool styles: Libre Franklin, flat panels.
+  - **New tier colors everywhere:** ink blue `#23408E`, ochre `#B7791F`, brick `#A63D2F`, gray `#6E7479`.
+  - Carried through to:
+    - the notebook (`pal` in the setup chunk, CSS tokens, all hardcoded chart colors, flat KPI tiles, manila takeaway boxes, Libre Franklin via `include-in-header`);
+    - the tool's font link (`src/tool/index.html`; offline it falls back to Franklin Gothic or Helvetica);
+    - the slide images;
+    - the slide brief's design section.
+  - Palette check: it passes the colorblind and normal-vision separation checks. It is flagged
+    only for the deliberately dark navy and the neutral gray, and every tier also has a shape and
+    a text label.
 - **Slide brief** `src/docs/presentation_brief.md`.
 - **Figure export** `src/export_slide_figures.py`. `outs/figures/` is now tracked in git.
 - `GUIDE.md` at the root.

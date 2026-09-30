@@ -64,7 +64,7 @@ def label_cells(page):
             cells = iter(heads)
             return re.sub(r"<td(?![^>]*data-label)", lambda _: f'<td data-label="{html.escape(next(cells, ""))}"', r.group(0))
         return re.sub(r"<tr>.*?</tr>", one_row, t, flags=re.S)
-    return re.sub(r"<table>.*?</table>", one_table, page, flags=re.S)
+    return re.sub(r"<table class=\"data\">.*?</table>", one_table, page, flags=re.S)
 
 
 # Never publish anything that contains the Census key.
@@ -97,6 +97,11 @@ fill = {
     "MODEL": p["meta"]["llm_model"], "BUILT": datetime.date.today().strftime("%B %-d, %Y"), "REPO": REPO,
     "TOP_ROWS": sample_rows(os.path.join(OUTS, "top_results.csv")),
 }
+# Everything not in Tiers 1-4 (out of scope, not this cycle, screened), so the routing slip adds up.
+fill["REST"] = f"{p['meta']['source_rows'] - sum(c.get(f'tier{k}', 0) for k in range(1, 5)):,}"
+# Funnel bar widths, drawn to scale against the full file.
+for k, n in {"W_OPEN": p["golden"]["fact_universe_count"], "W_NIH": p["golden"]["fact_nih_count"], "W_SIX": 6}.items():
+    fill[k] = f"{100 * n / p['meta']['source_rows']:.2f}%"
 vet, rur = p["populations"]["veterans"]["county"], p["community"]["county_rurality"]
 vet_total = sum(vet.values())
 fill["VET_TOTAL"] = f"{round(vet_total):,}"
