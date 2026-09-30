@@ -582,10 +582,12 @@ state-eligible rows it reaches
 meaning for one agency.
 
 Our first version estimated what one award is worth by dividing that total by the expected
-number of awards. For the final version we stopped estimating. Every state-eligible
+number of awards. For the final version we went to the source. Every state-eligible
 opportunity's current record on Grants.gov (its synopsis, or its forecast) was read, and the tool,
-the top results and the impact score now use the **award ceiling Grants.gov states**. Where
-Grants.gov states no ceiling, the award shows as "not stated"; it is never filled in with an estimate.
+the top results and the impact score use the **award ceiling Grants.gov states**. Only where
+Grants.gov states no ceiling do we fall back to an estimate: total program funding ÷ expected
+number of awards (Grants.gov's figures, else the export's). The tool marks these "est.", and the top
+results say which source each award came from.
 
 ```{r gg-award-coverage}
 #| results: asis
@@ -595,6 +597,16 @@ gg <- gg_awards |> inner_join(select(grants, opportunity_number, status_group, i
 cat(sprintf("Grants.gov records were read for **%s** state-eligible opportunities (checked %s). **%s** state an award ceiling and **%s** an award floor; **%s** state no ceiling at all.\n",
             n_fmt(nrow(gg)), paste(unique(range(str_sub(na.omit(gg$gg_checked), 1, 10))), collapse = " to "), n_fmt(sum(!is.na(gg$gg_award_ceiling))),
             n_fmt(sum(!is.na(gg$gg_award_floor))), n_fmt(sum(is.na(gg$gg_award_ceiling)))))
+```
+
+```{r award-sources}
+#| results: asis
+#| code-summary: "Where each award figure comes from"
+src_n <- table(map_chr(keep(opps, ~ isTRUE(.x$state_eligible)), ~ .x$award_basis %||% "none"))
+lab <- c(grantsgov_ceiling = "Grants.gov award ceiling", total_over_awards = "estimate (total ÷ expected awards)",
+         ceiling = "award ceiling in the export", none = "no figure at all")
+cat("Across state-eligible opportunities, the award figure comes from: ",
+    paste0(map_chr(names(src_n), ~ paste0("**", lab[[.x]], "** ", n_fmt(src_n[[.x]]))), collapse = "; "), ".\n", sep = "")
 ```
 
 ```{r ceiling-vs-implied}
@@ -644,9 +656,10 @@ gg |> mutate(export_date = if_else(status_group == "Forecasted", forecasted_clos
 ```
 
 ::: {.takeaway}
-Use what Grants.gov states, not an estimate. A ceiling is the most one award can be, so it is an
-upper bound, and the tool labels it "up to". Awards still span five orders of magnitude, so the
-minimum-award setting matters: a $50K award rarely justifies the same staff weeks as a $5M one.
+Use what Grants.gov states wherever it states it, and label an estimate as an estimate. The
+divided figure can be far from the real ceiling, so the tool shows "up to" for a stated ceiling
+and "about … est." for an estimate. Awards span five orders of magnitude, so the minimum-award
+setting matters: a $50K award rarely justifies the same staff weeks as a $5M one.
 :::
 
 # 10. The capability model
@@ -802,7 +815,7 @@ to the score. With the default equal weights each part can add at most 20 points
 | Award size | The award ceiling stated on Grants.gov | By its rank, the same way |
 | Program priorities | The writer's weight for the opportunity's program area (default 1 of 3) | Weight ÷ 3 × 20: 6.7 points at the default |
 
-A part with no number (for example, no stated ceiling) is left out, and the other parts share its
+A part with no number (for example, no award figure at all) is left out, and the other parts share its
 points (each can then add up to 25). The chart shows how each opportunity's score is built:
 
 ```{r impact-breakdown}
@@ -849,8 +862,9 @@ build_top_results(payload, "DHHS") |>
                                        paste0(n_fmt(round(people_reached)), " → ", people_reached_points)),
             `help per person` = if_else(is.na(help_per_person_usd), "n/a",
                                         paste0(dollar(help_per_person_usd, accuracy = .01), " → ", help_per_person_points)),
-            `award ceiling` = if_else(is.na(estimated_award), "not stated",
-                                      paste0(usd_fmt(estimated_award), " → ", award_size_points)),
+            `award` = if_else(is.na(estimated_award), "no figure",
+                              paste0(usd_fmt(estimated_award), if_else(award_source == "Estimate: total funding / expected awards", " (est.)", ""),
+                                     " → ", award_size_points)),
             `program priority` = paste0(coalesce(program_area, "none"), " (weight ", priority_weight, ") → ", program_priorities_points)) |>
   dt(pageLength = 10)
 ```
@@ -1635,9 +1649,11 @@ agency sees an opportunity. Similarity scores remain only as a secondary hint.
   "system-level", and some of those choices are too broad (the Preschool Development Grant is marked
   "all residents" rather than young children). District counts use the districts drawn for the 118th
   Congress; North Carolina redrew them for the 2024 election.
-- **Awards are ceilings.** The award shown is the most one award can be, as Grants.gov states it; actual
-  awards are often smaller. Opportunities with no stated ceiling show "not stated" and are never
-  filtered out by the minimum-award setting.
+- **Awards are ceilings or estimates.** Where Grants.gov states a ceiling, the award shown is the most
+  one award can be; actual awards are often smaller. Where it states none, the award is total funding
+  ÷ expected awards, which the chart above shows can be far off, and is marked "est.". A few
+  opportunities have neither; they show no award and are never filtered out by the minimum-award
+  setting.
 - **People-served estimates are upper bounds.** They count the population an opportunity serves in
   NC, not people an award would reach.
 

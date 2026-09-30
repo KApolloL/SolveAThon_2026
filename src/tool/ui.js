@@ -333,7 +333,7 @@
       el("div", { class: "meta" }, [
         el("span", { text: o.agency_code }),
         el("span", { text: days === null ? "No deadline stated" : fmtDate(o.close_day) + " (" + days + " days)" }),
-        el("span", { text: o.award_estimate_usd == null ? "Award not stated" : "Up to " + usd(o.award_estimate_usd) }),
+        el("span", { text: o.award_estimate_usd == null ? "Award not stated" : o.award_basis === "total_over_awards" ? "About " + usd(o.award_estimate_usd) + " (est.)" : "Up to " + usd(o.award_estimate_usd) }),
         o.domain ? el("span", { text: DOMAIN[o.domain] }) : null,
         o.status === "forecasted" ? el("span", { class: "badge", text: "Forecast" }) : null,
         statusBadge(o)
@@ -561,7 +561,7 @@
             if (k === "alignment") return a.llm_level ? "Rated " + a.llm_level + " by the labeler" : (a.pct != null ? "Text similarity, " + ordinal(Math.round(a.pct * 100)) + " percentile" : "Not rated");
             if (k === "reach") return people ? fmtNum(people) + " people" + (pop ? " (" + pop.label + ")" : "") : "No population estimate";
             if (k === "depth") return people && award ? "$" + (award / people < 10 ? (award / people).toFixed(2) : fmtNum(award / people)) + " per person" : "Needs both an award and a population";
-            if (k === "award") return award ? "Up to " + usd(award) + " (Grants.gov ceiling)" : "No ceiling on Grants.gov";
+            if (k === "award") return award ? (o.award_basis === "total_over_awards" ? "About " + usd(award) + " (estimated: total ÷ expected awards)" : "Up to " + usd(award) + " (Grants.gov ceiling)") : "No award amount, and no total or award count to estimate from";
             return (o.domain ? DOMAIN[o.domain] : "No program area") + ": weight " + (o.domain ? S.domain_weights[o.domain] : 0) + " of 3";
           }
           return el("table", { class: "gaps" }, [el("tr", {}, [el("th", { text: "Part" }), el("th", { text: "Actual number" }), el("th", { class: "num", text: "Points" })])]
@@ -575,7 +575,7 @@
         })()]) : null,
       el("section", {}, [el("h4", { text: "Key facts" }), el("dl", { class: "kv" }, [
         el("dt", { text: o.deadline_source === "grantsgov" ? (o.status === "forecasted" ? "Deadline (Grants.gov estimate)" : "Deadline (Grants.gov)") : "Deadline" }), el("dd", { text: fmtDate(o.close_day) + (days === null ? "" : " (" + days + " days from reference date)") }),
-        el("dt", { text: "Award (Grants.gov)" }), el("dd", { text: o.award_estimate_usd == null ? "Not stated on Grants.gov" : "Up to " + usd(o.award_estimate_usd) + (o.award_floor_usd ? " (floor " + usd(o.award_floor_usd) + ")" : "") + (o.award_basis === "grantsgov_ceiling" ? ", award ceiling on Grants.gov" : ", award ceiling in the export") }),
+        el("dt", { text: "Award (Grants.gov)" }), el("dd", { text: o.award_estimate_usd == null ? "Not stated on Grants.gov, and no total or award count to estimate from" : o.award_basis === "total_over_awards" ? "About " + usd(o.award_estimate_usd) + " per award, estimated: Grants.gov states no ceiling, so this is total program funding ÷ expected number of awards" : "Up to " + usd(o.award_estimate_usd) + (o.award_floor_usd ? " (floor " + usd(o.award_floor_usd) + ")" : "") + (o.award_basis === "grantsgov_ceiling" ? ", award ceiling on Grants.gov" : ", award ceiling in the export") }),
         el("dt", { text: "Instrument" }), el("dd", { text: (o.instrument || "").replace(/_/g, " ") + " · burden " + o.instrument_burden }),
         el("dt", { text: "Cost share" }), el("dd", { text: o.cost_share ? "Required" + (o.match_pct ? " (" + o.match_pct + "% stated)" : " (percentage not published)") : "Not indicated" }),
         el("dt", { text: "Domain" }), el("dd", { text: o.domain ? DOMAIN[o.domain] : "Unassigned" }),
@@ -817,7 +817,7 @@
       "<h3>" + esc(S.agency) + " capability profile</h3><table><tr><th>Capability</th><th>Control</th><th>Basis</th></tr>" + capRows + "</table>" +
       "<h3>Where the numbers come from</h3><ul>" +
       "<li>Opportunities: Grants.gov export pulled " + esc(P.meta.pull_date) + "; status re-checked against the Grants.gov API.</li>" +
-      "<li>Award = the award ceiling the opportunity states on Grants.gov (its current synopsis or forecast), checked " + esc((P.opportunities.find(function (o) { return o.status_checked; }) || {}).status_checked || "") + ". Where Grants.gov states no ceiling, the award shows as not stated; it is never estimated, and the national total is never shown as money NC could receive. Deadlines are Grants.gov\u2019s current application deadlines (estimated, for forecasts).</li>" +
+      "<li>Award = the award ceiling the opportunity states on Grants.gov (its current synopsis or forecast). Where Grants.gov states no ceiling, the award is estimated as total program funding \u00f7 expected number of awards and marked \u201cest.\u201d. The national total is never shown as money NC could receive. Deadlines are Grants.gov\u2019s current application deadlines (estimated, for forecasts).</li>" +
       "<li>Requirements, domain, population, and plan alignment: labeled by a local model (" + esc(P.meta.llm_model) + ", prompt " + esc(P.meta.llm_prompt_version) +
       ") from the abstract and, where available, the full announcement. Validated against 60 hand labels in the project notebook.</li>" +
       "<li>Match percentage is published in structured form almost nowhere; where the tool shows one, it was found in the text.</li>" +

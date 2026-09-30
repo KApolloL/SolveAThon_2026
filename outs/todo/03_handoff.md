@@ -81,8 +81,8 @@ What we decided **not** to do, and say so openly in the notebook:
 - Only 6 posted, non-NIH opportunities are genuine DHHS candidates.
 
 **Opening scenario for DHHS**
-- 27 in Tier 1, 24 in Tier 2, 3 in Tier 3, and 367 in Tier 4 (partner-led research).
-- 89 are "not this cycle", 5 are screened, and 1,147 are outside DHHS's scope.
+- 27 in Tier 1, 24 in Tier 2, 3 in Tier 3, and 366 in Tier 4 (partner-led research).
+- 90 are "not this cycle", 5 are screened, and 1,147 are outside DHHS's scope.
 - These counts changed on Sept 30, when awards and deadlines switched to what Grants.gov states
   (before: 23 / 23 / 3 / 365). See section 7.
 - Total: 1,662. Every opportunity is accounted for.
@@ -247,17 +247,24 @@ A clean-copy rebuild was verified:
   - §3 steps table and §16 limitations updated.
 - **Grants.gov awards and deadlines (Sept 30).** `src/R/01c_grantsgov_awards.R` reads the full Grants.gov
   record for all 872 state-eligible opportunities.
-  - **Award:** now the award ceiling Grants.gov states (351 of 872 state one), not total ÷ number of
-    awards; the old estimate was more than 2x off for 35% of opportunities that have both. A ceiling
+  - **Award:** now the award ceiling Grants.gov states (351 of 872 state one). Where it states none,
+    the award is total funding ÷ expected awards (Grants.gov's figures, else the export's), marked
+    "est." in the tool and named in an "Award source" column in the team sheet. That estimate was more
+    than 2x off the real ceiling for 35% of opportunities that have both, which is why a stated
+    ceiling always wins. Among the 57 top results, 4 still have no award figure: two DMVA GPD
+    forecasts, an FDA forecast and a FEMA grant, none with total funding or an award count to divide.
+    3 have no people count (people with a substance use disorder, which has no NC count), so help per
+    person is blank for 7. A ceiling
     under $1,000 is treated as a placeholder, which affected one forecast.
   - **Deadline:** now Grants.gov's current application deadline (its estimate, for forecasts).
-  - **Effect on the opening scenario:** it went from 23 / 23 / 3 / 365 to 27 / 24 / 3 / 367.
+  - **Effect on the opening scenario:** it went from 23 / 23 / 3 / 365 to 27 / 24 / 3 / 366.
   - **The three decisions were updated:**
-    - viral hepatitis is now a forecast due Feb 16, 2027, with no stated ceiling;
+    - viral hepatitis is now Tier 1's top result: a forecast due Feb 16, 2027, about $7.5M per award (estimated);
     - the Preschool Development Grant is up to $15M, due Nov 20;
     - 17 of 24 Tier 2 items wait on a partner.
   - The verified-facts check still uses the export's own dates (`export_close_day` in the payload),
     so 296 / 272 still reproduces.
+- **Filled-in spreadsheet** `outs/top_results_with_rationale.xlsx`: the same layout as the team sheet, with one AI-drafted sentence per opportunity (why it ranks where it does, plus what the grant funds, taken from its Grants.gov description). Source: `data/manual/top_results_rationales.csv`. The build stops if any row lacks a sentence. Disclosed in `ai_usage.md`; the team should review it.
 - **Team spreadsheet** `outs/top_results_team.xlsx`, written by `write_team_sheet()` in `07_top_results.R`:
   - a "How to fill this in" tab and one tab per tier;
   - the impact score and its five parts (0-100);

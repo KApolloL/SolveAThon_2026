@@ -18,6 +18,7 @@ COPIES = {
     "outs/grant-triage-tool.html": "07_try_the_tool.html",
     "outs/top_results.xlsx": "top_results.xlsx",
     "outs/top_results_team.xlsx": "08_top_results_to_fill_in.xlsx",
+    "outs/top_results_with_rationale.xlsx": "09_top_results_with_rationale.xlsx",
 }
 
 if os.path.isdir(TODO):

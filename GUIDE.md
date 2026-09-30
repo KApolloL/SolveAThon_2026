@@ -65,6 +65,8 @@ To publish or update it, see Part 3, "Publishing the website".
 - DHHS: 27 in Tier 1, 24 in Tier 2, 3 in Tier 3.
 - DMVA: 3 in Tier 3.
 
+**Filled-in version:** `outs/top_results_with_rationale.xlsx` (copied to `outs/todo/09_top_results_with_rationale.xlsx`) has the same layout, with a one-sentence rationale per opportunity drafted by Claude from the Grants.gov description and the impact scores. The sentences live in `data/manual/top_results_rationales.csv`, so edit them there and re-run `07_top_results.R`. The team should review them before submitting.
+
 **Team fill-in version:** `outs/top_results_team.xlsx` (copied to `outs/todo/08_top_results_to_fill_in.xlsx`). It has a tab per tier, the impact score and its five parts, the Grants.gov deadline and award ceiling, and an empty rationale column for the team to write.
 
 **Each row shows:**
@@ -225,7 +227,7 @@ Refresh the copies with `python3 src/build_todo.py`. The start page's source is 
 | `00_config.R` | **Every setting and threshold** is in one place. The top block is the one you are most likely to change: appropriation line, staff per application, alignment cutoffs. It also holds defaults, presets, domains, populations and capabilities. |
 | `01_load_clean.R` | Reads the Grants.gov export and cleans it: dates, eligibility, NIH flag, implied award, match text |
 | `check_facts.R` | Recomputes the 24 verified facts. Must print "24 of 24". |
-| `01c_grantsgov_awards.R` | Reads every state-eligible opportunity's full Grants.gov record and keeps the stated award ceiling and floor and the current deadline (`data/processed/grantsgov_awards.rds`). The tool and top results use these, not estimates. |
+| `01c_grantsgov_awards.R` | Reads every state-eligible opportunity's full Grants.gov record and keeps the stated award ceiling and floor, total funding, expected awards and the current deadline (`data/processed/grantsgov_awards.rds`). The tool uses the stated ceiling; where there is none, it estimates total ÷ expected awards and marks it "est.". |
 | `01a_grantsgov_enrich.R` | Checks each opportunity's current status on Grants.gov and downloads full announcements for 278 candidates (116 had one) |
 | `01b_alignment.R` | Text-similarity scores against each strategic plan. Also checks every plan row against its PDF page. |
 | `02_capabilities.R` | Requirement profiles, the agency capability profiles, and the bridge that runs the tier rules from R |

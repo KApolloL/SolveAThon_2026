@@ -327,19 +327,25 @@ out_of_scope_records <- function(g) {
     applicant_types = paste(g$applicant_type_list[[i]], collapse = ", ")))
 }
 
-# Award amounts and deadlines as Grants.gov publishes them (01c_grantsgov_awards.R). The award
-# shown is the current record's stated award ceiling; where Grants.gov states none it is left
-# empty ("not stated") rather than estimated. The deadline is Grants.gov's current application
-# deadline (estimated, for forecasts); the export's date is used only when Grants.gov has none.
+# Award amounts and deadlines as Grants.gov publishes them (01c_grantsgov_awards.R). The award is
+# the current record's stated award ceiling. Where Grants.gov states no ceiling, it is estimated as
+# total program funding / expected number of awards (Grants.gov's figures, else the export's) and
+# labeled as an estimate. The deadline is Grants.gov's current application deadline (estimated,
+# for forecasts); the export's date is used only when Grants.gov has none.
 apply_grantsgov_awards <- function(m, awards) {
   if (is.null(awards)) return(m |> mutate(award_floor_usd = NA_real_, deadline_source = "export",
                                           gg_deadline = as.Date(NA), gg_record = NA_character_))
-  m |> left_join(select(awards, opportunity_number, gg_record, gg_award_ceiling, gg_award_floor, gg_deadline),
-                 by = "opportunity_number") |>
+  m |> left_join(select(awards, opportunity_number, gg_record, gg_award_ceiling, gg_award_floor, gg_deadline,
+                        gg_est_funding, gg_n_awards), by = "opportunity_number") |>
     mutate(
-      award_estimate_usd = if_else(!is.na(gg_record), gg_award_ceiling, award_ceiling_clean),
-      award_basis = case_when(!is.na(gg_record) & !is.na(gg_award_ceiling) ~ "grantsgov_ceiling",
-                              is.na(gg_record) & !is.na(award_ceiling_clean) ~ "ceiling",
+      gg_divided = if_else(!is.na(gg_est_funding) & !is.na(gg_n_awards) & gg_n_awards > 0,
+                           gg_est_funding / gg_n_awards, NA_real_),
+      stated = if_else(!is.na(gg_record), gg_award_ceiling, award_ceiling_clean),
+      estimated = coalesce(gg_divided, implied_award_usd),
+      award_estimate_usd = coalesce(stated, estimated),
+      award_basis = case_when(!is.na(stated) & !is.na(gg_record) ~ "grantsgov_ceiling",
+                              !is.na(stated) ~ "ceiling",
+                              !is.na(estimated) ~ "total_over_awards",
                               TRUE ~ NA_character_),
       award_floor_usd = gg_award_floor,
       deadline_source = if_else(!is.na(gg_deadline), "grantsgov", "export"))

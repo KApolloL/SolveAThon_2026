@@ -140,7 +140,7 @@ that it could lead are *forecasts*, not open postings. On September 30 a DHHS wr
 open, aligned options with enough runway; the practical job is preparing for what is about to post.
 The tool opens with forecasts included for that reason. In the opening scenario (mid-level
 writer, about a month of runway, match with supervisor approval) DHHS sees **27 in Tier 1, 24 in
-Tier 2, 3 in Tier 3**, plus 367 research awards in Tier 4. Every Tier 1-3 item is in
+Tier 2, 3 in Tier 3**, plus 366 research awards in Tier 4. Every Tier 1-3 item is in
 `outs/top_results.xlsx` with a one-line reason.
 
 **[NEW] The AI found the Veterans Home match rate.** The data file only says the State Veterans Home

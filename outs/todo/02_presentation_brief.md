@@ -105,7 +105,7 @@ without a supervisor**. This came from an interview and was checked against publ
   designation).
 - **Tier 4:** research a university would lead, with the agency as partner.
 
-In the tool's opening scenario, DHHS has **27 in Tier 1, 24 in Tier 2, 3 in Tier 3** and 367 in
+In the tool's opening scenario, DHHS has **27 in Tier 1, 24 in Tier 2, 3 in Tier 3** and 366 in
 Tier 4. The opening scenario is a mid-level writer with about one month of runway who needs
 supervisor approval for match, with 1 staff FTE and forecasts included. All 1,662 opportunities
 are accounted for on screen, each with its reason.
@@ -184,7 +184,7 @@ answers.
 
 | Opportunity | Pile | Details | Deadline |
 |---|---|---|---|
-| **Integrated Viral Hepatitis Surveillance, Testing, Treatment and Prevention** (CDC) | Tier 1, impact score 66 (second of 27) | Forecast; Grants.gov states no award ceiling yet; no cost share, fits current staff; Division of Public Health | Feb 16, 2027 (Grants.gov estimate) |
+| **Integrated Viral Hepatitis Surveillance, Testing, Treatment and Prevention** (CDC) | Tier 1, highest impact score (71 of 100) | About $7.5M per award (estimated: $450M total ÷ 60 expected awards; Grants.gov states no ceiling yet); forecast; no cost share, fits current staff; Division of Public Health | Feb 16, 2027 (Grants.gov estimate) |
 | **Preschool Development Grant Birth Through Five** (ACF) | Tier 3, highest impact score in Tier 3 (73) | Up to $15M (Grants.gov ceiling); **30% cost share**; needs a formal state designation; Division of Child Development and Early Education | Nov 20, 2026 (Grants.gov estimate) |
 | **State Veterans Home Construction Grant** (VA, for DMVA) | Tier 3 | Up to $275M (Grants.gov ceiling); 35% match; construction; matches DMVA's own plan (Goal 2, Objective 1: modernize the State Veterans Homes) | — |
 
@@ -291,8 +291,8 @@ on slide 1, in small type under the headline.
 decisions, each with an owner and a date.
 
 - **Headline:** "Three decisions for this month"
-- **Decision 1.** **Route** the Integrated Viral Hepatitis opportunity (Tier 1, a forecast Grants.gov
-  expects to close Feb 16, 2027) to the Division of Public Health now, so they can prepare before it
+- **Decision 1.** **Route** the Integrated Viral Hepatitis opportunity (Tier 1's top result, about
+  $7.5M per award, a forecast Grants.gov expects to close Feb 16, 2027) to the Division of Public Health now, so they can prepare before it
   posts. It needs no one else's signature.
 - **Decision 2.** **Decide on match** for the Preschool Development Grant Birth Through Five (up to
   $15M, 30% cost share, needs a state designation, due Nov 20 per Grants.gov). It needs the secretary's decision in

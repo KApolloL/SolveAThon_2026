@@ -46,6 +46,8 @@ https://kapollol.github.io/SolveAThon_2026/
 | 05_ai_usage.md | How we used AI (Claude Code and a local model) and where it was wrong. Judges will ask. | 3 min |
 | 06_domain_taxonomy.md | Definitions of the eight program areas the tool uses | optional |
 | top_results.xlsx | The list we submit: 57 opportunities, each with a reason | skim |
+| 08_top_results_to_fill_in.xlsx | The same list by tier, with the impact breakdown and a blank rationale column | if writing our own |
+| 09_top_results_with_rationale.xlsx | The same, with a one-sentence rationale for each, drafted by AI from the Grants.gov description. **Review these before submitting.** | 15 min |
 | slide_figures/ | The 11 chart images for the slides | for the slide builder |
 
 ---
@@ -68,7 +70,7 @@ Evaluators in November may ask **anyone** on the team.
    - **Tier 3:** the secretary or legislature;
    - **Tier 4:** research a university would lead.
 
-   Opening scenario for DHHS: **27 / 24 / 3**, plus 367 in Tier 4.
+   Opening scenario for DHHS: **27 / 24 / 3**, plus 366 in Tier 4.
 4. **The haystack.** Of **1,662** opportunities, **296** are open to states. **272** of those (92%)
    are NIH research. Only **6** posted, non-research ones are real DHHS work. Most of the real
    pipeline is forecasts.
@@ -96,7 +98,7 @@ Evaluators in November may ask **anyone** on the team.
    announcement requires outside funding. The Veterans Home grant's **35%** match isn't in the
    data either.
 10. **What leadership should do next (three decisions):**
-    - route the viral hepatitis grant (Tier 1, a forecast due Feb 16, 2027) to Public Health;
+    - route the viral hepatitis grant (Tier 1's top result, about $7.5M per award, a forecast due Feb 16, 2027) to Public Health;
     - decide on the **30% match** for the Preschool Development Grant (Tier 3, up to $15M, due Nov 20);
     - line up standing partners for research evaluation and workforce training. **17 of the 24**
       Tier 2 items are waiting on a partner.
