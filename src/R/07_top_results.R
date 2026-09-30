@@ -147,24 +147,36 @@ write_team_sheet <- function(tr, path = file.path(DIR_OUTS, "top_results_team.xl
   date <- openxlsx::createStyle(numFmt = "mmm d, yyyy", valign = "top")
   blank <- openxlsx::createStyle(fgFill = "#FFF8E1", wrapText = TRUE, valign = "top")
 
-  openxlsx::addWorksheet(wb, "How to fill this in")
-  notes <- c(
-    "One tab per tier. Each row is an opportunity in that tier in the tool's opening scenario (NC DHHS, plus NC DMVA's two Tier 3 items).",
-    if (filled) "Each rationale says why the opportunity ranks where it does and what the grant funds. Our five criteria:" else "Write one line in the yellow Rationale column. Tie it to our five criteria: (1) we can be the applicant, (2) we have the capabilities or know the partner, (3) there is enough runway, (4) the award is worth the staff weeks, (5) the match is survivable at the writer's level.",
-    "Deadline and award come from each opportunity's current record on Grants.gov (checked Sept 29-30, 2026). Forecast deadlines are Grants.gov's estimates. The award is Grants.gov's stated award ceiling; where it states none, the award is estimated as total program funding divided by the expected number of awards, and the Award source column says so. A blank award means Grants.gov gives neither.",
-    "Impact score (0-100) orders opportunities within a tier only; it never moves anything between tiers. For each of five parts the sheet shows the actual number and the points it adds; the points add up to the score (small differences are rounding).",
-    "  Plan fit: the AI labeler's rating of fit with the agency's strategic plan. Strong earns full points, partial half, none zero.",
-    "  People reached: how many North Carolinians are in the population the opportunity serves (the population is named in the next column).",
-    "  Help per person: the award per recipient divided by that population.",
-    "  Award size: the award per recipient (shown in the Award per recipient column, with its source).",
-    "  Program priorities: the writer's weight for the opportunity's program area, out of 3. The default is 1 for every area.",
-    "People reached, help per person and award size earn points by how their number ranks against all the opportunities in the tool's view (about 400), not by the number alone. The biggest number gets full points; the median gets about half.",
-    "With the default equal weights, each part can add at most 100 / (number of parts with a number): 20 points when all five have one. A blank part has no number, and the others share its points. People reached is blank when the population served has no NC count (people with a substance use disorder); help per person is blank when either the award or the people count is.",
-    "Grants.gov ID is the number in grants.gov listing addresses; Simpler.Grants.gov ID is the code in the link, which opens the listing.")
-  openxlsx::writeData(wb, 1, data.frame(`How to fill this in` = notes, check.names = FALSE))
-  openxlsx::setColWidths(wb, 1, 1, 140)
-  openxlsx::addStyle(wb, 1, hdr, rows = 1, cols = 1)
-  openxlsx::addStyle(wb, 1, wrap, rows = 2:(length(notes) + 1), cols = 1)
+  if (filled && file.exists(file.path(DIR_MANUAL, "top_results_explanation.txt"))) {
+    # The team's own explanation tab (data/manual/top_results_explanation.txt): a heading line, then paragraphs.
+    expl <- readLines(file.path(DIR_MANUAL, "top_results_explanation.txt"), warn = FALSE)
+    expl <- expl[nzchar(trimws(expl))]
+    openxlsx::addWorksheet(wb, "EXPLANATION")
+    openxlsx::writeData(wb, 1, data.frame(x = expl[-1]), startRow = 2, colNames = FALSE)
+    openxlsx::writeData(wb, 1, expl[1], startRow = 1)
+    openxlsx::setColWidths(wb, 1, 1, 140)
+    openxlsx::addStyle(wb, 1, hdr, rows = 1, cols = 1)
+    openxlsx::addStyle(wb, 1, wrap, rows = seq_along(expl)[-1], cols = 1)
+  } else {
+    openxlsx::addWorksheet(wb, "How to fill this in")
+    notes <- c(
+      "One tab per tier. Each row is an opportunity in that tier in the tool's opening scenario (NC DHHS, plus NC DMVA's two Tier 3 items).",
+      if (filled) "Each rationale says why the opportunity ranks where it does and what the grant funds. Our five criteria:" else "Write one line in the yellow Rationale column. Tie it to our five criteria: (1) we can be the applicant, (2) we have the capabilities or know the partner, (3) there is enough runway, (4) the award is worth the staff weeks, (5) the match is survivable at the writer's level.",
+      "Deadline and award come from each opportunity's current record on Grants.gov (checked Sept 29-30, 2026). Forecast deadlines are Grants.gov's estimates. The award is Grants.gov's stated award ceiling; where it states none, the award is estimated as total program funding divided by the expected number of awards, and the Award source column says so. A blank award means Grants.gov gives neither.",
+      "Impact score (0-100) orders opportunities within a tier only; it never moves anything between tiers. For each of five parts the sheet shows the actual number and the points it adds; the points add up to the score (small differences are rounding).",
+      "  Plan fit: the AI labeler's rating of fit with the agency's strategic plan. Strong earns full points, partial half, none zero.",
+      "  People reached: how many North Carolinians are in the population the opportunity serves (the population is named in the next column).",
+      "  Help per person: the award per recipient divided by that population.",
+      "  Award size: the award per recipient (shown in the Award per recipient column, with its source).",
+      "  Program priorities: the writer's weight for the opportunity's program area, out of 3. The default is 1 for every area.",
+      "People reached, help per person and award size earn points by how their number ranks against all the opportunities in the tool's view (about 400), not by the number alone. The biggest number gets full points; the median gets about half.",
+      "With the default equal weights, each part can add at most 100 / (number of parts with a number): 20 points when all five have one. A blank part has no number, and the others share its points. People reached is blank when the population served has no NC count (people with a substance use disorder); help per person is blank when either the award or the people count is.",
+      "Grants.gov ID is the number in grants.gov listing addresses; Simpler.Grants.gov ID is the code in the link, which opens the listing.")
+    openxlsx::writeData(wb, 1, data.frame(`How to fill this in` = notes, check.names = FALSE))
+    openxlsx::setColWidths(wb, 1, 1, 140)
+    openxlsx::addStyle(wb, 1, hdr, rows = 1, cols = 1)
+    openxlsx::addStyle(wb, 1, wrap, rows = 2:(length(notes) + 1), cols = 1)
+  }
 
   tier_names <- c("1" = "Tier 1 - Writer can act", "2" = "Tier 2 - Supervisor", "3" = "Tier 3 - Secretary or legis.")
   for (k in names(tier_names)) {
