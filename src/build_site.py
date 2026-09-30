@@ -17,7 +17,7 @@ REPO = "https://github.com/KApolloL/SolveAThon_2026"
 COPIES = {
     "grant-triage-tool.html": "tool.html",
     "solveathon_project.html": "notebook.html",
-    "top_results.xlsx": "downloads/top_results.xlsx",
+    "top_results_with_rationale.xlsx": "downloads/top_results.xlsx",
     "top_results.csv": "downloads/top_results.csv",
 }
 TIER_VAR = {"1": "--t1", "2": "--t2", "3": "--t3", "4": "--t4"}

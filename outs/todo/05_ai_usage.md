@@ -69,9 +69,3 @@ rather than choose on these, and did.
 characterize real agencies from public sources, not from interviews with agency staff.
 The $1M appropriation line is a stated assumption, not a published rule. Both are
 editable in the tool's Assumptions panel.
-
-**Top-results rationales.** The one-sentence rationales in `outs/top_results_with_rationale.xlsx`
-were drafted by Claude from each opportunity's Grants.gov description and the tool's impact
-scores (`data/manual/top_results_rationales.csv`). Every figure in them was taken from the same
-row of the sheet. The team should review and edit them before submitting. The blank version,
-`outs/top_results_team.xlsx`, is there for the team to write their own.

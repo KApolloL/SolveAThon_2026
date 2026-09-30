@@ -3,7 +3,7 @@ title: "Team Brief: NC Grants Explorer (NC's Hidden Treasure)"
 subtitle: "Final update Tuesday Sept 29, evening. Replaces v1. Due Wednesday Sept 30, 11:59 p.m."
 ---
 
-**Team:** Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin.
+**Team:** Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin and Noah Goldblatt.
 
 **Read time: about 10 minutes.** What changed from v1 is marked **[NEW]** or **[CORRECTED]**.
 If you only have two minutes, read sections 1, 6, 7 and the new section 12 (how confident we are).
@@ -150,9 +150,17 @@ Construction Grant requires cost sharing. The AI read the full announcement and 
 **[NEW] The data goes stale fast.** 355 opportunities listed as open in the August 18 file had
 closed or been archived by September 29. The tool flags these.
 
-**We can estimate what an applicant actually gets.** Total national funding divided by number of awards
-gives an implied per-award amount: median $750,000. It matches the stated maximum award on the 451
-opportunities where both exist. Much more honest than quoting the national pot.
+**[UPDATED] What an applicant actually gets comes from Grants.gov.** We read each state-eligible
+opportunity's current Grants.gov record. The award shown is the ceiling Grants.gov states (351 of
+872 state one; median $680,000). Where there's no ceiling, we estimate total funding ÷ expected
+awards and mark it "est.". We checked that estimate against the real ceilings, and it was more than
+2x off for about a third of them, so a stated ceiling always wins. Deadlines are Grants.gov's current
+dates too. Never quote the national pot as money NC could receive.
+
+**[NEW] The impact score is five real numbers.** Plan fit, people reached, dollars per person, award
+size and program priority each earn up to 20 points, and the points add up to the score. Open any
+card in the tool, or see the top results spreadsheet, to show exactly why an opportunity ranks where
+it does.
 
 **[NEW] Which DHHS plan we use.** We use the plan the competition provides: the 2023-2025 DHHS plan
 on the state budget office's (OSBM) site. DHHS has since posted newer plans on its own website
@@ -232,7 +240,9 @@ capability profile, operating long-term care is "contracted", not "direct".
 user-weighted impact ranking inside each pile, an export button, a full accounting of all 1,662
 opportunities, the plain-English scenario box, four presets, a capability-gap panel, a county need
 map with four boundary types (now including real county overdose death rates from CDC), a
-reach-vs-intensity chart, the top results list with one-line rationales, the full notebook,
+reach-vs-intensity chart, a "who this reaches" view by county and congressional district, the top
+results list (`top_results_with_rationale.xlsx`: a tab per tier, the impact breakdown and a
+one-sentence rationale each), the full notebook,
 full-announcement retrieval for candidates, a local AI labeler with cached results, and the
 AI-usage disclosure.
 
@@ -243,8 +253,10 @@ flagged "check this" (that review is why research became its own Tier 4).
 its announcement. The notebook states this plainly. Our evidence for those tiers is the hand-label
 comparison (section 12 below).
 
-**Still to do:** record the video; check the strategic-plan tables and capability profile if time
-allows.
+**Still to do:**
+- read the rationales in the top results spreadsheet and fix any you can't defend;
+- record the video;
+- check the strategic-plan tables and capability profile, if time allows.
 
 **How the AI was checked (you may be asked).** We reviewed the AI's first 118 labels by hand and
 found it called far too many grants "aligned with DHHS" (including wildfire and a Sierra Leone

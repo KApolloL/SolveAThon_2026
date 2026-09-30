@@ -1,6 +1,6 @@
 # Project Guide: Where Everything Is and What It Is
 
-NC Grants Explorer · Solve-A-Thon 2026 · Team: Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin · due Wednesday Sept 30, 11:59 p.m.
+NC Grants Explorer · Solve-A-Thon 2026 · Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin and Noah Goldblatt · due Wednesday Sept 30, 11:59 p.m.
 
 This guide has three parts:
 1. **What to submit.** The files the competition asks for.
@@ -17,7 +17,7 @@ The competition asks for three things. Two are ready. The video still has to be 
 
 | # | The competition asks for | Our file | Status |
 |---|---|---|---|
-| 1 | A top results list with a one-line rationale per opportunity, tied to the match criteria | `outs/top_results.xlsx` (the same list is in `outs/top_results.csv`) | Ready |
+| 1 | A top results list with a one-line rationale per opportunity, tied to the match criteria | `outs/top_results_with_rationale.xlsx` (a tab per tier; the machine-generated version is `outs/top_results.xlsx`) | Ready |
 | 2 | The work as a notebook, with notes, the AI tools used, the key prompts, and at least one place the AI was wrong and how it was caught | `outs/solveathon_project.html` | Ready |
 | 3 | A 5-minute recorded presentation to leadership | not made yet | **To do** |
 
@@ -65,7 +65,7 @@ To publish or update it, see Part 3, "Publishing the website".
 - DHHS: 27 in Tier 1, 24 in Tier 2, 3 in Tier 3.
 - DMVA: 3 in Tier 3.
 
-**Filled-in version:** `outs/top_results_with_rationale.xlsx` (copied to `outs/todo/09_top_results_with_rationale.xlsx`) has the same layout, with a one-sentence rationale per opportunity drafted by Claude from the Grants.gov description and the impact scores. The sentences live in `data/manual/top_results_rationales.csv`, so edit them there and re-run `07_top_results.R`. The team should review them before submitting.
+**Filled-in version:** `outs/top_results_with_rationale.xlsx` (copied to `outs/todo/09_top_results_with_rationale.xlsx`) has the same layout, with a one-sentence rationale per opportunity: why it ranks where it does, and what the grant funds, taken from its Grants.gov description. **This is the list to submit.** The sentences live in `data/manual/top_results_rationales.csv`; edit them there and re-run `07_top_results.R`.
 
 **Team fill-in version:** `outs/top_results_team.xlsx` (copied to `outs/todo/08_top_results_to_fill_in.xlsx`). It has a tab per tier, the impact score and its five parts, the Grants.gov deadline and award ceiling, and an empty rationale column for the team to write.
 

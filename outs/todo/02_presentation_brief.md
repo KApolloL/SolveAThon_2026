@@ -131,7 +131,27 @@ it, contracts for it, needs a partner, or has no route. Every entry cites a publ
 - award size;
 - their own program priorities.
 
-The score never moves anything between piles.
+The score never moves anything between piles. It is built from five actual numbers, each worth
+up to 20 points, and the points add up to the score. Example, the Preschool Development Grant
+(score 73):
+- plan fit "strong" = 20;
+- 10.6M people reached = 13.0;
+- $1.42 per person = 14.7;
+- up to $15M award = 19.0;
+- program priority = 6.7.
+
+People reached, dollars per person and award earn points by how they rank against about 400
+opportunities in view.
+
+**Award amounts.** Each award is the ceiling Grants.gov states for the opportunity; where it
+states none, we estimate total funding ÷ expected number of awards and mark it "est.". That
+estimate was more than 2x off the real ceiling for 35% of opportunities that have both, so a
+stated ceiling always wins. Deadlines are Grants.gov's current dates (its estimates, for
+forecasts), checked Sept 29–30, 2026.
+
+**The top results list we submit** is `outs/top_results_with_rationale.xlsx`: 57 opportunities
+(DHHS 27 / 24 / 3, DMVA 3 in Tier 3), a tab per tier, each with its impact breakdown and a
+one-sentence rationale.
 
 **The AI (a free local model, run on a laptop).**
 - It reads each candidate's abstract and, where one exists, the full announcement: 116 of 278
@@ -219,7 +239,7 @@ answers.
 
 Timings are targets. The demo is the anchor; protect its 90 seconds.
 
-The project is called **NC Grants Explorer**. The team is Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin. Put the name and the team
+The project is called **NC Grants Explorer**. The team is Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin and Noah Goldblatt. Put the name and the team
 on slide 1, in small type under the headline.
 
 ### Slide 1: The problem (0:00–0:30) · Framing
@@ -393,3 +413,13 @@ look: a paperwork metaphor (a routing slip, a signature line) rather than a tech
   settings file, and the strategic plan is a swappable table.
 - **What if the capability profile is wrong?** Every entry is sourced and editable, and a
   division head should review it. Changing one entry re-sorts the piles instantly.
+- **How is the impact score calculated?** Five actual numbers: plan fit, people reached,
+  dollars per person, award and program priority. Each earns up to 20 points, and the points add
+  up to the score. Open any card in the tool to see the numbers and points. It only orders items
+  inside a pile.
+- **Where do the award amounts come from?** The ceiling Grants.gov states. Where there is none,
+  we estimate total funding ÷ expected awards and label it "est.".
+- **Why is a health center grant in Tier 1?** The rules place it there because DHHS has the
+  capabilities and there's no match. But Health Center Program competitions usually fund
+  community health centers, so its rationale says to confirm DHHS can apply. This is exactly the
+  kind of Tier 1 result we tell writers to confirm before committing staff.

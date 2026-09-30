@@ -821,7 +821,11 @@
       "<li>Requirements, domain, population, and plan alignment: labeled by a local model (" + esc(P.meta.llm_model) + ", prompt " + esc(P.meta.llm_prompt_version) +
       ") from the abstract and, where available, the full announcement. Validated against 60 hand labels in the project notebook.</li>" +
       "<li>Match percentage is published in structured form almost nowhere; where the tool shows one, it was found in the text.</li>" +
-      "<li>County and district counts: ACS 2019-2023 5-year estimates (Census API); CDC PLACES for adults in frequent mental distress; HRSA primary care shortage designations (multi-county designations split evenly); OpenFEMA declarations for hazard exposure. County need maps also use NCHS drug poisoning death rates.</li></ul>";
+      "<li>County and district counts: ACS 2019-2023 5-year estimates (Census API); CDC PLACES for adults in frequent mental distress; HRSA primary care shortage designations (multi-county designations split evenly); OpenFEMA declarations for hazard exposure. County need maps also use NCHS drug poisoning death rates.</li></ul>" +
+      "<div class=\"about-project\"><strong>NC Grants Explorer</strong>, Solve-A-Thon 2026, by Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin and Noah Goldblatt. " +
+      "<a href=\"https://kapollol.github.io/SolveAThon_2026/\" target=\"_blank\" rel=\"noopener\">Project website</a> · " +
+      "<a href=\"https://kapollol.github.io/SolveAThon_2026/notebook.html\" target=\"_blank\" rel=\"noopener\">Full notebook: data, method and checks</a> · " +
+      "<a href=\"https://github.com/KApolloL/SolveAThon_2026\" target=\"_blank\" rel=\"noopener\">Source code</a></div>";
   }
 
   // ---- Export the current view -------------------------------------------------------------

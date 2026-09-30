@@ -2,7 +2,7 @@
 
 Solve-A-Thon 2026 · NC's Hidden Treasure
 
-**Team:** Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin.
+**Team:** Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin and Noah Goldblatt.
 
 A tool for a grant writer inside a North Carolina state agency. It sorts federal funding
 opportunities into three piles by **whose signature is needed**: the writer's, a supervisor's, or
@@ -19,7 +19,7 @@ score whose weights they set. All 1,662 opportunities in the file are accounted 
 |---|---|---|
 | Interactive tool | `outs/grant-triage-tool.html` | Double-click. One file, works offline, no server. |
 | Analytical notebook | `outs/solveathon_project.html` | Double-click. The tool is embedded in section 14. |
-| Top results list | `outs/top_results.xlsx` (also in notebook section 14) | Every Tier 1-3 opportunity with a one-line rationale tied to the five criteria. |
+| Top results list | `outs/top_results_with_rationale.xlsx` (also notebook section 14) | A tab per tier: every Tier 1-3 opportunity with its impact breakdown, Grants.gov deadline and award, and a one-sentence rationale. `outs/top_results_team.xlsx` is the same with the rationale left blank. |
 | Team brief | `outs/team_brief_v2.docx` | Plain-language summary for the team. |
 | Hand labels and spot-check sheets | `data/manual/handlabels_60.csv`, `outs/spotcheck_for_team.xlsx` | Instructions in `src/docs/handlabel_instructions.md` |
 

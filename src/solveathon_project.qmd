@@ -3,10 +3,10 @@ title: "NC Grants Explorer: Sorting Federal Opportunities by Whose Signature You
 subtitle: "Solve-A-Thon 2026 · NC's Hidden Treasure"
 author:
   - Kent Lee
-  - Marco Gullotto
   - Everett Foo
-  - Noah Goldblatt
+  - Marco Gullotto
   - Matthew Martin
+  - Noah Goldblatt
 date: today
 format:
   html:
@@ -56,6 +56,11 @@ main.content h2 { font-size: 1.3rem; color: var(--dark); border-bottom-width: 1p
 .read-me p { margin:.25rem 0; }
 .read-me .lbl { font-weight:700; color:var(--blue); text-transform:uppercase; font-size:.75rem; letter-spacing:.05em; margin-right:.4rem; }
 .takeaway { border-left:4px solid var(--manila-line); background:var(--manila); padding:8px 14px; margin:8px 0 26px 0; border-radius:0; max-width:60rem; }
+.online-bar { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:baseline; border-top:1px solid #D9DCD6; border-bottom:1px solid #D9DCD6; padding:10px 0; margin:4px 0 26px 0; font-size:.93rem; }
+.online-bar p { display:flex; flex-wrap:wrap; gap:6px 20px; align-items:baseline; margin:0; }
+.online-bar .lbl { font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gray); }
+.online-bar a { color:var(--blue); font-weight:600; text-decoration:none; border-bottom:1px solid #B9BDB5; }
+.online-bar a:hover { border-bottom-color:var(--blue); }
 .takeaway::before { content:"Takeaway  "; font-weight:700; color:var(--green); font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; }
 .cell-output-display img { border-radius:6px; }
 .cell-output-display { margin-bottom: .6rem; }
@@ -130,6 +135,14 @@ nofo_n      <- sum(!is.na(enrich$nofo$nofo_text))
 cand_n      <- nrow(enrich$nofo)
 ```
 
+::: {.online-bar}
+<span class="lbl">Online</span>
+<a href="https://kapollol.github.io/SolveAThon_2026/">Project website</a>
+<a href="https://kapollol.github.io/SolveAThon_2026/tool.html">Interactive tool</a>
+<a href="https://kapollol.github.io/SolveAThon_2026/downloads/top_results.xlsx">Top results (Excel)</a>
+<a href="https://github.com/KApolloL/SolveAThon_2026">Source code on GitHub</a>
+:::
+
 # 1. Executive summary
 
 ```{r kpis}
@@ -167,7 +180,7 @@ them. The median application window is `r median(windows$application_window_days
 `r pct_fmt(mean(windows$application_window_days <= 30), 1)` of windows are 30 days or shorter.
 
 ::: {.read-me}
-<p><span class="lbl">How to read this notebook</span>Charts are followed by a green <b>takeaway</b> box that says, in one or two sentences, what the chart means for a grant writer. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted.</p>
+<p><span class="lbl">How to read this notebook</span>Charts are followed by a green <b>takeaway</b> box that says, in one or two sentences, what the chart means for a grant writer. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted. The tool, this notebook and the top results are also on the <a href="https://kapollol.github.io/SolveAThon_2026/">project website</a>.</p>
 <p><span class="lbl">Tiers</span><span style="color:#23408E;font-weight:700">Tier 1</span> the writer can act · <span style="color:#B7791F;font-weight:700">Tier 2</span> needs a supervisor or division · <span style="color:#A63D2F;font-weight:700">Tier 3</span> needs the secretary or legislature · <span style="color:#6E7479;font-weight:700">Tier 4</span> research a partner would lead.</p>
 :::
 
@@ -1713,6 +1726,12 @@ DMVA's own current goal of modernizing the veterans homes, and lands in Tier 3 b
 construction project with cost share needs an appropriation. The agency's best match is the thing
 it cannot act on alone. The DMVA plan also lists explicit *Priority Questions*; aligning
 opportunities to those questions is the natural next feature (section 17).
+
+## Project links
+
+- **Project website:** <https://kapollol.github.io/SolveAThon_2026/> (the landing page, the interactive tool, this notebook and the top results)
+- **Interactive tool:** <https://kapollol.github.io/SolveAThon_2026/tool.html>
+- **Source code and data pipeline:** <https://github.com/KApolloL/SolveAThon_2026>
 
 ## Session info
 

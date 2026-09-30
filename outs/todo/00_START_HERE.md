@@ -1,6 +1,6 @@
 # Start here: what the team needs to know and do
 
-NC Grants Explorer · Solve-A-Thon 2026 · Team: Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin · **due Wednesday, Sept 30, 11:59 p.m.** Late submissions are not accepted.
+NC Grants Explorer · Solve-A-Thon 2026 · Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin and Noah Goldblatt · **due Wednesday, Sept 30, 11:59 p.m.** Late submissions are not accepted.
 
 This folder is the team's reading packet. Everything in it is a copy. The originals live in the
 project and are refreshed with `python3 src/build_todo.py`, so if anything here looks out of date,
@@ -12,7 +12,8 @@ ask Kent to refresh it.
 
 | # | Task | Who | Done? |
 |---|---|---|---|
-| 1 | Everyone reads **01_team_brief.docx** and can explain the ten points in section 4 below | Everyone | ☐ |
+| 1 | Everyone reads **01_team_brief.docx** and can explain the eleven points in section 4 below | Everyone | ☐ |
+| 1b | Everyone reads the rationales in **09_top_results_with_rationale.xlsx**; fix any sentence you can't defend (edit `data/manual/top_results_rationales.csv`, then Kent rebuilds) | Everyone | ☐ |
 | 2 | Everyone opens **07_try_the_tool.html** and tries the demo steps once (section 3) | Everyone | ☐ |
 | 3 | Build the slides from **02_presentation_brief.md**: paste it into Claude chat and attach the images in `slide_figures/` | ________ | ☐ |
 | 4 | Rehearse the demo twice, then record the 5-minute video addressed to agency leadership | ________ | ☐ |
@@ -25,7 +26,7 @@ ask Kent to refresh it.
 
 | Competition item | Our file | Status |
 |---|---|---|
-| Top results list, with a one-line rationale per opportunity | `top_results.xlsx` (copy in this folder) | Ready |
+| Top results list, with a one-line rationale per opportunity | `09_top_results_with_rationale.xlsx` (copy in this folder; source `outs/top_results_with_rationale.xlsx`) | Ready |
 | Our work as a notebook, including AI tools used, key prompts, and where the AI was wrong | `outs/solveathon_project.html` (large file; also on the website) | Ready |
 | A presentation to agency leadership (a video of 5 minutes or less is preferred) | Built from `02_presentation_brief.md` | **To do** |
 
@@ -45,14 +46,14 @@ https://kapollol.github.io/SolveAThon_2026/
 | **04_GUIDE.md** | Map of every file in the project. Read Part 2 ("What to explain to the team"). | 5 min |
 | 05_ai_usage.md | How we used AI (Claude Code and a local model) and where it was wrong. Judges will ask. | 3 min |
 | 06_domain_taxonomy.md | Definitions of the eight program areas the tool uses | optional |
-| top_results.xlsx | The list we submit: 57 opportunities, each with a reason | skim |
+| top_results.xlsx | The machine-generated list: 57 opportunities, each with a rule-by-rule reason | optional |
 | 08_top_results_to_fill_in.xlsx | The same list by tier, with the impact breakdown and a blank rationale column | if writing our own |
-| 09_top_results_with_rationale.xlsx | The same, with a one-sentence rationale for each, drafted by AI from the Grants.gov description. **Review these before submitting.** | 15 min |
+| 09_top_results_with_rationale.xlsx | **The list we submit.** The same, with a one-sentence rationale for each: why it ranks where it does and what the grant funds. Read these so you can explain any of them. | 15 min |
 | slide_figures/ | The 11 chart images for the slides | for the slide builder |
 
 ---
 
-## 4. Ten things every one of us must be able to explain
+## 4. Eleven things every one of us must be able to explain
 
 Evaluators in November may ask **anyone** on the team.
 
@@ -94,10 +95,21 @@ Evaluators in November may ask **anyone** on the team.
 8. **Our honest weakness.** We **did not hand-check every Tier 1–3 result**. The tradeoff: the
    evidence is shown on every card, and a writer should confirm a Tier 1 before committing staff.
    Also, the $1M appropriation line is our assumption.
-9. **What the AI found that the data missed.** Title X is marked "no cost sharing", but its
+9. **Where the award amounts come from.** Each award is the ceiling Grants.gov states. Where it
+   states none, we estimate it as total funding ÷ expected number of awards and mark it "est.".
+   The impact score turns five actual numbers into points that add up to the score:
+   - plan-fit rating;
+   - people reached;
+   - dollars per person;
+   - award;
+   - program priority.
+
+   Awards, reach and dollars per person earn points by how they rank against about 400 other
+   opportunities.
+10. **What the AI found that the data missed.** Title X is marked "no cost sharing", but its
    announcement requires outside funding. The Veterans Home grant's **35%** match isn't in the
    data either.
-10. **What leadership should do next (three decisions):**
+11. **What leadership should do next (three decisions):**
     - route the viral hepatitis grant (Tier 1's top result, about $7.5M per award, a forecast due Feb 16, 2027) to Public Health;
     - decide on the **30% match** for the Preschool Development Grant (Tier 3, up to $15M, due Nov 20);
     - line up standing partners for research evaluation and workforce training. **17 of the 24**
@@ -113,9 +125,9 @@ Evaluators in November may ask **anyone** on the team.
 |---|---|---|
 | Understanding | Are the criteria specific to this agency and user, and did they drive the workflow? | Points 1–2; brief section 3 |
 | Framing | Were the problem and requirements framed well? | Points 3–4 |
-| Solving | Is it sensible and reproducible, and would an agency use it? No points for needless complexity. | Point 5; the tool; the notebook rebuilds from cached data |
+| Solving | Is it sensible and reproducible, and would an agency use it? No points for needless complexity. | Points 5 and 9; the tool; the notebook rebuilds from cached data |
 | Evaluating | Did we name a real weakness and our tradeoff? | Points 6–8 |
-| Driving impact | Can a non-technical budget director watch and know what to do next? | Point 10 |
+| Driving impact | Can a non-technical budget director watch and know what to do next? | Point 11 |
 
 ---
 

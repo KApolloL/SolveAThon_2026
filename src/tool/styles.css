@@ -356,3 +356,14 @@ blockquote { background: #e6d6a8; color: #3b3320; border-left: 0; padding: 10px 
 .reach-districts td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .dist-bar { display: block; height: 7px; background: var(--accent); min-width: 2px; }
 .reach-actions { margin: 10px 0 6px; }
+
+/* ---- Links back to the project website ---- */
+.site-links { display: flex; gap: 14px; align-items: center; font-size: 13px; }
+.site-links a { color: var(--text-secondary); text-decoration: none; border-bottom: 1px solid var(--border-strong); padding-bottom: 1px; }
+.site-links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.site-links a::after { content: " \2197"; font-size: 11px; }
+.about-project { margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 13px; color: var(--text-secondary); }
+@media (max-width: 700px) { .site-links { width: 100%; } }
+.header-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; margin-left: auto; }
+header.app .data-note { max-width: 360px; }
+@media (max-width: 700px) { .header-actions { align-items: flex-start; margin-left: 0; } }

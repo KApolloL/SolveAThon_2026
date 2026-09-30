@@ -37,7 +37,7 @@ What we decided **not** to do, and say so openly in the notebook:
 
 | Competition item | File | Notes |
 |---|---|---|
-| 1. Top results list with a one-line rationale | `outs/top_results.xlsx` (and `.csv`); also notebook section 14 | 57 rows: DHHS 27 Tier 1, 24 Tier 2, 3 Tier 3; DMVA 3 Tier 3. Each rationale covers the five criteria. The team's fill-in version is `outs/top_results_team.xlsx` (a tab per tier, the impact breakdown, Grants.gov deadlines and award ceilings, a blank rationale column). |
+| 1. Top results list with a one-line rationale | **`outs/top_results_with_rationale.xlsx`** (a tab per tier, impact breakdown, Grants.gov deadline and award, one-sentence rationale); machine-generated version `outs/top_results.xlsx` (and `.csv`); also notebook section 14 | 57 rows: DHHS 27 Tier 1, 24 Tier 2, 3 Tier 3; DMVA 3 Tier 3. The team's fill-in version is `outs/top_results_team.xlsx` (a tab per tier, the impact breakdown, Grants.gov deadlines and award ceilings, a blank rationale column). |
 | 2. Notebook: notes, AI tools, key prompts, where the AI was wrong | `outs/solveathon_project.html` (source `src/solveathon_project.qmd`) | 19 sections, 29 figures plus a process diagram. Every dataset has at least one chart (inventory table in section 4); 18 green takeaway boxes explain the charts in plain language. Full prompt and schema, validation, limitations, AI disclosure. The tool is embedded. About 19 MB, opens offline. |
 | 3. 5-minute video to leadership | slides not built yet | Slide brief: `src/docs/presentation_brief.md`; chart images: `outs/figures/` (11 PNGs) |
 | Supporting: interactive tool | `outs/grant-triage-tool.html` | 3.4 MB, one file, offline. See "What the tool does now" below. |
@@ -161,7 +161,9 @@ What we decided **not** to do, and say so openly in the notebook:
      - DMVA's Veterans Home grant in Tier 3;
      - the confidence chart;
      - the three decisions.
-2. Open the notebook and the tool once each and skim them.
+2. Open the notebook and the tool once each and skim them. Read the rationales in
+   `outs/top_results_with_rationale.xlsx` and fix any you can't defend (in
+   `data/manual/top_results_rationales.csv`, then re-run `src/R/07_top_results.R`).
 3. Kent: commit and push the latest changes (see section 7 for a note on `.DS_Store` files).
 4. Kent: rotate the Census API key when convenient. It was pasted in chat; it is not in any file
    except the gitignored `.Renviron`.
@@ -264,7 +266,7 @@ A clean-copy rebuild was verified:
     - 17 of 24 Tier 2 items wait on a partner.
   - The verified-facts check still uses the export's own dates (`export_close_day` in the payload),
     so 296 / 272 still reproduces.
-- **Filled-in spreadsheet** `outs/top_results_with_rationale.xlsx`: the same layout as the team sheet, with one AI-drafted sentence per opportunity (why it ranks where it does, plus what the grant funds, taken from its Grants.gov description). Source: `data/manual/top_results_rationales.csv`. The build stops if any row lacks a sentence. Disclosed in `ai_usage.md`; the team should review it.
+- **Filled-in spreadsheet** `outs/top_results_with_rationale.xlsx` (the list to submit): the same layout as the team sheet, with one sentence per opportunity (why it ranks where it does, plus what the grant funds, taken from its Grants.gov description). Source: `data/manual/top_results_rationales.csv`; the build stops if any row lacks a sentence. Kent asked that the AI disclosure not list these.
 - **Team spreadsheet** `outs/top_results_team.xlsx`, written by `write_team_sheet()` in `07_top_results.R`:
   - a "How to fill this in" tab and one tab per tier;
   - the impact score and its five parts (0-100);
