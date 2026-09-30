@@ -1,7 +1,12 @@
 ---
-title: "NC Grant Triage: Sorting Federal Opportunities by Whose Signature You Need"
+title: "NC Grants Explorer: Sorting Federal Opportunities by Whose Signature You Need"
 subtitle: "Solve-A-Thon 2026 · NC's Hidden Treasure"
-author: "Kent Lee and team"
+author:
+  - Kent Lee
+  - Marco Gullotto
+  - Everett Foo
+  - Noah Goldblatt
+  - Matthew Martin
 date: today
 format:
   html:
@@ -97,6 +102,7 @@ facts      <- compute_facts(grants)
 fact_val   <- function(label) facts$computed[facts$fact == label]
 enrich     <- readRDS(file.path(DIR_PROCESSED, "grantsgov_enrichment.rds"))
 alignment  <- readRDS(file.path(DIR_PROCESSED, "alignment.rds"))
+gg_awards  <- readRDS(file.path(DIR_PROCESSED, "grantsgov_awards.rds"))
 labels_path <- file.path(DIR_PROCESSED, "llm_labels.rds")
 labels     <- if (file.exists(labels_path)) readRDS(labels_path) else NULL
 labels_ok  <- !is.null(labels) && sum(labels$labeled) > 0
@@ -231,6 +237,7 @@ flowchart LR
 | Validate | The team labeled 60 opportunities without seeing the model's answers | Hard facts agree over 90% of the time; judgment calls 45-67% (section 12) |
 | Review research items | The team read 27 research awards flagged as closely aligned | They recommended a separate research tier, which became Tier 4 |
 | Build the tool | Rules in one JavaScript file, tested on every build, all 1,662 opportunities accounted for | The notebook runs the same rules, so the two can never disagree |
+| Check awards and deadlines at the source | Read every state-eligible opportunity's current record on Grants.gov | Awards are the stated ceiling instead of total ÷ number of awards, which was often more than 2x off; deadlines are Grants.gov's current dates |
 | Show who is reached | Added county, rural / urban and congressional-district counts for each population an opportunity serves | Leadership can see which communities an opportunity reaches, labeled as where people live, not where money goes |
 
 # 4. Data provenance and data dictionary
@@ -238,7 +245,7 @@ flowchart LR
 | Source | What we used | Access |
 |---|---|---|
 | Grants.gov export `r basename(GRANTS_CSV)` | `r n_fmt(nrow(grants))` opportunities, `r ncol(grants_raw)` columns | Supplied by the competition; pulled `r format(PULL_DATE)` |
-| Grants.gov public API | Current status for every opportunity; full announcements for `r n_fmt(nofo_n)` of `r n_fmt(cand_n)` candidates | Free, no key; cached with access dates |
+| Grants.gov public API | Current status for every opportunity; the full record (award ceiling and floor, application deadline) for `r n_fmt(nrow(gg_awards))` state-eligible opportunities; full announcements for `r n_fmt(nofo_n)` of `r n_fmt(cand_n)` candidates | Free, no key; cached with access dates |
 | NC DHHS Strategic Plan 2023-2025 | Goals, objectives, strategies, priority questions (`r nrow(load_priorities() |> filter(agency == "DHHS"))` rows) | [OSBM agency plans](https://www.osbm.nc.gov/strategic-plan-ncdhhs/open), the competition's source |
 | NC DMVA Strategic Plan 2025-2029 | Goals, objectives, priority questions (`r nrow(load_priorities() |> filter(agency == "DMVA"))` rows) | [OSBM agency plans](https://www.osbm.nc.gov/operational-excellence/strategic-planning/agency-strategic-plans) |
 | ACS 2023 5-year | County, state and congressional-district population counts (districts as drawn for the 118th Congress) | Census API |
@@ -256,7 +263,7 @@ flowchart LR
 | Dataset | Figures |
 |---|---|
 | Grants.gov export | Funding types (4), funnel and issuers (6), eligibility (7), deadlines and forecasts (8), award size (9) |
-| Grants.gov API | Status six weeks later (6), full-announcement coverage (12) |
+| Grants.gov API | Status six weeks later (6), award ceilings and deadlines (9), full-announcement coverage (12) |
 | Strategic plans | Plan structure (4), plan rows the labeler cited (12), similarity vs judgment (15) |
 | Capability profiles | Capability heatmap (10) |
 | Local-model labels | Prompt iteration, capabilities found, plan rows cited (12); piles by scenario and domain (11) |
@@ -572,46 +579,74 @@ lead sits mostly in forecasts, which is why the tool includes forecasts by defau
 The file's `estimated_total_program_funding` is the national pot. Summed across open
 state-eligible rows it reaches
 `r usd_fmt(sum(open_state$estimated_total_program_funding, na.rm = TRUE))`, a number with no
-meaning for one agency. We use the **implied per-award amount**: total funding divided by
-expected awards, available for `r n_fmt(nrow(implied))` rows.
+meaning for one agency.
 
-```{r implied}
-#| code-summary: "Implied award vs stated ceiling"
-cmp <- implied |> filter(!is.na(award_ceiling_clean))
-ggplot(cmp, aes(award_ceiling_clean, implied_award_usd)) +
-  geom_abline(slope = 1, intercept = 0, color = pal$gray, linetype = "dashed") +
-  geom_point(alpha = .45, color = pal$blue, size = 1.8) +
-  scale_x_log10(labels = usd_fmt, expand = expansion(mult = .05)) +
-  scale_y_log10(labels = usd_fmt, expand = expansion(mult = .06)) +
-  labs(title = "The implied award tracks the stated ceiling",
-       subtitle = paste0("n = ", n_fmt(nrow(cmp)), "; median implied / ceiling = ",
-                         number(median(cmp$implied_award_usd / cmp$award_ceiling_clean), .01)),
-       x = "Stated award ceiling (log)", y = "Implied award = total / expected awards (log)")
+Our first version estimated what one award is worth by dividing that total by the expected
+number of awards. For the final version we stopped estimating. Every state-eligible
+opportunity's current record on Grants.gov (its synopsis, or its forecast) was read, and the tool,
+the top results and the impact score now use the **award ceiling Grants.gov states**. Where
+Grants.gov states no ceiling, the award shows as "not stated"; it is never filled in with an estimate.
+
+```{r gg-award-coverage}
+#| results: asis
+#| code-summary: "What Grants.gov states for state-eligible opportunities"
+gg <- gg_awards |> inner_join(select(grants, opportunity_number, status_group, implied_award_usd, award_ceiling_clean,
+                                     close_date, forecasted_close_date), by = "opportunity_number")
+cat(sprintf("Grants.gov records were read for **%s** state-eligible opportunities (checked %s). **%s** state an award ceiling and **%s** an award floor; **%s** state no ceiling at all.\n",
+            n_fmt(nrow(gg)), paste(unique(range(str_sub(na.omit(gg$gg_checked), 1, 10))), collapse = " to "), n_fmt(sum(!is.na(gg$gg_award_ceiling))),
+            n_fmt(sum(!is.na(gg$gg_award_floor))), n_fmt(sum(is.na(gg$gg_award_ceiling)))))
 ```
 
-The median implied award is `r usd_fmt(median(implied$implied_award_usd))`. Where both exist,
-the median ratio of implied award to stated ceiling is
-`r number(median(cmp$implied_award_usd / cmp$award_ceiling_clean), .01)`, so the estimate
-is consistent with what agencies say they will award. Where the implied value is missing, the
-tool falls back to the ceiling and says so.
+```{r ceiling-vs-implied}
+#| fig-height: 4.4
+#| code-summary: "Grants.gov award ceiling vs the old divided estimate"
+cmp <- gg |> filter(!is.na(gg_award_ceiling), !is.na(implied_award_usd))
+ratio <- cmp$implied_award_usd / cmp$gg_award_ceiling
+ggplot(cmp, aes(gg_award_ceiling, implied_award_usd)) +
+  geom_abline(slope = 1, intercept = 0, color = pal$gray, linetype = "dashed") +
+  geom_point(alpha = .5, color = pal$blue, size = 1.8) +
+  scale_x_log10(labels = usd_fmt, expand = expansion(mult = .05)) +
+  scale_y_log10(labels = usd_fmt, expand = expansion(mult = .06)) +
+  labs(title = "Dividing the total by the number of awards was often far off",
+       subtitle = str_wrap(paste0("n = ", n_fmt(nrow(cmp)), " opportunities with both. The divided estimate was more than twice or less than half the stated ceiling for ",
+                                  pct_fmt(mean(ratio > 2 | ratio < .5)), " of them. Dashed line: the two agree."), 90),
+       x = "Award ceiling stated on Grants.gov (log)", y = "Old estimate: total ÷ awards (log)")
+```
 
 ```{r award-distribution}
 #| fig-height: 3.8
-#| code-summary: "Distribution of the implied award"
-ggplot(implied, aes(implied_award_usd)) +
+#| code-summary: "Distribution of Grants.gov award ceilings"
+ceil <- gg |> filter(!is.na(gg_award_ceiling))
+ggplot(ceil, aes(gg_award_ceiling)) +
   geom_histogram(bins = 40, fill = pal$blue, color = "white") +
-  geom_vline(xintercept = median(implied$implied_award_usd), linetype = "dashed", color = pal$red) +
-  annotate("text", x = median(implied$implied_award_usd) * 1.3, y = Inf, vjust = 1.6, hjust = 0, color = pal$red, size = 3.4,
-           label = paste("Median", usd_fmt(median(implied$implied_award_usd)))) +
+  geom_vline(xintercept = median(ceil$gg_award_ceiling), linetype = "dashed", color = pal$red) +
+  annotate("text", x = median(ceil$gg_award_ceiling) * 1.3, y = Inf, vjust = 1.6, hjust = 0, color = pal$red, size = 3.4,
+           label = paste("Median", usd_fmt(median(ceil$gg_award_ceiling)))) +
   scale_x_log10(labels = usd_fmt) +
-  labs(title = "What one award is worth: from thousands to tens of millions",
-       subtitle = paste0("Implied award per recipient, n = ", n_fmt(nrow(implied)), " (log scale)"),
-       x = "Implied award", y = "Opportunities")
+  labs(title = "One award can be worth anywhere from $20K to $275M",
+       subtitle = paste0("Award ceiling stated on Grants.gov, state-eligible opportunities, n = ", n_fmt(nrow(ceil)), " (log scale)"),
+       x = "Award ceiling", y = "Opportunities")
+```
+
+**Deadlines were checked the same way.** The tool uses each opportunity's current Grants.gov
+deadline (Grants.gov's estimate, for forecasts) instead of the date in the August export:
+
+```{r deadline-check}
+#| code-summary: "Grants.gov deadline vs the export's date"
+gg |> mutate(export_date = if_else(status_group == "Forecasted", forecasted_close_date, close_date),
+             change = case_when(is.na(gg_deadline) ~ "Grants.gov states no date",
+                                is.na(export_date) ~ "Date only on Grants.gov",
+                                gg_deadline == export_date ~ "Same date",
+                                gg_deadline > export_date ~ "Grants.gov date is later",
+                                TRUE ~ "Grants.gov date is earlier")) |>
+  count(`Deadline compared with the export` = change, name = "Opportunities") |>
+  arrange(desc(Opportunities)) |> dt(dom = "t")
 ```
 
 ::: {.takeaway}
-Awards span four orders of magnitude, so a minimum-award setting matters: a $50K award rarely
-justifies the same staff weeks as a $5M one.
+Use what Grants.gov states, not an estimate. A ceiling is the most one award can be, so it is an
+upper bound, and the tool labels it "up to". Awards still span five orders of magnitude, so the
+minimum-award setting matters: a $50K award rarely justifies the same staff weeks as a $5M one.
 :::
 
 # 10. The capability model
@@ -723,7 +758,7 @@ map_dfr(scen, function(sc) {
   scale_fill_manual(values = c("Tier 1" = pal$tier1, "Tier 2" = pal$tier2, "Tier 3" = pal$tier3), name = NULL,
                     breaks = paste("Tier", 1:3)) +
   labs(title = "Same opportunities, different piles",
-       subtitle = str_wrap("Tiers 1-3 under each preset. The two presets that leave out forecasts have far fewer options; with no match authority (deadline crunch), nothing is left in Tier 1.", 90),
+       subtitle = str_wrap("Tiers 1-3 under each preset. The two presets that leave out forecasts have far fewer options; with no match authority (deadline crunch), only one is left in Tier 1.", 90),
        x = "Opportunities in Tiers 1-3", y = NULL) +
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
@@ -753,6 +788,68 @@ opening |> filter(placement == "pile", tier <= 3) |>
 ::: {.takeaway}
 Preparedness and infectious disease dominate what DHHS can pursue now, mostly through CDC
 cooperative agreements with health departments. Other program areas depend on forecasts posting.
+:::
+
+**The impact score, part by part.** Inside each pile the tool orders opportunities by an impact
+score from 0 to 100. With the default equal weights, the score is the average of five parts, each
+on a 0-100 scale:
+
+| Part | What it measures | How it becomes 0-100 |
+|---|---|---|
+| Plan fit | The labeler's rating of fit with the agency's strategic plan | strong = 100, partial = 50, none = 0 |
+| People reached | North Carolinians in the population the opportunity serves | Percentile rank among the opportunities in view |
+| Help per person | Award ceiling divided by that population | Percentile rank among the opportunities in view |
+| Award size | The award ceiling stated on Grants.gov | Percentile rank among the opportunities in view |
+| Program priorities | The writer's weight for the opportunity's program area | Weight out of 3 (default 1 = 33) |
+
+A part that is unknown (for example, no stated ceiling) is left out and the others are averaged,
+rather than counting it as zero. The chart shows how each opportunity's score is built:
+
+```{r impact-breakdown}
+#| fig-height: 9.5
+#| fig-width: 10
+#| code-summary: "Impact score broken into its five parts (opening scenario, DHHS)"
+part_lab <- c(alignment = "Plan fit", reach = "People reached", depth = "Help per person",
+              award = "Award size", priority = "Program priorities")
+imp <- keep(run_tiering_piles_js(payload, payload$config$opening), ~ .x$tier <= 3) |>
+  map_dfr(function(r) {
+    p <- r$parts
+    tibble(opportunity_number = r$number, tier = r$tier, rank = r$rank_in_tier, score = r$impact %||% NA_real_,
+           !!!setNames(map(names(part_lab), ~ p[[.x]] %||% NA_real_), names(part_lab)))
+  }) |> left_join(titles, by = "opportunity_number")
+contrib <- imp |> filter(rank <= 8) |>
+  pivot_longer(all_of(names(part_lab)), names_to = "part", values_to = "value") |>
+  group_by(opportunity_number) |> mutate(n_known = sum(!is.na(value))) |> ungroup() |>
+  mutate(points = 100 * value / n_known, part = factor(part_lab[part], levels = rev(part_lab)),
+         tier = paste("Tier", tier),
+         label = fct_reorder(paste0(rank, ". ", str_trunc(opportunity_title, 54)), -rank)) |>
+  filter(!is.na(value))
+ggplot(contrib, aes(points, label, fill = part)) +
+  geom_col(width = .72, color = "white", linewidth = .3) +
+  geom_text(data = distinct(contrib, tier, label, score), aes(score, label, label = score), inherit.aes = FALSE,
+            hjust = -.25, size = 3.2, color = pal$dark) +
+  facet_grid(tier ~ ., scales = "free_y", space = "free_y") +
+  scale_fill_manual(values = c("Plan fit" = "#172a55", "People reached" = "#43609f", "Help per person" = "#8ea2d2",
+                               "Award size" = "#C9B57E", "Program priorities" = "#D9DCD6"),
+                    breaks = unname(part_lab), name = NULL) +
+  scale_x_continuous(limits = c(0, 100), expand = expansion(mult = c(0, .02))) +
+  labs(title = "What makes an opportunity rank high inside its pile",
+       subtitle = "Top 8 in each tier. Each bar is the impact score; segments show how many points each part contributes.",
+       x = "Impact score (0-100)", y = NULL) +
+  theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank(),
+        strip.text.y = element_text(angle = 0, face = "bold"), axis.text.y = element_text(size = 8.5))
+```
+
+```{r impact-table}
+#| code-summary: "Every Tier 1-3 opportunity with its impact parts (0-100)"
+imp |> transmute(tier, rank, opportunity = opportunity_title, `impact score` = score,
+                 across(all_of(names(part_lab)), ~ round(100 * .x))) |>
+  rename(!!!setNames(names(part_lab), part_lab)) |> arrange(tier, rank) |> dt(pageLength = 10)
+```
+
+::: {.takeaway}
+The score is transparent by design. A writer can see that an opportunity ranks high because of
+its reach or its award, not a black-box number, and can change the weights in the tool.
 :::
 
 ```{r rule-tests}
@@ -1232,7 +1329,7 @@ system-level work with no direct beneficiaries.
 if (file.exists(TOOL_HTML_OUT)) {
   tags$iframe(srcdoc = paste(readLines(TOOL_HTML_OUT, warn = FALSE, encoding = "UTF-8"), collapse = "\n"),
               style = "width:100%; height:1100px; border:1px solid #E4E7EC; border-radius:8px;",
-              title = "NC Grant Triage tool")
+              title = "NC Grants Explorer tool")
 } else {
   HTML('<div class="pending">Build the tool first: <code>Rscript src/tool/build_tool.R</code></div>')
 }
@@ -1527,6 +1624,9 @@ agency sees an opportunity. Similarity scores remain only as a secondary hint.
   "system-level", and some of those choices are too broad (the Preschool Development Grant is marked
   "all residents" rather than young children). District counts use the districts drawn for the 118th
   Congress; North Carolina redrew them for the 2024 election.
+- **Awards are ceilings.** The award shown is the most one award can be, as Grants.gov states it; actual
+  awards are often smaller. Opportunities with no stated ceiling show "not stated" and are never
+  filtered out by the minimum-award setting.
 - **People-served estimates are upper bounds.** They count the population an opportunity serves in
   NC, not people an award would reach.
 
@@ -1539,7 +1639,7 @@ agency sees an opportunity. Similarity scores remain only as a secondary hint.
   that shares vocabulary.
 - Interview division staff to verify each capability's control level.
 - Add past award history (USAspending) by assistance listing to estimate competitiveness.
-- Record standing partner agreements in the capability profile. Most Tier 2 opportunities (17 of 23
+- Record standing partner agreements in the capability profile. Most Tier 2 opportunities (17 of 24
   in the opening scenario) wait on a partner, mainly for research and evaluation or workforce training.
   Match authority matters less than we expected: full match authority moves only one opportunity from
   Tier 2 to Tier 1.

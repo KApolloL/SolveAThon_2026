@@ -82,7 +82,7 @@ run_payload_checks <- function(tiering_js, payload_txt) {
   anchor <- fromJSON(ctx$eval(paste0("JSON.stringify((function () {
       var n = 0, nih = 0, ref = ", as.integer(FACT_REF_DATE), ", cut = ref + ", FACT_RUNWAY_DAYS, ";
       P.opportunities.forEach(function (o) {
-        if (o.state_eligible !== false && o.status === 'posted' && o.close_day !== null && o.close_day >= cut) { n++; if (o.screen.is_nih) nih++; }
+        if (o.state_eligible !== false && o.status === 'posted' && (o.export_close_day === undefined ? o.close_day : o.export_close_day) !== null && (o.export_close_day === undefined ? o.close_day : o.export_close_day) >= cut) { n++; if (o.screen.is_nih) nih++; }
       });
       return { n: n, nih: nih };
     })())")))

@@ -1,4 +1,4 @@
-# Handoff: NC Grant Triage, final state
+# Handoff: NC Grants Explorer, final state
 Written Tuesday Sept 29, 2026, evening; last updated late Tuesday night. Due Wednesday Sept 30, 11:59 p.m.
 Read time: about 7 minutes. Section 7 is for a coding agent; everyone else can stop at section 6.
 For where every file lives, see `GUIDE.md`. For the team's reading packet, see `outs/todo/`.
@@ -37,7 +37,7 @@ What we decided **not** to do, and say so openly in the notebook:
 
 | Competition item | File | Notes |
 |---|---|---|
-| 1. Top results list with a one-line rationale | `outs/top_results.xlsx` (and `.csv`); also notebook section 14 | 51 rows: DHHS 23 Tier 1, 23 Tier 2, 3 Tier 3; DMVA 2 Tier 3. Each rationale covers the five criteria. |
+| 1. Top results list with a one-line rationale | `outs/top_results.xlsx` (and `.csv`); also notebook section 14 | 57 rows: DHHS 27 Tier 1, 24 Tier 2, 3 Tier 3; DMVA 3 Tier 3. Each rationale covers the five criteria. The team's fill-in version is `outs/top_results_team.xlsx` (a tab per tier, the impact breakdown, Grants.gov deadlines and award ceilings, a blank rationale column). |
 | 2. Notebook: notes, AI tools, key prompts, where the AI was wrong | `outs/solveathon_project.html` (source `src/solveathon_project.qmd`) | 19 sections, 29 figures plus a process diagram. Every dataset has at least one chart (inventory table in section 4); 18 green takeaway boxes explain the charts in plain language. Full prompt and schema, validation, limitations, AI disclosure. The tool is embedded. About 19 MB, opens offline. |
 | 3. 5-minute video to leadership | slides not built yet | Slide brief: `src/docs/presentation_brief.md`; chart images: `outs/figures/` (11 PNGs) |
 | Supporting: interactive tool | `outs/grant-triage-tool.html` | 3.4 MB, one file, offline. See "What the tool does now" below. |
@@ -81,8 +81,10 @@ What we decided **not** to do, and say so openly in the notebook:
 - Only 6 posted, non-NIH opportunities are genuine DHHS candidates.
 
 **Opening scenario for DHHS**
-- 23 in Tier 1, 23 in Tier 2, 3 in Tier 3, and 365 in Tier 4 (partner-led research).
-- 88 are "not this cycle", 4 are screened, and 1,156 are outside DHHS's scope.
+- 27 in Tier 1, 24 in Tier 2, 3 in Tier 3, and 367 in Tier 4 (partner-led research).
+- 89 are "not this cycle", 5 are screened, and 1,147 are outside DHHS's scope.
+- These counts changed on Sept 30, when awards and deadlines switched to what Grants.gov states
+  (before: 23 / 23 / 3 / 365). See section 7.
 - Total: 1,662. Every opportunity is accounted for.
 
 **Data quality**
@@ -153,7 +155,7 @@ What we decided **not** to do, and say so openly in the notebook:
    - Take the fallback screenshot.
    - The strongest moments:
      - the NIH funnel;
-     - "Deadline crunch" dropping Tier 1 to 0;
+     - "Deadline crunch" dropping Tier 1 to 1;
      - typing a scenario;
      - Title X's quoted match;
      - DMVA's Veterans Home grant in Tier 3;
@@ -243,12 +245,39 @@ A clean-copy rebuild was verified:
   - two new charts (rural/suburban/urban share by population; populations by district);
   - §4 sources and "where charted" tables list the district data and TIGER land area;
   - §3 steps table and §16 limitations updated.
+- **Grants.gov awards and deadlines (Sept 30).** `src/R/01c_grantsgov_awards.R` reads the full Grants.gov
+  record for all 872 state-eligible opportunities.
+  - **Award:** now the award ceiling Grants.gov states (351 of 872 state one), not total ÷ number of
+    awards; the old estimate was more than 2x off for 35% of opportunities that have both. A ceiling
+    under $1,000 is treated as a placeholder, which affected one forecast.
+  - **Deadline:** now Grants.gov's current application deadline (its estimate, for forecasts).
+  - **Effect on the opening scenario:** it went from 23 / 23 / 3 / 365 to 27 / 24 / 3 / 367.
+  - **The three decisions were updated:**
+    - viral hepatitis is now a forecast due Feb 16, 2027, with no stated ceiling;
+    - the Preschool Development Grant is up to $15M, due Nov 20;
+    - 17 of 24 Tier 2 items wait on a partner.
+  - The verified-facts check still uses the export's own dates (`export_close_day` in the payload),
+    so 296 / 272 still reproduces.
+- **Team spreadsheet** `outs/top_results_team.xlsx`, written by `write_team_sheet()` in `07_top_results.R`:
+  - a "How to fill this in" tab and one tab per tier;
+  - the impact score and its five parts (0-100);
+  - opportunity number and ID;
+  - the Grants.gov deadline (as a real date), award ceiling and floor;
+  - a blank yellow rationale column, and the link;
+  - no rules column.
+- **Notebook:**
+  - §9 was rewritten around the Grants.gov figures (ceiling vs old estimate, ceiling distribution,
+    deadline comparison);
+  - new "impact score, part by part" chart and table in §11;
+  - renamed **NC Grants Explorer**, with the team as authors.
+- **Rename** to NC Grants Explorer throughout (the tool, site, notebook and docs). File names such as
+  `grant-triage-tool.html` are unchanged, so links keep working.
 - **Website** (`docs/`, built by `src/build_site.py` from `src/site/index.html`).
   - The landing page follows Understand → Solve → Evaluate → Mobilize, using real data only.
   - **Correction made while building it:** decision 3 no longer says a pre-approved match budget
-    moves many Tier 2 items to Tier 1. We checked, and full match authority moves only 1 (23/23 →
-    24/22).
-  - 17 of 23 Tier 2 items wait on a partner, so decision 3 is now "line up standing partners for
+    moves many Tier 2 items to Tier 1. We checked, and full match authority moves only 1 (27/24 →
+    28/23 with current data).
+  - 17 of 24 Tier 2 items wait on a partner, so decision 3 is now "line up standing partners for
     research evaluation (9) and workforce training (6)". Fixed in the site, the slide brief, the
     notebook §17 and the team brief.
 - **"Signature ink" redesign** (applied from `less-ai-redesign.patch`, Sept 30).

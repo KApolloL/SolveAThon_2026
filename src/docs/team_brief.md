@@ -1,7 +1,9 @@
 ---
-title: "Team Brief: NC's Hidden Treasure (v2)"
+title: "Team Brief: NC Grants Explorer (NC's Hidden Treasure)"
 subtitle: "Final update Tuesday Sept 29, evening. Replaces v1. Due Wednesday Sept 30, 11:59 p.m."
 ---
+
+**Team:** Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin.
 
 **Read time: about 10 minutes.** What changed from v1 is marked **[NEW]** or **[CORRECTED]**.
 If you only have two minutes, read sections 1, 6, 7 and the new section 12 (how confident we are).
@@ -137,8 +139,8 @@ asks the AI to *explain* each alignment and cite the plan line, instead of trust
 that it could lead are *forecasts*, not open postings. On September 30 a DHHS writer has very few
 open, aligned options with enough runway; the practical job is preparing for what is about to post.
 The tool opens with forecasts included for that reason. In the opening scenario (mid-level
-writer, about a month of runway, match with supervisor approval) DHHS sees **23 in Tier 1, 23 in
-Tier 2, 3 in Tier 3**, plus 365 research awards in Tier 4. Every Tier 1-3 item is in
+writer, about a month of runway, match with supervisor approval) DHHS sees **27 in Tier 1, 24 in
+Tier 2, 3 in Tier 3**, plus 367 research awards in Tier 4. Every Tier 1-3 item is in
 `outs/top_results.xlsx` with a one-line reason.
 
 **[NEW] The AI found the Veterans Home match rate.** The data file only says the State Veterans Home
@@ -253,7 +255,7 @@ number we report.
 
 **With more time** (a required slide, not a failure): weekly re-pull of full announcements; aligning to
 DMVA's own "Priority Questions"; past award history from USAspending; interviews with division staff to
-verify the capability profile; standing partner agreements for research and workforce training (17 of 23 Tier 2 items wait on a partner).
+verify the capability profile; standing partner agreements for research and workforce training (17 of 24 Tier 2 items wait on a partner).
 
 *The full data dictionary is in section 4 of the notebook, with counts computed from the file. The
 notebook now has a chart for every dataset we used (27 in all), each followed by a one-line

@@ -22,7 +22,8 @@ run_tiering_piles_js <- function(payload, settings) {
       [1, 2, 3, 4].forEach(function (k) {
         res.piles[k].forEach(function (it, i) {
           rows.push({ number: it.opp.number, tier: k, rank_in_tier: i + 1,
-                      impact: it.impact ? it.impact.score : null, tier_reason: it.tier_reason,
+                      impact: it.impact ? it.impact.score : null, parts: it.impact ? it.impact.parts : null,
+                      tier_reason: it.tier_reason,
                       days_left: it.days_left, gaps: Tiering.capabilityGaps(it.opp, prof) });
         });
       });
@@ -32,7 +33,7 @@ run_tiering_piles_js <- function(payload, settings) {
 }
 
 usd_short <- function(x) {
-  if (is.null(x) || is.na(x)) return("award size not stated")
+  if (is.null(x) || is.na(x)) return("award not stated on Grants.gov")
   if (x >= 1e6) return(paste0("~$", format(round(x / 1e6, 1), nsmall = 1), "M"))
   paste0("~$", round(x / 1e3), "K")
 }
@@ -49,7 +50,7 @@ one_line_rationale <- function(row, opp, settings, tier_names) {
           else paste(map_chr(need, ~ paste0(if (.x$control == "none") "no route to " else "partner needed for ",
                                             tolower(.x$label))), collapse = "; ")
   runway <- if (is.null(row$days_left)) "no deadline stated" else paste0(row$days_left, " days to deadline")
-  award <- paste0(usd_short(opp$award_estimate_usd), if (identical(opp$award_basis, "total_over_count")) " implied award" else if (identical(opp$award_basis, "ceiling")) " ceiling" else "")
+  award <- if (is.null(opp$award_estimate_usd)) usd_short(NULL) else paste0("up to ", sub("^~", "", usd_short(opp$award_estimate_usd)), " (Grants.gov ceiling)")
   match <- if (isTRUE(opp$cost_share)) paste0("cost share required", if (!is.null(opp$match_pct)) paste0(" (", opp$match_pct, "% stated)") else " (percentage not published)")
            else "no cost share"
   paste0(applicant, " · ", caps, " · ", runway, " · ", award, " · ", match,
@@ -65,17 +66,25 @@ build_top_results <- function(payload, agency = "DHHS", settings = payload$confi
   rows <- keep(rows, ~ .x$tier <= TOP_RESULTS_MAX_TIER)
   map_dfr(rows, function(r) {
     o <- by_num[[r$number]]
+    part <- function(k) { v <- r$parts[[k]]; if (is.null(v)) NA_real_ else round(100 * v) }
     tibble(agency = agency, tier = r$tier, rank_in_tier = r$rank_in_tier,
            impact_score = r$impact %||% NA_real_,
-           opportunity_number = r$number, title = o$title, issuing_agency = o$agency_code,
+           impact_plan_fit = part("alignment"), impact_people_reached = part("reach"),
+           impact_help_per_person = part("depth"), impact_award_size = part("award"),
+           impact_program_priorities = part("priority"),
+           opportunity_number = r$number, opportunity_id = o$id %||% NA_character_,
+           title = o$title, issuing_agency = o$agency_code,
            status = o$status, deadline = if (is.null(o$close_day)) NA else as.Date(o$close_day, origin = "1970-01-01"),
            estimated_award = o$award_estimate_usd %||% NA_real_,
+           award_floor = o$award_floor_usd %||% NA_real_,
            rationale = one_line_rationale(r, o, settings, tier_names),
            rules_that_fired = r$tier_reason, link = o$url %||% NA_character_)
   }) |> arrange(tier, rank_in_tier)
 }
 
 write_top_results <- function(tr) {
+  tr <- select(tr, agency, tier, rank_in_tier, impact_score, opportunity_number, title, issuing_agency,
+               status, deadline, estimated_award, rationale, rules_that_fired, link)
   csv <- file.path(DIR_OUTS, "top_results.csv"); readr::write_csv(tr, csv, na = "")
   wb <- openxlsx::createWorkbook(); openxlsx::addWorksheet(wb, "Top results")
   openxlsx::writeData(wb, 1, tr, withFilter = TRUE)
@@ -90,11 +99,77 @@ write_top_results <- function(tr) {
   c(csv, xlsx)
 }
 
+# The team's version: one tab per tier, the impact score and its five parts, Grants.gov's
+# deadline (a real date) and award ceiling, and an empty rationale column for the team to write.
+# Output: outs/top_results_team.xlsx
+write_team_sheet <- function(tr, path = file.path(DIR_OUTS, "top_results_team.xlsx")) {
+  cols <- c("Agency" = "agency", "Rank in tier" = "rank_in_tier", "Impact score (0-100)" = "impact_score",
+            "Plan fit" = "impact_plan_fit", "People reached" = "impact_people_reached",
+            "Help per person" = "impact_help_per_person", "Award size" = "impact_award_size",
+            "Program priorities" = "impact_program_priorities",
+            "Opportunity number" = "opportunity_number", "Grants.gov ID" = "grantsgov_id",
+            "Simpler.Grants.gov ID" = "opportunity_id",
+            "Title" = "title", "Issuing agency" = "issuing_agency", "Status" = "status",
+            "Deadline (Grants.gov)" = "deadline", "Award ceiling (Grants.gov)" = "estimated_award",
+            "Award floor (Grants.gov)" = "award_floor", "Rationale" = "rationale", "Link" = "link")
+  wb <- openxlsx::createWorkbook()
+  hdr <- openxlsx::createStyle(textDecoration = "bold", fgFill = "#E6D6A8", wrapText = TRUE, valign = "top",
+                               border = "bottom", borderColour = "#C9B57E")
+  wrap <- openxlsx::createStyle(wrapText = TRUE, valign = "top")
+  money <- openxlsx::createStyle(numFmt = "$#,##0", valign = "top")
+  date <- openxlsx::createStyle(numFmt = "mmm d, yyyy", valign = "top")
+  blank <- openxlsx::createStyle(fgFill = "#FFF8E1", wrapText = TRUE, valign = "top")
+
+  openxlsx::addWorksheet(wb, "How to fill this in")
+  notes <- c(
+    "One tab per tier. Each row is an opportunity in that tier in the tool's opening scenario (NC DHHS, plus NC DMVA's two Tier 3 items).",
+    "Write one line in the yellow Rationale column. Tie it to our five criteria: (1) we can be the applicant, (2) we have the capabilities or know the partner, (3) there is enough runway, (4) the award is worth the staff weeks, (5) the match is survivable at the writer's level.",
+    "Deadline and award come straight from each opportunity's current record on Grants.gov (checked Sept 29-30, 2026). Forecast deadlines are Grants.gov's estimates. A blank award means Grants.gov states no ceiling.",
+    "Impact score (0-100) orders opportunities within a tier only; it never moves anything between tiers. It is the average of five parts, each 0-100, with equal weights:",
+    "  Plan fit: the AI labeler's rating of fit with the agency's strategic plan (strong = 100, partial = 50, none = 0).",
+    "  People reached: how many North Carolinians are in the population the opportunity serves, ranked against the other opportunities in view.",
+    "  Help per person: award ceiling divided by that population, ranked the same way.",
+    "  Award size: the Grants.gov award ceiling, ranked the same way.",
+    "  Program priorities: the writer's weight for the opportunity's program area, out of 3. The default weight is 1 for every area, which scores 33.",
+    "A blank part means the data isn't available (for example, no award ceiling), and the score is the average of the parts that are.",
+    "Grants.gov ID is the number in grants.gov listing addresses; Simpler.Grants.gov ID is the code in the link, which opens the listing.")
+  openxlsx::writeData(wb, 1, data.frame(`How to fill this in` = notes, check.names = FALSE))
+  openxlsx::setColWidths(wb, 1, 1, 140)
+  openxlsx::addStyle(wb, 1, hdr, rows = 1, cols = 1)
+  openxlsx::addStyle(wb, 1, wrap, rows = 2:(length(notes) + 1), cols = 1)
+
+  tier_names <- c("1" = "Tier 1 - Writer can act", "2" = "Tier 2 - Supervisor", "3" = "Tier 3 - Secretary or legis.")
+  for (k in names(tier_names)) {
+    d <- tr |> filter(tier == as.integer(k)) |> arrange(agency, rank_in_tier) |> mutate(rationale = NA_character_)
+    out <- setNames(d[unname(cols)], names(cols))
+    sh <- tier_names[[k]]
+    openxlsx::addWorksheet(wb, sh)
+    openxlsx::writeData(wb, sh, out, withFilter = TRUE)
+    n <- nrow(out) + 1
+    openxlsx::addStyle(wb, sh, hdr, rows = 1, cols = seq_along(cols), gridExpand = TRUE)
+    if (n > 1) {
+      openxlsx::addStyle(wb, sh, wrap, rows = 2:n, cols = seq_along(cols), gridExpand = TRUE)
+      openxlsx::addStyle(wb, sh, date, rows = 2:n, cols = which(names(cols) == "Deadline (Grants.gov)"), gridExpand = TRUE)
+      openxlsx::addStyle(wb, sh, money, rows = 2:n, cols = which(names(cols) %in% c("Award ceiling (Grants.gov)", "Award floor (Grants.gov)")), gridExpand = TRUE)
+      openxlsx::addStyle(wb, sh, blank, rows = 2:n, cols = which(names(cols) == "Rationale"), gridExpand = TRUE)
+      links <- out$Link; class(links) <- "hyperlink"
+      openxlsx::writeData(wb, sh, x = links, startCol = which(names(cols) == "Link"), startRow = 2)
+    }
+    openxlsx::freezePane(wb, sh, firstActiveRow = 2, firstActiveCol = which(names(cols) == "Title") + 1)
+    openxlsx::setColWidths(wb, sh, cols = seq_along(cols),
+                           widths = c(8, 7, 9, 7, 8, 8, 7, 9, 22, 11, 20, 48, 16, 11, 13, 14, 13, 55, 30))
+  }
+  openxlsx::saveWorkbook(wb, path, overwrite = TRUE)
+  path
+}
+
 if (sys.nframe() == 0L) {
   here::i_am("src/R/07_top_results.R")
   for (f in c("00_config", "01_load_clean", "02_capabilities")) source(here::here("src", "R", paste0(f, ".R")))
   payload <- jsonlite::fromJSON(PAYLOAD_JSON, simplifyVector = FALSE)
   tr <- bind_rows(build_top_results(payload, "DHHS"), build_top_results(payload, "DMVA"))
   message("Wrote ", paste(write_top_results(tr), collapse = ", "), " (", nrow(tr), " rows)")
+  ids <- readRDS(file.path(DIR_PROCESSED, "grantsgov_enrichment.rds"))$status |> select(opportunity_number, grantsgov_id = legacy_id)
+  message("Wrote ", write_team_sheet(left_join(tr, ids, by = "opportunity_number")), " (tabs by tier, blank rationale)")
   print(select(tr, agency, tier, impact_score, rationale) |> head(8), width = 250)
 }

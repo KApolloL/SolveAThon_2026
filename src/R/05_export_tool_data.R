@@ -327,13 +327,33 @@ out_of_scope_records <- function(g) {
     applicant_types = paste(g$applicant_type_list[[i]], collapse = ", ")))
 }
 
-opportunity_records <- function(m, alignment, enrich, populations) {
-  m <- m |> filter(state_eligible)
+# Award amounts and deadlines as Grants.gov publishes them (01c_grantsgov_awards.R). The award
+# shown is the current record's stated award ceiling; where Grants.gov states none it is left
+# empty ("not stated") rather than estimated. The deadline is Grants.gov's current application
+# deadline (estimated, for forecasts); the export's date is used only when Grants.gov has none.
+apply_grantsgov_awards <- function(m, awards) {
+  if (is.null(awards)) return(m |> mutate(award_floor_usd = NA_real_, deadline_source = "export",
+                                          gg_deadline = as.Date(NA), gg_record = NA_character_))
+  m |> left_join(select(awards, opportunity_number, gg_record, gg_award_ceiling, gg_award_floor, gg_deadline),
+                 by = "opportunity_number") |>
+    mutate(
+      award_estimate_usd = if_else(!is.na(gg_record), gg_award_ceiling, award_ceiling_clean),
+      award_basis = case_when(!is.na(gg_record) & !is.na(gg_award_ceiling) ~ "grantsgov_ceiling",
+                              is.na(gg_record) & !is.na(award_ceiling_clean) ~ "ceiling",
+                              TRUE ~ NA_character_),
+      award_floor_usd = gg_award_floor,
+      deadline_source = if_else(!is.na(gg_deadline), "grantsgov", "export"))
+}
+
+opportunity_records <- function(m, alignment, enrich, populations, awards = NULL) {
+  m <- m |> filter(state_eligible) |> apply_grantsgov_awards(awards)
   aud <- audience_from_labels(m)
   st <- enrich$status |> select(opportunity_number, status_now, close_date_now, status_checked)
   m <- m |> left_join(st, by = "opportunity_number") |>
     left_join(select(enrich$nofo, opportunity_number, nofo_chars), by = "opportunity_number")
   close <- if_else(m$status_group == "Forecasted", m$forecasted_close_date, m$close_date)
+  export_close <- close   # the export's own date, kept for the verified-facts check
+  close <- if_else(!is.na(m$gg_deadline), m$gg_deadline, close)
   post  <- if_else(m$status_group == "Forecasted", m$forecasted_post_date, m$post_date)
   al <- alignment |> select(opportunity_number, agency, emb_pct, emb_best_id)
   pop_n <- map_dbl(populations, ~ .x$n %||% NA_real_)
@@ -359,7 +379,9 @@ opportunity_records <- function(m, alignment, enrich, populations) {
       status_now = r$status_now, status_checked = str_sub(r$status_checked, 1, 10),
       audience = I(as.character(aud[[i]])),
       post_day = as.integer(post[i]), close_day = as.integer(close[i]),
+      export_close_day = as.integer(export_close[i]),
       award_estimate_usd = r$award_estimate_usd, award_basis = r$award_basis,
+      award_floor_usd = r$award_floor_usd, deadline_source = r$deadline_source,
       ceiling_usd = r$award_ceiling_clean, expected_awards = r$expected_number_of_awards,
       instrument = r$instrument, instrument_burden = r$instrument_burden,
       cost_share = isTRUE(r$match_required), match_pct = r$match_pct,
@@ -428,7 +450,9 @@ build_payload <- function() {
   merged <- merge_labels(reqs, labels)
   ci <- build_county_indicators()
   populations <- add_population_geography(build_populations(ci), ci)
-  opps <- c(opportunity_records(merged, alignment, enrich, populations), out_of_scope_records(grants))
+  awards_path <- file.path(DIR_PROCESSED, "grantsgov_awards.rds")
+  awards <- if (file.exists(awards_path)) readRDS(awards_path) else NULL
+  opps <- c(opportunity_records(merged, alignment, enrich, populations, awards), out_of_scope_records(grants))
   profiles <- build_capability_profiles()
   pr <- load_priorities()
   p <- list(

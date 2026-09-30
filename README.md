@@ -1,6 +1,8 @@
-# NC Grant Triage
+# NC Grants Explorer
 
 Solve-A-Thon 2026 · NC's Hidden Treasure
+
+**Team:** Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin.
 
 A tool for a grant writer inside a North Carolina state agency. It sorts federal funding
 opportunities into three piles by **whose signature is needed**: the writer's, a supervisor's, or
@@ -41,6 +43,7 @@ No Census key and no local model are needed; everything comes from the committed
 ```bash
 cd src
 Rscript R/check_facts.R            # the 24 verified facts; must print "24 of 24 rows pass"
+Rscript R/01c_grantsgov_awards.R     # Grants.gov award ceilings and deadlines (cached)
 Rscript R/05_export_tool_data.R    # data/processed/payload.json
 Rscript tool/build_tool.R          # outs/grant-triage-tool.html (runs 32 tests first)
 Rscript R/07_top_results.R         # outs/top_results.csv and .xlsx

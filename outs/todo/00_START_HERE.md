@@ -1,6 +1,6 @@
 # Start here: what the team needs to know and do
 
-NC Grant Triage · Solve-A-Thon 2026 · **due Wednesday, Sept 30, 11:59 p.m.** Late submissions are not accepted.
+NC Grants Explorer · Solve-A-Thon 2026 · Team: Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin · **due Wednesday, Sept 30, 11:59 p.m.** Late submissions are not accepted.
 
 This folder is the team's reading packet. Everything in it is a copy. The originals live in the
 project and are refreshed with `python3 src/build_todo.py`, so if anything here looks out of date,
@@ -45,7 +45,7 @@ https://kapollol.github.io/SolveAThon_2026/
 | **04_GUIDE.md** | Map of every file in the project. Read Part 2 ("What to explain to the team"). | 5 min |
 | 05_ai_usage.md | How we used AI (Claude Code and a local model) and where it was wrong. Judges will ask. | 3 min |
 | 06_domain_taxonomy.md | Definitions of the eight program areas the tool uses | optional |
-| top_results.xlsx | The list we submit: 51 opportunities, each with a reason | skim |
+| top_results.xlsx | The list we submit: 57 opportunities, each with a reason | skim |
 | slide_figures/ | The 11 chart images for the slides | for the slide builder |
 
 ---
@@ -68,7 +68,7 @@ Evaluators in November may ask **anyone** on the team.
    - **Tier 3:** the secretary or legislature;
    - **Tier 4:** research a university would lead.
 
-   Opening scenario for DHHS: **23 / 23 / 3**, plus 365 in Tier 4.
+   Opening scenario for DHHS: **27 / 24 / 3**, plus 367 in Tier 4.
 4. **The haystack.** Of **1,662** opportunities, **296** are open to states. **272** of those (92%)
    are NIH research. Only **6** posted, non-research ones are real DHHS work. Most of the real
    pipeline is forecasts.
@@ -96,9 +96,9 @@ Evaluators in November may ask **anyone** on the team.
    announcement requires outside funding. The Veterans Home grant's **35%** match isn't in the
    data either.
 10. **What leadership should do next (three decisions):**
-    - route the viral hepatitis grant (Tier 1, due Dec 9) to Public Health;
-    - decide on the **30% match** for the Preschool Development Grant (Tier 3, due Nov 17);
-    - line up standing partners for research evaluation and workforce training. **17 of the 23**
+    - route the viral hepatitis grant (Tier 1, a forecast due Feb 16, 2027) to Public Health;
+    - decide on the **30% match** for the Preschool Development Grant (Tier 3, up to $15M, due Nov 20);
+    - line up standing partners for research evaluation and workforce training. **17 of the 24**
       Tier 2 items are waiting on a partner.
 
     **Don't say** that a match budget moves many items. We checked, and it moves one.

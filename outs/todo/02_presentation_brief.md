@@ -105,7 +105,7 @@ without a supervisor**. This came from an interview and was checked against publ
   designation).
 - **Tier 4:** research a university would lead, with the agency as partner.
 
-In the tool's opening scenario, DHHS has **23 in Tier 1, 23 in Tier 2, 3 in Tier 3** and 365 in
+In the tool's opening scenario, DHHS has **27 in Tier 1, 24 in Tier 2, 3 in Tier 3** and 367 in
 Tier 4. The opening scenario is a mid-level writer with about one month of runway who needs
 supervisor approval for match, with 1 staff FTE and forecasts included. All 1,662 opportunities
 are accounted for on screen, each with its reason.
@@ -114,8 +114,8 @@ are accounted for on screen, each with its reason.
 
 | Situation | Tier 1 | Tier 2 | Tier 3 |
 |---|---|---|---|
-| "Deadline crunch" (no match authority, no forecasts) | 0 | 6 | 2 |
-| "Planning ahead" | 20 | 21 | 2 |
+| "Deadline crunch" (no match authority, no forecasts) | 1 | 6 | 2 |
+| "Planning ahead" | 26 | 22 | 2 |
 
 **Capability profile.** For each of 14 capabilities, the tool records whether the agency runs
 it, contracts for it, needs a partner, or has no route. Every entry cites a public source.
@@ -184,9 +184,9 @@ answers.
 
 | Opportunity | Pile | Details | Deadline |
 |---|---|---|---|
-| **Integrated Viral Hepatitis Surveillance, Testing, Treatment and Prevention** (CDC) | Tier 1, top impact score | ~$7.5M per award, forecast; no cost share, fits current staff; Division of Public Health | Dec 9, 2026 |
-| **Preschool Development Grant Birth Through Five** (ACF) | Tier 3 | ~$9M; **30% cost share**; needs a formal state designation; Division of Child Development and Early Education | Nov 17, 2026 |
-| **State Veterans Home Construction Grant** (VA, for DMVA) | Tier 3 | $275M national ceiling; 35% match; construction; matches DMVA's own plan (Goal 2, Objective 1: modernize the State Veterans Homes) | — |
+| **Integrated Viral Hepatitis Surveillance, Testing, Treatment and Prevention** (CDC) | Tier 1, impact score 66 (second of 27) | Forecast; Grants.gov states no award ceiling yet; no cost share, fits current staff; Division of Public Health | Feb 16, 2027 (Grants.gov estimate) |
+| **Preschool Development Grant Birth Through Five** (ACF) | Tier 3, highest impact score in Tier 3 (73) | Up to $15M (Grants.gov ceiling); **30% cost share**; needs a formal state designation; Division of Child Development and Early Education | Nov 20, 2026 (Grants.gov estimate) |
+| **State Veterans Home Construction Grant** (VA, for DMVA) | Tier 3 | Up to $275M (Grants.gov ceiling); 35% match; construction; matches DMVA's own plan (Goal 2, Objective 1: modernize the State Veterans Homes) | — |
 
 **Who an opportunity reaches** (in the tool, from ACS 2019-2023 Census data):
 - Opening an opportunity shows where the people it serves live:
@@ -219,6 +219,9 @@ answers.
 
 Timings are targets. The demo is the anchor; protect its 90 seconds.
 
+The project is called **NC Grants Explorer**. The team is Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin. Put the name and the team
+on slide 1, in small type under the headline.
+
 ### Slide 1: The problem (0:00–0:30) · Framing
 - **Headline:** "1,662 federal opportunities. Which can we actually act on?"
 - **Visual:** the funnel chart (`01_funnel_nih_haystack.png`), or one big number: "92% of open,
@@ -250,14 +253,14 @@ Timings are targets. The demo is the anchor; protect its 90 seconds.
   fails.
 - **Demo script** (the presenter follows this exactly):
   1. **(0:00)** The tool is open on NC DHHS, with the "Larger text" button on. "Here are the four
-     piles. 23 things this writer can start today, 23 that need their supervisor, 3 that need
+     piles. 27 things this writer can start today, 24 that need their supervisor, 3 that need
      the secretary or the legislature."
   2. **(0:15)** Click the **"Deadline crunch"** preset. "Same data, different person. With a
-     short deadline and no authority to commit match, nothing is left in Tier 1." (0 / 6 / 2)
-  3. **(0:30)** Click the **"Mid-level writer"** preset to go back (23 / 23 / 3). Then type into
+     short deadline and no authority to commit match, almost nothing is left in Tier 1." (1 / 6 / 2)
+  3. **(0:30)** Click the **"Mid-level writer"** preset to go back (27 / 24 / 3). Then type into
      the box: *"One month, match with approval, one staff, awards of at least $1 million, biggest
      grants first"*, and press Apply. "You can describe your situation in plain English. Each chip shows exactly
-     what the tool understood, and you can undo any of them." (17 / 19 / 3.) Backup: click the
+     what the tool understood, and you can undo any of them." (19 / 19 / 3.) Backup: click the
      **"Worth the effort"** example button, which types the same thing.
   4. **(0:55)** Click **Title X Family Planning** in Tier 3. "The data file says this has no cost
      sharing. The AI read the announcement and found this sentence." Point at "Match evidence
@@ -288,12 +291,13 @@ Timings are targets. The demo is the anchor; protect its 90 seconds.
 decisions, each with an owner and a date.
 
 - **Headline:** "Three decisions for this month"
-- **Decision 1.** **Route** the Integrated Viral Hepatitis opportunity (Tier 1, ~$7.5M, due Dec 9)
-  to the Division of Public Health now. It needs no one else's signature.
-- **Decision 2.** **Decide on match** for the Preschool Development Grant Birth Through Five (~$9M,
-  30% cost share, needs a state designation, due Nov 17). It needs the secretary's decision in
+- **Decision 1.** **Route** the Integrated Viral Hepatitis opportunity (Tier 1, a forecast Grants.gov
+  expects to close Feb 16, 2027) to the Division of Public Health now, so they can prepare before it
+  posts. It needs no one else's signature.
+- **Decision 2.** **Decide on match** for the Preschool Development Grant Birth Through Five (up to
+  $15M, 30% cost share, needs a state designation, due Nov 20 per Grants.gov). It needs the secretary's decision in
   the next few weeks, or it's gone.
-- **Decision 3.** **Line up partners once, not grant by grant.** 17 of the 23 Tier 2 opportunities
+- **Decision 3.** **Line up partners once, not grant by grant.** 17 of the 24 Tier 2 opportunities
   wait on a partner DHHS doesn't have in place. The most common are research and evaluation (9)
   and workforce training (6). Standing agreements with those partners would shorten the path for
   all of them.

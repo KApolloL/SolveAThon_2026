@@ -1,6 +1,6 @@
 # Project Guide: Where Everything Is and What It Is
 
-NC Grant Triage · Solve-A-Thon 2026 · due Wednesday Sept 30, 11:59 p.m.
+NC Grants Explorer · Solve-A-Thon 2026 · Team: Kent Lee, Marco Gullotto, Everett Foo, Noah Goldblatt and Matthew Martin · due Wednesday Sept 30, 11:59 p.m.
 
 This guide has three parts:
 1. **What to submit.** The files the competition asks for.
@@ -61,9 +61,11 @@ To publish or update it, see Part 3, "Publishing the website".
 
 ### 1. Top results list: `outs/top_results.xlsx`
 
-**What it has:** 51 rows.
-- DHHS: 23 in Tier 1, 23 in Tier 2, 3 in Tier 3.
-- DMVA: 2 in Tier 3.
+**What it has:** 57 rows.
+- DHHS: 27 in Tier 1, 24 in Tier 2, 3 in Tier 3.
+- DMVA: 3 in Tier 3.
+
+**Team fill-in version:** `outs/top_results_team.xlsx` (copied to `outs/todo/08_top_results_to_fill_in.xlsx`). It has a tab per tier, the impact score and its five parts, the Grants.gov deadline and award ceiling, and an empty rationale column for the team to write.
 
 **Each row shows:**
 - tier and rank within the tier;
@@ -223,6 +225,7 @@ Refresh the copies with `python3 src/build_todo.py`. The start page's source is 
 | `00_config.R` | **Every setting and threshold** is in one place. The top block is the one you are most likely to change: appropriation line, staff per application, alignment cutoffs. It also holds defaults, presets, domains, populations and capabilities. |
 | `01_load_clean.R` | Reads the Grants.gov export and cleans it: dates, eligibility, NIH flag, implied award, match text |
 | `check_facts.R` | Recomputes the 24 verified facts. Must print "24 of 24". |
+| `01c_grantsgov_awards.R` | Reads every state-eligible opportunity's full Grants.gov record and keeps the stated award ceiling and floor and the current deadline (`data/processed/grantsgov_awards.rds`). The tool and top results use these, not estimates. |
 | `01a_grantsgov_enrich.R` | Checks each opportunity's current status on Grants.gov and downloads full announcements for 278 candidates (116 had one) |
 | `01b_alignment.R` | Text-similarity scores against each strategic plan. Also checks every plan row against its PDF page. |
 | `02_capabilities.R` | Requirement profiles, the agency capability profiles, and the bridge that runs the tier rules from R |
@@ -231,7 +234,7 @@ Refresh the copies with `python3 src/build_todo.py`. The start page's source is 
 | `04_validate.R` | Compares AI labels with the hand labels |
 | `05_export_tool_data.R` | Builds `data/processed/payload.json`, all the data the tool needs, including the county need layers |
 | `06_spotcheck_sheet.R` | Makes the spot-check sheet (`outs/spotcheck_for_team.xlsx`). It never overwrites a filled-in sheet. |
-| `07_top_results.R` | Makes the top results list (`outs/top_results.csv`/`.xlsx`) |
+| `07_top_results.R` | Makes the top results list (`outs/top_results.csv`/`.xlsx`) and the team's fill-in version (`outs/top_results_team.xlsx`: a tab per tier, the impact score and its five parts, the Grants.gov deadline and award ceiling, and an empty rationale column) |
 
 `05_export_tool_data.R` also adds the county and congressional-district counts behind "Who this
 reaches" (`add_population_geography()`, `community_context()`).

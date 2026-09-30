@@ -17,6 +17,7 @@ COPIES = {
     "src/docs/domain_taxonomy.md": "06_domain_taxonomy.md",
     "outs/grant-triage-tool.html": "07_try_the_tool.html",
     "outs/top_results.xlsx": "top_results.xlsx",
+    "outs/top_results_team.xlsx": "08_top_results_to_fill_in.xlsx",
 }
 
 if os.path.isdir(TODO):
