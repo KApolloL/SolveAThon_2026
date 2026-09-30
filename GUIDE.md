@@ -23,7 +23,7 @@ The competition asks for three things. Two are ready. The video still has to be 
 
 **Website (GitHub Pages):** https://kapollol.github.io/SolveAThon_2026/
 It is built into `docs/` by `src/build_site.py`:
-- `index.html`: a landing page with the key numbers;
+- `index.html`: a one-page story that follows the competition's loop (Understand → Solve → Evaluate → Mobilize). It covers the user and their five criteria, the four piles, a real sample of top results, how sure to be, what the AI got wrong, and three decisions for leadership;
 - `tool.html`;
 - `notebook.html`;
 - `downloads/`: the top results.
@@ -322,8 +322,8 @@ reaches" (`add_population_geography()`, `community_context()`).
 
 | Path | What it is |
 |---|---|
-| `src/site/index.html` | Landing-page template. The numbers are filled in from `payload.json` at build time. |
-| `src/build_site.py` | Copies the tool, notebook, top results and one chart into `docs/`, fills the landing page, and adds `.nojekyll`. It refuses to publish if any file contains the Census key. |
+| `src/site/index.html` | Landing-page template (editorial style: Newsreader and Public Sans fonts, one green accent). The numbers, the sample of top results and the veterans figures are filled in from `payload.json` and `top_results.csv` at build time. |
+| `src/build_site.py` | Copies the tool, notebook and top results into `docs/`, fills in the landing page, labels table cells so rows stack on phones, and adds `.nojekyll`. It refuses to publish if any file contains the Census key. |
 | `docs/` | The built website. **Do not edit it by hand**; rebuild it. |
 
 **First time only:**

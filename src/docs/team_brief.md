@@ -249,7 +249,7 @@ number we report.
 
 **With more time** (a required slide, not a failure): weekly re-pull of full announcements; aligning to
 DMVA's own "Priority Questions"; past award history from USAspending; interviews with division staff to
-verify the capability profile; letting a supervisor pre-approve a match budget.
+verify the capability profile; standing partner agreements for research and workforce training (17 of 23 Tier 2 items wait on a partner).
 
 *The full data dictionary is in section 4 of the notebook, with counts computed from the file. The
 notebook now has a chart for every dataset we used (27 in all), each followed by a one-line

@@ -1529,7 +1529,10 @@ agency sees an opportunity. Similarity scores remain only as a secondary hint.
   that shares vocabulary.
 - Interview division staff to verify each capability's control level.
 - Add past award history (USAspending) by assistance listing to estimate competitiveness.
-- Let a supervisor pre-approve a match budget so Tier 2 items can move to Tier 1 in bulk.
+- Record standing partner agreements in the capability profile. Most Tier 2 opportunities (17 of 23
+  in the opening scenario) wait on a partner, mainly for research and evaluation or workforce training.
+  Match authority matters less than we expected: full match authority moves only one opportunity from
+  Tier 2 to Tier 1.
 - Add veterans as a cross-cutting flag rather than a ninth domain, so DMVA-relevant programs in any
   domain surface together.
 - Improve capability extraction, the model's weakest measured field, by reading the full

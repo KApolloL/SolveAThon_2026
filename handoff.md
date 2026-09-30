@@ -246,6 +246,14 @@ A clean-copy rebuild was verified:
   - two new charts (rural/suburban/urban share by population; populations by district);
   - §4 sources and "where charted" tables list the district data and TIGER land area;
   - §3 steps table and §16 limitations updated.
+- **Website** (`docs/`, built by `src/build_site.py` from `src/site/index.html`).
+  - The landing page follows Understand → Solve → Evaluate → Mobilize, using real data only.
+  - **Correction made while building it:** decision 3 no longer says a pre-approved match budget
+    moves many Tier 2 items to Tier 1. We checked, and full match authority moves only 1 (23/23 →
+    24/22).
+  - 17 of 23 Tier 2 items wait on a partner, so decision 3 is now "line up standing partners for
+    research evaluation (9) and workforce training (6)". Fixed in the site, the slide brief, the
+    notebook §17 and the team brief.
 - **Slide brief** `src/docs/presentation_brief.md`.
 - **Figure export** `src/export_slide_figures.py`. `outs/figures/` is now tracked in git.
 - `GUIDE.md` at the root.

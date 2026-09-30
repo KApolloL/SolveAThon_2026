@@ -212,7 +212,8 @@ answers.
 - re-pull announcements weekly so match percentages update themselves;
 - interview division staff to verify the capability profile;
 - add past award history (USAspending) to estimate competitiveness;
-- let a supervisor pre-approve a match budget so Tier 2 items move to Tier 1 in bulk.
+- set up standing partner agreements (research, workforce) in the capability profile, so Tier 2
+  items waiting on those partners move up.
 
 ## 5. Slide plan (7 slides, 5:00 total)
 
@@ -292,9 +293,15 @@ decisions, each with an owner and a date.
 - **Decision 2.** **Decide on match** for the Preschool Development Grant Birth Through Five (~$9M,
   30% cost share, needs a state designation, due Nov 17). It needs the secretary's decision in
   the next few weeks, or it's gone.
-- **Decision 3.** **Set the rules the tool uses:** confirm the dollar line above which cost share
-  needs an appropriation (now a $1M placeholder), and consider pre-approving a match budget for
-  supervisors, so Tier 2 items can move to Tier 1.
+- **Decision 3.** **Line up partners once, not grant by grant.** 17 of the 23 Tier 2 opportunities
+  wait on a partner DHHS doesn't have in place. The most common are research and evaluation (9)
+  and workforce training (6). Standing agreements with those partners would shorten the path for
+  all of them.
+  - Also mention: confirm the dollar line above which cost share needs an appropriation (now a
+    $1M placeholder).
+  - Do **not** say a match budget moves many items. We checked: giving the writer full match
+    authority moves only 1 opportunity from Tier 2 to Tier 1, because partners, not match, are
+    the main blocker.
 - **Say:** A top-ten list tells you what looks good. This tells you who has to say yes, and by
   when.
 

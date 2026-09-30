@@ -7,9 +7,8 @@ docs/index.html        landing page (from src/site/index.html; numbers filled fr
 docs/tool.html         outs/grant-triage-tool.html
 docs/notebook.html     outs/solveathon_project.html
 docs/downloads/        top results (.xlsx, .csv)
-docs/figures/          chart used on the landing page
 """
-import datetime, json, os, shutil
+import csv, datetime, html, json, os, shutil
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUTS, DOCS = os.path.join(ROOT, "outs"), os.path.join(ROOT, "docs")
@@ -20,8 +19,53 @@ COPIES = {
     "solveathon_project.html": "notebook.html",
     "top_results.xlsx": "downloads/top_results.xlsx",
     "top_results.csv": "downloads/top_results.csv",
-    "figures/01_funnel_nih_haystack.png": "figures/01_funnel_nih_haystack.png",
 }
+TIER_VAR = {"1": "--t1", "2": "--t2", "3": "--t3", "4": "--t4"}
+
+
+def money(x):
+    if not x:
+        return "not stated"
+    v = float(x)
+    return f"${v / 1e6:.1f}M".replace(".0M", "M") if v >= 1e6 else f"${v / 1e3:.0f}K"
+
+
+def sample_rows(path):
+    """A readable sample of the top results: DHHS's top 3 in Tier 1, top 2 in Tier 2, all of Tier 3,
+    and DMVA's first Tier 3 item. Reasons are the rules that fired, shortened to two."""
+    rows = list(csv.DictReader(open(path, encoding="utf-8")))
+    keep = [r for r in rows if r["agency"] == "DHHS" and (
+        (r["tier"] == "1" and int(r["rank_in_tier"]) <= 3) or (r["tier"] == "2" and int(r["rank_in_tier"]) <= 2) or r["tier"] == "3")]
+    keep += [r for r in rows if r["agency"] == "DMVA"][:1]
+    out = []
+    for r in keep:
+        why = "; ".join(x.strip() for x in r["rules_that_fired"].split(";")[:2])
+        why = why.replace("No escalation: ", "Nothing blocks it: ")
+        dl = datetime.date.fromisoformat(r["deadline"]).strftime("%b %-d, %Y") if r["deadline"] else "not stated"
+        tag = '<span class="tag">forecast</span>' if r["status"] == "forecasted" else ""
+        agency = "for DMVA" if r["agency"] == "DMVA" else r["issuing_agency"]
+        out.append(
+            f'              <tr><td class="pile" style="--c:var({TIER_VAR[r["tier"]]})"><i></i>Tier {r["tier"]}</td>'
+            f'<td class="opp"><a class="t" href="{html.escape(r["link"])}">{html.escape(r["title"])}</a>{tag}'
+            f'<span class="sub">{html.escape(agency)}</span></td>'
+            f'<td class="num">{dl}</td><td class="num">{money(r["estimated_award"])}</td>'
+            f'<td class="why">{html.escape(why)}.</td></tr>')
+    return "\n".join(out)
+
+def label_cells(page):
+    """Copy each table's column headers onto its cells as data-label, so rows can stack on phones."""
+    import re
+
+    def one_table(m):
+        t = m.group(0)
+        heads = [re.sub(r"<[^>]+>", "", h).strip() for h in re.findall(r"<th[^>]*>(.*?)</th>", t)]
+
+        def one_row(r):
+            cells = iter(heads)
+            return re.sub(r"<td(?![^>]*data-label)", lambda _: f'<td data-label="{html.escape(next(cells, ""))}"', r.group(0))
+        return re.sub(r"<tr>.*?</tr>", one_row, t, flags=re.S)
+    return re.sub(r"<table>.*?</table>", one_table, page, flags=re.S)
+
 
 # Never publish anything that contains the Census key.
 key = ""
@@ -51,10 +95,16 @@ fill = {
     "OPEN_STATE": str(p["golden"]["fact_universe_count"]), "NIH": str(p["golden"]["fact_nih_count"]),
     "PULL_DATE": datetime.date.fromisoformat(p["meta"]["pull_date"]).strftime("%B %-d, %Y"),
     "MODEL": p["meta"]["llm_model"], "BUILT": datetime.date.today().strftime("%B %-d, %Y"), "REPO": REPO,
+    "TOP_ROWS": sample_rows(os.path.join(OUTS, "top_results.csv")),
 }
+vet, rur = p["populations"]["veterans"]["county"], p["community"]["county_rurality"]
+vet_total = sum(vet.values())
+fill["VET_TOTAL"] = f"{round(vet_total):,}"
+fill["VET_RURAL"] = f"{sum(n for f, n in vet.items() if rur.get(f) == 'rural') / vet_total:.0%}"
 page = open(os.path.join(ROOT, "src", "site", "index.html"), encoding="utf-8").read()
 for k, v in fill.items():
     page = page.replace("{{" + k + "}}", v)
+page = label_cells(page)
 if "{{" in page:
     raise SystemExit("Unfilled placeholder in the landing page.")
 open(os.path.join(DOCS, "index.html"), "w", encoding="utf-8").write(page)

@@ -12540,7 +12540,7 @@ details.drawer &gt; summary { padding: 12px 14px; }
 <li>Replace keyword and similarity alignment with the DMVA plan’s own <strong>Priority Questions</strong>: an opportunity that helps answer a question the agency itself posed is a stronger match than one that shares vocabulary.</li>
 <li>Interview division staff to verify each capability’s control level.</li>
 <li>Add past award history (USAspending) by assistance listing to estimate competitiveness.</li>
-<li>Let a supervisor pre-approve a match budget so Tier 2 items can move to Tier 1 in bulk.</li>
+<li>Record standing partner agreements in the capability profile. Most Tier 2 opportunities (17 of 23 in the opening scenario) wait on a partner, mainly for research and evaluation or workforce training. Match authority matters less than we expected: full match authority moves only one opportunity from Tier 2 to Tier 1.</li>
 <li>Add veterans as a cross-cutting flag rather than a ninth domain, so DMVA-relevant programs in any domain surface together.</li>
 <li>Improve capability extraction, the model’s weakest measured field, by reading the full announcement’s program requirements section rather than an excerpt.</li>
 </ul>
@@ -14637,57 +14637,60 @@ loaded via a namespace (and not attached):
 <span id="cb64-1531"><a href="#cb64-1531" aria-hidden="true" tabindex="-1"></a>  that shares vocabulary.</span>
 <span id="cb64-1532"><a href="#cb64-1532" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Interview division staff to verify each capability&#39;s control level.</span>
 <span id="cb64-1533"><a href="#cb64-1533" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add past award history (USAspending) by assistance listing to estimate competitiveness.</span>
-<span id="cb64-1534"><a href="#cb64-1534" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Let a supervisor pre-approve a match budget so Tier 2 items can move to Tier 1 in bulk.</span>
-<span id="cb64-1535"><a href="#cb64-1535" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add veterans as a cross-cutting flag rather than a ninth domain, so DMVA-relevant programs in any</span>
-<span id="cb64-1536"><a href="#cb64-1536" aria-hidden="true" tabindex="-1"></a>  domain surface together.</span>
-<span id="cb64-1537"><a href="#cb64-1537" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Improve capability extraction, the model&#39;s weakest measured field, by reading the full</span>
-<span id="cb64-1538"><a href="#cb64-1538" aria-hidden="true" tabindex="-1"></a>  announcement&#39;s program requirements section rather than an excerpt.</span>
-<span id="cb64-1539"><a href="#cb64-1539" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1540"><a href="#cb64-1540" aria-hidden="true" tabindex="-1"></a><span class="fu"># 18. AI usage disclosure</span></span>
-<span id="cb64-1541"><a href="#cb64-1541" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1542"><a href="#cb64-1542" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ai-usage}</span></span>
-<span id="cb64-1543"><a href="#cb64-1543" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb64-1544"><a href="#cb64-1544" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb64-1545"><a href="#cb64-1545" aria-hidden="true" tabindex="-1"></a><span class="co"># The disclosure is maintained as src/docs/ai_usage.md; its own title line is dropped here.</span></span>
-<span id="cb64-1546"><a href="#cb64-1546" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">readLines</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;src&quot;</span>, <span class="st">&quot;docs&quot;</span>, <span class="st">&quot;ai_usage.md&quot;</span>), <span class="at">warn =</span> <span class="cn">FALSE</span>)[<span class="sc">-</span><span class="dv">1</span>], <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb64-1547"><a href="#cb64-1547" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-1548"><a href="#cb64-1548" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1549"><a href="#cb64-1549" aria-hidden="true" tabindex="-1"></a><span class="fu"># 19. Appendix: DMVA supplement</span></span>
-<span id="cb64-1550"><a href="#cb64-1550" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1551"><a href="#cb64-1551" aria-hidden="true" tabindex="-1"></a>DMVA is a contrast case, not a parallel analysis. Its entire universe in this file is</span>
-<span id="cb64-1552"><a href="#cb64-1552" aria-hidden="true" tabindex="-1"></a><span class="in">`r sum(grants$is_va)`</span> VA-issued opportunities, <span class="in">`r sum(grants$is_va &amp; grants$status_group == &quot;Forecasted&quot;)`</span></span>
-<span id="cb64-1553"><a href="#cb64-1553" aria-hidden="true" tabindex="-1"></a>of them forecasts.</span>
-<span id="cb64-1554"><a href="#cb64-1554" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1555"><a href="#cb64-1555" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dmva}</span></span>
-<span id="cb64-1556"><a href="#cb64-1556" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;DMVA&#39;s opportunities, tiered as DMVA&quot;</span></span>
-<span id="cb64-1557"><a href="#cb64-1557" aria-hidden="true" tabindex="-1"></a>dmva_settings <span class="ot">&lt;-</span> <span class="fu">modifyList</span>(payload<span class="sc">$</span>config<span class="sc">$</span>opening, <span class="fu">list</span>(<span class="at">agency =</span> <span class="st">&quot;DMVA&quot;</span>, <span class="at">include_forecasts =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb64-1558"><a href="#cb64-1558" aria-hidden="true" tabindex="-1"></a><span class="fu">run_tiering_js</span>(opps, payload<span class="sc">$</span>capabilities<span class="sc">$</span>profiles, dmva_settings) <span class="sc">|&gt;</span></span>
-<span id="cb64-1559"><a href="#cb64-1559" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="fu">filter</span>(grants, is_va) <span class="sc">|&gt;</span> <span class="fu">select</span>(opportunity_number, opportunity_title, status_group,</span>
-<span id="cb64-1560"><a href="#cb64-1560" aria-hidden="true" tabindex="-1"></a>                                             award_ceiling_clean, is_cost_sharing, applicant_types), <span class="at">by =</span> <span class="st">&quot;opportunity_number&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb64-1561"><a href="#cb64-1561" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">opportunity =</span> opportunity_title, <span class="at">status =</span> status_group, <span class="at">ceiling =</span> <span class="fu">usd_fmt</span>(award_ceiling_clean),</span>
-<span id="cb64-1562"><a href="#cb64-1562" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">cost share</span><span class="st">`</span> <span class="ot">=</span> is_cost_sharing, <span class="at">eligible =</span> applicant_types, placement, tier, <span class="at">reason =</span> <span class="fu">coalesce</span>(tier_reason, placement_why)) <span class="sc">|&gt;</span></span>
-<span id="cb64-1563"><a href="#cb64-1563" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dt</span>(<span class="at">dom =</span> <span class="st">&quot;t&quot;</span>)</span>
-<span id="cb64-1564"><a href="#cb64-1564" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-1565"><a href="#cb64-1565" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1566"><a href="#cb64-1566" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dmva-goal}</span></span>
-<span id="cb64-1567"><a href="#cb64-1567" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
-<span id="cb64-1568"><a href="#cb64-1568" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;The DMVA plan objective it maps to&quot;</span></span>
-<span id="cb64-1569"><a href="#cb64-1569" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">load_priorities</span>() <span class="sc">|&gt;</span> <span class="fu">filter</span>(priority_id <span class="sc">==</span> <span class="st">&quot;G2.O1&quot;</span>, agency <span class="sc">==</span> <span class="st">&quot;DMVA&quot;</span>)</span>
-<span id="cb64-1570"><a href="#cb64-1570" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&gt; **DMVA Goal 2, Objective 1 (p. &quot;</span>, g<span class="sc">$</span>page, <span class="st">&quot;):** &quot;</span>, g<span class="sc">$</span>text, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
-<span id="cb64-1571"><a href="#cb64-1571" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb64-1572"><a href="#cb64-1572" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1573"><a href="#cb64-1573" aria-hidden="true" tabindex="-1"></a>The one posted DMVA opportunity, the State Veterans Home Construction Grant Program, matches</span>
-<span id="cb64-1574"><a href="#cb64-1574" aria-hidden="true" tabindex="-1"></a>DMVA&#39;s own current goal of modernizing the veterans homes, and lands in Tier 3 because a capital</span>
-<span id="cb64-1575"><a href="#cb64-1575" aria-hidden="true" tabindex="-1"></a>construction project with cost share needs an appropriation. The agency&#39;s best match is the thing</span>
-<span id="cb64-1576"><a href="#cb64-1576" aria-hidden="true" tabindex="-1"></a>it cannot act on alone. The DMVA plan also lists explicit *Priority Questions*; aligning</span>
-<span id="cb64-1577"><a href="#cb64-1577" aria-hidden="true" tabindex="-1"></a>opportunities to those questions is the natural next feature (section 17).</span>
-<span id="cb64-1578"><a href="#cb64-1578" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1579"><a href="#cb64-1579" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
-<span id="cb64-1580"><a href="#cb64-1580" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb64-1581"><a href="#cb64-1581" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session}</span></span>
-<span id="cb64-1582"><a href="#cb64-1582" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;R session&quot;</span></span>
-<span id="cb64-1583"><a href="#cb64-1583" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb64-1584"><a href="#cb64-1584" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-1534"><a href="#cb64-1534" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Record standing partner agreements in the capability profile. Most Tier 2 opportunities (17 of 23</span>
+<span id="cb64-1535"><a href="#cb64-1535" aria-hidden="true" tabindex="-1"></a>  in the opening scenario) wait on a partner, mainly for research and evaluation or workforce training.</span>
+<span id="cb64-1536"><a href="#cb64-1536" aria-hidden="true" tabindex="-1"></a>  Match authority matters less than we expected: full match authority moves only one opportunity from</span>
+<span id="cb64-1537"><a href="#cb64-1537" aria-hidden="true" tabindex="-1"></a>  Tier 2 to Tier 1.</span>
+<span id="cb64-1538"><a href="#cb64-1538" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Add veterans as a cross-cutting flag rather than a ninth domain, so DMVA-relevant programs in any</span>
+<span id="cb64-1539"><a href="#cb64-1539" aria-hidden="true" tabindex="-1"></a>  domain surface together.</span>
+<span id="cb64-1540"><a href="#cb64-1540" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Improve capability extraction, the model&#39;s weakest measured field, by reading the full</span>
+<span id="cb64-1541"><a href="#cb64-1541" aria-hidden="true" tabindex="-1"></a>  announcement&#39;s program requirements section rather than an excerpt.</span>
+<span id="cb64-1542"><a href="#cb64-1542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1543"><a href="#cb64-1543" aria-hidden="true" tabindex="-1"></a><span class="fu"># 18. AI usage disclosure</span></span>
+<span id="cb64-1544"><a href="#cb64-1544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1545"><a href="#cb64-1545" aria-hidden="true" tabindex="-1"></a><span class="in">```{r ai-usage}</span></span>
+<span id="cb64-1546"><a href="#cb64-1546" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb64-1547"><a href="#cb64-1547" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb64-1548"><a href="#cb64-1548" aria-hidden="true" tabindex="-1"></a><span class="co"># The disclosure is maintained as src/docs/ai_usage.md; its own title line is dropped here.</span></span>
+<span id="cb64-1549"><a href="#cb64-1549" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">readLines</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;src&quot;</span>, <span class="st">&quot;docs&quot;</span>, <span class="st">&quot;ai_usage.md&quot;</span>), <span class="at">warn =</span> <span class="cn">FALSE</span>)[<span class="sc">-</span><span class="dv">1</span>], <span class="at">sep =</span> <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb64-1550"><a href="#cb64-1550" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-1551"><a href="#cb64-1551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1552"><a href="#cb64-1552" aria-hidden="true" tabindex="-1"></a><span class="fu"># 19. Appendix: DMVA supplement</span></span>
+<span id="cb64-1553"><a href="#cb64-1553" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1554"><a href="#cb64-1554" aria-hidden="true" tabindex="-1"></a>DMVA is a contrast case, not a parallel analysis. Its entire universe in this file is</span>
+<span id="cb64-1555"><a href="#cb64-1555" aria-hidden="true" tabindex="-1"></a><span class="in">`r sum(grants$is_va)`</span> VA-issued opportunities, <span class="in">`r sum(grants$is_va &amp; grants$status_group == &quot;Forecasted&quot;)`</span></span>
+<span id="cb64-1556"><a href="#cb64-1556" aria-hidden="true" tabindex="-1"></a>of them forecasts.</span>
+<span id="cb64-1557"><a href="#cb64-1557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1558"><a href="#cb64-1558" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dmva}</span></span>
+<span id="cb64-1559"><a href="#cb64-1559" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;DMVA&#39;s opportunities, tiered as DMVA&quot;</span></span>
+<span id="cb64-1560"><a href="#cb64-1560" aria-hidden="true" tabindex="-1"></a>dmva_settings <span class="ot">&lt;-</span> <span class="fu">modifyList</span>(payload<span class="sc">$</span>config<span class="sc">$</span>opening, <span class="fu">list</span>(<span class="at">agency =</span> <span class="st">&quot;DMVA&quot;</span>, <span class="at">include_forecasts =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb64-1561"><a href="#cb64-1561" aria-hidden="true" tabindex="-1"></a><span class="fu">run_tiering_js</span>(opps, payload<span class="sc">$</span>capabilities<span class="sc">$</span>profiles, dmva_settings) <span class="sc">|&gt;</span></span>
+<span id="cb64-1562"><a href="#cb64-1562" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="fu">filter</span>(grants, is_va) <span class="sc">|&gt;</span> <span class="fu">select</span>(opportunity_number, opportunity_title, status_group,</span>
+<span id="cb64-1563"><a href="#cb64-1563" aria-hidden="true" tabindex="-1"></a>                                             award_ceiling_clean, is_cost_sharing, applicant_types), <span class="at">by =</span> <span class="st">&quot;opportunity_number&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb64-1564"><a href="#cb64-1564" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transmute</span>(<span class="at">opportunity =</span> opportunity_title, <span class="at">status =</span> status_group, <span class="at">ceiling =</span> <span class="fu">usd_fmt</span>(award_ceiling_clean),</span>
+<span id="cb64-1565"><a href="#cb64-1565" aria-hidden="true" tabindex="-1"></a>            <span class="st">`</span><span class="at">cost share</span><span class="st">`</span> <span class="ot">=</span> is_cost_sharing, <span class="at">eligible =</span> applicant_types, placement, tier, <span class="at">reason =</span> <span class="fu">coalesce</span>(tier_reason, placement_why)) <span class="sc">|&gt;</span></span>
+<span id="cb64-1566"><a href="#cb64-1566" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dt</span>(<span class="at">dom =</span> <span class="st">&quot;t&quot;</span>)</span>
+<span id="cb64-1567"><a href="#cb64-1567" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-1568"><a href="#cb64-1568" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1569"><a href="#cb64-1569" aria-hidden="true" tabindex="-1"></a><span class="in">```{r dmva-goal}</span></span>
+<span id="cb64-1570"><a href="#cb64-1570" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: asis</span></span>
+<span id="cb64-1571"><a href="#cb64-1571" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;The DMVA plan objective it maps to&quot;</span></span>
+<span id="cb64-1572"><a href="#cb64-1572" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">load_priorities</span>() <span class="sc">|&gt;</span> <span class="fu">filter</span>(priority_id <span class="sc">==</span> <span class="st">&quot;G2.O1&quot;</span>, agency <span class="sc">==</span> <span class="st">&quot;DMVA&quot;</span>)</span>
+<span id="cb64-1573"><a href="#cb64-1573" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;&gt; **DMVA Goal 2, Objective 1 (p. &quot;</span>, g<span class="sc">$</span>page, <span class="st">&quot;):** &quot;</span>, g<span class="sc">$</span>text, <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span>, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)</span>
+<span id="cb64-1574"><a href="#cb64-1574" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb64-1575"><a href="#cb64-1575" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1576"><a href="#cb64-1576" aria-hidden="true" tabindex="-1"></a>The one posted DMVA opportunity, the State Veterans Home Construction Grant Program, matches</span>
+<span id="cb64-1577"><a href="#cb64-1577" aria-hidden="true" tabindex="-1"></a>DMVA&#39;s own current goal of modernizing the veterans homes, and lands in Tier 3 because a capital</span>
+<span id="cb64-1578"><a href="#cb64-1578" aria-hidden="true" tabindex="-1"></a>construction project with cost share needs an appropriation. The agency&#39;s best match is the thing</span>
+<span id="cb64-1579"><a href="#cb64-1579" aria-hidden="true" tabindex="-1"></a>it cannot act on alone. The DMVA plan also lists explicit *Priority Questions*; aligning</span>
+<span id="cb64-1580"><a href="#cb64-1580" aria-hidden="true" tabindex="-1"></a>opportunities to those questions is the natural next feature (section 17).</span>
+<span id="cb64-1581"><a href="#cb64-1581" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1582"><a href="#cb64-1582" aria-hidden="true" tabindex="-1"></a><span class="fu">## Session info</span></span>
+<span id="cb64-1583"><a href="#cb64-1583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-1584"><a href="#cb64-1584" aria-hidden="true" tabindex="-1"></a><span class="in">```{r session}</span></span>
+<span id="cb64-1585"><a href="#cb64-1585" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: &quot;R session&quot;</span></span>
+<span id="cb64-1586"><a href="#cb64-1586" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb64-1587"><a href="#cb64-1587" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
