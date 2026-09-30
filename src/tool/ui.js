@@ -552,12 +552,27 @@
         el("ul", { class: "rules" }, t.fired.map(function (f) { return el("li", { text: f.text }); }))]),
       el("section", {}, [el("h4", { text: "Capability gaps" }), gapTable]),
       item && item.impact ? el("section", {}, [el("h4", { text: "Impact score: " + (item.impact.score === null ? "n/a" : item.impact.score + " of 100") }),
-        el("div", { class: "small muted", text: "Orders this pile only. Each part is 0-1; reach, per-person and award are ranked against the opportunities in view. Parts marked n/a are left out and the other weights rescaled." }),
-        el("table", { class: "gaps" }, [el("tr", {}, [el("th", { text: "Part" }), el("th", { text: "Value" }), el("th", { text: "Your weight" })])]
-          .concat(Tiering.IMPACT_PARTS.map(function (k) {
-            var v = item.impact.parts[k];
-            return el("tr", {}, [el("td", { text: IMPACT_LABEL[k] }), el("td", { text: v === null ? "n/a" : v.toFixed(2) }), el("td", { text: "x" + S.impact_weights[k] })]);
-          })))]) : null,
+        el("div", { class: "small muted", text: "Orders this pile only. Each part turns an actual number into points; the points add up to the score. People reached, help per person and award size earn points by how they rank against the opportunities in view. A part with no number is left out and the others share its points." }),
+        (function () {
+          var parts = item.impact.parts, w = S.impact_weights, den = 0;
+          Tiering.IMPACT_PARTS.forEach(function (k) { if (parts[k] !== null && (w[k] || 0) > 0) den += w[k]; });
+          function actual(k) {
+            var people = o.people_est, award = o.award_estimate_usd, pop = P.populations[o.target_population];
+            if (k === "alignment") return a.llm_level ? "Rated " + a.llm_level + " by the labeler" : (a.pct != null ? "Text similarity, " + ordinal(Math.round(a.pct * 100)) + " percentile" : "Not rated");
+            if (k === "reach") return people ? fmtNum(people) + " people" + (pop ? " (" + pop.label + ")" : "") : "No population estimate";
+            if (k === "depth") return people && award ? "$" + (award / people < 10 ? (award / people).toFixed(2) : fmtNum(award / people)) + " per person" : "Needs both an award and a population";
+            if (k === "award") return award ? "Up to " + usd(award) + " (Grants.gov ceiling)" : "No ceiling on Grants.gov";
+            return (o.domain ? DOMAIN[o.domain] : "No program area") + ": weight " + (o.domain ? S.domain_weights[o.domain] : 0) + " of 3";
+          }
+          return el("table", { class: "gaps" }, [el("tr", {}, [el("th", { text: "Part" }), el("th", { text: "Actual number" }), el("th", { class: "num", text: "Points" })])]
+            .concat(Tiering.IMPACT_PARTS.map(function (k) {
+              var v = parts[k], pts = v === null || !(w[k] > 0) || !den ? null : 100 * w[k] * v / den;
+              return el("tr", {}, [el("td", { text: IMPACT_LABEL[k] + (w[k] !== 1 ? " (x" + w[k] + ")" : "") }), el("td", { text: actual(k) }),
+                el("td", { class: "num", text: pts === null ? "not counted" : pts.toFixed(1) })]);
+            }))
+            .concat([el("tr", {}, [el("td", {}, [el("strong", { text: "Impact score" })]), el("td", { text: "" }),
+              el("td", { class: "num" }, [el("strong", { text: String(item.impact.score) })])])]));
+        })()]) : null,
       el("section", {}, [el("h4", { text: "Key facts" }), el("dl", { class: "kv" }, [
         el("dt", { text: o.deadline_source === "grantsgov" ? (o.status === "forecasted" ? "Deadline (Grants.gov estimate)" : "Deadline (Grants.gov)") : "Deadline" }), el("dd", { text: fmtDate(o.close_day) + (days === null ? "" : " (" + days + " days from reference date)") }),
         el("dt", { text: "Award (Grants.gov)" }), el("dd", { text: o.award_estimate_usd == null ? "Not stated on Grants.gov" : "Up to " + usd(o.award_estimate_usd) + (o.award_floor_usd ? " (floor " + usd(o.award_floor_usd) + ")" : "") + (o.award_basis === "grantsgov_ceiling" ? ", award ceiling on Grants.gov" : ", award ceiling in the export") }),

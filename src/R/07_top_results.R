@@ -66,12 +66,27 @@ build_top_results <- function(payload, agency = "DHHS", settings = payload$confi
   rows <- keep(rows, ~ .x$tier <= TOP_RESULTS_MAX_TIER)
   map_dfr(rows, function(r) {
     o <- by_num[[r$number]]
-    part <- function(k) { v <- r$parts[[k]]; if (is.null(v)) NA_real_ else round(100 * v) }
+    # Points each part adds to the impact score: weight x part value (0-1), shared out over the
+    # parts that have a number, so the points add up to the score.
+    w <- unlist(settings$impact_weights)
+    known <- names(w)[map_lgl(names(w), ~ !is.null(r$parts[[.x]]) && w[[.x]] > 0)]
+    pts <- function(k) if (k %in% known) round(100 * w[[k]] * r$parts[[k]] / sum(w[known]), 1) else NA_real_
+    al <- o$alignment[[agency]]
+    people <- o$people_est %||% NA_real_
+    award <- o$award_estimate_usd %||% NA_real_
     tibble(agency = agency, tier = r$tier, rank_in_tier = r$rank_in_tier,
            impact_score = r$impact %||% NA_real_,
-           impact_plan_fit = part("alignment"), impact_people_reached = part("reach"),
-           impact_help_per_person = part("depth"), impact_award_size = part("award"),
-           impact_program_priorities = part("priority"),
+           plan_fit_rating = al$llm_level %||% (if (!is.null(al$pct)) paste0("text similarity, ", round(100 * al$pct), "th percentile") else NA_character_),
+           plan_fit_points = pts("alignment"),
+           people_reached = people,
+           population_served = if (is.null(o$target_population)) NA_character_ else payload$populations[[o$target_population]]$label %||% NA_character_,
+           people_reached_points = pts("reach"),
+           help_per_person_usd = if (is.na(people) || is.na(award)) NA_real_ else round(award / people, 2),
+           help_per_person_points = pts("depth"),
+           award_size_points = pts("award"),
+           program_area = if (is.null(o$domain)) NA_character_ else DOMAINS[[o$domain]] %||% NA_character_,
+           priority_weight = if (is.null(o$domain)) 0 else settings$domain_weights[[o$domain]] %||% NA_real_,
+           program_priorities_points = pts("priority"),
            opportunity_number = r$number, opportunity_id = o$id %||% NA_character_,
            title = o$title, issuing_agency = o$agency_code,
            status = o$status, deadline = if (is.null(o$close_day)) NA else as.Date(o$close_day, origin = "1970-01-01"),
@@ -104,9 +119,13 @@ write_top_results <- function(tr) {
 # Output: outs/top_results_team.xlsx
 write_team_sheet <- function(tr, path = file.path(DIR_OUTS, "top_results_team.xlsx")) {
   cols <- c("Agency" = "agency", "Rank in tier" = "rank_in_tier", "Impact score (0-100)" = "impact_score",
-            "Plan fit" = "impact_plan_fit", "People reached" = "impact_people_reached",
-            "Help per person" = "impact_help_per_person", "Award size" = "impact_award_size",
-            "Program priorities" = "impact_program_priorities",
+            "Plan fit: labeler's rating" = "plan_fit_rating", "Plan fit: points" = "plan_fit_points",
+            "People reached: NC people served" = "people_reached", "Population served" = "population_served",
+            "People reached: points" = "people_reached_points",
+            "Help per person: award / people ($)" = "help_per_person_usd", "Help per person: points" = "help_per_person_points",
+            "Award size: points" = "award_size_points",
+            "Program area" = "program_area", "Program priority weight (of 3)" = "priority_weight",
+            "Program priorities: points" = "program_priorities_points",
             "Opportunity number" = "opportunity_number", "Grants.gov ID" = "grantsgov_id",
             "Simpler.Grants.gov ID" = "opportunity_id",
             "Title" = "title", "Issuing agency" = "issuing_agency", "Status" = "status",
@@ -125,13 +144,14 @@ write_team_sheet <- function(tr, path = file.path(DIR_OUTS, "top_results_team.xl
     "One tab per tier. Each row is an opportunity in that tier in the tool's opening scenario (NC DHHS, plus NC DMVA's two Tier 3 items).",
     "Write one line in the yellow Rationale column. Tie it to our five criteria: (1) we can be the applicant, (2) we have the capabilities or know the partner, (3) there is enough runway, (4) the award is worth the staff weeks, (5) the match is survivable at the writer's level.",
     "Deadline and award come straight from each opportunity's current record on Grants.gov (checked Sept 29-30, 2026). Forecast deadlines are Grants.gov's estimates. A blank award means Grants.gov states no ceiling.",
-    "Impact score (0-100) orders opportunities within a tier only; it never moves anything between tiers. It is the average of five parts, each 0-100, with equal weights:",
-    "  Plan fit: the AI labeler's rating of fit with the agency's strategic plan (strong = 100, partial = 50, none = 0).",
-    "  People reached: how many North Carolinians are in the population the opportunity serves, ranked against the other opportunities in view.",
-    "  Help per person: award ceiling divided by that population, ranked the same way.",
-    "  Award size: the Grants.gov award ceiling, ranked the same way.",
-    "  Program priorities: the writer's weight for the opportunity's program area, out of 3. The default weight is 1 for every area, which scores 33.",
-    "A blank part means the data isn't available (for example, no award ceiling), and the score is the average of the parts that are.",
+    "Impact score (0-100) orders opportunities within a tier only; it never moves anything between tiers. For each of five parts the sheet shows the actual number and the points it adds; the points add up to the score (small differences are rounding).",
+    "  Plan fit: the AI labeler's rating of fit with the agency's strategic plan. Strong earns full points, partial half, none zero.",
+    "  People reached: how many North Carolinians are in the population the opportunity serves (the population is named in the next column).",
+    "  Help per person: the award ceiling divided by that population.",
+    "  Award size: the award ceiling on Grants.gov (shown in the Award ceiling column).",
+    "  Program priorities: the writer's weight for the opportunity's program area, out of 3. The default is 1 for every area.",
+    "People reached, help per person and award size earn points by how their number ranks against all the opportunities in the tool's view (about 400), not by the number alone. The biggest number gets full points; the median gets about half.",
+    "With the default equal weights, each part can add at most 100 / (number of parts with a number): 20 points when all five have one. A blank part has no number (for example, no award ceiling), and the others share its points.",
     "Grants.gov ID is the number in grants.gov listing addresses; Simpler.Grants.gov ID is the code in the link, which opens the listing.")
   openxlsx::writeData(wb, 1, data.frame(`How to fill this in` = notes, check.names = FALSE))
   openxlsx::setColWidths(wb, 1, 1, 140)
@@ -151,13 +171,19 @@ write_team_sheet <- function(tr, path = file.path(DIR_OUTS, "top_results_team.xl
       openxlsx::addStyle(wb, sh, wrap, rows = 2:n, cols = seq_along(cols), gridExpand = TRUE)
       openxlsx::addStyle(wb, sh, date, rows = 2:n, cols = which(names(cols) == "Deadline (Grants.gov)"), gridExpand = TRUE)
       openxlsx::addStyle(wb, sh, money, rows = 2:n, cols = which(names(cols) %in% c("Award ceiling (Grants.gov)", "Award floor (Grants.gov)")), gridExpand = TRUE)
+      openxlsx::addStyle(wb, sh, openxlsx::createStyle(numFmt = "#,##0", valign = "top"), rows = 2:n,
+                         cols = which(names(cols) == "People reached: NC people served"), gridExpand = TRUE)
+      openxlsx::addStyle(wb, sh, openxlsx::createStyle(numFmt = "$#,##0.00", valign = "top"), rows = 2:n,
+                         cols = which(names(cols) == "Help per person: award / people ($)"), gridExpand = TRUE)
+      openxlsx::addStyle(wb, sh, openxlsx::createStyle(numFmt = "0.0", valign = "top", textDecoration = "bold"), rows = 2:n,
+                         cols = which(grepl("points", names(cols))), gridExpand = TRUE)
       openxlsx::addStyle(wb, sh, blank, rows = 2:n, cols = which(names(cols) == "Rationale"), gridExpand = TRUE)
       links <- out$Link; class(links) <- "hyperlink"
       openxlsx::writeData(wb, sh, x = links, startCol = which(names(cols) == "Link"), startRow = 2)
     }
     openxlsx::freezePane(wb, sh, firstActiveRow = 2, firstActiveCol = which(names(cols) == "Title") + 1)
     openxlsx::setColWidths(wb, sh, cols = seq_along(cols),
-                           widths = c(8, 7, 9, 7, 8, 8, 7, 9, 22, 11, 20, 48, 16, 11, 13, 14, 13, 55, 30))
+                           widths = c(8, 7, 9, 12, 8, 14, 22, 8, 12, 8, 10, 22, 9, 9, 22, 11, 20, 48, 16, 11, 13, 14, 13, 55, 30))
   }
   openxlsx::saveWorkbook(wb, path, overwrite = TRUE)
   path
