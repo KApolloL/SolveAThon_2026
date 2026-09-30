@@ -173,6 +173,10 @@ the state's strategic-plan site covers 2023-25."
 
 # 8. The 5-minute presentation
 
+**[UPDATED]** The full slide plan, with a click-by-click demo script and the three decisions for
+leadership, is now `02_presentation_brief.md` in the team folder (`outs/todo/`). The outline below
+is the short version.
+
 Addressed to agency leadership, not our user.
 
 | Time | Section | Content |
