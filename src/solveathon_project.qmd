@@ -52,16 +52,18 @@ h1, h2 { border-bottom: 2px solid var(--blue-light); padding-bottom: .35rem; mar
 main.content p, main.content li, main.content blockquote { max-width: 60rem; line-height: 1.6; }
 main.content h1 { font-size: 1.75rem; color: var(--dark); }
 main.content h2 { font-size: 1.3rem; color: var(--dark); border-bottom-width: 1px; }
-.read-me { background:var(--manila); border:1px solid var(--manila-line); border-left:5px solid var(--blue); border-radius:0; padding:12px 18px; margin:6px 0 22px 0; max-width:60rem; }
+.read-me { background:#FFFFFF; border:1px solid #D9DCD6; border-left:4px solid var(--blue); border-radius:0; padding:12px 18px; margin:6px 0 22px 0; max-width:60rem; }
 .read-me p { margin:.25rem 0; }
 .read-me .lbl { font-weight:700; color:var(--blue); text-transform:uppercase; font-size:.75rem; letter-spacing:.05em; margin-right:.4rem; }
-.takeaway { border-left:4px solid var(--manila-line); background:var(--manila); padding:8px 14px; margin:8px 0 26px 0; border-radius:0; max-width:60rem; }
+.takeaway { border:1px solid var(--manila-line); border-left:4px solid #A8935A; background:var(--manila); padding:10px 16px 12px; margin:10px 0 28px 0; border-radius:0; max-width:60rem; color:#2B2618; }
+.takeaway p { margin:0; line-height:1.55; }
+.takeaway p + p { margin-top:.5rem; }
 .online-bar { display:flex; flex-wrap:wrap; gap:6px 18px; align-items:baseline; border-top:1px solid #D9DCD6; border-bottom:1px solid #D9DCD6; padding:10px 0; margin:4px 0 26px 0; font-size:.93rem; }
 .online-bar p { display:flex; flex-wrap:wrap; gap:6px 20px; align-items:baseline; margin:0; }
 .online-bar .lbl { font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gray); }
 .online-bar a { color:var(--blue); font-weight:600; text-decoration:none; border-bottom:1px solid #B9BDB5; }
 .online-bar a:hover { border-bottom-color:var(--blue); }
-.takeaway::before { content:"Takeaway  "; font-weight:700; color:var(--green); font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; }
+.takeaway::before { content:"Takeaway"; display:block; margin-bottom:4px; font-weight:700; color:#6B5A2E; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; }
 .cell-output-display img { border-radius:6px; }
 .cell-output-display { margin-bottom: .6rem; }
 table { font-size: .92em; }
@@ -180,7 +182,7 @@ them. The median application window is `r median(windows$application_window_days
 `r pct_fmt(mean(windows$application_window_days <= 30), 1)` of windows are 30 days or shorter.
 
 ::: {.read-me}
-<p><span class="lbl">How to read this notebook</span>Charts are followed by a green <b>takeaway</b> box that says, in one or two sentences, what the chart means for a grant writer. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted. The tool, this notebook and the top results are also on the <a href="https://kapollol.github.io/SolveAThon_2026/">project website</a>.</p>
+<p><span class="lbl">How to read this notebook</span>Charts are followed by a tan <b>Takeaway</b> note that says, in one or two sentences, what the chart means for a grant writer. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted. The tool, this notebook and the top results are also on the <a href="https://kapollol.github.io/SolveAThon_2026/">project website</a>.</p>
 <p><span class="lbl">Tiers</span><span style="color:#23408E;font-weight:700">Tier 1</span> the writer can act · <span style="color:#B7791F;font-weight:700">Tier 2</span> needs a supervisor or division · <span style="color:#A63D2F;font-weight:700">Tier 3</span> needs the secretary or legislature · <span style="color:#6E7479;font-weight:700">Tier 4</span> research a partner would lead.</p>
 :::
 
@@ -671,7 +673,7 @@ gg |> mutate(export_date = if_else(status_group == "Forecasted", forecasted_clos
 ::: {.takeaway}
 Use what Grants.gov states wherever it states it, and label an estimate as an estimate. The
 divided figure can be far from the real ceiling, so the tool shows "up to" for a stated ceiling
-and "about … est." for an estimate. Awards span five orders of magnitude, so the minimum-award
+and "about … est." for an estimate. Stated ceilings run from $20K to $275M, so the minimum-award
 setting matters: a $50K award rarely justifies the same staff weeks as a $5M one.
 :::
 
@@ -715,7 +717,7 @@ load_capabilities() |>
 DHHS runs surveillance, labs, data systems and long-term care, and contracts clinical and
 behavioral health services, but needs partners for housing, research, workforce training,
 construction and emergency management. DMVA runs benefits eligibility and contracts its veterans
-homes; almost everything else needs a partner or has no route. Every orange or red cell is a gap
+homes; almost everything else needs a partner or has no route. Every ochre or brick-red cell is a gap
 that moves an opportunity to Tier 2 or Tier 3.
 :::
 
@@ -806,14 +808,15 @@ opening |> filter(placement == "pile", tier <= 3) |>
   geom_col(width = .7, color = "white", linewidth = .4) +
   scale_fill_manual(values = c("Tier 1" = pal$tier1, "Tier 2" = pal$tier2, "Tier 3" = pal$tier3), name = NULL,
                     breaks = paste("Tier", 1:3)) +
-  labs(title = "What DHHS can pursue now is mostly public health preparedness",
+  labs(title = "Public health preparedness is the biggest share of what DHHS can pursue now",
        subtitle = "Opening scenario, Tiers 1-3, by program domain", x = "Opportunities", y = NULL) +
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank())
 ```
 
 ::: {.takeaway}
-Preparedness and infectious disease dominate what DHHS can pursue now, mostly through CDC
-cooperative agreements with health departments. Other program areas depend on forecasts posting.
+Public health preparedness and infectious disease are about half of what DHHS can pursue now (25
+of 54 in Tiers 1-3), funded by CDC and HRSA about equally. Most are cooperative agreements, which
+mean ongoing federal involvement. Other program areas depend on forecasts posting.
 :::
 
 **The impact score, part by part.** Inside each pile the tool orders opportunities by an impact
@@ -1499,8 +1502,8 @@ reaches very different parts of the state than a grant for another.
 :::
 
 ::: {.takeaway}
-Large statewide programs spread cents per person across millions; a few small programs put
-$10-100 per person into a narrow group. The tool lets the writer choose which matters more instead
+Large statewide programs spread cents per person across millions; a handful put $15 to $400 per
+person into a narrow group, such as home visiting at about $382 per North Carolina birth. The tool lets the writer choose which matters more instead
 of blending the two.
 :::
 
