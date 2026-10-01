@@ -301,6 +301,12 @@ A clean-copy rebuild was verified:
   - Palette check: it passes the colorblind and normal-vision separation checks. It is flagged
     only for the deliberately dark navy and the neutral gray, and every tier also has a shape and
     a text label.
+- **Interactive charts.** A `knit_print.ggplot` method in the notebook's setup chunk shows every
+  ggplot as a plotly chart (hover text from each chart's `text` aesthetic, zoom, PNG download), with
+  the title and subtitle above as HTML. It also saves a static PNG of every chart to
+  `outs/figures/chunks/<chunk label>.png`. Chunks marked `static: true` (the two small-multiple map
+  grids) show that PNG instead. `src/export_slide_figures.py` now copies slide images from
+  `outs/figures/chunks/`, and adds `12_impact_score_breakdown.png`.
 - **Slide brief** `src/docs/presentation_brief.md`.
 - **Figure export** `src/export_slide_figures.py`. `outs/figures/` is now tracked in git.
 - `GUIDE.md` at the root.

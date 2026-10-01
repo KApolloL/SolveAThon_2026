@@ -82,7 +82,7 @@ To publish or update it, see Part 3, "Publishing the website".
 
 ### 2. Notebook: `outs/solveathon_project.html`
 
-One file of about 19 MB. Double-click to open; it works offline. It has 19 sections, 30 charts and a process diagram, and the interactive tool is embedded in section 14.
+One file of about 19 MB. Double-click to open; it works offline. It has 19 sections, 30 charts (28 interactive: hover for the numbers, drag to zoom, save as PNG; the two small-multiple map grids are images) and a process diagram, and the interactive tool is embedded in section 14.
 
 **Where each competition requirement is:**
 

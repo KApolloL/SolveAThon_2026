@@ -63,6 +63,14 @@ main.content h2 { font-size: 1.3rem; color: var(--dark); border-bottom-width: 1p
 .online-bar .lbl { font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gray); }
 .online-bar a { color:var(--blue); font-weight:600; text-decoration:none; border-bottom:1px solid #B9BDB5; }
 .online-bar a:hover { border-bottom-color:var(--blue); }
+.chart { margin: 18px 0 8px 0; }
+.chart-head { margin: 0 0 2px 0; }
+.chart-title { font-weight: 700; font-size: 1.12rem; color: #1E2226; line-height: 1.3; }
+.chart-sub { color: #4B5158; font-size: .92rem; margin-top: 2px; max-width: 60rem; }
+.chart-cap { color: #737980; font-size: .8rem; margin-top: 4px; max-width: 60rem; }
+.chart-hint { color: #8B9089; font-size: .72rem; text-align: right; margin-top: 2px; }
+.chart .plotly .modebar { opacity: .55; }
+.chart .plotly:hover .modebar { opacity: 1; }
 .takeaway::before { content:"Takeaway"; display:block; margin-bottom:4px; font-weight:700; color:#6B5A2E; font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; }
 .cell-output-display img { border-radius:6px; }
 .cell-output-display { margin-bottom: .6rem; }
@@ -96,6 +104,54 @@ theme_g <- function(base_size = 12) {
           plot.title.position = "plot", plot.caption.position = "plot")
 }
 theme_set(theme_g())
+
+# Every chart is drawn with ggplot and shown as an interactive plotly chart: hover for the
+# numbers behind a mark, drag to zoom, double-click to reset, camera icon to save a PNG. The
+# title, subtitle and caption sit above and below the chart as text. A static PNG of every chart
+# is also saved to outs/figures/chunks/ (for the slides). Chunks marked `static: true` (the
+# small-multiple maps) are shown as that image instead.
+CHUNK_PNG_DIR <- file.path(DIR_OUTS, "figures", "chunks")
+has_text_aes <- function(p) "text" %in% c(names(p$mapping), unlist(lapply(p$layers, function(l) names(l$mapping))))
+knit_print.ggplot <- function(x, options, ...) {
+  w <- options$fig.width %||% 7; h <- options$fig.height %||% 5
+  dir.create(CHUNK_PNG_DIR, recursive = TRUE, showWarnings = FALSE)
+  png_path <- file.path(CHUNK_PNG_DIR, paste0(options$label, ".png"))
+  suppressWarnings(ggsave(png_path, x, width = w, height = h, dpi = 200, bg = "white"))
+  if (isTRUE(options$static)) return(knitr::knit_print(knitr::include_graphics(png_path)))
+  lab <- x$labels
+  bare <- x + labs(title = NULL, subtitle = NULL, caption = NULL)
+  widget <- suppressWarnings(plotly::ggplotly(bare, tooltip = if (has_text_aes(x)) "text" else "all",
+                                              height = round(h * 78)))
+  # Value labels drawn just past the bar end in ggplot (hjust < 0) go to the right of the point here too.
+  right_labels <- any(vapply(x$layers, function(l) inherits(l$geom, "GeomText") && isTRUE((l$aes_params$hjust %||% l$geom_params$hjust %||% 0.5) < 0), logical(1)))
+  if (right_labels) widget$x$data <- lapply(widget$x$data, function(tr) {
+    if (identical(tr$mode, "text")) { tr$textposition <- "middle right"; tr$hoverinfo <- "skip"; tr$text <- paste0("&nbsp;&nbsp;&nbsp;", tr$text) }
+    tr
+  })
+  for (ax in grep("^[xy]axis", names(widget$x$layout), value = TRUE))
+    if (identical(widget$x$layout[[ax]]$type, "category") || grepl("^yaxis", ax)) widget$x$layout[[ax]]$ticksuffix <- "  "
+  if (identical(x$theme$legend.position, "none")) widget <- plotly::layout(widget, showlegend = FALSE)
+  faceted <- !inherits(x$facet, "FacetNull")
+  widget <- widget |>
+    plotly::layout(font = list(family = "Libre Franklin, Helvetica, Arial, sans-serif", color = "#1E2226"),
+                   hoverlabel = list(bgcolor = "#FFFFFF", bordercolor = "#B9BDB5",
+                                     font = list(family = "Libre Franklin, Helvetica, Arial, sans-serif", size = 13, color = "#1E2226")),
+                   legend = list(orientation = "h", x = 0, xanchor = "left", y = if (faceted) 1.06 else 1.02, yanchor = "bottom",
+                                 title = list(text = "")),
+                   margin = list(t = if (faceted) 64 else 36, r = 16, b = 8, l = 8)) |>
+    plotly::config(displaylogo = FALSE, responsive = TRUE,
+                   modeBarButtonsToRemove = c("lasso2d", "select2d", "autoScale2d", "hoverClosestCartesian",
+                                              "hoverCompareCartesian", "toggleSpikelines", "zoomIn2d", "zoomOut2d"),
+                   toImageButtonOptions = list(format = "png", filename = options$label, scale = 2))
+  head <- htmltools::div(class = "chart-head",
+    if (!is.null(lab$title)) htmltools::div(class = "chart-title", lab$title),
+    if (!is.null(lab$subtitle)) htmltools::div(class = "chart-sub", gsub("\n", " ", lab$subtitle)))
+  foot <- if (!is.null(lab$caption)) htmltools::div(class = "chart-cap", gsub("\n", " ", lab$caption))
+  knitr::knit_print(htmltools::div(class = "chart", head, widget,
+                                   htmltools::div(class = "chart-hint", htmltools::HTML("Hover for details &middot; drag to zoom &middot; double-click to reset")),
+                                   foot))
+}
+registerS3method("knit_print", "ggplot", knit_print.ggplot, envir = asNamespace("knitr"))
 n_fmt <- function(x) format(x, big.mark = ",", scientific = FALSE, trim = TRUE)
 pct_fmt <- function(x, d = 0) paste0(format(round(100 * x, d), nsmall = d), "%")
 usd_fmt <- function(x) dollar(x, scale_cut = cut_short_scale())
@@ -182,7 +238,7 @@ them. The median application window is `r median(windows$application_window_days
 `r pct_fmt(mean(windows$application_window_days <= 30), 1)` of windows are 30 days or shorter.
 
 ::: {.read-me}
-<p><span class="lbl">How to read this notebook</span>Charts are followed by a tan <b>Takeaway</b> note that says, in one or two sentences, what the chart means for a grant writer. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted. The tool, this notebook and the top results are also on the <a href="https://kapollol.github.io/SolveAThon_2026/">project website</a>.</p>
+<p><span class="lbl">How to read this notebook</span>Charts are followed by a tan <b>Takeaway</b> note that says, in one or two sentences, what the chart means for a grant writer. Charts are interactive: hover over any bar, point or county for the numbers behind it, drag to zoom, double-click to reset, and use the camera icon to save a picture. Code is folded under "Show code" buttons; you never need to open it. Every number is recomputed from the data on each render; nothing is typed in by hand. Section 4 lists every dataset and where it is charted. The tool, this notebook and the top results are also on the <a href="https://kapollol.github.io/SolveAThon_2026/">project website</a>.</p>
 <p><span class="lbl">Tiers</span><span style="color:#23408E;font-weight:700">Tier 1</span> the writer can act · <span style="color:#B7791F;font-weight:700">Tier 2</span> needs a supervisor or division · <span style="color:#A63D2F;font-weight:700">Tier 3</span> needs the secretary or legislature · <span style="color:#6E7479;font-weight:700">Tier 4</span> research a partner would lead.</p>
 :::
 
@@ -309,7 +365,7 @@ load_priorities() |>
          kind = if_else(alignable, "Program work (scored)", "Internal operations (not scored)"),
          agency = paste(agency, if_else(agency == "DHHS", "2023-2025", "2025-2029"))) |>
   count(agency, goal, kind) |>
-  ggplot(aes(n, fct_rev(goal), fill = kind)) +
+  ggplot(aes(n, fct_rev(goal), fill = kind, text = paste0(agency, ", ", goal, "<br>", kind, ": ", n, " plan rows"))) +
   geom_col(width = .7, color = "white", linewidth = .3) +
   facet_wrap(~ agency, scales = "free_y") +
   scale_fill_manual(values = c("Program work (scored)" = pal$blue, "Internal operations (not scored)" = "#CBD1DD"), name = NULL) +
@@ -370,7 +426,7 @@ bind_rows(
   tibble(value = grants$category, panel = "Category")) |>
   mutate(value = str_replace_all(str_to_sentence(value), "_", " ")) |>
   count(panel, value) |>
-  ggplot(aes(n, reorder(value, n))) +
+  ggplot(aes(n, reorder(value, n), text = paste0(value, ": ", n_fmt(n), " opportunities"))) +
   geom_col(fill = pal$blue, width = .7) +
   geom_text(aes(label = n_fmt(n)), hjust = -.15, size = 3.4) +
   facet_wrap(~ panel, scales = "free", ncol = 2) +
@@ -439,7 +495,7 @@ funnel <- tibble(
         sum(grants$status_group == "Posted" & grants$state_eligible), nrow(open_state),
         nrow(nonnih_open), nrow(relevant), sum(opening$placement == "pile" & opening$tier <= 3))
 ) |> mutate(stage = factor(stage, levels = rev(stage)))
-ggplot(funnel, aes(n, stage)) +
+ggplot(funnel, aes(n, stage, text = paste0(stage, ": ", n_fmt(n), " opportunities"))) +
   geom_col(fill = pal$blue, width = .7) +
   geom_text(aes(label = n_fmt(n)), hjust = -.15, size = 3.8) +
   scale_x_continuous(labels = comma, expand = expansion(mult = c(0, .12))) +
@@ -472,7 +528,7 @@ grants |>
   filter(dense_rank(desc(total)) <= 12) |>
   mutate(issuer = fct_reorder(issuer, total),
          state_eligible = if_else(state_eligible, "State governments eligible", "Not state-eligible")) |>
-  ggplot(aes(n, issuer, fill = state_eligible)) +
+  ggplot(aes(n, issuer, fill = state_eligible, text = paste0(issuer, "<br>", state_eligible, ": ", n_fmt(n)))) +
   geom_col(width = .7) +
   scale_fill_manual(values = c("State governments eligible" = pal$blue, "Not state-eligible" = "#CBD1DD"), name = NULL) +
   labs(title = "NIH dominates the file, and most of it is open to states on paper",
@@ -493,7 +549,7 @@ enrich$status |>
   filter(status_group == "Posted") |>
   mutate(status_now = str_to_sentence(coalesce(status_now, "not found on Grants.gov"))) |>
   count(status_now) |>
-  ggplot(aes(n, reorder(status_now, n))) +
+  ggplot(aes(n, reorder(status_now, n), text = paste0(status_now, ": ", n_fmt(n), " opportunities"))) +
   geom_col(fill = pal$blue, width = .6) +
   geom_text(aes(label = n_fmt(n)), hjust = -.15, size = 3.6) +
   scale_x_continuous(expand = expansion(mult = c(0, .15))) +
@@ -512,8 +568,9 @@ Grants.gov and warns when the file and the live status disagree.
 
 ```{r breadth}
 #| code-summary: "How many applicant types each opportunity lists"
-ggplot(grants, aes(n_applicant_types)) +
-  geom_bar(fill = pal$blue, width = .8) +
+count(grants, n_applicant_types) |>
+  ggplot(aes(n_applicant_types, n, text = paste0(n_applicant_types, " applicant type", if_else(n_applicant_types == 1, "", "s"), " listed: ", n_fmt(n), " opportunities"))) +
+  geom_col(fill = pal$blue, width = .8) +
   scale_x_continuous(breaks = 1:16) +
   labs(title = "Eligibility is bimodal: one applicant type, or nearly all of them",
        subtitle = paste0(n_fmt(sum(grants$n_applicant_types == 1)), " rows list one type; ",
@@ -531,10 +588,12 @@ Eligibility is a floor, not a signal of fit.
 
 ```{r windows}
 #| code-summary: "Application window distribution"
-ggplot(windows, aes(application_window_days)) +
-  geom_histogram(binwidth = 7, fill = pal$blue, color = "white") +
+win_bins <- windows |> mutate(lo = 7 * (application_window_days %/% 7)) |> count(lo)
+top_n <- max(win_bins$n)
+ggplot(win_bins, aes(lo + 3.5, n, text = paste0(lo, "-", lo + 6, " days: ", n_fmt(n), " opportunities"))) +
+  geom_col(width = 7, fill = pal$blue, color = "white") +
   geom_vline(xintercept = WINDOW_CUTOFFS_DAYS, linetype = "dashed", color = pal$red) +
-  annotate("text", x = max(WINDOW_CUTOFFS_DAYS) + 6, y = Inf, vjust = c(1.6, 3.4), hjust = 0, color = pal$red, size = 3.4,
+  annotate("text", x = max(WINDOW_CUTOFFS_DAYS) + 70, y = top_n * c(.95, .82), color = pal$red, size = 3.4,
            label = paste0(WINDOW_CUTOFFS_DAYS, " days or fewer: ",
                           pct_fmt(c(mean(windows$application_window_days <= WINDOW_CUTOFFS_DAYS[1]),
                                     mean(windows$application_window_days <= WINDOW_CUTOFFS_DAYS[2])), 1))) +
@@ -556,7 +615,7 @@ open_state |>
   mutate(month = floor_date(close_date, "month"), who = if_else(is_nih, "NIH research", "Everything else")) |>
   filter(month <= REF_DATE_DEFAULT %m+% months(12)) |>
   count(month, who) |>
-  ggplot(aes(month, n, fill = who)) +
+  ggplot(aes(month, n, fill = who, text = paste0(format(month, "%B %Y"), "<br>", who, ": ", n, " closing"))) +
   geom_col(width = 25) +
   scale_fill_manual(values = c("NIH research" = "#CBD1DD", "Everything else" = pal$blue), name = NULL) +
   scale_x_date(date_labels = "%b %Y", date_breaks = "2 months") +
@@ -574,7 +633,7 @@ grants |>
   mutate(quarter = paste0(year(forecasted_post_date), " Q", quarter(forecasted_post_date)),
          who = if_else(is_nih, "NIH research", "Everything else")) |>
   count(quarter, who) |>
-  ggplot(aes(quarter, n, fill = who)) +
+  ggplot(aes(quarter, n, fill = who, text = paste0(quarter, "<br>", who, ": ", n, " forecasts"))) +
   geom_col(width = .7) +
   scale_fill_manual(values = c("NIH research" = "#CBD1DD", "Everything else" = pal$blue), name = NULL) +
   labs(title = "The forecast pipeline is where the non-NIH work is",
@@ -629,7 +688,7 @@ cat("Across state-eligible opportunities, the award figure comes from: ",
 #| code-summary: "Grants.gov award ceiling vs the old divided estimate"
 cmp <- gg |> filter(!is.na(gg_award_ceiling), !is.na(implied_award_usd))
 ratio <- cmp$implied_award_usd / cmp$gg_award_ceiling
-ggplot(cmp, aes(gg_award_ceiling, implied_award_usd)) +
+ggplot(cmp, aes(gg_award_ceiling, implied_award_usd, text = paste0(opportunity_number, "<br>Grants.gov ceiling: ", dollar(gg_award_ceiling, accuracy = .1, scale_cut = cut_short_scale()), "<br>Total / awards: ", dollar(implied_award_usd, accuracy = .1, scale_cut = cut_short_scale())))) +
   geom_abline(slope = 1, intercept = 0, color = pal$gray, linetype = "dashed") +
   geom_point(alpha = .5, color = pal$blue, size = 1.8) +
   scale_x_log10(labels = usd_fmt, expand = expansion(mult = .05)) +
@@ -644,10 +703,15 @@ ggplot(cmp, aes(gg_award_ceiling, implied_award_usd)) +
 #| fig-height: 3.8
 #| code-summary: "Distribution of Grants.gov award ceilings"
 ceil <- gg |> filter(!is.na(gg_award_ceiling))
-ggplot(ceil, aes(gg_award_ceiling)) +
-  geom_histogram(bins = 40, fill = pal$blue, color = "white") +
+usd1 <- function(x) dollar(x, accuracy = .1, scale_cut = cut_short_scale())
+edges <- seq(log10(min(ceil$gg_award_ceiling)), log10(max(ceil$gg_award_ceiling)), length.out = 31)
+ceil_bins <- tibble(bin = cut(log10(ceil$gg_award_ceiling), edges, include.lowest = TRUE, labels = FALSE)) |>
+  count(bin) |> mutate(lo = 10^edges[bin], hi = 10^edges[bin + 1])
+ggplot(ceil_bins, aes(xmin = lo, xmax = hi, ymin = 0, ymax = n,
+                      text = paste0(usd1(lo), " to ", usd1(hi), ": ", n, " opportunities"))) +
+  geom_rect(fill = pal$blue, color = "white") +
   geom_vline(xintercept = median(ceil$gg_award_ceiling), linetype = "dashed", color = pal$red) +
-  annotate("text", x = median(ceil$gg_award_ceiling) * 1.3, y = Inf, vjust = 1.6, hjust = 0, color = pal$red, size = 3.4,
+  annotate("text", x = median(ceil$gg_award_ceiling) * 12, y = max(ceil_bins$n) * .92, color = pal$red, size = 3.4,
            label = paste("Median", usd_fmt(median(ceil$gg_award_ceiling)))) +
   scale_x_log10(labels = usd_fmt) +
   labs(title = "One award can be worth anywhere from $20K to $275M",
@@ -701,7 +765,7 @@ lvl <- c(direct = "Runs it directly", contracted = "Through a contract", partner
 load_capabilities() |>
   mutate(control = factor(lvl[control_level], levels = lvl),
          capability = fct_reorder(str_wrap(capability_label, 38), as.integer(factor(control_level, levels = names(lvl))), .fun = mean, .desc = TRUE)) |>
-  ggplot(aes(agency, capability, fill = control)) +
+  ggplot(aes(agency, capability, fill = control, text = paste0(agency, ": ", str_replace_all(capability, "\n", " "), "<br>", control))) +
   geom_tile(color = "white", linewidth = 1.2) +
   geom_text(aes(label = control), size = 3, color = "white") +
   scale_fill_manual(values = c("Runs it directly" = "#172a55", "Through a contract" = "#43609f",
@@ -781,7 +845,7 @@ map_dfr(scen, function(sc) {
 }) |>
   mutate(tier = factor(paste("Tier", tier), levels = paste("Tier", 3:1)),
          scenario = factor(scenario, levels = rev(map_chr(scen, "label")))) |>
-  ggplot(aes(n, scenario, fill = tier)) +
+  ggplot(aes(n, scenario, fill = tier, text = paste0(scenario, "<br>", tier, ": ", n, " opportunities"))) +
   geom_col(width = .65, color = "white", linewidth = .4) +
   scale_fill_manual(values = c("Tier 1" = pal$tier1, "Tier 2" = pal$tier2, "Tier 3" = pal$tier3), name = NULL,
                     breaks = paste("Tier", 1:3)) +
@@ -804,7 +868,7 @@ opening |> filter(placement == "pile", tier <= 3) |>
   mutate(domain = coalesce(unname(DOMAINS[dom_of[opportunity_number]]), "No domain assigned"),
          tier = factor(paste("Tier", tier), levels = paste("Tier", 3:1))) |>
   count(domain, tier) |>
-  ggplot(aes(n, fct_reorder(str_wrap(domain, 40), n, sum), fill = tier)) +
+  ggplot(aes(n, fct_reorder(str_wrap(domain, 40), n, sum), fill = tier, text = paste0(domain, "<br>", tier, ": ", n))) +
   geom_col(width = .7, color = "white", linewidth = .4) +
   scale_fill_manual(values = c("Tier 1" = pal$tier1, "Tier 2" = pal$tier2, "Tier 3" = pal$tier3), name = NULL,
                     breaks = paste("Tier", 1:3)) +
@@ -853,11 +917,11 @@ contrib <- imp |> filter(rank <= 8) |>
          tier = paste("Tier", tier),
          label = fct_reorder(paste0(rank, ". ", str_trunc(opportunity_title, 54)), -rank)) |>
   filter(!is.na(value))
-ggplot(contrib, aes(points, label, fill = part)) +
+ggplot(contrib, aes(points, label, fill = part, text = paste0(opportunity_title, "<br>", part, ": ", round(points, 1), " points (score ", score, ")"))) +
   geom_col(width = .72, color = "white", linewidth = .3) +
   geom_text(data = distinct(contrib, tier, label, score), aes(score, label, label = score), inherit.aes = FALSE,
             hjust = -.25, size = 3.2, color = pal$dark) +
-  facet_grid(tier ~ ., scales = "free_y", space = "free_y") +
+  facet_wrap(~ tier, ncol = 1, scales = "free_y") +
   scale_fill_manual(values = c("Plan fit" = "#172a55", "People reached" = "#43609f", "Help per person" = "#8ea2d2",
                                "Award size" = "#C9B57E", "Program priorities" = "#D9DCD6"),
                     breaks = unname(part_lab), name = NULL) +
@@ -866,7 +930,7 @@ ggplot(contrib, aes(points, label, fill = part)) +
        subtitle = "Top 8 in each tier. Each bar is the impact score; segments show how many points each part contributes.",
        x = "Impact score (0-100)", y = NULL) +
   theme(legend.position = "top", legend.justification = "left", panel.grid.major.y = element_blank(),
-        strip.text.y = element_text(angle = 0, face = "bold"), axis.text.y = element_text(size = 8.5))
+        strip.text = element_text(face = "bold", hjust = 0), axis.text.y = element_text(size = 8.5))
 ```
 
 ```{r impact-table}
@@ -934,7 +998,7 @@ enrich$nofo |>
   mutate(read = if_else(!is.na(nofo_text), "Full announcement read", "Abstract only"),
          status_group = coalesce(status_group, "Other")) |>
   count(status_group, read) |>
-  ggplot(aes(n, status_group, fill = read)) +
+  ggplot(aes(n, status_group, fill = read, text = paste0(status_group, ", ", str_to_lower(read), ": ", n))) +
   geom_col(width = .6, color = "white", linewidth = .3) +
   scale_fill_manual(values = c("Full announcement read" = pal$blue, "Abstract only" = "#CBD1DD"), name = NULL) +
   labs(title = "Forecasts rarely have a full announcement yet",
@@ -995,7 +1059,7 @@ if (labels_ok && file.exists(v2_path)) {
          v3 = c(mean(both$llm_align_dhhs_v3 %in% c("strong", "partial")), mean(both$llm_administrable_v3), mean(both$llm_domain_v3 == "D08"), mean(both$llm_evaluation_v3))) |>
     pivot_longer(c(v2, v3), names_to = "prompt", values_to = "share") |>
     mutate(prompt = if_else(prompt == "v2", "Prompt v2", "Prompt v3.1")) |>
-    ggplot(aes(share, str_wrap(measure, 30), fill = prompt)) +
+    ggplot(aes(share, str_wrap(measure, 30), fill = prompt, text = paste0(measure, "<br>", prompt, ": ", percent(share, 1)))) +
     geom_col(position = position_dodge(width = .75), width = .7) +
     scale_fill_manual(values = c("Prompt v2" = "#CBD1DD", "Prompt v3.1" = pal$blue), name = NULL) +
     scale_x_continuous(labels = percent, limits = c(0, 1)) +
@@ -1022,7 +1086,7 @@ if (labels_ok) {
   tibble(cap = unlist(filter(labels, labeled)$llm_capabilities)) |>
     count(cap) |>
     mutate(cap = coalesce(cap_lab[cap], cap)) |>
-    ggplot(aes(n, fct_reorder(cap, n))) +
+    ggplot(aes(n, fct_reorder(cap, n), text = paste0(cap, ": ", n, " opportunities"))) +
     geom_col(fill = pal$blue, width = .7) +
     geom_text(aes(label = n), hjust = -.3, size = 3.3) +
     scale_x_continuous(expand = expansion(mult = c(0, .1))) +
@@ -1045,7 +1109,7 @@ if (labels_ok) {
     filter(dense_rank(desc(total)) <= 10) |>
     mutate(row = fct_reorder(str_wrap(paste0(priority_id, ": ", str_trunc(coalesce(text, ""), 70)), 55), total),
            level = factor(level, levels = c("Partial", "Strong"))) |>
-    ggplot(aes(n, row, fill = level)) +
+    ggplot(aes(n, row, fill = level, text = paste0(priority_id, ": ", str_trunc(coalesce(text, ""), 90), "<br>", level, ": ", n, " opportunities"))) +
     geom_col(width = .7, color = "white", linewidth = .3) +
     scale_fill_manual(values = c("Strong" = pal$blue, "Partial" = "#8ea2d2"), name = "Alignment") +
     labs(title = "The plan rows opportunities connect to",
@@ -1118,7 +1182,7 @@ if (!is.null(validation)) {
     mutate(kind = if_else(field %in% facts_f, "Stated fact", "Judgment call"),
            field = str_replace_all(str_to_sentence(field), c("Dmva" = "DMVA", "Dhhs" = "DHHS")),
            field = fct_reorder(paste0(field, "  (n = ", n, ")"), accuracy)) |>
-    ggplot(aes(accuracy, field, color = kind)) +
+    ggplot(aes(accuracy, field, color = kind, text = paste0(field, "<br>Agreed with the team: ", pct_fmt(accuracy)))) +
     geom_segment(aes(x = 0, xend = accuracy, yend = field), linewidth = .8, alpha = .5) +
     geom_point(size = 3.4) +
     geom_text(aes(label = pct_fmt(accuracy)), hjust = -.45, size = 3.4, color = pal$dark) +
@@ -1148,7 +1212,7 @@ if (!is.null(validation)) {
   }) |>
     mutate(across(c(human, model), ~ str_to_sentence(.x))) |>
     group_by(field) |> mutate(share = Freq / sum(Freq)) |> ungroup() |>
-    ggplot(aes(model, human, fill = Freq)) +
+    ggplot(aes(model, human, fill = Freq, text = paste0("Team said: ", human, "<br>Model said: ", model, "<br>", Freq, " opportunities"))) +
     geom_tile(color = "white", linewidth = 1) +
     geom_text(aes(label = Freq, color = Freq > max(Freq) / 2), size = 4, show.legend = FALSE) +
     scale_color_manual(values = c(`TRUE` = "white", `FALSE` = pal$dark)) +
@@ -1156,7 +1220,7 @@ if (!is.null(validation)) {
     facet_wrap(~ field, scales = "free") +
     labs(title = "Where the model and the team disagree",
          subtitle = "Rows: team's hand label. Columns: model. The diagonal is agreement.", x = "Model", y = "Team") +
-    theme(panel.grid = element_blank(), strip.text = element_text(face = "bold", hjust = 0))
+    theme(panel.grid = element_blank(), strip.text = element_text(face = "bold", hjust = 0), legend.position = "none")
 }
 ```
 
@@ -1235,6 +1299,7 @@ an opportunity inherits its domain's map. The tool shows these with a boundary o
 counties, congressional districts, census tracts, and places.
 
 ```{r need-maps}
+#| static: true
 #| fig-height: 8.5
 #| fig-width: 9
 #| code-summary: "Need index by domain"
@@ -1267,6 +1332,7 @@ east and southeast; overdose concentrates in the mountains; preparedness follows
 across the 100 counties (darker = higher need), so a reader can see which dataset drives each domain.
 
 ```{r indicator-maps}
+#| static: true
 #| fig-height: 9.2
 #| fig-width: 10
 #| code-summary: "Each county indicator mapped"
@@ -1298,11 +1364,11 @@ imap_dfr(domain_indicators(), ~ tibble(domain = DOMAINS[[.y]], indicator = unnam
 ```
 
 ```{r overdose-map}
-#| fig-height: 4
+#| fig-height: 5.6
 #| fig-width: 9
 #| code-summary: "Drug poisoning death rates by county"
-counties |> select(GEOID) |> left_join(select(ci, fips, overdose_rate), by = c("GEOID" = "fips")) |>
-  ggplot() + geom_sf(aes(fill = overdose_rate), color = "white", linewidth = .15) +
+counties |> select(GEOID, NAME) |> left_join(select(ci, fips, overdose_rate), by = c("GEOID" = "fips")) |>
+  ggplot() + geom_sf(aes(fill = overdose_rate, text = paste0(NAME, " County: ", round(overdose_rate, 1), " deaths per 100,000")), color = "white", linewidth = .15) +
   scale_fill_gradient(low = "#dde3f1", high = "#172a55", name = "Deaths per\n100,000") +
   labs(title = "Overdose deaths concentrate in the mountains and along the coast",
        subtitle = paste0("Drug poisoning death rate, ", min(OVERDOSE_YEARS), "-", max(OVERDOSE_YEARS), " average (NCHS model-based county estimates)")) +
@@ -1323,7 +1389,7 @@ rates, a different set of counties from where poverty-driven need is highest.
 nm <- need_long |> mutate(domain = str_wrap(domain, 24)) |> pivot_wider(names_from = domain, values_from = index)
 cm <- cor(select(nm, -fips), use = "pairwise.complete.obs")
 as.data.frame(as.table(cm)) |>
-  ggplot(aes(Var1, Var2, fill = Freq)) +
+  ggplot(aes(Var1, Var2, fill = Freq, text = paste0(str_replace_all(Var1, "\n", " "), "<br>", str_replace_all(Var2, "\n", " "), "<br>Correlation: ", sprintf("%.2f", Freq)))) +
   geom_tile(color = "white") +
   geom_text(aes(label = sprintf("%.1f", Freq)), size = 3) +
   scale_fill_gradient2(low = pal$red, mid = "#f5f5f3", high = pal$blue, midpoint = 0, limits = c(-1, 1), name = "Correlation") +
@@ -1413,7 +1479,7 @@ serves, counted for North Carolina from the ACS and CDC PLACES:
 map_dfr(payload$populations, ~ tibble(label = .x$label, n = .x$n %||% NA_real_, source = .x$source %||% "")) |>
   filter(!is.na(n), n > 0) |>
   mutate(label = fct_reorder(label, n)) |>
-  ggplot(aes(n, label)) +
+  ggplot(aes(n, label, text = paste0(label, ": ", n_fmt(n), " people in NC"))) +
   geom_col(fill = pal$blue, width = .7) +
   geom_text(aes(label = label_number(scale_cut = cut_short_scale(), accuracy = .1)(n)), hjust = -.15, size = 3.3) +
   scale_x_continuous(labels = label_number(scale_cut = cut_short_scale()), expand = expansion(mult = c(0, .16))) +
@@ -1433,7 +1499,7 @@ rv <- opening |> filter(placement == "pile") |>
          pop = map_chr(o, ~ .x$target_population %||% NA_character_)) |>
   filter(!is.na(people), !is.na(award), people > 0) |>
   mutate(per_person = award / people, tier = factor(paste("Tier", tier)))
-ggplot(rv, aes(people, per_person, color = tier, shape = tier)) +
+ggplot(rv, aes(people, per_person, color = tier, shape = tier, text = paste0(opportunity_title, "<br>", tier, ": ", n_fmt(people), " people, $", formatC(per_person, format = "f", digits = 2), " per person"))) +
   geom_point(size = 2.4, alpha = .7, position = position_jitter(width = .06, height = 0, seed = SEED)) +
   scale_x_log10(labels = label_number(scale_cut = cut_short_scale()), expand = expansion(mult = .08)) +
   scale_y_log10(labels = label_dollar(accuracy = .001, drop0trailing = TRUE)) +
@@ -1463,7 +1529,7 @@ imap_dfr(payload$populations, function(p, id) if (is.null(p$county) || !length(p
   mutate(rurality = factor(rur_lab[rur[fips]], levels = rev(rur_lab))) |>
   count(label, rurality, wt = n) |>
   group_by(label) |> mutate(share = n / sum(n), rural_share = sum(share[rurality == "Rural"])) |> ungroup() |>
-  ggplot(aes(share, fct_reorder(label, rural_share), fill = rurality)) +
+  ggplot(aes(share, fct_reorder(label, rural_share), fill = rurality, text = paste0(label, "<br>", rurality, ": ", percent(share, .1)))) +
   geom_col(width = .7, color = "white", linewidth = .3) +
   scale_fill_manual(values = c("Rural" = "#b7c4e3", "Suburban / regional city" = "#6680bf", "Urban" = "#172a55"),
                     breaks = unname(rur_lab), name = NULL) +
@@ -1484,7 +1550,7 @@ imap_dfr(payload$populations, function(p, id) if (is.null(p$district) || id == "
   filter(label %in% c("Children under 18", "Adults 65 and older", "Veterans", "People below the poverty line")) |>
   mutate(label = recode(label, "People below the poverty line" = "Below poverty", "Adults 65 and older" = "Adults 65+")) |>
   mutate(district = factor(str_remove(dn[geoid], "Congressional "), levels = str_remove(dn[order(as.integer(names(dn)))], "Congressional "))) |>
-  ggplot(aes(n, fct_rev(district))) +
+  ggplot(aes(n, fct_rev(district), text = paste0(district, "<br>", label, ": ", n_fmt(n)))) +
   geom_col(fill = pal$blue, width = .7) +
   facet_wrap(~ label, nrow = 1, scales = "free_x") +
   scale_x_continuous(labels = label_number(scale_cut = cut_short_scale()), breaks = scales::breaks_extended(3), expand = expansion(mult = c(0, .12))) +
@@ -1604,7 +1670,8 @@ if (labels_ok) {
     mutate(level = factor(str_to_sentence(llm_align_dhhs), levels = c("None", "Partial", "Strong"))) |>
     ggplot(aes(emb_pct, level)) +
     geom_boxplot(width = .5, outlier.shape = NA, fill = pal$blue_light, color = pal$blue) +
-    geom_point(position = position_jitter(height = .12, width = 0, seed = SEED), alpha = .35, size = 1.4, color = pal$blue) +
+    geom_point(aes(text = paste0(opportunity_number, "<br>Similarity percentile: ", percent(emb_pct, 1), "<br>Model: ", level)),
+               position = position_jitter(height = .12, width = 0, seed = SEED), alpha = .35, size = 1.4, color = pal$blue) +
     scale_x_continuous(labels = percent) +
     labs(title = "High similarity does not mean the model found a real link",
          subtitle = str_wrap("Embedding-similarity percentile against DHHS program rows, by the model's alignment rating", 80),

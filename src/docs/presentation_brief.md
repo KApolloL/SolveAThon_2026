@@ -384,6 +384,7 @@ look: a paperwork metaphor (a routing slip, a signature line) rather than a tech
 | `08_reach_vs_intensity.png` | People reached versus dollars per person | Backup |
 | `09_forecast_pipeline.png` | Forecasts by expected posting quarter; the non-NIH work is in forecasts | Slide 1 or backup |
 | `10_population_rural_urban.png` | Rural / suburban / urban share of each population an opportunity can serve | Backup / Q&A |
+| `12_impact_score_breakdown.png` | How each top opportunity's impact score is built, part by part | Q&A: "how is the score calculated?" |
 | `11_population_by_district.png` | Older adults, people below poverty, children and veterans by congressional district | Backup / Q&A |
 
 ## 7. Do not say
