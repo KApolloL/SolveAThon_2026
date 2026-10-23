@@ -17,6 +17,7 @@
 | `data/cache/` | Saved API and model responses so nothing is re-queried. |
 | `data/processed/` | Pipeline outputs. |
 | `outs/` | Generated files. Safe to delete and rebuild. |
+| `planning/` | Friday worksheets: discovery questions, framing worksheet, problem types, data prep. |
 | `testing/` | Persona role-play testing: personas, scenarios, paste-ready prompts, transcripts, results log. |
 | `tasks/` | One brief per teammate task. Finished briefs move to `tasks/done/`. |
 | `deliverables/` | Final files teammates produce (slides, disclosure, handouts). |
@@ -48,7 +49,7 @@ quarto render report.qmd       # outs/report.html
 
 Not built until needed: ingestion for the real data (`02_*` scripts) and the text-labeling run. Add them after the design sprint.
 
-Top-level files: `CLAUDE.md` (rules and context for the AI agent), `handoff.md` (current status), `AI_USAGE_LOG.md` (running log for the disclosure).
+Top-level files: `SKILLS_GUIDE.md` (which Claude skill to load when), `CLAUDE.md` (rules and context for the AI agent), `handoff.md` (current status), `AI_USAGE_LOG.md` (running log for the disclosure).
 
 ## Working rules
 

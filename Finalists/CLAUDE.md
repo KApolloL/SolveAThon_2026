@@ -23,6 +23,14 @@ Understanding (match criteria specific to this agency and user), Framing (proble
 ## Pipeline skeleton
 Reusable code is in `src/R`, `src/tool` and `src/tests` (see README.md, "Pipeline skeleton"). Reuse it; do not rewrite it. The criteria table `data/manual/criteria.csv` is the whole method: each row is one measurable rule tied to a data field, with a plain-language `why` and a `source` (a client quote). Change the table, not the code, wherever possible. After any change run `tests/run_tests.R` and `R/check_facts.R`. The toy data in `data/example/` is fake; delete it before submitting.
 
+Decide at the design sprint whether the skeleton fits (`planning/03_problem_types.md`). Use `rank_items()` only if the user's decision is a choice among a list of items. If the problem is another type, keep the plumbing (`read_any`, cache helpers, tests, report, figure export) and write a new core; record what we keep and why in `handoff.md`. Do not bend the problem to fit the ranking code (Deloitte: do not anchor on a method before the problem is understood).
+
+## Planning documents (Discover phase)
+`planning/` holds the Friday worksheets: `01_discovery_questions.md` (workshop questions and note-taker sheet), `02_framing_worksheet.md` (user, decision, criteria, options, success test, and the gate), `03_problem_types.md`, `04_data_prep.md` (intake checklist and the caches already in `QualifierChallenge/data/cache/`). Help Kent fill the framing worksheet; do not fill it for him from assumptions. Do not profile or download data until its gate is ticked.
+
+## Skills
+`SKILLS_GUIDE.md` says which installed skill to load for each phase and which to ignore. Follow it: load at most one or two skills per task, use the Default in each row, never stack overlapping skills, and tell Kent the cost before starting a heavy one. Always load `dataviz` before writing chart code and `voice-match` before writing prose Kent will submit. Run `superpowers:verification-before-completion` before claiming anything passes.
+
 ## Constraints
 - No participant, patient or personal data in any file.
 - No API keys in any file. Keys go in `.Renviron` (gitignored).
