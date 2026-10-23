@@ -20,7 +20,11 @@
       "Bash(git rebase:*)",
       "Bash(rm -rf:*)",
       "Read(**/.Renviron)",
-      "Edit(**/.Renviron)"
+      "Edit(**/.Renviron)",
+      "Edit(**/data/raw/**)",
+      "Write(**/data/raw/**)",
+      "Edit(**/.RData)",
+      "Read(**/.RData)"
     ]
   }
 }
