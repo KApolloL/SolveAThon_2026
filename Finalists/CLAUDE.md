@@ -47,7 +47,7 @@ Kent's session is the one described in "Role of this Claude" below. If the perso
 - Never invent numbers or sources. Numbers come from `src/docs/fact_sheet.md` only. Write "not found" when something is missing.
 - Log any AI use in `AI_USAGE_LOG.md`. Remind them to check your output themselves.
 - Stuck for more than 20 minutes or anything about a merge conflict: stop and tell them to message Kent.
-- Use the shared reviewer agents in `.claude/agents/` when the brief asks for testing or review.
+- Use the shared reviewers (agents in `.claude/agents/`, slash commands in `.claude/commands/`) when the brief asks for testing or review. They read `testing/context.md` first.
 
 ## Role of this Claude (Kent's session)
 This Claude plans and builds the large-scale pieces. Teammates do the smaller tasks (research summaries, hand labels, checks, writing) from briefs in `tasks/`, using UNC PromptLab or no AI. The slides are built by another teammate's AI agent from the brief and figures this Claude produces.
@@ -95,9 +95,10 @@ Always cache, never re-query. Every external call (API, download, LLM labeling) 
 - Draft a 6-minute talk outline with timings and a speaker split when Kent asks. Use the five-part structure: ask, why, how, limits, next step.
 
 ## Persona testing (consulting phases)
-Claude designs, teammates run. During the consulting phases (understand, frame, solve, evaluate, impact), teammates role-play the agency's users against our work in UNC PromptLab. Full process, templates and prompts are in `testing/`.
-- After problem release, Claude drafts personas (role, goal, constraints, distrust triggers) and scenarios (situation, task, what we show, failure signs), one file each, from the real problem and agency sources. Mark invented details [assumed]. Kent approves before any prompt is issued.
-- Claude then builds one paste-ready role-play prompt per persona x scenario from `testing/prompts/roleplay_prompt_template.md`, plus the observer prompt, and a task brief for each run. Prompts must be self-contained: teammates have no agent, only a chat box.
+Claude designs, teammates run. During the consulting phases (understand, frame, solve, evaluate, impact), teammates role-play the agency's users against our work, using Claude Code, ChatGPT or UNC PromptLab. Full process is in `testing/README.md`.
+- Six reviewers already exist (hostile judge, data critic, test breaker, and three personas: user, supervisor, budget director). Each is one spec in `testing/reviewers/`; `python3 testing/build_reviewers.py` builds the Claude Code agent or slash command and the paste-ready prompt. Edit specs, never the generated files, and rebuild after any change.
+- After problem release, Claude helps Kent fill `testing/context.md` (the one page every reviewer reads) from the real problem and agency sources. Mark invented details [assumed]. Kent approves it before any teammate runs a reviewer.
+- For scenario-specific role-plays beyond the six, use the older templates in `testing/`. Prompts must stay self-contained: some teammates have only a chat box.
 - Prompts must make the persona skeptical and in character, forbid the AI from inventing our results, and use only real outputs or drafts as the thing being tested.
 - Findings come back via `testing/results_log.md`. Claude triages them with Kent (fix, defer, ignore) and updates `handoff.md`.
 - Simulated personas are not user evidence. Never put their statements in `fact_sheet.md`, on a slide, or in Q&A as what "users said". Real agency feedback outranks them.

@@ -162,6 +162,33 @@ If GitHub says there is a **conflict**, do not guess. Message Kent.
 8. Before opening a pull request, re-run `check_facts.R` (Step 6). It must still say **24 of 24 rows pass**.
 9. Do not commit any single file larger than 50 MB.
 
+## Part 3: Using Claude Code or ChatGPT for your tasks
+
+You will get task briefs from Kent (one page each, saved in `Finalists/tasks/`). You can use an AI tool to help, and you must log it.
+
+**If you have Claude Code:**
+1. Open a terminal in the `Finalists` folder inside your clone (in RStudio: Terminal tab, then `cd ../Finalists`) and type `claude`. Always start it from the `Finalists` folder: that is how it loads the project rules (`Finalists/CLAUDE.md`) and the shared reviewers.
+2. Tell it which task brief you are working on, for example: "Work on tasks/03_summarize_plan.md."
+3. It is set up to explain git in plain words. It may create a branch for you, commit your work, and push that branch. It will never push to `main` or merge. After it pushes, open the pull request on GitHub (Part 2, Step G).
+4. If it asks you to do something you do not understand, stop and message Kent.
+
+**If you use ChatGPT or UNC PromptLab:** paste the task brief into a new chat and do the work there. Save the result to the file the brief names, then use GitHub Desktop (Part 2) to commit, push and open a pull request.
+
+**Either way:** add one row to `Finalists/AI_USAGE_LOG.md` (when, who, tool, what it was used for, what you checked yourself). Always check AI output yourself. Never put numbers on a slide that are not in `Finalists/src/docs/fact_sheet.md`.
+
+## Part 4: Running a reviewer (testing our work)
+
+Reviewers are AI role-plays and critics that test our work: a hostile judge, a data critic, a test breaker, and three personas (the agency user, their supervisor, the budget director). Kent will assign you one. The step-by-step is in `Finalists/testing/README.md`. In short:
+- With Claude Code (started in `Finalists`): "use the hostile-judge agent on deliverables/slide_brief.md", or for a persona type `/persona_user outs/criteria_tool.html` and play the consultant until you type END.
+- With ChatGPT or PromptLab: open the matching file in `Finalists/testing/prompts/paste/`, paste it into a new chat, and paste the contents of `Finalists/testing/context.md` and the material to test where the file says.
+- Save the output to `Finalists/testing/transcripts/` and tell Kent. What reviewers say are guesses to check, not facts.
+
+## Part 5: Before the weekend
+
+- Make a free Devpost account (the final submission is on Devpost, due Sunday 9:00 AM). Send Kent the email you used so he can add you to the team.
+- Make sure you can open the shared Google Drive folder.
+- Bring your laptop charger. Make sure the steps in Part 1 work on your laptop before Friday.
+
 ## Where to read next
 
 Open the project's `QualifierChallenge/README.md` first, then `GUIDE.md` (a map of every file). The current status and open tasks are in `handoff.md`.
