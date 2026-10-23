@@ -3,7 +3,7 @@
 pkgs <- c(
   "arrow", "digest", "dplyr", "DT", "forcats", "ggplot2", "here", "htmltools",
   "htmlwidgets", "httr2", "janitor", "jsonlite", "knitr", "leaflet", "lubridate",
-  "openxlsx", "pdftools", "plotly", "purrr", "readr", "rmapshaper", "rvest",
+  "openxlsx", "pdftools", "readxl", "testthat", "plotly", "purrr", "readr", "rmapshaper", "rvest",
   "scales", "sf", "stringr", "takeaway", "tibble", "tidycensus", "tidyr", "tigris",
   "V8", "xml2"
 )

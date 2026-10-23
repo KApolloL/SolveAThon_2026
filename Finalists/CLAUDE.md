@@ -20,6 +20,9 @@ Understanding (match criteria specific to this agency and user), Framing (proble
 - If an LLM is used on data, it only labels with quoted evidence. It does not make the final decision.
 - State the main weakness of the approach and its tradeoff in writing. The Evaluating criterion requires it.
 
+## Pipeline skeleton
+Reusable code is in `src/R`, `src/tool` and `src/tests` (see README.md, "Pipeline skeleton"). Reuse it; do not rewrite it. The criteria table `data/manual/criteria.csv` is the whole method: each row is one measurable rule tied to a data field, with a plain-language `why` and a `source` (a client quote). Change the table, not the code, wherever possible. After any change run `tests/run_tests.R` and `R/check_facts.R`. The toy data in `data/example/` is fake; delete it before submitting.
+
 ## Constraints
 - No participant, patient or personal data in any file.
 - No API keys in any file. Keys go in `.Renviron` (gitignored).
@@ -37,6 +40,15 @@ Four phases: Discover, Build, Test, Present. Full notes in the vault `NCHiddenTr
 - Present: lead with the answer. Ask, why, how, limits, next step. Tell the client what they need to hear, not what they want to hear.
 - Ask probing questions instead of letting the data drive. Note extra context (for example fiscal year runs Oct 1 to Sep 30).
 
+## Teammate sessions (if you are a teammate's Claude)
+Kent's session is the one described in "Role of this Claude" below. If the person you are helping is a teammate (Everett, Marco, Matthew, Noah), these rules replace the "does not commit or push" rule:
+- Work only on the task brief in `tasks/` they point you to. Write output only to the path the brief lists. Do not edit `src/R`, `src/tool`, `src/tests`, `CLAUDE.md` or `data/raw` unless the brief says to.
+- They are new to git. Explain each git step in plain words. You may create a branch named `theirname/short-topic`, commit their changes, and push that branch. Never commit to or push `main`, never merge, never force-push. Tell them to open a pull request on GitHub for Kent to review.
+- Never invent numbers or sources. Numbers come from `src/docs/fact_sheet.md` only. Write "not found" when something is missing.
+- Log any AI use in `AI_USAGE_LOG.md`. Remind them to check your output themselves.
+- Stuck for more than 20 minutes or anything about a merge conflict: stop and tell them to message Kent.
+- Use the shared reviewer agents in `.claude/agents/` when the brief asks for testing or review.
+
 ## Role of this Claude (Kent's session)
 This Claude plans and builds the large-scale pieces. Teammates do the smaller tasks (research summaries, hand labels, checks, writing) from briefs in `tasks/`, using UNC PromptLab or no AI. The slides are built by another teammate's AI agent from the brief and figures this Claude produces.
 
@@ -51,7 +63,7 @@ Does:
 
 Does not:
 - Build the slides, write the AI-usage disclosure, or do small tasks teammates own, unless Kent says so. Spending credits on those is waste.
-- Commit, push, branch, merge or touch GitHub. Suggest a commit message; Kent runs git.
+- Commit, push, branch, merge or touch GitHub (in Kent's session). Suggest a commit message; Kent runs git.
 - Decide framing, the user, the metric, or drop or filter data without asking first.
 - Invent agency facts, figures, quotes or sources.
 - Run unattended. Work only while Kent is at the keyboard. No overnight or background jobs.

@@ -1,0 +1,30 @@
+# check_facts.R: every number used on a slide is a row in data/manual/facts.csv with an R
+# expression that reproduces it from the pipeline outputs. Presentation numbers must pass here.
+# Columns: fact_id, fact, expr, expected, tol. Expressions can use `items`, `ranking`,
+# `dropped`, `all_items` and `criteria`. Prints "N of N rows pass".
+# Run from Finalists/src: Rscript R/check_facts.R
+
+here::i_am("src/R/check_facts.R")
+source(here::here("src", "R", "00_config.R"))
+source(here::here("src", "R", "helpers_io.R"))
+source(here::here("src", "R", "score.R"))
+suppressPackageStartupMessages(library(readr))
+
+items <- read_any(ITEMS_FILE)
+criteria <- read_csv(CRITERIA_FILE, show_col_types = FALSE, col_types = cols(.default = col_character()))
+criteria$weight <- if ("weight" %in% names(criteria)) suppressWarnings(as.numeric(criteria$weight)) else NA_real_
+rk <- rank_items(items, criteria, REF_DATE, ID_COL, NAME_COL)
+ranking <- rk$ranked; dropped <- rk$dropped; all_items <- rk$all
+
+facts <- read_csv(FACTS_FILE, show_col_types = FALSE, col_types = cols(.default = col_character()))
+facts$got <- NA_character_; facts$pass <- FALSE
+for (i in seq_len(nrow(facts))) {
+  got <- tryCatch(eval(parse(text = facts$expr[i])), error = function(e) paste("ERROR:", conditionMessage(e)))
+  facts$got[i] <- paste(got, collapse = ",")
+  exp_num <- suppressWarnings(as.numeric(facts$expected[i]))
+  tol <- suppressWarnings(as.numeric(facts$tol[i])); if (is.na(tol)) tol <- 0
+  facts$pass[i] <- if (!is.na(exp_num) && is.numeric(got)) abs(got[1] - exp_num) <= tol else identical(facts$got[i], facts$expected[i])
+}
+if (!all(facts$pass)) print(as.data.frame(facts[!facts$pass, c("fact_id", "fact", "expected", "got")]))
+cat(sprintf("%d of %d rows pass%s\n", sum(facts$pass), nrow(facts), if (USING_EXAMPLE) " (on TOY example data)" else ""))
+if (!all(facts$pass)) quit(status = 1)

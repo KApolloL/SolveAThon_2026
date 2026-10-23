@@ -1,0 +1,13 @@
+# Generated; rebuild with the commands in README.md. Keep figures and final deliverables.
+outs/*
+!outs/figures/
+!outs/.gitkeep
+!outs/criteria_tool.html
+!outs/report.html
+!outs/top_results.csv
+!outs/top_results.xlsx
+!outs/test_report.csv
+data/processed/profile/
+data/cache/llm/
+.quarto/
+*_files/
