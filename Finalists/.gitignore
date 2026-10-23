@@ -1,12 +1,10 @@
-# Generated; rebuild with the commands in README.md. Keep figures and final deliverables.
+# Generated; rebuild with the commands in README.md. A teammate running "git add -A" must never
+# commit toy-data or stale outputs. To keep a final deliverable: git add -f outs/<file> (Kent only).
 outs/*
 !outs/figures/
 !outs/.gitkeep
-!outs/criteria_tool.html
-!outs/report.html
-!outs/top_results.csv
-!outs/top_results.xlsx
-!outs/test_report.csv
+data/processed/ranking.csv
+data/processed/payload.json
 data/processed/profile/
 data/cache/llm/
 .quarto/

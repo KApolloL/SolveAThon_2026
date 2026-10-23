@@ -40,7 +40,7 @@ _Update this at each checkpoint (about every 6 hours) and before ending any long
 (Commands to rebuild from scratch, once they exist. Model after the "Rebuild from scratch" block in `../QualifierChallenge/README.md`.)
 
 ## Checkpoint schedule
-Official schedule is in the vault hub `Projects/Competitions/Solveathon/NCHiddenTreasure.md`; the hour-by-hour plan is in `NCHiddenTreasure_DeloitteTraining` ("Weekend plan").
+Official schedule is in the vault hub `Projects/Competitions/Solveathon/Solveathon.md`; the hour-by-hour plan is in `Solveathon_DeloitteTraining` ("Weekend plan").
 - Fri 6:30 pm client discovery workshop; 7:30 to 8:45 solution design sprint (user and criteria on paper before any data); 8:45 mentor check-ins.
 - Sat 9:00 check-in; 1:00 mid-day check-in (gate: working ranking); 2:00 to 4:00 mentor drop-ins; 7:00 to 8:00 wrap up = code freeze.
 - Sun 9:00 am presentation submission; 10:00 to 12:30 presentations (6 min plus 2 min Q&A).

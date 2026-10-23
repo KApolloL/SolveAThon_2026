@@ -7,7 +7,7 @@ Apply when working anywhere in Finalists/ (Solve-A-Thon 2026 Final Quest; team p
 - Deliverables required by the organizers:
 - Presentation format: in person, 6 minutes plus 2 minute Q&A with judges (organizer email, 10.22.26). Slides are built by a teammate's AI agent from our slide brief.
 - Hard deadline: presentation submission Sun Nov 8, 9:00 am (what exactly is submitted: confirm with organizers). Presentations 10:00 am to 12:30 pm. Awards end at 2:00 pm.
-- Schedule and Deloitte training notes live in the vault: `~/Documents/KALNotes/Projects/Competitions/Solveathon/` (`NCHiddenTreasure.md`, `NCHiddenTreasure_DeloitteTraining.md`, `NCHiddenTreasure_FinalistsPlaybook.md`).
+- Schedule and Deloitte training notes live in the vault: `~/Documents/KALNotes/Projects/Competitions/Solveathon/` (`Solveathon.md`, `Solveathon_DeloitteTraining.md`).
 
 ## Judging criteria (assumed same as the qualifier; confirm at release)
 Understanding (match criteria specific to this agency and user), Framing (problem and requirements), Solving (sensible, reproducible, wanted by an agency), Evaluating (name a real weakness and its tradeoff), Driving Impact (a non-technical decision maker knows the next step).
@@ -39,7 +39,7 @@ Decide at the design sprint whether the skeleton fits (`planning/03_problem_type
 - Log every AI use in `AI_USAGE_LOG.md` (tool, what for, what was checked by a human).
 
 ## Deloitte method (finalist training, 10.22.26)
-Four phases: Discover, Build, Test, Present. Full notes in the vault `NCHiddenTreasure_DeloitteTraining`.
+Four phases: Discover, Build, Test, Present. Full notes in the vault `Solveathon_DeloitteTraining`.
 - Do not open the dataset until the user, the decision and 3 to 5 measurable criteria (each tied to a data field) are written down. Refuse to start analysis before this exists.
 - Solve the right problem, not the fanciest model. Start with the user, not the data.
 - Offer the client 2 to 3 options (COA) with pros, cons and tradeoffs. Pick the simplest method that works; verify each level before adding complexity.
@@ -89,6 +89,18 @@ Ask Kent before anything non-trivial: framing, scope, metric, data exclusions, n
 - Do not read many files in the main thread. Search first, read only the part needed.
 - Start a fresh session at a natural breakpoint with `handoff.md` updated, rather than letting one session grow.
 - Keep about 25% of credits in reserve for the last 6 hours.
+
+## Subagent playbook (standing authorization from Kent for the cases below)
+Agent types available here: `Explore` (broad read-only search), `caveman:cavecrew-investigator` (locate code, returns `path:line`), `caveman:cavecrew-builder` (1 to 2 file edits only), `caveman:cavecrew-reviewer` (one-line diff review), `Plan` (design a plan), `general-purpose` (multi-step research or build), and the project's own `hostile-judge`, `data-critic`, `test-breaker` in `.claude/agents/`. `impeccable-*` agents are for UI polish only. Ignore the academic, understand-anything and kalnotes agents here.
+- **Spawn without asking** (read-only): searching files, "where is X", reading long documents for extraction, summarizing raw data files, running a reviewer agent on finished work.
+- **Ask Kent first**: any agent that writes files, runs longer than about 5 minutes, calls an outside service or costs money, or any multi-agent Workflow (never start one unless Kent asks for it).
+- **Never spawn for**: framing, choosing the user or metric, small edits, anything Kent must decide, or one-file lookups a direct search answers.
+- **Model per job**: haiku for search and bulk summaries; sonnet for routine code and figure scripts; the strongest model for `Plan`, design and the three reviewers.
+- **Brief every agent** with: the exact paths, the goal, what done looks like, what it must not touch, no commits or pushes, and a short output format. A cold agent knows nothing else.
+- **Parallel**: at most 3 at once, independent files only, never two writers on the same files.
+- **Check before reporting**: read the agent's result and run `tests/run_tests.R` or `R/check_facts.R` where it touched code or numbers. An agent's report is a claim, not proof.
+- **Reviewers**: run `data-critic` after the criteria exist, `test-breaker` before the Saturday 1:00 PM gate, `hostile-judge` on the pitch near the Saturday evening freeze. One run each unless the work changes a lot.
+- Teammates run their own sessions; do not spawn agents for their tasks.
 
 ## Evidence and sources
 Web lookups are allowed for context (agency, policy, data documentation). Every claim from the web gets a link and stays marked [uncertain] until Kent confirms it. Separate what was verified in a provided file from what is inferred. If corrected, carry the fix forward.
