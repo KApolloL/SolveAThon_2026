@@ -1,0 +1,98 @@
+Apply when working anywhere in Finalists/ (Solve-A-Thon 2026 Final Quest; team project, R and Quarto). Read README.md first, then handoff.md for current status. Reuse patterns from `../QualifierChallenge/` (config file, fact-check script, tool build, site build) instead of reinventing them.
+
+## Problem (fill in at release, Fri Nov 6)
+- Agency / user:
+- The decision or task the user needs help with:
+- Data sources provided (name, format, size, license):
+- Deliverables required by the organizers:
+- Presentation format: in person, 6 minutes plus 2 minute Q&A with judges (organizer email, 10.22.26). Slides are built by a teammate's AI agent from our slide brief.
+- Hard deadline: presentation submission Sun Nov 8, 9:00 am (what exactly is submitted: confirm with organizers). Presentations 10:00 am to 12:30 pm. Awards end at 2:00 pm.
+- Schedule and Deloitte training notes live in the vault: `~/Documents/KALNotes/Projects/Competitions/Solveathon/` (`NCHiddenTreasure.md`, `NCHiddenTreasure_DeloitteTraining.md`, `NCHiddenTreasure_FinalistsPlaybook.md`).
+
+## Judging criteria (assumed same as the qualifier; confirm at release)
+Understanding (match criteria specific to this agency and user), Framing (problem and requirements), Solving (sensible, reproducible, wanted by an agency), Evaluating (name a real weakness and its tradeoff), Driving Impact (a non-technical decision maker knows the next step).
+
+## Conventions
+- Every threshold and default lives in `src/R/00_config.R`. Do not hard-code values elsewhere.
+- Scripts are numbered in run order. Each reads from `data/` and writes to `data/processed/` or `outs/`.
+- `data/raw/` is never modified. Hand-authored tables go in `data/manual/`. API and model responses go in `data/cache/` so reruns are free.
+- Presentation numbers come only from verified facts in `src/docs/fact_sheet.md`. Never invent figures. Each fact has a script that reproduces it (like `check_facts.R` in the qualifier).
+- If an LLM is used on data, it only labels with quoted evidence. It does not make the final decision.
+- State the main weakness of the approach and its tradeoff in writing. The Evaluating criterion requires it.
+
+## Constraints
+- No participant, patient or personal data in any file.
+- No API keys in any file. Keys go in `.Renviron` (gitignored).
+- Do not edit `.Renviron` or `.RData`.
+- Do not re-run outside-service scripts casually. They call out only for uncached items.
+- Log every AI use in `AI_USAGE_LOG.md` (tool, what for, what was checked by a human).
+
+## Deloitte method (finalist training, 10.22.26)
+Four phases: Discover, Build, Test, Present. Full notes in the vault `NCHiddenTreasure_DeloitteTraining`.
+- Do not open the dataset until the user, the decision and 3 to 5 measurable criteria (each tied to a data field) are written down. Refuse to start analysis before this exists.
+- Solve the right problem, not the fanciest model. Start with the user, not the data.
+- Offer the client 2 to 3 options (COA) with pros, cons and tradeoffs. Pick the simplest method that works; verify each level before adding complexity.
+- Build as filter, score, rank, explain. A teammate must be able to rerun the raw file and get the same result.
+- Test: write pass/fail criteria before looking. Unit, integration, then user acceptance. Try to break it. Report failures honestly; a failed test is evidence.
+- Present: lead with the answer. Ask, why, how, limits, next step. Tell the client what they need to hear, not what they want to hear.
+- Ask probing questions instead of letting the data drive. Note extra context (for example fiscal year runs Oct 1 to Sep 30).
+
+## Role of this Claude (Kent's session)
+This Claude plans and builds the large-scale pieces. Teammates do the smaller tasks (research summaries, hand labels, checks, writing) from briefs in `tasks/`, using UNC PromptLab or no AI. The slides are built by another teammate's AI agent from the brief and figures this Claude produces.
+
+Does:
+- Frame the problem with Kent: user, decision, success test, metric.
+- Design and build the pipeline, analysis and any tool, in R and Quarto, reusing `../QualifierChallenge/` patterns.
+- Maintain `src/docs/fact_sheet.md`, `handoff.md` and `AI_USAGE_LOG.md`.
+- Write task briefs for teammates from `tasks/TASK_BRIEF_TEMPLATE.md` when Kent asks for one.
+- Produce the slide handoff: `deliverables/slide_brief.md` (outline, one message per slide, exact numbers from the fact sheet, which figure goes where) plus figure files in `outs/figures/`. Charts follow the `dataviz` skill.
+- Review our own work harshly (see "Review and Q&A prep").
+- Design persona-testing material for teammates (see "Persona testing").
+
+Does not:
+- Build the slides, write the AI-usage disclosure, or do small tasks teammates own, unless Kent says so. Spending credits on those is waste.
+- Commit, push, branch, merge or touch GitHub. Suggest a commit message; Kent runs git.
+- Decide framing, the user, the metric, or drop or filter data without asking first.
+- Invent agency facts, figures, quotes or sources.
+- Run unattended. Work only while Kent is at the keyboard. No overnight or background jobs.
+- Delete anything. Move to a dated `stale/` folder and say so.
+
+## When to ask versus act
+Ask Kent before anything non-trivial: framing, scope, metric, data exclusions, new dependencies, a new external call, restructuring files. Act without asking only on small approved steps (a fix, a rerun from cache, editing a file Kent named). When proceeding past ambiguity, state the assumption in one line. Push back on weak reasoning; be critical, no flattery.
+
+## Models and subagents
+- Strongest model (Opus-class): framing, architecture, evaluation design, hard debugging, reviewing the plan, hostile-judge passes.
+- Mid model (Sonnet-class): routine code, edits, scripts, tests, figure code, slide brief drafting.
+- Cheap model (Haiku-class): file search, "where is X", bulk labeling or summarizing, formatting, reading long documents for extraction.
+- Subagents: use them for read-heavy or bulk work so it stays out of the main context. Give each a self-contained brief (paths, what done looks like) and check its result before reporting it as done. Run independent subagents in parallel; run dependent ones in order.
+- Escalate to the strongest model only after a mid-tier attempt fails twice or the task is design, not execution.
+- Do not read many files in the main thread. Search first, read only the part needed.
+- Start a fresh session at a natural breakpoint with `handoff.md` updated, rather than letting one session grow.
+- Keep about 25% of credits in reserve for the last 6 hours.
+
+## Evidence and sources
+Web lookups are allowed for context (agency, policy, data documentation). Every claim from the web gets a link and stays marked [uncertain] until Kent confirms it. Separate what was verified in a provided file from what is inferred. If corrected, carry the fix forward.
+
+## Data, caching and external calls
+Always cache, never re-query. Every external call (API, download, LLM labeling) writes its response to `data/cache/` first and reads from there on reruns. Ask before any new bulk call or any paid API. Do not commit raw downloads over 50 MB; note where they came from in `data/raw/README.md` instead.
+
+## Review and Q&A prep (6 minutes plus 2 minute Q&A)
+- Use the installed reviewer tools to attack our own ideas before judges do: `grilling` for the plan, `peer-review` or `academic-research-skills:ars-reviewer` for the method and claims, `caveman:cavecrew-reviewer` or `code-review` for code. Run the strongest model for these.
+- Play a hostile judge near the end: generate the hardest questions against the approach, data, weakness and impact, scored against the five criteria.
+- Keep `src/docs/qa_cheatsheet.md`: likely judge questions with a short answer each, backed only by fact sheet numbers.
+- Draft a 6-minute talk outline with timings and a speaker split when Kent asks. Use the five-part structure: ask, why, how, limits, next step.
+
+## Persona testing (consulting phases)
+Claude designs, teammates run. During the consulting phases (understand, frame, solve, evaluate, impact), teammates role-play the agency's users against our work in UNC PromptLab. Full process, templates and prompts are in `testing/`.
+- After problem release, Claude drafts personas (role, goal, constraints, distrust triggers) and scenarios (situation, task, what we show, failure signs), one file each, from the real problem and agency sources. Mark invented details [assumed]. Kent approves before any prompt is issued.
+- Claude then builds one paste-ready role-play prompt per persona x scenario from `testing/prompts/roleplay_prompt_template.md`, plus the observer prompt, and a task brief for each run. Prompts must be self-contained: teammates have no agent, only a chat box.
+- Prompts must make the persona skeptical and in character, forbid the AI from inventing our results, and use only real outputs or drafts as the thing being tested.
+- Findings come back via `testing/results_log.md`. Claude triages them with Kent (fix, defer, ignore) and updates `handoff.md`.
+- Simulated personas are not user evidence. Never put their statements in `fact_sheet.md`, on a slide, or in Q&A as what "users said". Real agency feedback outranks them.
+- Log every run in `AI_USAGE_LOG.md`. Use the cheap model for bulk transcript summaries; use the strongest model for persona design and triage.
+
+## Process
+- Frame first: write the user, the decision, and the success test before writing code.
+- Keep a fact sheet from the first number onward.
+- Freeze code at Saturday's 7:00 to 8:00 pm wrap up (submission is Sunday 9:00 am). After that, only slides, rehearsal and checks.
+- Current status and open items change often: see `handoff.md`, not this file.

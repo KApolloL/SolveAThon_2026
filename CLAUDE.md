@@ -1,6 +1,6 @@
 **Layout change (Oct 2026):** the qualifier work now lives in `QualifierChallenge/` (README.md, GUIDE.md, handoff.md, `src/`, `data/`, `outs/`, `docs/`, the .Rproj and .Renviron). All paths below are relative to that folder; run commands from `QualifierChallenge/src/`. The repo's `.git` stays at this level. Round-two work goes in its own subfolder here.
 
-Apply when working anywhere in this folder (Solve-A-Thon 2026, NC's Hidden Treasure; team project, R-based). Read README.md first; GUIDE.md maps every file. Vault hub: ~/Documents/KALNotes/Projects/Competitions/NCHiddenTreasure.
+Apply when working anywhere in this folder (Solve-A-Thon 2026, NC's Hidden Treasure; team project, R-based). Read README.md first; GUIDE.md maps every file. Vault hub: ~/Documents/KALNotes/Projects/Competitions/Solveathon.
 
 - Goal: help an NC DHHS grant writer act on Grants.gov opportunities (1,662 in the file). Sorts them into Tier 1-3 by whose signature is needed (writer, supervisor, secretary/legislature) plus Tier 4 (university-led research), checked against the DHHS 2023-2025 plan (DMVA 2025-2029 also used).
 - Layout: `src/` = everything written by hand (`solveathon_project.qmd` notebook, `R/` numbered pipeline, `tool/` JS tool source, `docs/` briefs and AI-usage disclosure). `data/` = `raw/` (never modify), `manual/` (hand-authored tables), `cache/` (API and LLM responses), `processed/` (incl. `payload.json`). `outs/` = generated only, safe to delete. `docs/` = GitHub Pages site built by `src/build_site.py`.

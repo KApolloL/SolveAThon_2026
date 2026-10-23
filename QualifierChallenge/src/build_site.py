@@ -1,7 +1,7 @@
 """Assemble the GitHub Pages site in docs/ from the built deliverables.
 
 Run from src/ after the tool and notebook are built:  python3 build_site.py
-GitHub Pages serves docs/ from the main branch (Settings > Pages > Deploy from a branch > main /docs).
+GitHub Pages is deployed from QualifierChallenge/docs by .github/workflows/pages.yml (Settings > Pages > Source: GitHub Actions).
 
 docs/index.html        landing page (from src/site/index.html; numbers filled from payload.json)
 docs/tool.html         outs/grant-triage-tool.html
