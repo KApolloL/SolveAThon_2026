@@ -8,7 +8,7 @@ Six reviewers, each written once in `testing/reviewers/` and built into two form
 
 | Reviewer | What it does | Claude Code | Any chat box (ChatGPT, PromptLab) |
 |---|---|---|---|
-| hostile-judge | Scores the five judging criteria, checks 6-minute fit, asks the 8 hardest Q&A questions | agent `hostile-judge` | `prompts/paste/hostile-judge.md` |
+| hostile-judge | Scores the five judging criteria, checks 5-minute fit, asks the 8 hardest Q&A questions | agent `hostile-judge` | `prompts/paste/hostile-judge.md` |
 | data-critic | Attacks criteria, fields, filters, weights, claims | agent `data-critic` | `prompts/paste/data-critic.md` |
 | test-breaker | Writes expected-vs-actual test cases, tries to break the ranking | agent `test-breaker` | `prompts/paste/test-breaker.md` |
 | persona_user | Role-play the busy agency staffer (interactive) | `/persona_user <what you present>` | `prompts/paste/persona_user.md` |

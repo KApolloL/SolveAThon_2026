@@ -5,7 +5,7 @@ Apply when working anywhere in Finalists/ (Solve-A-Thon 2026 Final Quest; team p
 - The decision or task the user needs help with:
 - Data sources provided (name, format, size, license):
 - Deliverables required by the organizers:
-- Presentation format: in person, 6 minutes plus 2 minute Q&A with judges (organizer email, 10.22.26). Slides are built by a teammate's AI agent from our slide brief.
+- Presentation format: in person, 5 minutes plus 2 minute Q&A with judges (organizer email, 10.22.26). Slides are built by a teammate's AI agent from our slide brief.
 - Hard deadline: presentation submission Sun Nov 8, 9:00 am (what exactly is submitted: confirm with organizers). Presentations 10:00 am to 12:30 pm. Awards end at 2:00 pm.
 - Schedule and Deloitte training notes live in the vault: `~/Documents/KALNotes/Projects/Competitions/Solveathon/` (`Solveathon.md`, `Solveathon_DeloitteTraining.md`).
 
@@ -102,17 +102,24 @@ Agent types available here: `Explore` (broad read-only search), `caveman:cavecre
 - **Reviewers**: run `data-critic` after the criteria exist, `test-breaker` before the Saturday 1:00 PM gate, `hostile-judge` on the pitch near the Saturday evening freeze. One run each unless the work changes a lot.
 - Teammates run their own sessions; do not spawn agents for their tasks.
 
+## Other AI tools (OpenCode, Codex, Gemini, ChatGPT, PromptLab)
+You (Claude) are the main planner and drafter. Other tools do smaller bounded tasks and hand results back to you to polish and check. Rules for them are in `AGENTS.md` (OpenCode and Codex read it automatically); a paste-ready context for chat-only tools is `AI_HANDOFF.md`; the day plan is `RUNBOOK.md`.
+- **Hand off** with a task brief (`tasks/TASK_BRIEF_TEMPLATE.md`): exact inputs, one output path, what done means, what not to touch. Tell Kent which tool to use and why.
+- **Routing (capabilities not verified):** OpenCode with a free or local model (`qwen2.5-coder:32b`) for small R or JavaScript edits and test boilerplate, one file at a time; Codex or ChatGPT free for a second code opinion and draft prose from the fact sheet; Gemini for reading long agency documents and summaries; PromptLab is the teammates' workbench for research, persona drafts and Q&A practice.
+- **Take back** their output from `drafts/<tool>/` or the named path. Before promoting it: run `tests/run_tests.R`, check every number against `src/docs/fact_sheet.md`, make the language plain, and read the code. Their output is a claim, not proof. Log the tool in `AI_USAGE_LOG.md` and note any error they made; the team must name at least one place an AI was wrong.
+- **Never** hand them framing, criteria, metric or data-exclusion decisions, and never let two tools edit the same file.
+
 ## Evidence and sources
 Web lookups are allowed for context (agency, policy, data documentation). Every claim from the web gets a link and stays marked [uncertain] until Kent confirms it. Separate what was verified in a provided file from what is inferred. If corrected, carry the fix forward.
 
 ## Data, caching and external calls
 Always cache, never re-query. Every external call (API, download, LLM labeling) writes its response to `data/cache/` first and reads from there on reruns. Ask before any new bulk call or any paid API. Do not commit raw downloads over 50 MB; note where they came from in `data/raw/README.md` instead.
 
-## Review and Q&A prep (6 minutes plus 2 minute Q&A)
+## Review and Q&A prep (5 minutes plus 2 minute Q&A)
 - Use the installed reviewer tools to attack our own ideas before judges do: `grilling` for the plan, `peer-review` or `academic-research-skills:ars-reviewer` for the method and claims, `caveman:cavecrew-reviewer` or `code-review` for code. Run the strongest model for these.
 - Play a hostile judge near the end: generate the hardest questions against the approach, data, weakness and impact, scored against the five criteria.
 - Keep `src/docs/qa_cheatsheet.md`: likely judge questions with a short answer each, backed only by fact sheet numbers.
-- Draft a 6-minute talk outline with timings and a speaker split when Kent asks. Use the five-part structure: ask, why, how, limits, next step.
+- Draft a 5-minute talk outline with timings and a speaker split when Kent asks. Use the five-part structure: ask, why, how, limits, next step.
 
 ## Persona testing (consulting phases)
 Claude designs, teammates run. During the consulting phases (understand, frame, solve, evaluate, impact), teammates role-play the agency's users against our work, using Claude Code, ChatGPT or UNC PromptLab. Full process is in `testing/README.md`.

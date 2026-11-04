@@ -3,7 +3,7 @@
 Copy to `deliverables/slide_brief.md` and fill in. Kent and Claude fill it; the teammate pastes it into their AI agent along with the figure files from `outs/figures/`. Draft format. Adjust after a trial run with the teammate.
 
 ## Constraints
-- Talk: **6 minutes plus 2 minute Q&A**, in person. A live demo is allowed.
+- Talk: **5 minutes plus 2 minute Q&A**, in person. A live demo is allowed.
 - Audience: judges and NC government staff. Non-technical decision makers. No jargon.
 - Submission: Devpost, due **Sunday 9:00 AM** (confirm what it needs: slides file, link, video, text fields).
 - Maximum slides: 6 to 8 (about 45 seconds each). One idea per slide.
@@ -59,5 +59,5 @@ Follow the five-part structure: ask, why, how, limits, next step.
 
 ## Checks before submitting
 - Every number on every slide matches `fact_sheet.md`.
-- Total speaking time is 6 minutes or less when read aloud.
+- Total speaking time is 5 minutes or less when read aloud.
 - Slide 1 states the recommendation before any method.

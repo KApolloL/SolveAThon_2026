@@ -12,5 +12,5 @@ Keep it to one page. Plain words. Mark anything unconfirmed [assumed]. No person
 - **Data used:** (source, date, size, known gaps)
 - **Success test:** (how the user would know it worked)
 - **Weaknesses we already know about:**
-- **The talk:** 6 minutes plus 2 minute Q&A, in person, live demo allowed. Judges and NC government staff, mostly non-technical.
+- **The talk:** 5 minutes plus 2 minute Q&A, in person, live demo allowed. Judges and NC government staff, mostly non-technical.
 - **Judging criteria (assumed same as the qualifier):** Understanding (criteria specific to this agency and user), Framing (problem and requirements), Solving (sensible, reproducible, wanted by an agency), Evaluating (names a real weakness and its tradeoff), Driving Impact (a non-technical decision maker knows the next step).

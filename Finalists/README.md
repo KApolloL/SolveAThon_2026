@@ -1,6 +1,6 @@
 # Finalists: Solve-A-Thon 2026 Final Quest
 
-**When:** Friday Nov 6, 5:30 pm, to Sunday Nov 8, 2 pm (awards). Presentation submission due **Sunday 9:00 am**. Presentations 10:00 am to 12:30 pm: **6 minutes plus 2 minute Q&A**, in person. Manning Hall. Full schedule: vault `Projects/Competitions/Solveathon/Solveathon.md`.
+**When:** Friday Nov 6, 5:30 pm, to Sunday Nov 8, 2 pm (awards). Presentation submission due **Sunday 9:00 am**. Presentations 10:00 am to 12:30 pm: **5 minutes plus 2 minute Q&A**, in person. Manning Hall. Full schedule: vault `Projects/Competitions/Solveathon/Solveathon.md`.
 **Prompt (as announced):** Turn real public data into a solution North Carolina can use. Move from understanding the user and framing the problem to building, evaluating, presenting and driving impact.
 **Team:** Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt.
 
