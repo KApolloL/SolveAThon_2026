@@ -82,8 +82,20 @@ rows <- sel |>
 soon <- rows[rows$in_top10 & !is.na(rows$days_left) & rows$days_left >= 0 & rows$days_left <= CLOSING_SOON_DAYS, ]
 for (i in seq_along(agencies)) agencies[[i]]$n_closing_soon <- sum(soon$agency_id == agencies[[i]]$agency_id)
 
+# goals[] (additive, for the match board and the alignment view): each active agency's own plan goals.
+# Folded plans (State Board of Education) belong to the agency they fold into; duplicates and dropped plans are skipped.
+goal_src <- read_csv(GOALS_FILE, show_col_types = FALSE, col_types = chr)
+plan_owner <- amap |> transmute(plan_file, owner = ifelse(is.na(fold_into), agency_id, fold_into)) |>
+  filter(!is.na(plan_file), is.na(amap$drop_reason[match(plan_file, amap$plan_file)]))
+goals <- goal_src |>
+  filter(is.na(duplicate_of_row) | duplicate_of_row == "") |>
+  inner_join(plan_owner, by = "plan_file") |>
+  transmute(agency_id = owner, goal_id, goal_text = str_sub(clean_text(ifelse(is.na(goal_statement) | goal_statement == "", goal_text_exact, goal_statement)), 1, 240)) |>
+  filter(agency_id %in% active$agency_id, !is.na(goal_text), goal_text != "") |>
+  distinct(agency_id, goal_id, .keep_all = TRUE)
+
 payload <- list(data_as_of = PAYLOAD_AS_OF, window_days = WINDOW_DEFAULT_WEEKS * 7L,
-                agencies = agencies, rows = rows)
+                closing_soon_days = as.integer(CLOSING_SOON_DAYS), agencies = agencies, goals = goals, rows = rows)
 write_json(payload, PAYLOAD_JSON, auto_unbox = TRUE, null = "null", na = "null", pretty = TRUE, digits = NA)
 message("Wrote payload.json: ", length(agencies), " agencies, ", nrow(rows), " rows (",
         sum(rows$in_top10), " top 10, ", sum(!rows$in_top10 & rows$eligibility != "no"), " coming up, ",

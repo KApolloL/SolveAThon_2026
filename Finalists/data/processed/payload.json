@@ -1,6 +1,7 @@
 {
   "data_as_of": "2026-11-07T11:00:00-05:00",
   "window_days": 14,
+  "closing_soon_days": 14,
   "agencies": [
     {
       "agency_id": "dpi",
@@ -321,6 +322,773 @@
       "folded_from": [],
       "n_hidden_ineligible": 98,
       "n_closing_soon": 0
+    }
+  ],
+  "goals": [
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 1",
+      "goal_text": "1. Prepare Each Student For Their Next Phase in Life"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 2",
+      "goal_text": "2. Revere Public School Educators"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 3",
+      "goal_text": "3. Enhance Parent, Caregiver and Community Support"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 4",
+      "goal_text": "4. Ensure Healthy, Safe and Secure Learning Environments"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 5",
+      "goal_text": "5. Optimize Operational Excellence"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 6",
+      "goal_text": "6. Lead Transformative Change"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 7",
+      "goal_text": "7. Celebrate the Excellence in Public Education"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Pillar 8",
+      "goal_text": "8. Galvanize Champions to Fully Invest in and Support Public Education"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Goal I",
+      "goal_text": "Goal I-Eliminate opportunity gaps by 2027"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Goal II",
+      "goal_text": "Goal II-Improve school and district performance by 2027"
+    },
+    {
+      "agency_id": "dpi",
+      "goal_id": "Goal III",
+      "goal_text": "Goal III-Increase educator preparedness to meet the needs of every student by 2027"
+    },
+    {
+      "agency_id": "ncccs",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1: Recruit and retain top talent to enable the North Carolina Community College System to educate and prepare the State’s workforce."
+    },
+    {
+      "agency_id": "ncccs",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2: Increase access and enrollment at North Carolina community colleges to meet the state’s educational attainment goal and expand postsecondary opportunities."
+    },
+    {
+      "agency_id": "ncccs",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3: Provide resources inside and outside the classroom for all students to successfully enroll, persist, and complete a career program of study."
+    },
+    {
+      "agency_id": "ncccs",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4: Provide education, training, and credentials to develop the most competitive workforce in the nation."
+    },
+    {
+      "agency_id": "ncccs",
+      "goal_id": "Goal 5",
+      "goal_text": "Goal 5: Increase state funding, streamline the allocation formula, and implement practices to improve system effectiveness."
+    },
+    {
+      "agency_id": "unc",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1: Increase access for underserved populations"
+    },
+    {
+      "agency_id": "unc",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2: Increase undergraduate student"
+    },
+    {
+      "agency_id": "osbm",
+      "goal_id": "Goal 1",
+      "goal_text": "1. Use evidence to allocate resources for programs and policies that deliver results."
+    },
+    {
+      "agency_id": "osbm",
+      "goal_id": "Goal 2",
+      "goal_text": "2. Advance technology and new tools to improve efficiency of operations."
+    },
+    {
+      "agency_id": "osbm",
+      "goal_id": "Goal 3",
+      "goal_text": "3. Ensure a team culture that thrives in uncertainty and solves problems creatively."
+    },
+    {
+      "agency_id": "osbm",
+      "goal_id": "Goal 4",
+      "goal_text": "4. Foster a statewide network of employees with expertise in financial and performance management."
+    },
+    {
+      "agency_id": "ncdit",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1 – Ensure that the state’s services are supported by reliable and accessible technology and data services Establishing a healthy production environment will be the primary focus of our"
+    },
+    {
+      "agency_id": "ncdit",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2 – Build a future-ready state with smarter, faster, trusted, and more responsive government operations through the strategic deployment of AI and emerging technologies."
+    },
+    {
+      "agency_id": "ncdit",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3 – Foster a statewide IT ecosystem where agencies, counties, boards, and community institutions operate as interconnected partners – advancing cybersecurity and operational efficiency through coordinated strategy."
+    },
+    {
+      "agency_id": "ncdit",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4 – Protect North Carolina’s information assets and empower government to operate with trust, agility, and confidence."
+    },
+    {
+      "agency_id": "ncdit",
+      "goal_id": "Goal 5",
+      "goal_text": "Goal 5 – Use innovative methods to build an agile and forward-thinking public- sector IT workforce in North Carolina."
+    },
+    {
+      "agency_id": "hfa",
+      "goal_id": "Goal 1",
+      "goal_text": "• Goal 1 – Meet the housing needs of North Carolinians through a variety of housing options"
+    },
+    {
+      "agency_id": "hfa",
+      "goal_id": "Goal 2",
+      "goal_text": "• Goal 2 – Partner with other organizations to accomplish a variety of housing strategies"
+    },
+    {
+      "agency_id": "hfa",
+      "goal_id": "Goal 3",
+      "goal_text": "• Goal 3 – Identify and tap into new funding resources while maintaining and strengthening existing funding streams"
+    },
+    {
+      "agency_id": "hfa",
+      "goal_id": "Goal 4",
+      "goal_text": "• Goal 4 – Support and encourage sustainable building practices"
+    },
+    {
+      "agency_id": "hfa",
+      "goal_id": "Goal 5",
+      "goal_text": "• Goal 5 - Attract, maintain and develop diverse, talented and committed professionals"
+    },
+    {
+      "agency_id": "hfa",
+      "goal_id": "Goal 6",
+      "goal_text": "• Goal 6 - Tailor communications to our many audiences, including specifics about our programs and overall benefits to North Carolinians"
+    },
+    {
+      "agency_id": "hfa",
+      "goal_id": "Goal 7",
+      "goal_text": "• Goal 7 – Actively reach out to underserved groups and communities to improve access and utilization of our programs"
+    },
+    {
+      "agency_id": "dmva",
+      "goal_id": "Goal 1",
+      "goal_text": "Increase the number of transitioning service members and families who choose to remain in or return to North Carolina by 5% year over year through 2028."
+    },
+    {
+      "agency_id": "dmva",
+      "goal_id": "Goal 2",
+      "goal_text": "Enhance the quality of care and conditions at North Carolina’s State Veterans Homes and ensure the State Veterans Cemeteries reflect the dignity and respect of our veterans and their families, maintaining 5 Star Centers for Medicare and Med"
+    },
+    {
+      "agency_id": "dmva",
+      "goal_id": "Goal 3",
+      "goal_text": "Strengthen sector collaboration by fostering partnerships among government, private businesses, non-profit organizations, and community stakeholders to enhance the quality of services provided to veterans and their families."
+    },
+    {
+      "agency_id": "dmva",
+      "goal_id": "Goal 4",
+      "goal_text": "Empower, develop, and invest in our workforce for the future"
+    },
+    {
+      "agency_id": "oshr",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1: Strengthen recruitment and improve ease of access to state employment services to meet the state’s workforce needs."
+    },
+    {
+      "agency_id": "oshr",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2: Transform state HR through modernization, innovation, and strategic collaboration."
+    },
+    {
+      "agency_id": "oshr",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3: Retain and support current employees by fostering a collaborative, inclusive, and resilient workplace culture – within OSHR and across state entities."
+    },
+    {
+      "agency_id": "sos",
+      "goal_id": "Priority: Our Customers",
+      "goal_text": "• Our Customers"
+    },
+    {
+      "agency_id": "sos",
+      "goal_id": "Priority: Our People",
+      "goal_text": "• Our People"
+    },
+    {
+      "agency_id": "sos",
+      "goal_id": "Priority: Fiscal Sustainability",
+      "goal_text": "• Fiscal Sustainability"
+    },
+    {
+      "agency_id": "sos",
+      "goal_id": "Priority: Technological Innovation",
+      "goal_text": "• Technological Innovation"
+    },
+    {
+      "agency_id": "osa",
+      "goal_id": "Approach 1",
+      "goal_text": "1. Impactful Audits and Investigations – We will know that our audits and investigations are impactful when"
+    },
+    {
+      "agency_id": "osa",
+      "goal_id": "Approach 2",
+      "goal_text": "2. Operational Excellence – We will know that we have achieved operational excellence when we"
+    },
+    {
+      "agency_id": "osa",
+      "goal_id": "Approach 3",
+      "goal_text": "3. Culture of Excellence - We will know that we possess a culture of excellence where everyone feels their"
+    },
+    {
+      "agency_id": "dst",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1: Provide Public Leadership in Finance, Fiscal and Health Policy"
+    },
+    {
+      "agency_id": "dst",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2: Enhance Accountability of Department Services"
+    },
+    {
+      "agency_id": "dst",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3: Innovate and Modernize Operations"
+    },
+    {
+      "agency_id": "dst",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4: Maximize Our Talent"
+    },
+    {
+      "agency_id": "doi",
+      "goal_id": "Goal 1",
+      "goal_text": "1. Goal: Consumer Protection, Education and Support - Safeguard North Carolina residents through effective licensing, education, complaint resolution, and outreach efforts"
+    },
+    {
+      "agency_id": "doi",
+      "goal_id": "Goal 2",
+      "goal_text": "2. Goal: Insurer Financial Oversight and Transparency - Safeguard consumers’ financial interests by ensuring the solvency, compliance, and transparency of licensed insurers and other"
+    },
+    {
+      "agency_id": "doi",
+      "goal_id": "Goal 3",
+      "goal_text": "3. Goal: Marketplace Optimization - Strengthen the North Carolina insurance marketplace through timely rate regulation, effective oversight, and a competitive climate for captive"
+    },
+    {
+      "agency_id": "doi",
+      "goal_id": "Goal 4",
+      "goal_text": "4. Goal: Fraud Control and Public Safety - Protect North Carolinians from insurance fraud and improve public safety through technology, enforcement, and modernization"
+    },
+    {
+      "agency_id": "osfm",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1: Develop and Maintain High-Quality Training Programs"
+    },
+    {
+      "agency_id": "osfm",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2: Strengthen State Emergency Response Capabilities"
+    },
+    {
+      "agency_id": "osfm",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3: Protect State-Owned Property"
+    },
+    {
+      "agency_id": "osfm",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4: Protect Citizens of North Carolina"
+    },
+    {
+      "agency_id": "doa",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1: Optimize Government Operations to Maximize Resources and Reduce Redundancy"
+    },
+    {
+      "agency_id": "doa",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2: Foster Culture of Innovation to Modernize State Government Services"
+    },
+    {
+      "agency_id": "doa",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3: Deliver Client and People-Centered Services That Are Timely, Accessible and Transparent"
+    },
+    {
+      "agency_id": "osc",
+      "goal_id": "Goal 1",
+      "goal_text": "Recruit and retain the highest quality employees each and every day."
+    },
+    {
+      "agency_id": "osc",
+      "goal_id": "Goal 2",
+      "goal_text": "Continuously improve enterprise systems to better serve customers and stakeholders"
+    },
+    {
+      "agency_id": "osc",
+      "goal_id": "Goal 3",
+      "goal_text": "Continually track statewide finances in an accurate timely manner"
+    },
+    {
+      "agency_id": "osc",
+      "goal_id": "Goal 4",
+      "goal_text": "Ensure state employees are paid accurately and on time each payroll period."
+    },
+    {
+      "agency_id": "osc",
+      "goal_id": "Goal 5",
+      "goal_text": "Provide statewide accounting support that meets or exceeds agency needs"
+    },
+    {
+      "agency_id": "dor",
+      "goal_id": "Goal 1",
+      "goal_text": "1. Goal: Tax System Modernization"
+    },
+    {
+      "agency_id": "dor",
+      "goal_id": "Goal 2",
+      "goal_text": "2. Goal: Workforce Development and Planning"
+    },
+    {
+      "agency_id": "dor",
+      "goal_id": "Goal 3",
+      "goal_text": "3. Goal: Operational Excellence and Efficiency"
+    },
+    {
+      "agency_id": "ncsbe",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1 – Create and maintain a comprehensive secure environment for North Carolina elections."
+    },
+    {
+      "agency_id": "ncsbe",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2 – Be good stewards of election resources."
+    },
+    {
+      "agency_id": "ncsbe",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3 – Institute and establish practices that prioritize statewide uniformity in elections administration to ensure lawful, accurate elections that promote public confidence in the process."
+    },
+    {
+      "agency_id": "ncsbe",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4 – Provide excellent customer service in all agency efforts."
+    },
+    {
+      "agency_id": "ncsbe",
+      "goal_id": "Goal 5",
+      "goal_text": "Goal 5 – Foster an empowering, collaborative, and professional work environment."
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Hearings Division Goal 1",
+      "goal_text": "Goal 1 – Conduct Contested Case Hearings in Compliance with Statutory Requirements and Render Final Decisions that Correctly Apply the Laws of North Carolina."
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Hearings Division Goal 2",
+      "goal_text": "Goal 2 – Manage Dockets and Case Flow"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Hearings Division Goal 3",
+      "goal_text": "Goal 3 – Conclude Contested Cases in A Timely Manner"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Hearings Division Goal 4",
+      "goal_text": "Goal 4 – Dispose of 90% of Medicaid Contested Case Filings Within 90 days"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Rules Division Goal 1",
+      "goal_text": "Goal 1 – Publication of Rules"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Rules Division Goal 2",
+      "goal_text": "Goal 2 – Rules Review Commission (RRC) Review of Rules"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Rules Division Goal 3",
+      "goal_text": "Goal 3 – Rulemaking Training"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Civil Rights Division Goal 1",
+      "goal_text": "Goal 1 – Conduct Discrimination Investigations per Statutory Requirements"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Civil Rights Division Goal 2",
+      "goal_text": "Goal 2 – Simplify the Process to File a Charge/Complaint"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Civil Rights Division Goal 3",
+      "goal_text": "Goal 3 – Complete Discrimination Investigations in a Timely Manner"
+    },
+    {
+      "agency_id": "oah",
+      "goal_id": "Civil Rights Division Goal 4",
+      "goal_text": "Goal 4 – Civil Rights Training"
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "PRIORITY 1",
+      "goal_text": "PRIORITY 1: Deliver Critical Services to Improve the Health and Well-being of North Carolinians"
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "PRIORITY 2",
+      "goal_text": "PRIORITY 2: Transform Rural Health"
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "PRIORITY 3",
+      "goal_text": "PRIORITY 3: Strengthen Behavioral Health Crisis Care and Its Coordination with the Justice System"
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "PRIORITY 4",
+      "goal_text": "PRIORITY 4: Partner with Key Stakeholders to Drive Reforms that Promote Affordable and Accessible Health Care for Every North Carolinian"
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "GOAL 1",
+      "goal_text": "Support North Carolinians’ ability to safely, easily and fully access the services, programs and systems of care of NCDHHS and our partners."
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "GOAL 2",
+      "goal_text": "Improve the well-being of North Carolinians by delivering comprehensive, high-quality services that address complex factors shaping outcomes for individuals and families."
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "GOAL 3",
+      "goal_text": "Transform North Carolina’s health care ecosystem by modernizing delivery, strengthening community and rural care, and optimizing strategic partnerships to expand access, improve outcomes and manage costs."
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "GOAL 4",
+      "goal_text": "Develop a skilled workforce that supports North Carolinians’ health and well-being through training, career pathways and innovative strategies to attract and retain talent."
+    },
+    {
+      "agency_id": "dhhs",
+      "goal_id": "GOAL 5",
+      "goal_text": "Promote efficient and effective operations through continuous improvement, leveraging data, modernizing systems, using resources wisely and strengthening accountability and transparency across the department."
+    },
+    {
+      "agency_id": "ids",
+      "goal_id": "Goal 1",
+      "goal_text": "Continue to implement a comprehensive long-term plan for provision of quality client service in 100 counties."
+    },
+    {
+      "agency_id": "ids",
+      "goal_id": "Goal 2",
+      "goal_text": "Improve compensation and case-related support to all appointed counsel to help build private assigned counsel rosters and to help improve client outcomes."
+    },
+    {
+      "agency_id": "ids",
+      "goal_id": "Goal 3",
+      "goal_text": "Improve agency administrative support for and communications to public defense attorneys to help improve client outcomes and to increase efficiency of agency operations."
+    },
+    {
+      "agency_id": "dac",
+      "goal_id": "1",
+      "goal_text": "1. Grow our workforce1, 3, 6"
+    },
+    {
+      "agency_id": "dac",
+      "goal_id": "2",
+      "goal_text": "2. Support our employees1, 3, 6"
+    },
+    {
+      "agency_id": "dac",
+      "goal_id": "3",
+      "goal_text": "3. Strengthen safety and security4"
+    },
+    {
+      "agency_id": "dac",
+      "goal_id": "4",
+      "goal_text": "4. Upgrade infrastructure and technology1, 3, 4, 5, 6"
+    },
+    {
+      "agency_id": "dac",
+      "goal_id": "5",
+      "goal_text": "5. Modernize and improve our correctional healthcare system3, 6"
+    },
+    {
+      "agency_id": "dac",
+      "goal_id": "6",
+      "goal_text": "6. Reduce recidivism1, 2, 3"
+    },
+    {
+      "agency_id": "doj",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1: Provide excellent legal counsel and defense to the State."
+    },
+    {
+      "agency_id": "doj",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2: Provide local law enforcement agencies with high value, cost effective, and responsive officer training, licensure, and certification activities."
+    },
+    {
+      "agency_id": "doj",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3: Use science to pursue justice and promote public safety."
+    },
+    {
+      "agency_id": "doj",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4: Safeguard consumers by upholding consumer laws, litigating deceptive practices and educating the public."
+    },
+    {
+      "agency_id": "doj",
+      "goal_id": "Goal 5",
+      "goal_text": "Goal 5: Fight Organized Crime in North Carolina"
+    },
+    {
+      "agency_id": "dps",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal #1: Make DPS a career destination"
+    },
+    {
+      "agency_id": "dps",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal #2: Foster a culture of excellent service, safety, and innovation"
+    },
+    {
+      "agency_id": "dps",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal #3: Strengthen our comprehensive approach to public safety"
+    },
+    {
+      "agency_id": "sbi",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1 – Support the SBI workforce"
+    },
+    {
+      "agency_id": "sbi",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2 – Assist criminal justice partners and the public"
+    },
+    {
+      "agency_id": "sbi",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3 – Ensure effective and efficient processes"
+    },
+    {
+      "agency_id": "shp",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal #1: MAKE NCSHP A CAREER DESTINATION"
+    },
+    {
+      "agency_id": "shp",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal #2: ENSURE EFFECTIVE AND EFFICIENT OPERATIONS"
+    },
+    {
+      "agency_id": "shp",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal #3: PROTECT AND ENGAGE WITH THE PUBLIC"
+    },
+    {
+      "agency_id": "shp",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal #4: MAKE NORTH CAROLINA MORE RESILIENT TO DISASTERS"
+    },
+    {
+      "agency_id": "shp",
+      "goal_id": "Goal 5",
+      "goal_text": "Goal #5: SUCCESSFUL INTEGRATION OF PARTNER AGENCIES"
+    },
+    {
+      "agency_id": "dacs",
+      "goal_id": "Goal 1",
+      "goal_text": "To provide services to promote and enhance the production, marketing, and distribution of safe and healthy agricultural products and to ensure the sound stewardship of farmland and natural resources for all North Carolina citizens."
+    },
+    {
+      "agency_id": "dacs",
+      "goal_id": "Goal 2",
+      "goal_text": "To protect, manage and promote forest resources for the citizens of North Carolina."
+    },
+    {
+      "agency_id": "dacs",
+      "goal_id": "Goal 3",
+      "goal_text": "To protect the public health, safety and welfare of North Carolina through food safety initiatives; monitor, protect and maintain animal health; and preserve environmental quality by monitoring and managing risk for those activities associa"
+    },
+    {
+      "agency_id": "dacs",
+      "goal_id": "Goal 4",
+      "goal_text": "To promote NC agriculture and agribusiness by creating positive entertainment and educational experience as well as fostering economic opportunities through the management and operation of available state facilities."
+    },
+    {
+      "agency_id": "dacs",
+      "goal_id": "Goal 5",
+      "goal_text": "To provide services and support that help the Department achieve its mission and vision."
+    },
+    {
+      "agency_id": "dol",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1 – Protect the safety and health of North Carolina’s workforce."
+    },
+    {
+      "agency_id": "dol",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2 – Ensure public safety through timely device inspections"
+    },
+    {
+      "agency_id": "dol",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3 – Enforce labor standards and resolve complaints efficiently"
+    },
+    {
+      "agency_id": "dol",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4 – Deliver excellent customer service and modernize operations"
+    },
+    {
+      "agency_id": "dncr",
+      "goal_id": "Goal 1",
+      "goal_text": "Expand and advance educational excellence and innovation throughout DNCR’s sites and programs and support workforce pathways for our fields of work."
+    },
+    {
+      "agency_id": "dncr",
+      "goal_id": "Goal 2",
+      "goal_text": "Strengthen local economies by uplifting DNCR sites and services as community anchors."
+    },
+    {
+      "agency_id": "dncr",
+      "goal_id": "Goal 3",
+      "goal_text": "Preserve, enhance and expand access to North Carolina’s natural and cultural resources to reflect and serve all."
+    },
+    {
+      "agency_id": "dncr",
+      "goal_id": "Goal 4",
+      "goal_text": "Improve operational efficiencies, collaboration, and customer service across the department."
+    },
+    {
+      "agency_id": "dncr",
+      "goal_id": "Goal 5",
+      "goal_text": "Support western North Carolina’s recovery from Hurricane Helene and integrate climate resilience from future disasters and preservation of natural and working lands throughout DNCR programs and operations."
+    },
+    {
+      "agency_id": "deq",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1 Environmental and Public Health Protection: Protect public health by setting and implementing science-based standards and by providing technical, compliance, permitting and financial assistance to residents, communities, businesses, "
+    },
+    {
+      "agency_id": "deq",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2 Community Restoration and Resilience: Engage with policy makers, state agencies, local governments, and community leaders to support and accelerate the long-term recovery of communities devastated by Hurricane Helene and other natura"
+    },
+    {
+      "agency_id": "deq",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3 Forever Chemicals: Protect North Carolina’s people and natural resources from exposure to PFAS and other forever chemicals, using a transparent, collaborative, and science-based decision-making process."
+    },
+    {
+      "agency_id": "deq",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4 Environmental Infrastructure: Strengthen North Carolina’s infrastructure through thoughtful and strategic investments."
+    },
+    {
+      "agency_id": "deq",
+      "goal_id": "Goal 5",
+      "goal_text": "Goal 5 Community Engagement and Public Participation: Ensure the meaningful involvement and fair treatment of all people with respect to the development, implementation, and enforcement of environmental laws, health safeguards, and policies"
+    },
+    {
+      "agency_id": "deq",
+      "goal_id": "Goal 6",
+      "goal_text": "Goal 6 Modernize DEQ: Modernize processes and foster innovation to enhance efficiency in services, increase transparency, and strengthen partnerships to better serve all stakeholders and the general public."
+    },
+    {
+      "agency_id": "deq",
+      "goal_id": "Goal 7",
+      "goal_text": "Goal 7 Work Environment: Create a work environment where employees feel valued and are empowered to be active participants in developing science-based solutions to better protect public health and the environment."
+    },
+    {
+      "agency_id": "wrc",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1 – All North Carolina citizens have the opportunity for safe and readily available participation in hunting, fishing, boating and other wildlife-related activities."
+    },
+    {
+      "agency_id": "wrc",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2 – Expand the constituency base by providing and promoting opportunities for every adult and child, regardless of physical abilities, to experience North Carolina’s wildlife resources."
+    },
+    {
+      "agency_id": "wrc",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3 – Conserve and enhance the abundance and diversity of the fish and wildlife resources of North Carolina."
+    },
+    {
+      "agency_id": "wrc",
+      "goal_id": "Goal 4",
+      "goal_text": "Goal 4 – The NCWRC is recognized as a leader in sustaining working lands, conserving wildlife habitats and species diversity, and maintaining the hunting and fishing heritage of North Carolina."
+    },
+    {
+      "agency_id": "wrc",
+      "goal_id": "Goal 5",
+      "goal_text": "Goal 5 – Communicate, educate, and market wildlife conservation and the role of hunting and fishing in effective wildlife management programs."
+    },
+    {
+      "agency_id": "wrc",
+      "goal_id": "Goal 6",
+      "goal_text": "Goal 6 – The NCWRC operates under a sound funding model that meets resource and constituent needs and supports current and future programs and new populations’ needs."
+    },
+    {
+      "agency_id": "wrc",
+      "goal_id": "Goal 7",
+      "goal_text": "Goal 7 – Create a work environment where priorities are clear; the decision-making process is efficient and effective; and employees feel a sense of creativity, accountability, value and satisfaction in their achievements and their contribu"
+    },
+    {
+      "agency_id": "commerce",
+      "goal_id": "Goal 1",
+      "goal_text": "Goal 1 – To support the growth of North Carolina’s economy."
+    },
+    {
+      "agency_id": "commerce",
+      "goal_id": "Goal 2",
+      "goal_text": "Goal 2 – To increase the efficiency of the Department of Commerce’s programs and service delivery."
+    },
+    {
+      "agency_id": "commerce",
+      "goal_id": "Goal 3",
+      "goal_text": "Goal 3 – Provide high quality services to businesses, individuals and communities."
+    },
+    {
+      "agency_id": "ncdot",
+      "goal_id": null,
+      "goal_text": "4. Recover the transportation network after emergencies"
     }
   ],
   "rows": [
