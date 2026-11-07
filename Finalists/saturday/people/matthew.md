@@ -1,6 +1,6 @@
 # Matthew: human checks and mentors
 
-No Claude needed. Do the checks yourself and write answers down. If you use any AI tool, log it in `AI_USAGE_LOG.md` and check it yourself.
+You use ChatGPT on your computer, connected to GitHub. Paste your block from `prompts.md` as the first message. It pulls `main` and works on the branch `matthew/sat-checks`. Never accept a number, quote or eligibility answer from ChatGPT that you have not confirmed on the Grants.gov page yourself, and write the page link in `sat_checks.csv`. Log every ChatGPT use in `AI_USAGE_LOG.md`. Tell Kent when your branch is pushed so he can merge it at the next window.
 
 ## Goal
 Run every mentor slot, finish the verification sheet by **12:15**, and ask two questions of the organizers at the 9:00 check-in.
