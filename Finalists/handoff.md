@@ -2,8 +2,8 @@
 
 _Update this at each checkpoint (about every 6 hours) and before ending any long AI session. A fresh session reads this after CLAUDE.md._
 
-**Last updated:** Fri Nov 6, 2026, ~11:00 am (before discovery workshop)
-**Hours remaining to submission deadline (Sun Nov 8, 9:00 am):** about 46
+**Last updated:** Fri Nov 6, 2026, ~9:00 pm (Marco's Azure update; the rest of this file is from ~11:00 am, before the discovery workshop)
+**Hours remaining to submission deadline (Sun Nov 8, 9:00 am):** about 36
 
 ## Goal in one sentence
 [assumed, confirm at workshop] Help an agency grant coordinator find and prioritize federal funding opportunities that match their agency's strategic plan early enough to apply, with a human making the final call, deployed on Azure for OSBM. Organizer text: `docs/QUEST_BRIEF.md`.
@@ -12,7 +12,7 @@ _Update this at each checkpoint (about every 6 hours) and before ending any long
 | Piece | State (not started / in progress / done / blocked) | Owner | Notes |
 |---|---|---|---|
 | Quest brief saved (`docs/QUEST_BRIEF.md`) | done | Kent / Claude | Docs updated from it Fri am |
-| Azure access and environment | not started | Kent | Blocker: no access confirmed yet. Read the Azure Access Guide first |
+| Azure access and environment | in progress | Marco | Logged in; team subscription `unc-sdis-solveathon-team15`; East US. Created: storage `ffmdatateam15` + container `ffm-data`, `ffm-logs`, registry `ffmacrteam15`, env `ffm-env`. NOT yet: Azure OpenAI, container app/URL, budget alerts. Hello app written in `app/`, not built. Spending limit is $500. Plan for Sat: [src/docs/azure_setup.md](src/docs/azure_setup.md) |
 | Problem framing and user | not started | Kent | Waits for 6:30 pm workshop and 7:30 pm sprint; user is [assumed] |
 | Data ingestion (opportunities feed) | not started | Kent | Grants.gov or SAM.gov live API; the qualifier already cached Grants.gov (`QualifierChallenge/data/cache/api/grantsgov/`); gate must be ticked first |
 | Agency profiles from strategic plans | not started | Kent / teammate | 34 OSBM plan PDFs downloaded to `data/raw/agency_plans/` (see `MANIFEST.csv`). Text extractability not yet checked. Starter Kit says serve ONE agency; sponsor picks tonight |
@@ -44,11 +44,12 @@ _Update this at each checkpoint (about every 6 hours) and before ending any long
 - Which Azure services are in the provided environment (LLM endpoint? app hosting? storage?) and is a model available there? Local Ollama cannot count as "on Azure".
 - How many agencies and which? (Strategic plans are on the OSBM page.)
 - Live Grants.gov vs SAM.gov: which feed, and are API keys needed?
-- Azure: subscription is `unc-sdis-solveathon-teamXX`, login `ONYEN@ad.unc.edu` plus Duo. Is Azure OpenAI pre-provisioned? Not stated in the guide.
+- Azure: subscription is `unc-sdis-solveathon-team15` (found Fri night), login `ONYEN@ad.unc.edu` plus Duo. Azure OpenAI is not pre-provisioned in the subscription (none listed Fri night); whether we may create it is still to confirm.
 - Who is the real user and what does the Discovery Session say changed our plan? (Field notes need this in the sponsors' words.)
 
 ## Blockers
-- Azure access not confirmed.
+- Azure access is confirmed (Fri night). Open: is Azure OpenAI ours to create, and does R Shiny on Container Apps build and run? Answers decide the stack (see `src/docs/azure_setup.md`).
+- Spending limit of $500 on the team subscription (told to Marco). Keep to the cheapest tiers and cap model calls.
 
 ## Discovery session
 Findings and plan changes: [planning/07_discovery_findings.md](planning/07_discovery_findings.md). Organized notes: [notes/vault/Solveathon_DiscoverySession.md](notes/vault/Solveathon_DiscoverySession.md).
@@ -56,7 +57,7 @@ Findings and plan changes: [planning/07_discovery_findings.md](planning/07_disco
 ## Next three steps
 Friday night owners and teammate AI prompts: [planning/06_tonight_plan.md](planning/06_tonight_plan.md). Marco owns Azure; Noah and Matthew check plan text; Kent owns planning.
 
-1. Azure (Kent): log in, find the team subscription, confirm whether Azure OpenAI is available, then run the Starter Kit's setup steps. Email the three support contacts (CC all) if the subscription does not appear. Starter Kit, Azure guide, template and zip are already read: `src/docs/organizer_materials_notes.md`.
+1. Azure (Marco; first half done Fri night, rest in `src/docs/azure_setup.md`): log in, find the team subscription, confirm whether Azure OpenAI is available, then run the Starter Kit's setup steps. Email the three support contacts (CC all) if the subscription does not appear. Starter Kit, Azure guide, template and zip are already read: `src/docs/organizer_materials_notes.md`.
 2. 6:30 pm workshop using `planning/01_discovery_questions.md`; add the brief-specific questions listed there. Then 7:30 pm sprint: fill `planning/02_framing_worksheet.md` and tick the gate.
 3. Only after the gate: profile the opportunity feed and agency plans, and start the field notes file (record each sponsor-driven plan change as it happens).
 

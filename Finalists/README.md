@@ -12,6 +12,7 @@
 | Folder | What goes there |
 |---|---|
 | `docs/` | Team and process docs: [QUEST_BRIEF.md](docs/QUEST_BRIEF.md) (organizer text), [RUNBOOK.md](docs/RUNBOOK.md) (day plan), [SKILLS_GUIDE.md](docs/SKILLS_GUIDE.md), [AI_HANDOFF.md](docs/AI_HANDOFF.md) (paste-ready context for chat-only AIs). |
+| `app/` | The Azure skeleton: a minimal R Shiny hello page and its Dockerfile (`MODE=app` or `MODE=job`). Built in the cloud with `az acr build`. Setup state and plan: [src/docs/azure_setup.md](src/docs/azure_setup.md). |
 | `src/R/` | Numbered R pipeline scripts (`00_config.R`, `01_...`). Written by hand or with AI. |
 | `src/docs/` | Briefs, the fact sheet (`fact_sheet.md`), notes. |
 | `notes/vault/` | Copies of the Solveathon vault notes (the vault is the source), including the organized discovery session notes. Index: [notes/vault/README.md](notes/vault/README.md). Findings: [planning/07_discovery_findings.md](planning/07_discovery_findings.md). |
