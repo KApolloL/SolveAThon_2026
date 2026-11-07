@@ -23,3 +23,8 @@ Need from you, in order, from `Finalists/src` on a fresh pull of main:
 3. Commit `data/processed/notice_reader.csv`, `data/cache/llm_notice/` and `data/processed/payload.json` on a branch, PR, tell Kent's Claude.
 4. `sh app/stage_proof_assets.sh`, `az acr build`, `az containerapp update` as v18 (v17 is the rollback). Post the revision here.
 Cut-off: if step 1 is not done by 2:35 pm, skip it, and redeploy nothing. Kent's Claude smoke-tests the live URL after v18.
+
+## 2026-11-07 14:40 kent/sat-marco-note
+Done: main now has the tool bonus features (PR 85: learn-from-my-marks re-sort, median-rank line, deadlines .ics export) and the reach backtest (PR 84). Checks on main: `Rscript R/check_facts.R` 42 of 42, `Rscript tests/run_tests.R` 83 of 83.
+Change to the 14:35 plan: deploy v18 from current main even if the notice reader did not run. Pull main first. Skip step 1 if it is past the cut-off; steps 2 and 4 still apply, with facts now 42 of 42. v17 stays the rollback.
+Need from you: post the v18 revision name here. Kent's Claude smoke-tests the live URL after.
