@@ -142,6 +142,7 @@ body.proj #stub, body.proj .start .note, body.proj .start details.drawer, body.p
 body.proj .start .who, body.proj .start .badge { display:none !important; }
 body.proj #proj-exit { display:block !important; }
 body.proj #desk-panel { display:none !important; }
+body.proj .start li.row > div { min-width:0; }
 @media (min-width: 1100px) { body.proj #v-opps:not([hidden]) { display:block; } body.proj header, body.proj main { max-width: 1100px; } }
 body.proj { background:#000; color:#fff; font-size:24px; --text-primary:#fff; --text-secondary:#f0f0f0; --text-muted:#e0e0e0; --accent:#9fc2ff; --surface-2:#0d0d0d; --border:#777; }
 body.proj header, body.proj main { max-width:1400px; }
@@ -336,7 +337,7 @@ body.proj .start .reason { font-size:1.35rem; }
     det.appendChild(dl); return det;
   }
   function rowEl(r) {
-    var li = el("li", "row"), body = el("div");
+    var li = el("li", "row"), body = el("div"); li.dataset.opp = r.opp_id; li.dataset.ag = r.agency_id;
     li.appendChild(daysBlock(r));
     var t = el("div", "title"), u = safeUrl(r.url);
     if (u) { var a = el("a", null, r.title || r.opp_number || r.opp_id); a.href = u; a.target = "_blank"; a.rel = "noopener"; t.appendChild(a); }
@@ -702,8 +703,7 @@ body.proj .start .reason { font-size:1.35rem; }
   var deskMQ = window.matchMedia ? window.matchMedia("(min-width: 1100px)") : { matches: false };
   var deskSel = null;
   function deskRowFor(li) {
-    var tt = li.querySelector(".title"), title = tt ? tt.textContent : "";
-    var hit = P && P.rows.filter(function (r) { return r.agency_id === cur.id && (r.title || r.opp_number || r.opp_id) === title; });
+    var hit = P && P.rows.filter(function (r) { return r.agency_id === li.dataset.ag && String(r.opp_id) === li.dataset.opp; });
     return hit && hit[0];
   }
   function deskClear() {
