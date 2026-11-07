@@ -105,8 +105,18 @@ for (r in seq_len(nrow(tc))) {
 if (!file.exists(PAYLOAD_JSON)) {
   check("R and JS agree", "payload.json exists (run R/10_run_ranking.R)", FALSE)
 } else if (!is.null(jsonlite::fromJSON(PAYLOAD_JSON)$rows)) {
-  # Contract-shape payload (saturday/03_contract.md); tool/ranker.js still expects the toy shape.
-  check("R and JS agree", "agreement test pending new ranker for contract-shape payload.json", FALSE)
+  # Contract-shape payload (saturday/03_contract.md): the shipped tool shows R's rank and fit_score as written and
+  # only re-sorts by fit_score x weight in the browser (tool/matchmaker.html). tool/ranker.js is for the toy shape.
+  # So the agreement check is: the payload order is exactly the order of fit_score (ties by opp_id) within each agency.
+  pl0 <- jsonlite::fromJSON(PAYLOAD_JSON)$rows; top0 <- pl0[pl0$in_top10, ]
+  ok_order <- all(vapply(split(top0, top0$agency_id), function(d) {
+    o <- order(-d$fit_score, d$opp_id, method = "radix"); identical(d$opp_id[o], d$opp_id[order(d$rank)]) }, logical(1)))
+  check("R and JS agree", "payload rank order equals fit_score order inside every agency", ok_order)
+  rk0 <- readr::read_csv(RANKING_CSV, show_col_types = FALSE)
+  chk_rank <- merge(top0[, c("agency_id","opp_id","rank")], transform(rk0, opp_id = sub("^[^:]*:", "", id))[, c("agency_id","opp_id","rank")],
+                    by = c("agency_id","opp_id"), suffixes = c("_payload","_full"))
+  check("R and JS agree", "payload ranks never beat the full ranking order (same relative order)", all(vapply(split(chk_rank, chk_rank$agency_id),
+    function(d) !is.unsorted(d$rank_full[order(d$rank_payload)]), logical(1))))
 } else {
   ag <- check_r_js_agreement()
   for (k in seq_len(nrow(ag))) check("R and JS agree", ag$name[k], ag$ok[k], ag$got[k])
@@ -127,7 +137,10 @@ if (file.exists(PAYLOAD_JSON) && file.exists(BACKTEST_CSV)) {
   check("payload contract", "eligibility is yes, no or ask", all(pr$eligibility %in% c("yes","no","ask")))
   check("payload contract", "fit_score within 0 to 1", all(pr$fit_score >= 0 & pr$fit_score <= 1, na.rm = TRUE))
   check("payload contract", "unknown ceiling is null, never 0", !any(pr$award_ceiling == 0, na.rm = TRUE))
-  check("payload contract", "unknown tier is 'unknown', never a tier guess", all(pr$signature_tier == "unknown"))
+  check("payload contract", "tier is writer, supervisor, leadership or unknown", all(pr$signature_tier %in% c("writer","supervisor","leadership","unknown")))
+  chk <- signature_tier(c("Yes","Yes","No",NA), c(2e6, 5e5, 9e9, 9e9))$signature_tier
+  check("payload contract", "tier rules: big match leadership, small match supervisor, no match writer, missing unknown", identical(chk, c("leadership","supervisor","writer","unknown")))
+  check("payload contract", "a tier is never set without a stated cost share", all(pr$signature_tier[is.na(pr$tier_source)] == "unknown"))
   check("payload contract", "no stub flag", is.null(pl$stub))
   bt <- readr::read_csv(BACKTEST_CSV, show_col_types = FALSE)
   check("backtest contract", "columns", identical(names(bt), c("agency_id","window_start","window_end","window_weeks","opp_id",
