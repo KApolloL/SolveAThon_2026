@@ -49,3 +49,9 @@ Done in src/tool/matchmaker.html (UI skills used: ui-ux-pro-max, accessibility-a
  - Live: image v5, revision ffm-app--0000009 (v4 revision 0000008 is the rollback). Blob payload still the OLD one (roles).
 Data point for Kent's ranking request: in the OSBM overview some "shared" items look like weak generic-word matches (for example U.S. Embassy Praia Ambassador's SSH Program under Treasurer, Auditor and Secretary of State). Not verified as errors; Kent to judge.
 Not done: impact, county, capability panels wait on payload fields; color-contrast check covered the opportunities, overview and refine views only; not tested on a phone or with a screen reader.
+
+## 2026-11-07 claude/marco-work-2 (loop run 7: after merge of PR 59)
+Done: Synced to main (your merge has County map, capability panel, Refine, OSBM). Blob write role is STILL missing, so I worked around it: app.R now falls back to a payload baked into the image (stage_proof_assets.sh copies data/processed/payload.json; the newer data_as_of wins, ties go to the baked file; a newer Blob file from the job will win later). Built image v6, revision ffm-app--0000010. Verified live: /payload.json has goals (153), counties, capabilities, 960 rows; tabs: opps, board, map, osbm, marks, how. Not tested by hand: the new tabs' behavior, phone, screen reader.
+Blocked: daily job still not created (AcrPull); Blob upload still refused. Live data is baked, so each data change needs a rebuild: run `sh app/stage_proof_assets.sh`, then `az acr build` and `az containerapp update` (ask me to redeploy).
+Need from you: an Owner to grant the two roles (Storage Blob Data Contributor to Marco on ffmdatateam15; AcrPull to the job identity). Also say if you want app.R changed another way.
+Next: open PR for the app.R and stage-script change.
