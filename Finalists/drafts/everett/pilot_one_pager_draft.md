@@ -3,7 +3,7 @@
 Draft by Everett's Claude for Kent. Unverified by a human. Numbers are from `src/docs/fact_sheet.md` (row in brackets). Anything not in the repo is a placeholder.
 
 ## The ask
-Approve a [Kent to fill: length] pilot of the Matchmaker with [Kent to fill: number and names of agencies], at a cost of [Kent to fill: cost and staffing].
+Approve a [proposed: 3-month] pilot of the Matchmaker with [proposed: 3 agencies, see Pilot shape], staffed by [to decide: cost and staffing are not in the repo].
 
 ## Who uses it
 An agency grant coordinator, who sees a ranked list of open federal grants for one agency, with the plan goal each one matches. OSBM is the sponsor. [assumed: user role, per CLAUDE.md]
@@ -19,8 +19,8 @@ Reading every open notice by hand. The tool ranks 1,576 open opportunities [row 
 - Limits: the test counts repeat funding, which favors programs an agency already wins, and cannot reward a new good fit. Samples are small. Keyword matching can miss a real fit that uses different words; better matching is untested.
 
 ## Pilot shape
-- Agencies: [Kent to fill]. The tool already covers all 32 [row 2].
-- Length: [Kent to fill].
+- Agencies [proposed by Claude, Kent to confirm]: three that differ on purpose, because the backtest is small and mixed: one where award-history backtest looked strongest (for example NCDOT or Wildlife Resources), one in the middle (for example Public Safety), and DHHS as the hard case, where it looked weakest. Those agency-level counts are in `backtest_v2_result.csv`, not the fact sheet [not for speech]. The tool already covers all 32 [row 2].
+- Length [proposed]: about 3 months, long enough to see several 4-week windows of new notices. Not derived from data.
 - Measured (proposed, Kent to confirm): how many Top 10 items the coordinator opens, pursues or rejects and why; any real opportunity the tool did not show (false negatives); time saved against the coordinator's current routine. No targets are set here, because none are in the repo.
 - Daily refresh: [unverified] do not claim it is live until it runs (`src/docs/daily_job.md`).
 
@@ -28,6 +28,6 @@ Reading every open notice by hand. The tool ranks 1,576 open opportunities [row 
 Pilot agencies first, then the other agencies in the tool [row 2]. Before widening, test better matching (embeddings) and confirm the program-to-agency links, such as the DERA link, which is marked uncertain [row 14].
 
 ## Next step
-- Decision: [Kent to fill]
-- Owner: [Kent to fill]
-- Date: [Kent to fill]
+- Decision [proposed]: the OSBM budget director approves or declines a 3-agency, 3-month pilot, after seeing this page.
+- Owner [to decide]: an OSBM staff lead plus one grant coordinator per pilot agency. Names are Kent's.
+- Date [to decide]: no date is in the repo; set after the Sunday pitch.

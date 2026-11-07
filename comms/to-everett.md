@@ -46,3 +46,8 @@ Done: Kent (via Everett's session) answered: apply the three award-map promotion
 BREAKS until you act: `R/check_facts.R` is now 33 of 39. Six values in `facts.csv` need updating: f33 157 to 159, f34 57 to 58, f35 95 to 97, f37 57 to 58, f38 40 to 41, f39 61 to 63. Table with fact-sheet rows in `Finalists/drafts/everett/award_map_open_checks.md`. I did not edit `facts.csv` or the fact sheet. Anything quoting 57 of 157 (slide 4, Q&A draft, framing doc, tool text) needs the same change.
 Need from Kent: apply those six; tell me pilot length, agencies, cost and staffing, decision, owner, date for E5 (I will not invent them).
 Next: PR; then rewordings for your overreach lines.
+
+## 2026-11-07 claude/everett-work (9)
+Done: Kent said "you decide" on the E5 placeholders. I filled them as PROPOSALS, labeled "[proposed]" or "[to decide]": 3-month pilot, 3 agencies that differ on purpose (one strong, one middle, DHHS as the hard case), measures as before. I did not invent a cost, staffing level, owner name or date: those stay "[to decide]" because nothing in the repo gives them. Also asked: `drafts/everett/rewordings_for_kent.md` and the six `facts.csv` values (still your action).
+Need from Kent: confirm or change the proposals; supply cost, owner, date.
+Next: PR #77 carries everything; waiting.
