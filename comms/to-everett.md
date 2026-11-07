@@ -40,3 +40,9 @@ Done: Kent's message (via Everett's session) asked for the task list; answered i
 For Kent (your files): `backtest_framing.md:32` ("beats both baselines once fair") holds pooled only, not for Commerce, DEQ, DHHS, DNCR; `:40` ("at its ceiling") overreaches for a 9-setting grid; `slide_brief.md:35` figure name; the Top 20, Top 50 baseline and in-time numbers are not in the fact sheet, so do not speak them unless you add them. In my files I fixed the pooled-figure title ("later won" removed) and corrected my E2 timing wording.
 Need from Kent: the earlier list (E5 placeholders, map promotions 58 of 159, fact-sheet numbers, DMV source).
 Next: PR for E9.
+
+## 2026-11-07 claude/everett-work (8)
+Done: Kent (via Everett's session) answered: apply the three award-map promotions; fact-sheet numbers to carry: in-time, miss split, keyword-gap counts; E5 placeholders (length, agencies, cost, decision/owner/date) are Kent's to supply, values not given yet; draft rewordings for his files. Applied the map change (Adult Correction to `dac`, Employment Security to `commerce`, Motor Vehicles to `ncdot`) and reran 20, 21, 22, 24, 25, 26 and the figures, offline. Results: v2 Top 10 58 of 159 (was 57 of 157), Top 50 97 of 159, in time 42 of 58, split 58 / 39 / 62 (reached / 11 to 50 / below 50). The v1 pre-set result is unchanged.
+BREAKS until you act: `R/check_facts.R` is now 33 of 39. Six values in `facts.csv` need updating: f33 157 to 159, f34 57 to 58, f35 95 to 97, f37 57 to 58, f38 40 to 41, f39 61 to 63. Table with fact-sheet rows in `Finalists/drafts/everett/award_map_open_checks.md`. I did not edit `facts.csv` or the fact sheet. Anything quoting 57 of 157 (slide 4, Q&A draft, framing doc, tool text) needs the same change.
+Need from Kent: apply those six; tell me pilot length, agencies, cost and staffing, decision, owner, date for E5 (I will not invent them).
+Next: PR; then rewordings for your overreach lines.

@@ -5,9 +5,8 @@
 #
 # Pooling matches fact sheet rows 26 to 29: weight each agency by its won programs, 4-week windows,
 # agencies with 3+ won programs. Random is the exact expected value from 21_backtest_v2.R.
-# NOT HERE: the "in-time" line (catch with >= IN_TIME_DAYS before close). backtest_v2_result.csv has no
-# in-time column, and 21_backtest_v2.R is Kent's file. Adding it needs a small change there (ask Kent).
-# Only Top 10 (57 of 157, 36%), Top 50 (95 of 157, 61%) and the Top 10 baselines (17%, 13%) are in the fact sheet (rows 26 to 29).
+# In-time catches live in 26_backtest_v2_intime.R (figure 3 below); 21_backtest_v2.R is unchanged.
+# Only Top 10 (58 of 159, 36%), Top 50 (97 of 159, 61%) and the Top 10 baselines (17%, 13 or 14%) are in the fact sheet (rows 26 to 29).
 # The Top 20 bars, the Top 50 baselines and the in-time counts are NOT in the fact sheet: do not speak them until Kent adds them.
 # Limits (printed on the figures): exploratory, not the pre-set bar; program-level match favors repeat
 # funding; award data never enters the score; small denominators; no notice-level award link exists.
@@ -62,7 +61,7 @@ p2 <- ggplot(a10, aes(y = lab)) +
        x = "Won programs reached", y = NULL, color = NULL, caption = caption) +
   theme_finals() + theme(legend.position = "bottom")
 export_figure(p2, "backtest_v2_by_agency", width = 9, height = 5.5)
-message("Limit: small denominators (1 to 38 programs per agency); intervals are wide. In-time line not drawn (see header).")
+message("Limit: small denominators (1 to 38 programs per agency); intervals are wide. In-time figure needs 26_backtest_v2_intime.R output.")
 
 # ---- Figure 3: Top 10 catches, all vs in time (>= IN_TIME_DAYS before close). Needs 26_backtest_v2_intime.R output ----
 it_file <- file.path(DIR_PROCESSED, "backtest_v2_intime.csv")

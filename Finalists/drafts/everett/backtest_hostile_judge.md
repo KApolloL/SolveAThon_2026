@@ -3,11 +3,11 @@
 Draft by Everett's Claude, from an Opus read-only pass; I spot-checked the figure and wording claims and fixed two in my own files. Numbers only from `src/docs/fact_sheet.md` (row given). Unverified by a human. Kent owns `backtest_framing.md` and the slide brief.
 
 ## Six hard questions, honest answers
-1. **"Isn't the first test circular?"** Yes, it kept only won programs already in the top 50; `backtest_framing.md:29` says so. The fair-denominator v2 reaches 57 of 157 won programs in the Top 10 (row 26).
+1. **"Isn't the first test circular?"** Yes, it kept only won programs already in the top 50; `backtest_framing.md:29` says so. The fair-denominator v2 reaches 58 of 159 won programs in the Top 10 (row 26).
 2. **"Doesn't this reward repeat funding?"** Yes. The match is by program, not notice (row 15). It cannot score a good new opportunity; we have no number for one.
 3. **"You built v2 after v1 failed."** Do not call it a pass. The pre-set bar failed: 1 of 3 agencies (row 15), and a deadline sort scored higher in all 3 (row 16). v2 is exploratory, 4 of 12 at the same 50% line (row 28); tuning changed nothing (row 30).
-4. **"Intervals are huge."** Agreed. DPI 2 of 3 (row 15) is not a result. Only the pooled 157 (rows 26, 29) carries weight, and it mixes agencies of very different size. No pooled interval is in the fact sheet.
-5. **"Where does 21 days come from?"** A team assumption, not a sponsor figure. The in-time count (41 of 57) is not in the fact sheet.
+4. **"Intervals are huge."** Agreed. DPI 2 of 3 (row 15) is not a result. Only the pooled 159 (rows 26, 29) carries weight, and it mixes agencies of very different size. No pooled interval is in the fact sheet.
+5. **"Where does 21 days come from?"** A team assumption, not a sponsor figure. The in-time count (42 of 58) is not in the fact sheet.
 6. **"DHHS does worst."** First test 4 of 11 (row 15). The v2 DHHS count is not in the fact sheet; say "weakest case" only.
 
 ## Overreaches to fix (owner)
