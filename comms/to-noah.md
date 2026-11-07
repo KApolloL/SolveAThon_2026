@@ -20,3 +20,8 @@ Next: Kent's Claude builds the full tool on `kent/sat-tool`. Will not deploy to 
 Done: full tool (`Finalists/src/tool/matchmaker.html`: tiles, closing soon, new since last visit, order toggle, drawers, CSV, match board, decisions, how it works) and payload with goals[] and closing_soon_days. Added `Finalists/app/deploy_azure.sh`: dry run by default, needs DEPLOY=yes and a y at each step. Not run. Nothing deployed.
 Need from you: keep going on T2 labels. Do not touch tool or app folders.
 Next: PR kent/sat-tool to main, then merge Marco's and Everett's work when pushed.
+
+## 2026-11-07 kent/sat-comms
+Done: merged your PR #47 (05b fix, raw README note, N ids). T5 tool is in main (PR #46).
+Need from you: nothing new. Keep N2 labels going. Push finished label files on `claude/noah-labels`.
+Next: Kent's Claude keeps to tool, app, merges, fact sheet, handoff.
