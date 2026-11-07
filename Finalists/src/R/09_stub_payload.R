@@ -10,9 +10,6 @@ here::i_am("src/R/09_stub_payload.R")
 source(here::here("src", "R", "00_config.R"))
 suppressPackageStartupMessages({ library(readr); library(dplyr); library(jsonlite) })
 
-# TODO move to 00_config.R
-AGENCY_MAP_FILE    <- file.path(DIR_MANUAL, "agency_map.csv")
-BACKTEST_CSV       <- file.path(DIR_PROCESSED, "rankings_backtest.csv")
 STUB_DATA_AS_OF    <- "2026-11-07T09:30:00-05:00"
 STUB_WINDOW_DAYS   <- 14L
 ROLLING_CLOSE_DATE <- as.Date("2099-01-01")   # Grants.gov placeholder for no deadline

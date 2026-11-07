@@ -13,12 +13,12 @@ invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
 # =============================================================================
 # FILL IN AT RELEASE
 # =============================================================================
-PROJECT_TITLE <- "Finals project (rename at release)"
+PROJECT_TITLE <- "Federal Funds Matchmaker"
 PROJECT_SUB   <- "Solve-A-Thon 2026 Final Quest"
 
 ID_COL     <- "id"                                   # unique key of one item
-NAME_COL   <- "name"                                 # what the user sees as the item's name
-SHOW_FIELDS <- c("agency", "close_date", "award_usd") # extra columns shown next to each result
+NAME_COL   <- "title"                                # what the user sees as the item's name
+SHOW_FIELDS <- c("agency_id", "close_date", "award_ceiling") # extra columns shown next to each result
 
 REF_DATE   <- as.Date("2026-11-06")  # "today" for deadline rules, so reruns are reproducible
 TOP_N      <- 20L                    # how many ranked results the outputs keep
@@ -48,6 +48,52 @@ ITEMS_FILE      <- pick_file(file.path(DIR_PROCESSED, "items.csv"),      file.pa
 CRITERIA_FILE   <- pick_file(file.path(DIR_MANUAL, "criteria.csv"),      file.path(DIR_EXAMPLE, "criteria_example.csv"))
 TEST_CASES_FILE <- pick_file(file.path(DIR_MANUAL, "test_cases.csv"),    file.path(DIR_EXAMPLE, "test_cases_example.csv"))
 FACTS_FILE      <- pick_file(file.path(DIR_MANUAL, "facts.csv"),         file.path(DIR_EXAMPLE, "facts_example.csv"))
+
+# Pipeline scripts call this first with the input files they read: a real run must never
+# rank toy data by accident. Tests and the notebook may still run on the toy files.
+stop_if_toy <- function(...) {
+  files <- c(...)
+  toy <- if (length(files)) any(startsWith(normalizePath(files, mustWork = FALSE), normalizePath(DIR_EXAMPLE, mustWork = FALSE))) else USING_EXAMPLE
+  if (toy) stop("Real input missing, refusing to run on TOY example data. See the NOTE lines above.", call. = FALSE)
+}
+
+OPPS_FILE       <- file.path(DIR_PROCESSED, "opportunities.csv")
+AGENCY_MAP_FILE <- file.path(DIR_MANUAL, "agency_map.csv")
+GOALS_FILE      <- here("src", "docs", "agency_goal_summaries.csv")
+BACKTEST_CSV    <- file.path(DIR_PROCESSED, "rankings_backtest.csv")
+OPEN_STATUSES   <- c("posted", "forecasted", "notice")   # rows in payload.json; closed go to the backtest
+FAR_FUTURE_DATE <- as.Date("2030-01-01")   # close dates on or after this read "rolling or no date listed" (decision 8)
+
+# Eligibility (steps 1 and 2). Applicant-type codes checked against single-code rows in
+# opportunities.csv: 00 state governments, 06 public higher ed, 25 other (see text), 99 unrestricted.
+# Codes 01, 02, 04, 11 and 22 never appear alone in the data [uncertain]; they count as not state-eligible.
+ELIG_YES_CODES  <- c("00", "99")              # a state agency can apply
+ELIG_ASK_CODES  <- "25"                       # "other": read the text rules, else ask; never hidden
+ELIG_HIGHER_ED_CODE   <- "06"                 # public higher ed: eligible only for the agencies below
+ELIG_HIGHER_ED_AGENCIES <- c("unc", "ncccs")  # [assumed] the only agencies that are public higher ed
+ELIG_TEXT_NO  <- c("state governments are not eligible", "state agencies are not eligible",
+                   "applications from federal, state, or tribal governments will not be considered",
+                   "tribal governments only", "federally recognized tribes only", "individuals only")
+ELIG_TEXT_YES <- c("state governments", "state government agencies", "state agencies", "agencies of state")
+ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government|agenc)"
+
+# Geography: fit is multiplied by GEO_PENALTY when the opportunity TITLE names another US state or
+# region and does not name North Carolina. Titles only: summaries list many states in passing.
+# [assumed] 0.5; the item is demoted, never hidden.
+GEO_PENALTY <- 0.5
+GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida",
+  "Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts",
+  "Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico",
+  "New York","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota",
+  "Tennessee","Texas","Utah","Vermont","Virginia","Wisconsin","Wyoming","Great Lakes","Pacific Northwest","Northern Forest",
+  "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake")
+
+PAYLOAD_AS_OF   <- "2026-11-07T11:00:00-05:00"   # stamped into payload.json; fixed so reruns are identical
+TOP10_N         <- 10L    # open items flagged per agency (Top 10 list)
+COMING_UP_N     <- 10L    # forecasted items kept per agency ("Coming up")
+HIDDEN_N        <- 10L    # best-fitting clearly-ineligible items kept per agency so the tool can show the toggle
+BACKTEST_TOP_N  <- 50L    # ranked items written per agency and window in rankings_backtest.csv
+SNIPPET_CHARS   <- 240L   # opp_snippet length
 
 PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")
