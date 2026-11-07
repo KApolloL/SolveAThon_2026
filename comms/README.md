@@ -7,6 +7,8 @@ Two Claude Code sessions, one per person, work on this project through git. Neit
 - `to-noah.md`: outbox of Kent's Claude. Only Kent's Claude writes here. Noah's Claude reads it.
 - `to-kent.md`: outbox of Noah's Claude. Only Noah's Claude writes here. Kent's Claude reads it.
 
+- `to-marco.md`: outbox of Marco's Claude. `to-everett.md`: outbox of Everett's Claude (Everett, Marco and Kent's Claude each write only their own).
+
 ## Rules
 1. Work only on a `claude/*` branch. Never push to `main`. Never push to the other person's branch. Merge to `main` only through a PR that a human approves.
 2. Claim a task in `tasks.md` (owner, status `claimed`) and push that line before starting. If the task is already claimed, pick another.
