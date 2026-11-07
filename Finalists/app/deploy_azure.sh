@@ -18,7 +18,7 @@ APP=ffm-app
 JOB=ffm-daily-refresh
 STORAGE=ffmdatateam15
 CONTAINER=ffm-data
-TAG="${TAG:-v3}"
+TAG="${TAG:-v4}"   # v3 is live (Sat 11:40 am). Always build a NEW tag: reusing a live tag may not roll a new revision
 IMAGE="$ACR.azurecr.io/ffm-app:$TAG"
 CRON="${JOB_CRON:-0 11 * * *}"   # 11:00 UTC daily (6:00 am Eastern in winter); change if the team wants another time
 
@@ -46,14 +46,26 @@ run "2. Validate payload.json before shipping (local)" \
 run "3. Build the image in the registry (about 1.5 minutes, about \$0.02)" \
   az acr build -r "$ACR" -t "ffm-app:$TAG" ./app --no-logs
 
-run "4. Upload payload.json to Blob (login auth, key never printed)" \
+# Step 4 was REFUSED on Sat 11:40 am (Marco's login has no Storage Blob Data write role). Skipping it is safe:
+# app.R serves the payload baked into the image when its data_as_of is the same or newer than Blob's (both are
+# 2026-11-07T11:00), so the new image alone ships the new payload. Answer N here unless the role now exists.
+run "4. (optional, needs Storage Blob Data Contributor) Upload payload.json to Blob" \
   az storage blob upload --account-name "$STORAGE" --container-name "$CONTAINER" --name payload.json \
     --file data/processed/payload.json --auth-mode login --overwrite
 
 run "5. Point the Container App at the new image (min replicas stay as they are)" \
   az containerapp update -n "$APP" -g "$RG" --image "$IMAGE"
 
+run "5b. Check the live page is the new tool (expects 'Start swiping'; cold start can take ~40 s)" \
+  sh -c "curl -s --max-time 90 https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/ | grep -c 'Start swiping'"
+
 # The daily job. JOB_DRY_RUN=1 means it checks and stamps but writes nothing until a write SAS or the Contributor role exists.
+# Step 6 FAILED on Sat 11:40 am: the job's system identity has no AcrPull on the registry. Fix (needs a subscription
+# Owner, e.g. the organizers): grant AcrPull to the job identity, OR create the job with registry admin credentials
+# (az acr update -n ffmacrteam15 --admin-enabled true; then --registry-username/--registry-password from
+# az acr credential show; unverified whether Marco's role may do this). Note: with the app image (ffm-app) the job
+# has no src/ and only re-ships the baked payload (job.R says so). Real daily scoring needs the job image built
+# from Dockerfile.job (repo-root context): az acr build -r ffmacrteam15 -t ffm-job:v1 -f Finalists/app/Dockerfile.job .
 run "6. Create the daily refresh job (dry-run mode on; cron $CRON)" \
   az containerapp job create -n "$JOB" -g "$RG" --environment "$ENVNAME" \
     --trigger-type Schedule --cron-expression "$CRON" --replica-timeout 900 --replica-retry-limit 0 \
