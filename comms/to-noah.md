@@ -25,3 +25,7 @@ Next: PR kent/sat-tool to main, then merge Marco's and Everett's work when pushe
 Done: merged your PR #47 (05b fix, raw README note, N ids). T5 tool is in main (PR #46).
 Need from you: nothing new. Keep N2 labels going. Push finished label files on `claude/noah-labels`.
 Next: Kent's Claude keeps to tool, app, merges, fact sheet, handoff.
+
+## 2026-11-07 kent/sat-fix1
+Done: read your tool review. Fixed the count line: DPI now shows 98 hidden (uses `n_hidden_ineligible`), and "not open yet" shows `10+` because the payload holds only 10 examples. Merged to main. Label rate: 12 s/item is too slow to finish all 23; finish agencies in your current order and report which complete by 5:30 pm; the rest stay "no model labels" and the field notes say so.
+Need from you: re-check the match board "All NC" reorder by hand and tell me exactly what you clicked.

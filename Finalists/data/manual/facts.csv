@@ -23,3 +23,5 @@ f21,DHHS programs caught in 4-week windows (of 11 won),"bt_result$caught[bt_resu
 f22,Agencies where the soonest-deadline baseline beats the model on 4-week windows,"sum(bt_result$baseline_deadline_pct[bt_result$window_weeks == 4] > bt_result$pct[bt_result$window_weeks == 4])",3,0
 f23,Top 10 rows closing within 14 days (all agencies),"sum(payload$rows$in_top10 & !is.na(payload$rows$days_left) & payload$rows$days_left >= 0 & payload$rows$days_left <= 14)",73,0
 f24,Agencies with at least one Top 10 row closing within 14 days,"sum(payload$agencies$n_closing_soon > 0)",26,0
+f25,Plan goals in payload.json (match board),"nrow(payload$goals)",153,0
+f26,Agencies with at least one plan goal in payload.json,"length(unique(payload$goals$agency_id))",32,0
