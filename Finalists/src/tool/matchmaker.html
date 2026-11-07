@@ -141,6 +141,8 @@ body.proj #refine, body.proj #gloss, body.proj #caps, body.proj #coming, body.pr
 body.proj #stub, body.proj .start .note, body.proj .start details.drawer, body.proj .start .act, body.proj .start .matched,
 body.proj .start .who, body.proj .start .badge { display:none !important; }
 body.proj #proj-exit { display:block !important; }
+body.proj #desk-panel { display:none !important; }
+@media (min-width: 1100px) { body.proj #v-opps:not([hidden]) { display:block; } body.proj header, body.proj main { max-width: 1100px; } }
 body.proj { background:#000; color:#fff; font-size:24px; --text-primary:#fff; --text-secondary:#f0f0f0; --text-muted:#e0e0e0; --accent:#9fc2ff; --surface-2:#0d0d0d; --border:#777; }
 body.proj header, body.proj main { max-width:1400px; }
 body.proj label { font-size:1.1rem; }
