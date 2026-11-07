@@ -42,6 +42,24 @@ Output, in this order, and nothing else:
 Save the full output to testing/transcripts/NN_{name}_YYYYMMDD.md if you can write files; otherwise end with "Save this to testing/transcripts/".
 """
 
+def oc_permissions(name):
+    """OpenCode V2 `permissions`: an ordered list of rules, last match wins.
+
+    V2 expects `permissions:` with action/resource/effect entries. The older
+    `permission: {edit: ask, bash: deny}` map is V1 and is ignored in V2.
+    """
+    rules = [("shell", "*", "deny")]
+    if name == "test-breaker":
+        rules.append(("shell", "Rscript *", "allow"))
+    rules.append(("edit", "*", "ask"))
+    lines = ["permissions:"]
+    for action, resource, effect in rules:
+        lines.append(f"  - action: {action}")
+        lines.append(f'    resource: "{resource}"')
+        lines.append(f"    effect: {effect}")
+    return "\n".join(lines) + "\n"
+
+
 PASTE_FOOTER = """
 ---
 TEAM CONTEXT (paste the contents of testing/context.md here):
@@ -86,7 +104,8 @@ def main():
                      f"tools: {meta['tools']}\nmodel: inherit\n---\n")
             (AGENTS / f"{name}.md").write_text(front + HEADER.format(src=src) + "\n" + agent_body)
             ocf = (f"---\ndescription: {meta['description']}\nmode: subagent\n"
-                   f"permission:\n  edit: ask\n  bash: deny\n---\n")
+                   + oc_permissions(name)
+                   + "---\n")
             (OC_AGENTS / f"{name}.md").write_text(ocf + HEADER.format(src=src) + "\n" + agent_body)
         else:
             if kind == "roleplay":
@@ -105,7 +124,8 @@ def main():
                      f"tools: {meta['tools']}\nmodel: inherit\n---\n")
             (AGENTS / f"{agent_name}.md").write_text(front + HEADER.format(src=src) + "\n" + agent_body)
             ocf = (f"---\ndescription: {agent_desc}\nmode: subagent\n"
-                   f"permission:\n  edit: ask\n  bash: deny\n---\n")
+                   + oc_permissions(agent_name)
+                   + "---\n")
             (OC_AGENTS / f"{agent_name}.md").write_text(ocf + HEADER.format(src=src) + "\n" + agent_body)
 
         # Any chat box: context and material are pasted under the prompt.
