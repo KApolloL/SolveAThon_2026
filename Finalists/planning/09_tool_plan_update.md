@@ -1,5 +1,7 @@
 # Tool plan update: proposals for Kent
 
+> **Saturday Nov 7 update:** `../saturday/` (start at `../saturday/README.md`) overrides this file where they differ.
+
 Written Sat Nov 7, about 12:30 am, by Claude with Marco, from a grilling session after the seven reviews (`testing/triage_20261106_full_review.md`). **These are proposals.** `planning/08_product_decisions.md` stays the source of truth until Kent accepts them. Reviewers are simulated personas, not user evidence. Marked `[reported]` means Marco reported it and the files are not in the repo.
 
 ## Goal

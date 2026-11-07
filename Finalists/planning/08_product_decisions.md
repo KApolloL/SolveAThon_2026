@@ -1,5 +1,7 @@
 # Product decisions (confirmed by Kent, Fri Nov 6 night, after a grilling interview)
 
+> **Saturday Nov 7 update:** `../saturday/` (start at `../saturday/README.md`) overrides this file where they differ.
+
 Source of truth for what we build. Anything here overrides the "chosen option" lines in `02_framing_worksheet.md` where they differ. Reasoning for each choice came from the interview; the qualifier design reused here is in `../../QualifierChallenge/` (`src/tool/tiering.js`, `src/tool/ui.js`, `src/R/00_config.R`).
 
 ## The 15 decisions

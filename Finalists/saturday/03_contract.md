@@ -1,0 +1,57 @@
+# Contract: who owns what, and the shapes everyone builds against
+
+**Status: draft. Kent confirms or edits this at the 9:30 merge.** After 9:30, a schema change needs Kent's OK and a message to every lane.
+
+## File ownership (only the owner edits)
+| Owner | Files |
+|---|---|
+| Kent | Existing `src/R/*.R` (00 to 04, `score.R`, `10_run_ranking.R`, helpers), `data/manual/criteria.csv`, `data/manual/agency_map.csv`, `data/processed/payload.json`, `data/processed/rankings_backtest.csv`, `src/docs/fact_sheet.md`, `handoff.md`, `CLAUDE.md`, merges |
+| Marco | `app/`, `src/tool/`, Azure resources, new `src/R/30_notice_reader.R`, `src/docs/azure_setup.md` |
+| Everett | New `src/R/20_backtest_awards.R`, `data/manual/agency_award_map.csv`, new `src/R/21_audit_clearinghouse.R`, backtest figures in `outs/figures/backtest_*` |
+| Noah | New `src/R/05a_county_need.R`, `src/R/05b_sam_listings.R`, `src/R/40_label_check.R`, `data/manual/label_holdout.csv`, `data/manual/reader_spotcheck.csv`, `drafts/claude/docs/` (field notes drafts) |
+| Matthew | `data/manual/sat_checks.csv`, `saturday/mentor_log.md` |
+
+Shared and append-only: `AI_USAGE_LOG.md` (add rows at the bottom; on a conflict keep both rows).
+
+## Branches
+`<name>/sat-<topic>`, for example `marco/sat-blob`, `everett/sat-backtest`. Push your branch, open a pull request to `main`, and Kent merges at the next window. Before each window, pull `main` into your branch.
+
+## `data/processed/payload.json` (read by the tool)
+```json
+{
+  "data_as_of": "2026-11-07T11:00:00-05:00",
+  "window_days": 14,
+  "agencies": [
+    {"agency_id": "dpi", "agency_name": "Department of Public Instruction",
+     "plan_files": ["..."], "plan_stale": false, "plan_thin": false,
+     "folded_from": ["State Board of Education Plan"]}
+  ],
+  "rows": [
+    {"agency_id": "dpi", "opp_id": "...", "opp_number": "...", "title": "...",
+     "status": "posted|forecasted|notice",
+     "close_date": "2026-12-01 or null", "days_left": 24, "date_note": "rolling or no date listed or null",
+     "fit_score": 0.0, "rank": 1, "in_top10": true,
+     "eligibility": "yes|no|ask", "elig_source": "code|rule|reader",
+     "elig_quote": "exact text or null",
+     "reader_label": "lead|partner|not_eligible|unclear|null", "reader_quote": "exact text or null",
+     "goal_id": "...", "goal_snippet": "...", "opp_snippet": "...",
+     "cfda_list": "66.039", "award_ceiling": 1000000,
+     "signature_tier": "writer|supervisor|leadership|unknown", "tier_source": "fields|text",
+     "nc_won_before": true, "url": "https://..."}
+  ]
+}
+```
+Rules:
+- `rows` holds open and forecasted items only (plus notices). Closed items go to the backtest file.
+- `nc_won_before` is a display column only. It never enters `fit_score` or `rank`.
+- Unknown values are `null`, never 0 or Tier 1.
+- Ranking is per agency. `in_top10` is the flag; Top 10 holds open items only, forecasts go to "Coming up".
+
+## `data/processed/rankings_backtest.csv` (read by Everett)
+One row per agency, window and ranked item, for closed items since 2024-11-06.
+`agency_id, window_start, window_end, window_weeks, opp_id, opp_number, cfda_list, close_date, fit_score, rank`
+- Windows are 2, 4 and 6 weeks long. An item is in a window if it was posted on or before `window_end` and closes on or after `window_start`.
+- Rank uses the same scoring function as `payload.json`. Only the top 50 per agency and window are written, to keep the file small.
+
+## Agency ids
+`data/manual/agency_map.csv` (Kent, by 9:30): `agency_id, agency_name, plan_file, fold_into, drop_reason`. DPI gets the State Board of Education plan folded in; Guiding Principles has `drop_reason = duplicate`. 32 agencies after that.

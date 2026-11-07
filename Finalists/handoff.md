@@ -1,5 +1,7 @@
 # Handoff: Finalists
 
+> **Saturday Nov 7 update:** `saturday/` (start at `saturday/README.md`) overrides this file where they differ.
+
 _Update this at each checkpoint (about every 6 hours) and before ending any long AI session. A fresh session reads this after CLAUDE.md._
 
 **Last updated:** Fri Nov 6, 2026, ~9:00 pm (Marco's Azure update; the rest of this file is from ~11:00 am, before the discovery workshop)
