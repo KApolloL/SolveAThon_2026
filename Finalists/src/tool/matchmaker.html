@@ -1732,7 +1732,7 @@ body.proj .tour-card { font-size:1.2rem; }
   // Where it goes: kept in this browser, and the person can send it by email or through the team's form.
   // Set these two when they exist; an empty value hides that button.
   var FEEDBACK_EMAIL = "";   // e.g. a team inbox; mailto opens the person's own email with everything filled in
-  var FEEDBACK_FORM = "";    // e.g. a Microsoft Forms or Google Forms link
+  var FEEDBACK_FORM = "https://claude.ai/artifact/CzWWSuBv8vsQurdWdDjiLa"; // team feedback form (claude.ai page; responses visible to its owner and editors only). It must be shared before others can open it.
   var fbAll = lsGet("ffm_feedback_v1", []);
   function fbSave(item) { item.when = new Date().toISOString(); item.agency = cur.id ? agName(cur.id) : ""; fbAll.push(item); lsSet("ffm_feedback_v1", fbAll); renderFbCount(); return item; }
   function renderFbCount() { var n = $("fb-n"); if (n) { n.textContent = String(fbAll.length); n.hidden = !fbAll.length; } }
@@ -1761,6 +1761,7 @@ body.proj .tour-card { font-size:1.2rem; }
   function openFeedback() {
     var box = $("fb-body"); box.innerHTML = "";
     box.appendChild(el("p", "note", "Three quick questions. Do not include personal or private information."));
+    if (FEEDBACK_FORM && safeUrl(FEEDBACK_FORM)) { var fl = el("p", "note"); fl.appendChild(document.createTextNode("Prefer a full form? ")); var fa = el("a", null, "Open the team feedback form"); fa.href = FEEDBACK_FORM; fa.target = "_blank"; fa.rel = "noopener"; fl.appendChild(fa); box.appendChild(fl); }
     var q1 = el("fieldset", "fb-q"); q1.appendChild(el("legend", null, "Was this tool helpful today?"));
     var pick = "";
     ["Yes", "Somewhat", "No"].forEach(function (v) { var b = el("button", "fb-choice", v); b.type = "button"; b.setAttribute("aria-pressed", "false"); b.addEventListener("click", function () { pick = v; [].forEach.call(q1.querySelectorAll(".fb-choice"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); }); q1.appendChild(b); });
