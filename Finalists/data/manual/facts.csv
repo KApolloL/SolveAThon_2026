@@ -41,3 +41,8 @@ f39,Tuning grid: best setting on all 12 (z centering) Top 10 catches,"sum(bt_tun
 f40,Reach: won programs a newest-posted-first alert reaches in its Top 10 (same 12 agencies),"round(sum((bt_v2$newest_pct * bt_v2$won_in_pool)[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3]))",34,0
 f41,Reach: won programs our Top 10 reached that the newest-posted Top 10 did not,"sum(bt_v2$only_model[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3])",36,0
 f42,Reach: won programs the newest-posted Top 10 reached that our Top 10 did not,"sum(bt_v2$only_newest[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3])",12,0
+f43,"In-time curve: won programs reaching the Top 10 with 21+ days left, 2-week windows (same 159)","with(read.csv(file.path(DIR_PROCESSED, ""backtest_v2_intime_curve.csv"")), caught_intime[window_weeks == 2])",52,0
+f44,"In-time curve: same, 4-week windows","with(read.csv(file.path(DIR_PROCESSED, ""backtest_v2_intime_curve.csv"")), caught_intime[window_weeks == 4])",42,0
+f45,"In-time curve: same, 6-week windows","with(read.csv(file.path(DIR_PROCESSED, ""backtest_v2_intime_curve.csv"")), caught_intime[window_weeks == 6])",35,0
+f46,"In-time curve: all Top 10 catches, 2-week windows","with(read.csv(file.path(DIR_PROCESSED, ""backtest_v2_intime_curve.csv"")), caught[window_weeks == 2])",59,0
+f47,"In-time curve: all Top 10 catches, 6-week windows","with(read.csv(file.path(DIR_PROCESSED, ""backtest_v2_intime_curve.csv"")), caught[window_weeks == 6])",55,0
