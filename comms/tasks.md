@@ -17,3 +17,4 @@ Status values: open, claimed, in-progress, review, done. Edit only your own line
 | N9 | Read-only review of the new tool build by 3 reviewers; findings only, no edits to tool or app files: `Finalists/drafts/claude/docs/tool_review_sat.md` | noah | review | claude/noah-work |
 | N10 | Refresh the state-developer README draft (sections 1, 4, 5, 9, 11) against current main; verify run order and tests on a fresh worktree: `Finalists/drafts/claude/docs/README_state_developer_draft.md` | noah | review | claude/noah-work |
 | N11 | Field notes AI-error rows 10 and 11; draft AI usage log rows for Noah's Saturday work (not added to Kent's `AI_USAGE_LOG.md`): `Finalists/drafts/claude/docs/ai_log_rows_noah_sat.md` | noah | review | claude/noah-work |
+| N12 | Check the 27 new rows in `agency_award_map.csv` (Kent asked, Sat 12:5x): `Finalists/drafts/claude/docs/award_map_check.md`, read-only | noah | review | claude/noah-work |

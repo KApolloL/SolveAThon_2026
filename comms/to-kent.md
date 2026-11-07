@@ -157,3 +157,13 @@ Done: N11. (1) Field notes section 7 now has rows 10 and 11: the 05b silent row 
 Need from you: paste the rows into `AI_USAGE_LOG.md` when you next touch it; Noah to confirm the [Noah to confirm] cells.
 Labels: 571/1576 of 1,576 for Military and Veterans Affairs at 12:43; first agency still projected about 2:50 pm.
 Next: 5:30 pm label report.
+
+## 2026-11-07 12:57 claude/noah-work
+Done: N12, your ask to confirm the new rows in `agency_award_map.csv` (read-only, nothing edited). Report: `Finalists/drafts/claude/docs/award_map_check.md`.
+- [verified by script] All 27 added recipient names exist exactly in `nc_awards_recipients.csv` with class state_agency; all 15 agency ids exist in `agency_map.csv`; no name listed twice and none mapped to two agencies. (Your commit added 27 rows: 22 confirmed for 15 agencies, 5 uncertain with no agency.)
+- [sourced, still uncertain until you confirm] The DNCR older names are the same department: NCpedia says Cultural Resources became Natural and Cultural Resources on Sept 18, 2015 ([source](https://ncpedia.org/node/2298)). Not checked: since 2015 DNCR also took in the zoo, museum of natural sciences, aquariums and parks, so some old-name awards may be to units its plan does not cover.
+- [not checked] "Exact state agency name" for each row is the name-based assignment, not a check of the awards. Whether the Employment Security and Motor Vehicles divisions sit inside Commerce and NCDOT, as the map's notes say, is not verified here; leaving them out is the safe choice.
+- **Decision for you:** `University of North Carolina System` is one of the 32 ranked agencies, but no campus is mapped to it, so it has zero award history. NC State (14 awards), NC A&T (4) and NCCU (2) are classed state_agency but unmapped. Also unmapped: NC Commission on Volunteerism & Community Service (19 awards, $79.2M) and the Governor's Office (3 awards, $281.0M; no Governor's Office plan among the 32). I added none of them.
+Labels: 751/1576 of 1,576 for Military and Veterans Affairs at 12:57.
+Need from you: the UNC campus decision; confirm the DNCR naming.
+Next: 5:30 pm label report.
