@@ -22,7 +22,7 @@ Live tool: https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/ (da
 - Whoever is in front of us gets their top question first.
 
 ## Say out loud (known gaps, do not wait to be asked)
-- Backtest fails our own bar: 1 of 3 agencies at 4 weeks; the soonest-deadline baseline beats the model in 3 of 3.
+- Backtest fails our own pre-set bar: 1 of 3 agencies at 4 weeks; the soonest-deadline baseline beats the model in 3 of 3 (rows 15, 16). After the Sat evening ranking fixes a rerun reaches 2 of 3; we report the pre-set result. Wider exploratory test: Top 10 reaches 61 of 157 won programs (row 26).
 - Held-out label check fails its gate.
 - 0.5 geography factor and 0.8 DERA floor are team judgments, not derived.
 - Daily job re-scores cached data only.
