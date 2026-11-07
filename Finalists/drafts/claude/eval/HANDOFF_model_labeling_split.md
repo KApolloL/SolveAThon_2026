@@ -1,42 +1,48 @@
-# Handoff: model-label the full pool on two machines
+# Handoff: model-label the full pool on five machines
 
-Goal: label every open grant (1,576 rows: posted, forecasted, notice) against each of the 34 agency plans with the local Ollama model, then merge. Machine A (Kent's) takes 17 agencies, machine B takes the other 17. Plan: `model_labels/agency_plan.csv` (columns agency, machine, order). Agencies run in `order`; each finished agency writes its own CSV, so partial results are usable.
+Goal: label every open grant (1,576 rows: posted, forecasted, notice) against each agency plan with the local Ollama model. Five machines (A to E) split the work. Plan: `model_labels/agency_plan.csv` (columns agency, machine, order, status). Each finished agency writes its own CSV, so partial results are usable.
 
-## Status (2026-11-07, machine A stopped)
-Machine A finished 7 of its 17 agencies (Public Schools, Environmental Quality, DHHS, Administration, Agriculture and Consumer Services, Information Technology, Justice) and was stopped during Military and Veterans Affairs. Those CSVs are in `model_labels/by_agency/`. Rerunning the machine A command resumes from the next agency. Machine B has not reported. Remaining agencies: 27 of 34.
+## Status (Sat Nov 7, late morning)
+- Done, 11 of 34 (`status = done`, files in `model_labels/by_agency/`): Public Schools, Environmental Quality, DHHS, Administration, Agriculture and Consumer Services, Information Technology, Justice (machine A); Adult Correction, Commerce, Insurance, Labor (machine B).
+- To do, 23: split A 7, B 4, C 4, D 4, E 4. Machine A is Kent's, the fastest, so it gets the most. Agencies that were in progress stay on the same machine (Military and Veterans Affairs on A, Natural and Cultural Resources on B) so local caches are reused. The rest are ordered by likely grant volume (a judgment, not measured); "Guiding Principles" and "State Board of Education Plan" are plan-level, not agencies, so they go last.
+
+## Who runs which letter (Kent fills this in before announcing)
+| Machine | Person | Agencies |
+|---|---|---|
+| A | Kent | 7 |
+| B | (whoever ran machine B before) | 4 |
+| C | | 4 |
+| D | | 4 |
+| E | | 4 |
 
 ## Read first
-- The validation gate FAILED (kappa 0.44, needs 0.60; recall of the 3 hand-"relevant" items 3 of 3). Runs use `force=1`. Every number built on these labels must say "model labels, unvalidated". Hand labels are the only validated labels.
-- Prompt is fixed at `evalpool-v3` in `model_label.R`. Do NOT edit the prompt, `MAX_TEXT_CHARS` or the model on either machine; labels from different prompts cannot be mixed.
-- Keyword/embedding prefilters were tested and rejected: embedding rank put hand-positive items as low as 1456 of 1576, so skipping low-ranked items would drop real hits.
-- "Guiding Principles" and "State Board of Education Plan" are in the plan file; they are cross-cutting or plan-level, not agencies. Labels for them are low value; they are on machine B at the end of its order. [Kent to confirm]
+- The validation gate FAILED (in-sample kappa 0.44; held-out check also failed, and the two human labelers agreed at kappa 0.32). Runs use `force=1`. Every number built on these labels must say "model labels, unvalidated". These labels never enter the ranking score.
+- Prompt is fixed at `evalpool-v3`, model `qwen2.5:14b`. Do NOT edit the prompt, `MAX_TEXT_CHARS` or the model; labels from different prompts or models cannot be mixed.
+- Do not `git pull` a newer `data/processed/opportunities.csv` mid-run. The script now stops if the pool differs from the finished labels.
 
 ## Time (measured, not promised)
-About 3.3 s per item on Kent's machine (qwen2.5:14b, one process). 17 agencies x 1,576 items = 26,792 calls, roughly 24 hours per machine at that speed. It will NOT finish by Sunday 9:00 AM on either machine. The order puts the most useful agencies first. Stop whenever the deadline forces it and use the agencies that are done.
-Parallel processing was tested and does NOT help: one process took 4.2 s/item on a server with OLLAMA_NUM_PARALLEL=2, and two concurrent processes took 167 s for 40 items (also 4.2 s/item). The GPU is the limit. Run one process per machine.
-So expect about 3.3 to 4.2 s per item: roughly 600 to 800 items per hour, about 0.4 to 0.5 agencies per hour per machine. Whatever agencies finish by the cutoff are the result.
+About 3.3 s per item on Kent's machine (qwen2.5:14b, one process); one agency is 1,576 items, so about 1.5 to 2 hours on Kent's machine and likely longer on smaller laptops [uncertain, not measured on C to E]. Run one process per machine: parallel processes did not help (the GPU is the limit). Labels will not be ready before the 6:00 pm build stop for every agency; they are not in the demo. Whatever finishes by the cutoff is the result.
 
-## Machine B setup
-1. Get the repo and the branch Kent names (he pushed it; it contains `model_label.R` and `agency_plan.csv`): `git fetch origin` then `git switch <branch>`. Run everything from the `Finalists` folder.
+## Setup (machines B to E; about 20 minutes)
+Needs about 10 GB disk and 16 GB RAM. With 8 GB RAM the model will not load: tell Kent instead of switching to a smaller model.
+1. Get the repo: `git fetch origin` then `git switch main` and `git pull`. Run everything from the `Finalists` folder.
 2. Install R 4.5 packages: data.table, openxlsx, httr2, jsonlite, digest, dplyr, stringr, purrr, tibble, here.
-3. Install Ollama, then pull the same model: `ollama pull qwen2.5:14b`. Needs about 10 GB and roughly 16 GB RAM free. Keep the laptop awake and plugged in.
-4. Check it runs: `ollama list` shows `qwen2.5:14b`.
+3. Install Ollama (ollama.com), then `ollama pull qwen2.5:14b`.
+4. Check: `ollama list` shows `qwen2.5:14b`.
+5. Keep the laptop plugged in and awake (macOS: run the label command under `caffeinate -i`).
 
-## Run on machine B (from the Finalists folder)
+## Run (replace X with your letter)
 ```bash
-Rscript drafts/claude/eval/model_label.R stage=full force=1 machine=B
+caffeinate -i Rscript drafts/claude/eval/model_label.R stage=full force=1 machine=X
 ```
-Log progress to a file if you like: add `> drafts/claude/eval/model_labels/run_B.log 2>&1`. If it stops, run the same command again; finished agencies are skipped and the LLM cache resumes the rest.
+It prints how many agencies are yours and how many are already done, then one progress line every 10 items. If it stops, run the same command again: finished agencies are skipped and the LLM cache resumes the rest. On Windows or Linux drop `caffeinate -i`.
 
-## Machine A (Kent), already started
-```bash
-Rscript drafts/claude/eval/model_label.R stage=full force=1 machine=A
-```
-
-## Bring results back
-- Copy `drafts/claude/eval/model_labels/by_agency/*.csv` from machine B into the same folder on machine A. File names are the agency slug, so nothing collides.
-- Optional: copy `src/data/cache/llm/` too (lets either machine reuse every label).
-- Only copy complete files. A file named `*.csv.tmp` is an unfinished agency; ignore it.
+## Send results back
+After each agency finishes (a file appears in `drafts/claude/eval/model_labels/by_agency/`):
+1. `git switch -c <yourname>/labels-<X>` (first time only; later just stay on it).
+2. `git add drafts/claude/eval/model_labels/by_agency/*.csv` (only those files; never `*.csv.tmp`, never `src/data/cache/llm/`).
+3. `git commit -m "Model labels, machine X: <agency>"` then `git push -u origin <yourname>/labels-<X>`.
+4. Tell Kent. He merges. File names are agency slugs, so machines never collide.
 
 ## Merge (any machine, from Finalists)
 ```bash
@@ -48,6 +54,6 @@ agency, opp_id, opp_number, title, model_label (relevant | maybe | not relevant)
 
 ## Do not
 - Edit the prompt, the model or `MAX_TEXT_CHARS`.
-- Commit `src/data/cache/llm/` or push to `main` without Kent.
+- Commit `src/data/cache/llm/` or push to `main`.
 - Use these labels as ground truth or quote them as validated.
-- Add AI-use entries to `AI_USAGE_LOG.md` by hand on machine B; tell Kent so one entry covers both machines.
+- Add AI-use entries to `AI_USAGE_LOG.md` by hand on machines B to E; tell Kent so one entry covers all machines.

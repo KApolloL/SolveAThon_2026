@@ -1,35 +1,35 @@
-agency,machine,order
-Department of Public Schools,A,1
-Department of Environmental Quality,A,2
-Department of Health and Human Services,A,3
-Department of Administration,A,4
-Department of Agriculture and Consumer Services,A,5
-Department of Information Technology,A,6
-Department of Justice,A,7
-Department of Military and Veterans Affairs,A,8
-Department of Public Safety,A,9
-Department of Secretary of State,A,10
-Department of Transportation,A,11
-Judicial Branch - Indigent Defense,A,12
-NC Housing Finance Agency,A,13
-Office of State Budget and Management,A,14
-Office of State Human Resources,A,15
-Office of the State Controller,A,16
-State Board of Elections,A,17
-Department of Adult Correction,B,1
-Department of Commerce,B,2
-Department of Insurance,B,3
-Department of Labor,B,4
-Department of Natural and Cultural Resources,B,5
-Department of Revenue,B,6
-Department of State Treasurer,B,7
-Guiding Principles,B,8
-NC Community College System,B,9
-Office of Administrative Hearings,B,10
-Office of State Fire Marshal,B,11
-Office of the State Auditor,B,12
-State Board of Education Plan,B,13
-State Bureau of Investigation,B,14
-State Highway Patrol,B,15
-University of North Carolina System,B,16
-Wildlife Resources Commission,B,17
+agency,machine,order,status
+Department of Public Schools,A,0,done
+Department of Environmental Quality,A,0,done
+Department of Health and Human Services,A,0,done
+Department of Administration,A,0,done
+Department of Agriculture and Consumer Services,A,0,done
+Department of Information Technology,A,0,done
+Department of Justice,A,0,done
+Department of Adult Correction,B,0,done
+Department of Commerce,B,0,done
+Department of Insurance,B,0,done
+Department of Labor,B,0,done
+Department of Military and Veterans Affairs,A,1,todo
+Department of Natural and Cultural Resources,B,1,todo
+Department of Transportation,C,1,todo
+Department of Public Safety,D,1,todo
+NC Community College System,E,1,todo
+Wildlife Resources Commission,A,2,todo
+NC Housing Finance Agency,A,3,todo
+University of North Carolina System,B,2,todo
+State Highway Patrol,C,2,todo
+State Bureau of Investigation,D,2,todo
+Office of State Fire Marshal,E,2,todo
+Department of Secretary of State,A,4,todo
+Judicial Branch - Indigent Defense,A,5,todo
+Office of State Budget and Management,B,3,todo
+Department of Revenue,C,3,todo
+Department of State Treasurer,D,3,todo
+Office of Administrative Hearings,E,3,todo
+Office of the State Auditor,A,6,todo
+Office of the State Controller,A,7,todo
+Office of State Human Resources,B,4,todo
+State Board of Elections,C,4,todo
+Guiding Principles,D,4,todo
+State Board of Education Plan,E,4,todo
