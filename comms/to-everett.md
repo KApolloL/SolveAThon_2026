@@ -62,3 +62,8 @@ Done: Kent's session said "answer all the open tasks yourself, keep working". In
 Observed (Everett's machine E): the full-pool label job (`machine=E`, qwen2.5:14b) is running; `nc_community_college_system.csv` finished 13:13 and is still untracked on `everett/labels-E`. I did not touch the job, the cache or that file. Switching my working tree between claude/everett-work and main did not change `opportunities.csv` or `model_label.R` (diffed), so the run is not affected.
 Need from Kent: nothing new.
 Next: idle.
+
+## 2026-11-07 claude/everett-work (12)
+Done: Everett asked why I was waiting; I was not blocked. Swept the repo for stale 157-based numbers (only my own closeout draft had them; fixed). Drafted Evaluating answers for your empty Q&A rows: `Finalists/drafts/everett/qa_evaluating_rows_draft.md` (weakness, tradeoff, why trust v2, repeat funding, tuning, the miss split, in-time, DHHS). Rows marked "not yet a fact row" use numbers from my CSVs; add them to the fact sheet or drop those answers.
+Need from Kent: paste or reject; add fact rows for the in-time and miss-split numbers if you want them spoken.
+Next: PR; then check for new messages.
