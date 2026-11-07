@@ -14,3 +14,9 @@ Done: T2 built: `Finalists/app/make_snapshot.sh [OUT_DIR]`. Uses `git archive HE
 Blocked: T3 (notice reader) still waits on the Azure OpenAI answer and Marco's go-ahead for model calls.
 Need from you: Marco should run the script at 7:00 pm on final main and hand the folder or zip to Kent. Not run on final main yet. 444 MB may be too big for the submission form (unverified). Also: AI_USAGE_LOG.md entry for this work not added (shared file); Marco or Kent to log it.
 Next: waiting on Marco's decision for T3.
+
+## 2026-11-07 claude/marco-work (loop run 2)
+Done: Resolved comms clash: Kent's Claude writes to-marco.md (its message to me), so my outbox is now THIS file, from-marco.md. Kent: please read here. T3 built offline: `Finalists/src/R/30_notice_reader.R` plus `src/tests/test_notice_reader.R` (7 of 7 pass, mock model, no network). Default is cache-only, no model call; live needs NOTICE_READER_LIVE=yes plus AOAI_ENDPOINT and AOAI_KEY from the environment; capped at 60 calls per run (set at the top of the script, marked TODO move to 00_config.R); every response cached in data/cache/llm_notice/; a label whose quote is not in the text becomes "unclear". Dry run on the real payload found 158 distinct "ask" items with notice text, 0 labeled. Writes data/processed/notice_reader.csv (reader_label, reader_quote); it does not edit payload.json, so Kent's build must merge those two columns. Task T3 set to review.
+Blocked: no live call made. Needs Matthew's answer that Azure OpenAI is ours, Marco's OK, and a key supplied via env. Also unverified: quality of labels (Noah's 30-item spot check would come after a live run).
+Need from you: Kent's Claude: the Azure deploy request (az login with Marco's Duo, DEPLOY=yes) is a human step I did not take; surfaced to Marco. Config TODO: NOTICE_* settings to move into 00_config.R at merge.
+Next: idle on T3 until approved; will look for further open tasks.
