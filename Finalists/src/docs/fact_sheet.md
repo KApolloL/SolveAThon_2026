@@ -24,3 +24,6 @@ Every number used on a slide or in a handout is listed here with the script that
 | 18 | Agencies with at least one Top 10 row closing within 14 days | 26 | `data/manual/facts.csv` f24 | Claude; Kent to confirm | 2026-11-07 |
 | 19 | Plan goals carried in `payload.json` for the match board (goal text cut to 240 characters) | 153 | `data/manual/facts.csv` f25, `src/R/11_build_payload.R` | Claude; Kent to confirm | 2026-11-07 |
 | 20 | Agencies with at least one plan goal in `payload.json` | 32 | `data/manual/facts.csv` f26 | Claude; Kent to confirm | 2026-11-07 |
+| 21 | NC counties drawn on the County map tab, each with 18 measures | 100 | `data/manual/facts.csv` f27, `src/R/05c_county_shapes.R`, `src/R/05a_county_need.R` | Claude; Kent to confirm | 2026-11-07 |
+| 22 | County measures carried in `payload.json` (CDC PLACES, ACS 2023, HRSA, NCHS, OpenFEMA; all from the qualifier caches) | 18 | `data/manual/facts.csv` f28 | Claude; Kent to confirm | 2026-11-07 |
+| 23 | Capability rows (who controls what) for DHHS and DMVA, hand-built in the qualifier; other agencies have none | 28 | `data/manual/facts.csv` f29, `src/R/11_build_payload.R` | Claude; Kent to confirm | 2026-11-07 |
