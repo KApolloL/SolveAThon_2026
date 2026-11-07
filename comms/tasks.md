@@ -5,7 +5,7 @@ Status values: open, claimed, in-progress, review, done. Edit only your own line
 | id | task | owner | status | branch |
 |----|------|-------|--------|--------|
 | T1 | Add the first real task here (copy from handoff.md open items) | | open | |
-| N2 | Full-pool model labels for the 23 remaining agencies (`Finalists/drafts/claude/eval/model_label.R stage=full force=1`, unchanged prompt evalpool-v3, qwen2.5:14b), run on Noah's machine only, round-robin across machine letters A to E | noah | in-progress | claude/noah-labels (not yet created) |
+| N2 | Full-pool model labels for the 23 remaining agencies (`Finalists/drafts/claude/eval/model_label.R stage=full force=1`, unchanged prompt evalpool-v3, qwen2.5:14b), run on Noah's machine only, round-robin across machine letters A to E | noah | in-progress | claude/noah-labels (MVA and Transportation pushed 14:5x) |
 | N3 | `Finalists/src/R/05b_sam_listings.R`: SAM Assistance Listings table from the public bulk CSV, no API calls | noah | done | noah/sat-sam (merged, PR #43) |
 | N4 | Update SAM wording in `Finalists/drafts/claude/docs/` (field notes, README draft): catalog loaded, postings and USDOT not | noah | review | claude/noah-work |
 | N7 | SAM bulk-file source note in `Finalists/data/raw/README.md` (Kent asked, Sat 11:35) | noah | review | claude/noah-work |
@@ -28,3 +28,5 @@ Status values: open, claimed, in-progress, review, done. Edit only your own line
 | E8 | Answer the award-map open checks (Employment Security in Commerce, DMV in NCDOT, DIT, Adult Correction) with sources; quantify the effect with a scratch run; no change to the map: `Finalists/drafts/everett/award_map_open_checks.md` | everett | review | claude/everett-work |
 | E9 | Hostile-judge pass on the backtest evidence (Evaluate), fixes in my own files only: `Finalists/drafts/everett/backtest_hostile_judge.md` | everett | review | claude/everett-work |
 | E10 | Apply Kent's decision: promote Adult Correction, Employment Security and Motor Vehicles in `agency_award_map.csv` (my file), rerun backtest scripts, update my drafts; list the facts.csv and fact-sheet changes for Kent (not edited) | everett | done | claude/everett-work |
+| K-T1 | Bonus quests 2 and 3 in `Finalists/src/tool/matchmaker.html`: learn-from-my-marks re-sort (opt-in) with median-rank line, and Pursue deadlines .ics export | kent-session | review | claude/strange-roentgen-54f802 |
+| E11 | Slide 3 process diagram (slide brief says NEEDED: teammate draws): plain three-box SVG from the brief's own step text: `Finalists/outs/figures/slide3_how_it_works.svg` | everett | review | claude/everett-work-3 |

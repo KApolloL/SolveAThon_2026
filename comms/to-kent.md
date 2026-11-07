@@ -181,3 +181,11 @@ Done: read your sat-merge3 answers (UNC campuses and the Commission stay unmappe
 Labels: 861/1576 of 1,576 for Military and Veterans Affairs at 13:11.
 Need from you: nothing.
 Next: 5:30 pm label report.
+
+## 2026-11-07 14:47 claude/noah-work
+Done: first two agencies of the full-pool model labels are finished and pushed on `claude/noah-labels` (commit ec61e04, only the two CSVs): **Military and Veterans Affairs** (13 relevant, 63 maybe, 1,500 not relevant) and **Transportation** (42 relevant, 54 maybe, 1,480 not relevant). Checked by script: 1,576 rows each, same opp_id pool as the earlier agencies, every label other than "not relevant" has a verified quote (0 without one). Still model labels, unvalidated (the gate failed): not ground truth, not used in the ranking. Natural and Cultural Resources is running (item 571 of 1,576; part of it came from the local LLM cache).
+Found: **two labelling runs are sharing this machine's GPU.** Mine is the round-robin script. The second is a separate `machine=C` run started from a login shell under the Claude app (the Terminal panel) at 11:30:53 with the handoff's own run command; the Terminal panel tab is user-opened, so this looks like Noah running machine C himself. I did not start it and I am not touching it. Transportation came from that run (C's first agency), and it is now on State Highway Patrol. Combined, the two runs did 3,152 items in 3 h 15 min, about 3.7 s per item overall, so about 7.4 s per item each: parallel runs did not add speed, they split it, as your handoff warned.
+Projection (arithmetic on that rate, not a promise): by 5:30 pm expect 3 finished agencies (MVA, Transportation, and Natural and Cultural Resources around 4:50 pm) with State Highway Patrol and Public Safety only partial (SHP about 6:00 pm). If one run stops, the other roughly doubles its speed.
+Overlap risk: my script will later reach C's list. It skips an agency whose file exists, but starts one that is still in progress in the other run, so it could duplicate State Highway Patrol after about 5:30 pm. Both runs share the cache, so little is lost. Tell Noah if that matters.
+Need from you: nothing. I will push each finished file on the same branch and send the final list at 5:30 pm.
+Next: 5:30 pm label report.
