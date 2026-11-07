@@ -128,3 +128,50 @@ Three README gaps a state developer would hit (fixed in my draft, not in your `F
 Note: to run this I installed readr, tidyr and janitor from CRAN into Noah's R library. Nothing in the repo changed.
 Need from you: promote the draft to `Finalists/README.md` when you are ready (it is yours); and the failing-placeholder decision. I did not touch tool, app or scoring files.
 Next: labels (item count in my next entry); reply to anything you send.
+
+## 2026-11-07 12:29 claude/noah-work
+Your last note says "to-kent.md unchanged" and repeats two asks I already answered. My outbox lives on `claude/noah-work` and was not in your merge, so you have not seen it. Answers, short form (full text in my 11:4x entries on that branch; please merge the branch or read `comms/to-kent.md` there):
+1. **Match board "All NC" reorder, exact clicks [run, real clicks, build 35df84f]:** (a) clicked a plan goal in the left column (selected "3. Enhance Parent, Caregiver and Community Support" because the page had shifted): grants reordered; (b) clicked a saved project "Replace diesel school buses with electric buses": grants reordered, DERA first twice; (c) clicked the DERA grant: left column re-ranked goals grouped by agency. All three work. My earlier "no reorder" was a test mistake (synthetic click on an inner element). Under "All NC" the left column shows all 153 goals grouped by agency, so Public Schools first is just the first group, not a bug.
+2. **Which label agencies finish by 5:30 pm:** progress is 461/1576 of 1,576 for Military and Veterans Affairs (first agency) at 12:29. Measured rate about 7.4 s per item when I am not running other R work. Projection (arithmetic, not a promise): it finishes about 2:50 pm; a second agency finishes after 5:30. I will send the final list at 5:30.
+New:
+- **Notice reader spot-check stays blocked.** Marco's T3 is "done", but no output exists: no `data/processed/notice_reader.csv`, no `data/cache/llm_notice/`, and 0 of 960 payload rows have a `reader_label`. The script is offline by default and a live run needs AOAI credentials, which I will not use. If someone runs it live (capped at 60 calls), tell me the output path and I will check 30 labels against their quotes. Whether Azure OpenAI is ours to use is still [not confirmed in the repo].
+- Merge note: my merge of main hit a conflict in `comms/tasks.md`; resolved by taking Marco's T2/T3 "done" rows. Markers 0.
+Need from you: merge `claude/noah-work` (PR) so my outbox is on main; decide who runs the reader live, if anyone.
+Next: label run; spot-check when output exists.
+
+## 2026-11-07 12:29 claude/noah-work
+Correction to my previous entry: I said my outbox was not on main and asked you to merge my branch for that. That was wrong. `origin/main:comms/to-kent.md` already holds my entries through 12:26, and the match-board answer with the exact clicks is the one stamped 11:45 ("answered your question"). Please read that entry. The only thing not on main is my last entry (the answers restated, the notice-reader status, and this correction), and the branch has no other pending outbox content. The merge request in that entry is withdrawn, apart from the usual PR when you want it.
+The rest of that entry stands: no notice-reader output exists yet (0 of 960 payload rows have a `reader_label`), so the spot-check is blocked until someone runs the reader live.
+Need from you: nothing.
+Next: label run; I will not repeat answers you already have.
+
+## 2026-11-07 12:38 claude/noah-work
+Done: read your merge summary. Its two asks to me are already answered in this file on main: the exact clicks for the "All NC" match board reorder (entry stamped 11:45; all three paths work, my earlier no-reorder was a test mistake), and the label finish projection (entries stamped 12:13 and 12:26).
+Current label numbers: Military and Veterans Affairs is at 531/1576 of 1,576 at 12:38. Projection (arithmetic on the measured rate, not a promise): it finishes about 2:50 pm and a second agency would finish after 5:30 pm, so by 5:30 expect one finished agency. I will send the final list at 5:30.
+Discrepancy to check, not mine to fix: your summary says Azure is still undeployed. Marco's outbox (`comms/from-marco.md`, loop runs 3 to 6) says he deployed with his own login: image v5, revision ffm-app--0000009, URL returns 200. The Blob payload is still the OLD one because he has no write role, so live plan goals are missing; a new branch `claude/marco-work-2` serves the baked payload as a fallback. Read his outbox before telling anyone it is undeployed.
+Need from you: nothing.
+Next: label run; 5:30 report.
+
+## 2026-11-07 12:43 claude/noah-work
+Done: N11. (1) Field notes section 7 now has rows 10 and 11: the 05b silent row loss (210 of 2,875 rows dropped, wrong explanation written before it was checked, caught by an unreconciled count) and the reviewer-agent claims I re-checked (mostly right, one overcount, one unreproduced). Both are AI errors we caught, which the Evaluate criterion asks for. (2) `drafts/claude/docs/ai_log_rows_noah_sat.md`: five ready-to-paste rows for `AI_USAGE_LOG.md` covering my Saturday work, with "Human check done" marked [Noah to confirm] where I do not know that Noah read or ran it. I did not edit the log (yours).
+Need from you: paste the rows into `AI_USAGE_LOG.md` when you next touch it; Noah to confirm the [Noah to confirm] cells.
+Labels: 571/1576 of 1,576 for Military and Veterans Affairs at 12:43; first agency still projected about 2:50 pm.
+Next: 5:30 pm label report.
+
+## 2026-11-07 12:57 claude/noah-work
+Done: N12, your ask to confirm the new rows in `agency_award_map.csv` (read-only, nothing edited). Report: `Finalists/drafts/claude/docs/award_map_check.md`.
+- [verified by script] All 27 added recipient names exist exactly in `nc_awards_recipients.csv` with class state_agency; all 15 agency ids exist in `agency_map.csv`; no name listed twice and none mapped to two agencies. (Your commit added 27 rows: 22 confirmed for 15 agencies, 5 uncertain with no agency.)
+- [sourced, still uncertain until you confirm] The DNCR older names are the same department: NCpedia says Cultural Resources became Natural and Cultural Resources on Sept 18, 2015 ([source](https://ncpedia.org/node/2298)). Not checked: since 2015 DNCR also took in the zoo, museum of natural sciences, aquariums and parks, so some old-name awards may be to units its plan does not cover.
+- [not checked] "Exact state agency name" for each row is the name-based assignment, not a check of the awards. Whether the Employment Security and Motor Vehicles divisions sit inside Commerce and NCDOT, as the map's notes say, is not verified here; leaving them out is the safe choice.
+- **Decision for you:** `University of North Carolina System` is one of the 32 ranked agencies, but no campus is mapped to it, so it has zero award history. NC State (14 awards), NC A&T (4) and NCCU (2) are classed state_agency but unmapped. Also unmapped: NC Commission on Volunteerism & Community Service (19 awards, $79.2M) and the Governor's Office (3 awards, $281.0M; no Governor's Office plan among the 32). I added none of them.
+Labels: 751/1576 of 1,576 for Military and Veterans Affairs at 12:57.
+Need from you: the UNC campus decision; confirm the DNCR naming.
+Next: 5:30 pm label report.
+
+## 2026-11-07 13:02 claude/noah-work
+Done: read your backtest v2 and tuning entries (nothing asked of me). Used them in my drafts, numbers from fact-sheet rows only, none quoted as the pre-set bar:
+- `qa_cheatsheet_draft.md`: two new answers ("Did you try to improve it after it failed?" 57 of 157, 36% vs 17% deadline vs 13% random, 4 of 12 agencies at or above 50%; "Did tuning help?" no, 61 vs 57 and nothing adopted), and the "your baseline beat you" answer now states both sides: the deadline baseline beat us on the pre-set test, we beat it on the exploratory test built after seeing results.
+- `tool_review_sat.md` item 1 updated: your tier change fixed "unknown on all 30 DHHS rows" (now 27 writer, 2 supervisor, 1 leadership). Still open: DHHS ranks 1 to 4 are NIH PAR research awards, now labelled "writer". The tier comes from cost share and award size, not from who leads the research, so it does not flag them. Your call whether that needs a research flag.
+Labels: 791/1576 of 1,576 for Military and Veterans Affairs at 13:02.
+Need from you: nothing.
+Next: 5:30 pm label report.
