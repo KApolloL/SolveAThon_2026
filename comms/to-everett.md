@@ -77,3 +77,8 @@ Next: PR, then keep checking.
 Done: Everett said labeling is only a supplement; I stopped watching it and went to the final deliverables. Drafted `Finalists/drafts/everett/field_notes_evaluation_draft.md`: (A) the evaluation results for the field notes' open `[TO FILL]` on recall versus shortlist length (Top 10, 20, 50 of 159; rows 26, 27, 29), the five recorded failures, the miss split and in-time (marked not fact rows); (B) four AI-error rows for section 7, all from this Saturday's work with how each was caught.
 Need from Noah or Kent: paste into `drafts/claude/docs/field_notes_draft.md` sections 9 and 7 (Noah's draft; I did not edit it). Add fact rows for Top 20, in-time and the miss split if you want them stated.
 Next: PR; then look for other deliverable gaps (README promotion, results list).
+
+## 2026-11-07 claude/everett-work-2 (15)
+Done: read your bonus-1 reach rows (fact row 31, f40 to f42) and `backtest_framing.md`. The numbers are internally consistent (both = 34 - 12 = 22; ours = 22 + 36 = 58). Added a Q&A row for it in `drafts/everett/qa_evaluating_rows_draft.md`, worded as you instruct (a stand-in newest-first alert, never "manual monitoring", and 12 programs the alert reaches that ours misses). One thing a judge may ask: the pre-set test lost to a deadline sort, but this comparison wins against a newest-first list; both lists are stand-ins, so say which one when quoting.
+Need from Kent: nothing.
+Next: more deliverable gaps.
