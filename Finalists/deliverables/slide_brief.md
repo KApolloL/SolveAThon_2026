@@ -35,7 +35,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
   - **Their goal:** find the few federal opportunities worth applying for, early enough to apply.
   - **Context:** no time, short deadlines, unclear eligibility, unclear which agency should apply. A past fix (agency contacts plus a periodic survey) did not work.
   - **Around them:** funds it: OSBM (pilot budget). Approves applications: agency leadership. Keeps it running: OSBM sponsors with state IT hosting, **our proposal, not agreed** [confirm].
-- **Hook (speaker only):** the school bus story: sponsors told us NC missed a first-year federal school bus deadline because nobody noticed it in time. **Any dollar amount or date: NEEDED until verified and added to the fact sheet.** Note: Matthew's check (`data/manual/sat_checks.csv`) found DERA's current window is about four months and that school bus replacement is a separate EPA program, so do not say the bus window was one month.
+- **Hook (speaker only):** "Sponsors told us deadlines get missed because nobody is assigned to watch, for example a school bus program." [from notes; unverified] No dollar figure, date or "NC missed" claim unless Matthew verifies it from a primary source and Kent adds a fact row (Kent, Sat Nov 7). Note: Matthew's check (`data/manual/sat_checks.csv`) found DERA's current window is about four months and that school bus replacement is a separate EPA program, so do not say the bus window was one month.
 - **Source:** `planning/07_discovery_findings.md` (our notes, not quotes).
 - **Figure:** none; the canvas is the visual.
 
@@ -49,7 +49,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
   | A deadline was missed because nobody noticed | Days-to-deadline on every row and a closing-soon list |
   | Nobody knows which agency should apply | All 32 agencies ranked (row 2), plus a view across agencies |
 - **Left out on purpose (one line):** writing proposals, private foundations, a setup quiz, past awards in the score, AI labels in the ranking.
-- **Speaker note:** Say requirements in priority order: save time, simple, eligibility, deadline, cross-agency, public data only. "Payoff versus effort" (award size, burden) is partly covered: say only what the tool does. [confirm with Kent what the score uses]
+- **Speaker note:** Say requirements in priority order: save time, simple, eligibility, deadline, cross-agency, public data only. "Payoff versus effort" (award size, burden): say it before they ask. "Rank is plan fit only, by design, so a big award never outranks a real fit. Award size, cost share and time left are shown on every row and sortable (Sort: best payoff, biggest money); turning their weights on is a pilot setting." Check: `data/manual/criteria.csv` gives `award_size`, `no_cost_share` and `runway` weight 0.
 
 ### Slide 4: How it works (Solve, 1:15 to 1:35)
 - **Message:** Three plain steps, and a person decides.
@@ -59,14 +59,19 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - **Speaker note:** The AI only reads and labels text with a quote; it never ranks or hides anything.
 
 ### Slide 5: Live demo (Solve, 1:35 to 3:10)
-- **Message:** It runs on Azure today, for any of the 32 agencies.
-- **On the slide:** URL plus one screenshot as the fallback image (`outs/figures/demo_deq_top10.png`, NEEDED after the feature freeze).
-- **Demo path: PLACEHOLDER.** Features are still being added. Fill in after the 6:00 pm build stop. Fixed parts:
-  - Agency: **DEQ**. Start on the DEQ Top 10, which has DERA at rank 1 (row 14).
-  - Must show: Azure URL in the address bar, the ranking and its reason, a hidden-ineligible example, and a person choosing Pursue / Maybe / Pass.
-  - Steps: NEEDED (Marco, after freeze). Time each step and keep the total at 1:35 or less.
+- **Message:** It runs on Azure, for any of the 32 agencies. **Say this only if the Sunday-morning check passes:** the live URL shows "Start swiping" and the post-filter payload (`saturday/deploy_checklist_sun.md`, PR 106). As of Sat 6 pm the live page is the older version. If the deploy has not happened, demo locally and say so.
+- **On the slide:** URL plus one screenshot as the fallback image (`outs/figures/demo_dpi_bus.png`, NEEDED from the live URL after the deploy).
+- **Demo path (Kent, Sat Nov 7: DPI with the school bus query, not DEQ).** Draft from Marco's handoff; time it on the live URL after the UI PR merges and the deploy, and keep the total at 1:35 or less [timing NEEDED].
+  1. Open the live URL with `?agency=dpi` (Azure URL visible in the address bar). One line: "Department of Public Schools, picked."
+  2. Type in "Tell us your situation": `clean diesel school buses, I have 4 weeks`, press Apply. DERA (Diesel Emissions Reduction Act) comes first.
+  3. Open "Why it fits, odds and details" on DERA: the plan goal it matched and the words behind it. Say the odds and effort chips are team rules, not measured.
+  4. Start swiping; swipe right on DERA (adds to the cart).
+  5. Open the plan: timeline worked back from the deadline and the checklist.
+  6. Open the cart; tick two grants and Compare.
+  - Do not browse DPI's unfiltered Top 10 on stage (its #1 is a Tribal Colleges program; see `testing/transcripts/35_hostile_judge_pitch_20261107.md`). The query keeps the demo on DERA.
+  - Still to show if time allows: the hidden count (row 7) and a person choosing Pursue / Maybe / Pass.
 - **Backup:** screen recording of the same path, 90 seconds (NEEDED, Marco). Set min replicas to 1 before 8:30 am to avoid the 38-second cold start.
-- **Speaker note:** Say that the DERA link to DEQ and DPI comes from a hand-made program link we still need to confirm (row 14 is marked uncertain).
+- **Speaker note:** Say that the DERA link to DPI and DEQ comes from a hand-made program link we still need to confirm (row 14 is marked uncertain).
 
 ### Slide 6: Architecture (Solve, 3:10 to 3:30)
 - **Message:** A small, cheap setup the state can run and hand over.
@@ -96,7 +101,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
   - **Replaces:** each agency scanning Grants.gov alone, and the contact-and-survey approach that did not work.
   - **Measure built in:** grant leads mark Pursue / Maybe / Pass and keep their usual manual checks; each week we report what the tool caught, what it would not have flagged, and what was pursued. Today the marks stay in the browser; saving them centrally is pilot work (say so).
   - **Cost:** NEEDED: measured Azure cost from Marco, added to the fact sheet first.
-  - **Why now:** 73 Top 10 items close within 14 days, across 26 agencies (rows 17, 18).
+  - **Why now:** 73 Top 10 items close within 14 days, across 26 agencies (rows 17, 18). [Recheck rows 17 and 18 after the payload drops already-closed rows (close date Nov 6, 0 days left); the count may fall.]
 - **Speaker note:** One sentence: "We are asking for a yes on a 60-day pilot, an OSBM owner, and three grant leads."
 
 ### Slide 10: Roadmap and risks (Drive Impact, 5:35 to 6:00)
@@ -104,7 +109,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - **On the slide:**
   1. **Pilot (60 days):** three agencies, weekly catch report. Risk: grant leads stop doing manual checks, so we lose the comparison.
   2. **Better matching plus saved feedback:** meaning-based matching on Azure OpenAI; Pursue / Maybe / Pass saved centrally to tune weights. Risk: the matching has not been tested yet and may not beat word matching.
-  3. **Statewide and more sources:** all 32 agencies, daily alerts, more sources (agency sites like DOT, foundations). Risk: stale or vague agency plans (4 plans ended before 2026) weaken matches.
+  3. **Statewide and more sources:** all 32 agencies, daily alerts, more sources (agency sites like DOT, foundations). Risk: stale or vague agency plans weaken matches (the count of plans that ended before 2026 is not a fact row: add one or say "some plans").
 - **Close (last line spoken):** "Would you fund a pilot? A yes means 60 days, three agencies, one owner at OSBM."
 
 ### Slides 11 to 15: Q&A backup (not presented)
@@ -125,44 +130,5 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - [ ] Demo path timed at 1:35 or less, with the recording ready.
 - [ ] Read aloud with all five speakers at 5:45 or less.
 - [ ] Every "live on Azure" claim checked on the URL Sunday morning.
-### Slide 1: The ask
-- **Message:** Give each state agency a ranked, plan-matched list of open federal grants, refreshed daily.
-- **On the slide:** headline; "32 agencies"; "1,576 open opportunities ranked" (fact rows 2, 3); the decision needed (NEEDED: Kent to state the ask and owner).
-- **Figure:** screenshot of one agency's Top 10 (DEQ), taken from the live tool.
-- **Speaker note:** Open with the answer, then show one agency.
 
-### Slide 2: Why it helps
-- **Message:** The best matches are not the ones a keyword search finds, and ineligible ones waste time.
-- **On the slide:** one example: the national DERA program (Diesel Emissions Reduction Act) is the top result for DEQ and also reaches DPI (fact row 14). "4,758 agency-opportunity pairs hidden as not usable: clearly not eligible, or run by a U.S. embassy abroad" (row 7). "16,924 marked: check eligibility, shown not hidden" (row 8).
-- **Speaker note:** Say that DERA reaches DPI because of a hand-built program link that we still need to confirm (row 14 is marked uncertain).
-
-### Slide 3: How
-- **Message:** Three plain steps.
-- **On the slide:** (1) Read each agency's plan and each grant notice. (2) Score how well the grant's words match the plan, drop what the agency cannot apply for, and lower grants that name another state. (3) Show the plan goal that matched, with its exact text.
-- **Figure:** simple three-box process diagram, no jargon (NEEDED: teammate draws).
-- **Speaker note:** An AI model only reads and labels text; it never decides the ranking or eligibility.
-
-### Slide 4: Does it work
-- **Message:** We tested it against grants agencies actually won, and the result was mixed; we say so.
-- **On the slide:** "Bar set before the test: at least 50% of an agency's won programs in its Top 10, in 2 of 3 agencies." Result at 4 weeks: DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11. "1 of 3 agencies met the bar" (row 15). "A plain sort by soonest deadline scored higher in all 3" (row 16).
-- **Figure:** `outs/figures/backtest_recall.png` (the pre-set test). Optional second figure, exploratory: `outs/figures/backtest_recall_v2.png`. Label it "exploratory, built after the first result". Numbers (fact sheet rows 26 to 29): Top 10 reaches 59 of 159 won programs (37%), a soonest-deadline sort 19.5%, a random 10 about 14%; Top 50 reaches 63% (100 of 159). Do not say the bar passed. Tuning the text fit with held-out agencies changed nothing (row 30).
-- **Speaker note:** Use `src/docs/backtest_framing.md`. Say "would not have flagged", never "missed". The 50% bar is a team judgment.
-
-### Slide 5: Limits
-- **Message:** Where it can mislead and what to check first.
-- **On the slide:** Keyword matching can miss a real fit that uses different words (the named weakness; the fix, better matching, is untested). The test counts repeat funding, not new opportunities. Small samples (3 to 11 programs per agency). Eligibility "Ask" items need a person to read the notice. Model labels were not validated on the held-out check, so none ship in the ranking.
-- **Speaker note:** Offer the Q&A cheat sheet.
-
-### Slide 6: Next step
-- **Message:** Pilot with a few agencies and a named contact.
-- **On the slide:** decision, owner, date (NEEDED: Kent). "73 Top 10 rows close within 14 days across 26 agencies" shows the daily panel's value (rows 17, 18).
-- **Speaker note:** Daily refresh status: say what is live. Do not claim a cloud refresh until it runs (see `src/docs/daily_job.md`).
-
-## Style
-- Plain words, large type, one chart per slide. No em dashes, no stock photos, direct chart labels.
-- Colors: NEEDED.
-
-## Checks before submitting
-- Every number matches `fact_sheet.md`.
-- 6 minutes or less read aloud, demo included.
-- Slide 1 states the recommendation before the method.
+_The stale v1 slide block (old "Slide 1: The ask" to "Slide 6: Next step", pre-filter numbers) moved to `archive/stale/slide_brief_v1_block_20261107.md` on Sat Nov 7 (Kent). Build only from the v2 slides above._
