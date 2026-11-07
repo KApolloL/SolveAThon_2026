@@ -16,3 +16,8 @@ f14,"Backtest windows (2, 4 and 6 weeks from 2024-11-06)","nrow(unique(backtest[
 f15,Open opportunities whose title names another state or region (fit halved),"length(unique(items$opp_id[items$geo_other]))",40,0
 f16,DERA (opp 363936) is in the DEQ Top 10,"sum(payload$rows$opp_id == '363936' & payload$rows$agency_id == 'deq' & payload$rows$in_top10)",1,0
 f17,DERA (opp 363936) is in the DPI Top 10,"sum(payload$rows$opp_id == '363936' & payload$rows$agency_id == 'dpi' & payload$rows$in_top10)",1,0
+f18,Agencies that reach the 50% pass bar on 4-week windows (DPI DEQ DHHS),"sum(bt_result$pct[bt_result$window_weeks == 4] >= 0.5)",1,0
+f19,DPI programs caught in 4-week windows (of 3 won),"bt_result$caught[bt_result$agency_id == 'dpi' & bt_result$window_weeks == 4]",2,0
+f20,DEQ programs caught in 4-week windows (of 7 won),"bt_result$caught[bt_result$agency_id == 'deq' & bt_result$window_weeks == 4]",3,0
+f21,DHHS programs caught in 4-week windows (of 11 won),"bt_result$caught[bt_result$agency_id == 'dhhs' & bt_result$window_weeks == 4]",4,0
+f22,Agencies where the soonest-deadline baseline beats the model on 4-week windows,"sum(bt_result$baseline_deadline_pct[bt_result$window_weeks == 4] > bt_result$pct[bt_result$window_weeks == 4])",3,0
