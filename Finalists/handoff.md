@@ -105,3 +105,9 @@ Official schedule is in the vault hub `Projects/Competitions/Solveathon/Solveath
 - `payload.json` rows gain `tier_reason` and `rank_note` (additive). The tool shows both under Details.
 - The "R and JS agree" pending test is replaced by a check that payload rank order equals fit_score order in every agency, and matches the full ranking. `tool/ranker.js` serves the toy payload only. Tests 83 of 83, facts 31 of 31.
 - Weights were NOT tuned. `20_backtest_awards.R` fixes its pass bar (50 percent on 4-week windows, 2 of 3 agencies) before the run and says not to retune after seeing results. Current 4-week recall: DPI 67 percent, DEQ 43, DHHS 36, so the bar is failed (1 of 3) and sits at or under the deadline baseline. That stays reported as evidence in the field notes. Tuning on the same 3 agencies would void the bar.
+
+## Backtest v2 (step 1, measure fix)
+- Original bar (50% on 4-week windows, 2 of 3 agencies) failed 1 of 3 and stays reported. Not retuned.
+- `src/R/21_backtest_v2.R` fixes the denominator (full window pool, not stored top 50), adds Top 20 and 50 and 15 more agencies by exact-name map rows in `data/manual/agency_award_map.csv`. Facts f32 to f36, fact sheet rows 26 to 29. Exploratory.
+- Result: Top 10 57 of 157 won programs (36%), deadline sort about 17%, random about 13%.
+- Step 2 (improve the ranking with a leave-one-program-out holdout) not started; see to-noah and the board.
