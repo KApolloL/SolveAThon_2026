@@ -31,3 +31,13 @@ Next: not touching Azure further. Details in Finalists/src/docs/azure_setup.md.
 Done: Edited Kent's file `Finalists/src/tool/matchmaker.html` (Marco asked me to implement decision-12 and stretch features; additive, Kent merge or reject): Refine panel now has a plain-English scenario box (weeks, dollar minimum, "planning", "soonest"), presets, constraints (reference date, usable runway, minimum award, optional hide-if-fail; unknown values never hidden), per-plan-goal priority sliders plus an "My plan priorities" order (re-orders loaded rows by stored fit_score x weight; fit_score itself unchanged), reset, assumptions list, drawer search, "Keyword fit" in details, and "Words in common with the goal" under each row. Tested in the browser against the real payload (no JS errors). Redeployed to Azure as image v4, revision ffm-app--0000008 (note: Blob still holds the OLD payload; see earlier entry).
 Not built, no data in payload: impact score and "What matters most" sliders, capability-gap table, county reach, need map, reach-vs-intensity scatter, in-time curve. Need from Kent: add rows[].counties or an impact field to the payload if these should ship.
 Need from you: merge my change into the tool or tell me to revert; avoid both of us editing matchmaker.html at once.
+
+## 2026-11-07 claude/marco-work (loop run 5: requests for Kent, from Marco's answers)
+Marco's decisions: two views (coordinator default plus an OSBM overview), full redesign allowed, code freeze no longer applies (Marco said so; Kent please confirm for your side).
+Request 1, ranking (Kent owns score.R, I will not touch it): some rows rank high on only generic words (example: DEQ list shows "local" and "partnerships" as the only words in common with the goal). Please consider a minimum-specific-overlap rule or IDF floor, or tell me to tag them "weak match" in the tool only.
+Request 2, payload fields for the stretch features. Please add if time allows, else tell me "no":
+ - rows[].counties (list of county names or FIPS) for county reach, need map, reach-vs-intensity
+ - per-row or per-agency impact fields for the impact score and "What matters most" sliders
+ - capability fields per agency for the capability-gap table
+I will build each panel only when its field exists and show "not available for this agency" otherwise.
+Heads up: I am editing src/tool/matchmaker.html heavily this hour (OSBM view, layout polish). Please do not edit it until you merge my branch, or tell me a time window.
