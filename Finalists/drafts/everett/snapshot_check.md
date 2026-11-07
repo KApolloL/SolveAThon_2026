@@ -1,5 +1,7 @@
 # Independent check of the judge snapshot (E12, Everett's Claude)
 
+> Historical note (Sat Nov 7, ~5:30 pm): this file records an earlier change and is kept as written. After the overseas-embassy filter the current values are in `src/docs/fact_sheet.md` (Top 10 59 of 159, Top 50 100, baselines 19.5% and 14.0%, in-time 4-week 42 of 59, hidden pairs 4,758).
+
 Ran `Finalists/app/make_snapshot.sh` (Marco's T2) from `main` at d43a9c5 into a scratch folder outside the repo, then ran the repo's own checks inside the copy with no API keys. Read-only for the repo; nothing published. Unverified by a human.
 
 ## Result

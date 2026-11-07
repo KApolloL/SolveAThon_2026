@@ -9,7 +9,7 @@ Goes with `deliverables/slide_brief.md` (what each slide says) and `docs/JUDGING
 | 2 | Noah's Claude builds the .pptx from the brief |
 | 3 | Organizer template order, Starter Kit timing by criterion; custom clean design |
 | 4 | 6:00 plus 2:00 Q&A, confirmed |
-| 5 | Live demo on the Azure URL with a recorded backup; agency DEQ; demo steps are a placeholder until the feature freeze |
+| 5 | Live demo on the Azure URL with a recorded backup; agency DPI with the school bus query (Kent, Sat Nov 7; was DEQ); draft steps in slide brief slide 5 |
 | 6 | Understand: one user-canvas slide; primary user is the agency grant lead |
 | 7 | Frame: all four heard → changed items on one slide |
 | 8 | School bus hook stays, but its dollar figure must be verified and added to the fact sheet first |
@@ -32,7 +32,7 @@ Goes with `deliverables/slide_brief.md` (what each slide says) and `docs/JUDGING
 | 5 | Heard → changed figure and three-step process figure | Noah's Claude | brief slides 3, 4; `dataviz` skill | PNGs in `outs/figures/` | 8:30 pm |
 | 6 | Architecture diagram via the organizer skill, then checked against task 4 | Noah's Claude, Marco checks | task 4 | `outs/figures/architecture.png`, every box true | 9:00 pm |
 | 7 | Feature freeze, then write the demo click path (time each step) | Marco | tool frozen at 6:00 pm | slide 5 filled, 1:35 or less | 8:30 pm |
-| 8 | Screenshots of the DEQ Top 10 and one expanded row from the live URL | Marco or Noah | task 7 | PNGs in `outs/figures/` | 8:45 pm |
+| 8 | Screenshots of the DPI school bus query (DERA first) and one expanded row from the live URL | Marco or Noah | task 7 | PNGs in `outs/figures/` | 8:45 pm |
 | 9 | Build the .pptx (custom design, 10 slides plus 5 backup) | Noah's Claude | tasks 1 to 8 | deck in `deliverables/`, no NEEDED left | 10:00 pm |
 | 10 | Fill Q&A cheat sheet rows for each criterion from the fact sheet | Noah's Claude, Kent checks | brief | `src/docs/qa_cheatsheet.md` has 2+ rows per criterion | 10:00 pm |
 | 11 | Hostile-judge pass on the deck, scored against the rubric | Claude (strongest model) | deck | findings triaged by Kent | 10:30 pm |

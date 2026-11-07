@@ -1,5 +1,7 @@
 # Where the v2 Top 10 would not have flagged programs agencies won (E2 draft)
 
+> Historical note (Sat Nov 7, ~5:30 pm): this file records an earlier change and is kept as written. After the overseas-embassy filter the current values are in `src/docs/fact_sheet.md` (Top 10 59 of 159, Top 50 100, baselines 19.5% and 14.0%, in-time 4-week 42 of 59, hidden pairs 4,758).
+
 Status: draft by Everett's Claude, for Kent. Numbers come from `src/R/24_backtest_misses.R` (offline, reads `agency_award_map.csv` and `nc_awards_by_cfda.csv`, rebuilds the 4-week full pool the way `21_backtest_v2.R` does). Not in `fact_sheet.md`; **Kent adds what he wants and confirms.** Unverified by a human. Exploratory, not the pre-set bar. Program-level match favors repeat funding; there is no link from an award to a notice.
 
 ## What was checked
