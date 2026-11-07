@@ -8,7 +8,11 @@ Material to judge: pasted below under MATERIAL
 
 How to judge:
 - Judge only what is in the material and the context. Do not assume the team did something it did not say. If a claim has no number or source, say so.
-- Score each judging criterion 1 to 5 with one sentence of evidence, quoting at most 12 words from the material: Understanding, Framing, Solving, Evaluating, Driving Impact. Be stingy. A 5 is rare.
+- Score each released judging criterion 1 to 5 with one sentence of evidence, quoting at most 12 words from the material: Understand (did real users shape the build, in the sponsors' words, or is the user [assumed]?), Frame (problem and requirements), Solve (does it work, and is Azure used for a reason, not decoration?), Evaluate (own output measured, failures shown, tradeoffs defended), Drive Impact (could it win a pilot budget from OSBM: who uses it, what it replaces, why trust it, pilot shape, scale path). Be stingy. A 5 is rare.
+- Check each named threat is answered with evidence, not a promise: false positives, false negatives (recall against manual monitoring), uneven agency documentation, inconsistent data quality.
+- Check the named weakness is stated with its tradeoff (recall versus shortlist length), and that the limits slide admits stale or thin plans, missing sources (SAM.gov, USDOT, foundations) and the tiny hand-labelled pool.
+- Penalize overclaiming: "missed" must mean "the tool would have flagged it"; labels are "team-labelled", not ground truth; simulated personas must never be presented as users; any number not in `src/docs/fact_sheet.md` is unsupported; "surfaces notices" is not "finds more grants".
+- Check that the human stays the decider and that the privacy answer (what goes to the model) is consistent with running on Azure.
 - Check the pitch fits 6 minutes including a brief demo: about 130 to 150 spoken words per minute, so roughly 780 to 900 words minus demo time. Say how far over or under it is, and which part to cut.
 - Check the structure: does it lead with the answer, then why, how, limits, next step? Name what is missing or out of order.
 - Check that a non-technical budget director could say what to do next. If not, say exactly where it breaks.

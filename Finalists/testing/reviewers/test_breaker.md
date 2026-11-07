@@ -20,6 +20,8 @@ Work through these, using only what the material shows:
    - points_equal: this item must get exactly this many points on this criterion
 3. Probe edge cases: ties, missing values, dates on the boundary, all weights zero, one filter off, duplicate ids, unusual text (accents, empty strings), very large or negative values, an item that passes every filter but scores zero.
 4. Try to break it: find an input that gives a plausible-looking but wrong ranking.
+   Known must-pass and must-fail cases are drafted in `drafts/claude/eval/known_cases_draft.csv` (school bus via EPA-OAR-OTAQ-26-01, tribal-only items hidden but counted, far-future dates read "rolling or no date listed", notices keep no deadline or award part, missing award is "unknown" never 0). Start from those, do not duplicate them, and say which are not yet approved by Kent.
+   Also test: the flag is exactly the top 10 per agency per window; a repeat run gives identical output; an unknown tier signal reads "unknown" and never defaults to Tier 1; blank eligibility shows "check eligibility"; the hide-ineligible count matches the toggle; stale-plan agencies show a warning.
 5. If you can run commands, run `Rscript tests/run_tests.R` from Finalists/src and report the result. If you cannot run code, say "not run" and give the cases only. Never claim a test passed that you did not run.
 
 Output, in this order, and nothing else:
