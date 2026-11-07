@@ -886,7 +886,7 @@ body.proj .tour-card { font-size:1.2rem; }
       var last = c.points[c.points.length - 1]; mk("text", { x: X(last.weeks) + 10, y: Y(last[L[0]]) + 4, "class": "lab " + L[2] }, L[1] + ": " + last[L[0]]);
     });
     wrap.appendChild(svg);
-    wrap.appendChild(el("p", "src", "Same 159 won programs. " + c.days + " days is a team assumption."));
+    wrap.appendChild(el("p", "src", "Same " + c.won + " won programs. " + c.days + " days is a team assumption."));
     return wrap;
   }
   function fmtAsOf(s) {
