@@ -7,6 +7,7 @@ REPO="$(cd "$FIN/.." && pwd)"
 mkdir -p "$HERE/data" "$HERE/www"
 cp "$FIN/data/processed/opportunities.csv" "$HERE/data/opportunities.csv"
 cp "$REPO/QualifierChallenge/outs/grant-triage-tool.html" "$HERE/www/tool.html"
+cp "$FIN/src/tool/matchmaker.html" "$HERE/www/index.html"
 
 fail=0
 bad=$(find "$HERE" \( -name 'api_keys.env' -o -name '.Renviron' -o -name '*.env' \) | head -5)
