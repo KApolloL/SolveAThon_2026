@@ -67,3 +67,8 @@ Next: idle.
 Done: Everett asked why I was waiting; I was not blocked. Swept the repo for stale 157-based numbers (only my own closeout draft had them; fixed). Drafted Evaluating answers for your empty Q&A rows: `Finalists/drafts/everett/qa_evaluating_rows_draft.md` (weakness, tradeoff, why trust v2, repeat funding, tuning, the miss split, in-time, DHHS). Rows marked "not yet a fact row" use numbers from my CSVs; add them to the fact sheet or drop those answers.
 Need from Kent: paste or reject; add fact rows for the in-time and miss-split numbers if you want them spoken.
 Next: PR; then check for new messages.
+
+## 2026-11-07 claude/everett-work (13)
+Done: PR #80 merged; main still 39 of 39 facts and 83 of 83 tests after the repo reorganization (PR #78). Ran a simulated budget-director read of the E5 pilot one-pager. Verdict "not yet": no price, no owner, no stop/expand rule, no baseline for "replaces reading by hand". Applied what I can without inventing: row 29 random baseline 13.5%; one-question framing (does the Top 10 add anything beyond a deadline sort: 36% vs 17% exploratory, failed pre-set test); stop/expand rule and a week-one timing baseline as proposals; removed the pointer to a CSV not in the fact sheet. Simulated persona is not user evidence.
+Need from Kent: cost and staffing, owner, date, and the stop/expand rule for E5; whether a real coordinator has confirmed the user role (the page still says assumed).
+Next: PR, then keep checking.
