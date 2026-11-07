@@ -121,15 +121,56 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
 .act button.primary[aria-pressed="true"] { color:var(--surface-2); }
 .help { font-size:.9rem; }
 dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; font-size:.92rem; } dl.gloss dt { font-weight:700; } dl.gloss dd { margin:0; }
+/* DESK */
+#desk-panel { display:none; }
+@media (min-width: 1100px) {
+  header, main { max-width: 1240px; }
+  #v-opps:not([hidden]) { display:grid; grid-template-columns:minmax(0,1fr) 380px; column-gap:20px; align-items:start; }
+  #v-opps > * { grid-column:1; }
+  #v-opps > #desk-panel { display:block; grid-column:2; grid-row:1 / span 40; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; }
+  #v-opps li.row[tabindex] { cursor:pointer; }
+  #v-opps li.row.desk-sel { outline:3px solid var(--accent); outline-offset:1px; }
+  #desk-panel h2 { font-size:1.1rem; margin:0 0 6px; }
+  #desk-panel details.drawer { margin-top:8px; } #desk-panel details.drawer > summary { display:none; }
+  #desk-panel .act button { font-size:1rem; padding:8px 18px; }
+}
+/* PROJECTOR */
+#proj-exit { position:fixed; top:8px; right:8px; z-index:20; font:inherit; font-size:.9rem; padding:8px 14px; border:2px solid var(--accent); border-radius:14px; background:var(--surface-2); color:var(--text-primary); cursor:pointer; }
+body.proj header .sub, body.proj .tabs, body.proj #banner, body.proj #tiles, body.proj #toolbar, body.proj #counts, body.proj #top,
+body.proj #refine, body.proj #gloss, body.proj #caps, body.proj #coming, body.proj #hidden, body.proj #large, body.proj #proj,
+body.proj #stub, body.proj .start .note, body.proj .start details.drawer, body.proj .start .act, body.proj .start .matched,
+body.proj .start .who, body.proj .start .badge { display:none !important; }
+body.proj #proj-exit { display:block !important; }
+body.proj #desk-panel { display:none !important; }
+body.proj .start li.row > div { min-width:0; }
+@media (min-width: 1100px) { body.proj #v-opps:not([hidden]) { display:block; } body.proj header, body.proj main { max-width: 1100px; } }
+body.proj { background:#000; color:#fff; font-size:24px; --text-primary:#fff; --text-secondary:#f0f0f0; --text-muted:#e0e0e0; --accent:#9fc2ff; --surface-2:#0d0d0d; --border:#777; }
+body.proj header, body.proj main { max-width:1400px; }
+body.proj label { font-size:1.1rem; }
+body.proj select { font-size:1.2rem; min-height:56px; }
+body.proj .start { border:3px solid var(--accent); background:#000; padding:16px 20px; margin-top:8px; }
+body.proj .start h2 { font-size:2rem; margin-bottom:10px; }
+body.proj .start li.row { grid-template-columns:200px 1fr; gap:20px; padding:14px 18px; margin-bottom:12px; border:2px solid var(--border); }
+body.proj .start .days b { font-size:4.5rem; line-height:1; color:#fff; } body.proj .start .days span { font-size:1.2rem; color:#e0e0e0; }
+body.proj .start .days.none b { font-size:1.6rem; } body.proj .start .days.urgent b { color:#ff9d8c; }
+body.proj .start .title { font-size:2rem; line-height:1.2; } body.proj .start .title a { font-weight:700; color:#9fc2ff; }
+body.proj .start .elig { font-size:1.25rem; padding:2px 14px; font-weight:700; }
+body.proj .start .elig.yes { color:#7ee07e; } body.proj .start .elig.ask { color:#ffd27a; } body.proj .start .elig.no { color:#ff9d8c; }
+body.proj .start .whyfit { font-size:1.35rem; color:#f0f0f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+body.proj .start .reason { font-size:1.35rem; }
+@media (max-width: 700px) { body.proj .start li.row { grid-template-columns:1fr; } }
+@media (prefers-reduced-motion: reduce) { body.proj * { transition:none !important; animation:none !important; scroll-behavior:auto !important; } }
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the list</a>
+<button type="button" id="proj-exit" hidden>Exit projector view</button>
 <div id="stub" class="stub" hidden>STUB DATA: not real opportunities</div>
 <header>
   <div><h1>Federal Funds Matchmaker</h1><div class="sub" id="asof">Loading data...</div></div>
   <div class="spacer"></div>
   <button type="button" id="large" aria-pressed="false" title="Enlarge text for a projector">Larger text</button>
+  <button type="button" id="proj" aria-pressed="false" title="Show only the best matches in very large type (shortcut: p)">Projector view</button>
 </header>
 <main id="main" tabindex="-1">
   <div class="tabs" role="tablist" aria-label="Views">
@@ -142,6 +183,7 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   </div>
 
   <section id="v-opps" role="tabpanel" aria-labelledby="tab-opps">
+    <aside id="desk-panel" role="region" aria-label="Opportunity details" aria-live="polite"><p class="note">Click a row to see its details here.</p></aside>
     <label for="agency">Pick your agency</label>
     <select id="agency" aria-label="Agency"><option value="">Choose an agency</option></select>
     <div id="banner"></div>
@@ -295,7 +337,7 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
     det.appendChild(dl); return det;
   }
   function rowEl(r) {
-    var li = el("li", "row"), body = el("div");
+    var li = el("li", "row"), body = el("div"); li.dataset.opp = r.opp_id; li.dataset.ag = r.agency_id;
     li.appendChild(daysBlock(r));
     var t = el("div", "title"), u = safeUrl(r.url);
     if (u) { var a = el("a", null, r.title || r.opp_number || r.opp_id); a.href = u; a.target = "_blank"; a.rel = "noopener"; t.appendChild(a); }
@@ -414,9 +456,9 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   // ---- Start here: the three best open matches, one next step each ----
   function renderStart(g, id) {
     var box = $("start"); box.innerHTML = "";
-    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 0; }).filter(function (r) { return !K.hide || !failsK(r).length; }).slice(0, 3);
-    box.hidden = cur.tile !== "top" || !pick.length; if (box.hidden) return;
-    box.appendChild(el("h2", null, "Start here: your 3 best open matches"));
+    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 0; }).filter(function (r) { return !K.hide || !failsK(r).length; }).slice(0, document.body.classList.contains("proj") ? 5 : 3);
+    box.hidden = (cur.tile !== "top" && !document.body.classList.contains("proj")) || !pick.length; if (box.hidden) return;
+    box.appendChild(el("h2", null, "Start here: your " + pick.length + " best open matches"));
     var soon = g.soon.length;
     box.appendChild(el("p", "note", "Ranked by how well each fits your agency's plan goals." + (soon ? " " + soon + " close within " + CSD + " days (see Closing soon)." : "") + " Mark Pursue to save one to My decisions."));
     var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
@@ -657,6 +699,47 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
     v.appendChild(bar);
   }
 
+  // ---- DESK: side details panel at >= 1100px (list left, panel right); below that nothing changes ----
+  var deskMQ = window.matchMedia ? window.matchMedia("(min-width: 1100px)") : { matches: false };
+  var deskSel = null;
+  function deskRowFor(li) {
+    var hit = P && P.rows.filter(function (r) { return r.agency_id === li.dataset.ag && String(r.opp_id) === li.dataset.opp; });
+    return hit && hit[0];
+  }
+  function deskClear() {
+    deskSel = null; var pn = $("desk-panel"); pn.innerHTML = ""; pn.appendChild(el("p", "note", "Click a row to see its details here."));
+    Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row.desk-sel"), function (x) { x.classList.remove("desk-sel"); });
+  }
+  function deskSelect(li) {
+    var r = deskRowFor(li); if (!r) return;
+    deskClear(); deskSel = li; li.classList.add("desk-sel");
+    var pn = $("desk-panel"); pn.innerHTML = "";
+    pn.appendChild(el("h2", null, r.title || r.opp_number || r.opp_id));
+    var u = safeUrl(r.url); if (u) { var a = el("a", null, "Open the notice"); a.href = u; a.target = "_blank"; a.rel = "noopener"; pn.appendChild(a); }
+    pn.appendChild(daysBlock(r));
+    if (r.goal_snippet) pn.appendChild(el("p", null, "Plan goal: " + r.goal_snippet));
+    var d = drawer(r); d.open = true; pn.appendChild(d);
+    var act = actions(r); pn.appendChild(act);
+  }
+  function deskMark() {
+    if (!deskMQ.matches) return;
+    Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row:not([tabindex])"), function (li) { li.tabIndex = 0; });
+  }
+  (function () {
+    var root = $("v-opps");
+    new MutationObserver(deskMark).observe(root, { childList: true, subtree: true });
+    root.addEventListener("click", function (e) {
+      if (!deskMQ.matches) return; var li = e.target.closest && e.target.closest("li.row"); if (!li || e.target.closest("a, button, summary, input, select, details")) return; deskSelect(li);
+    });
+    root.addEventListener("keydown", function (e) {
+      if (!deskMQ.matches) return;
+      if (e.key === "Escape" && deskSel) { var prev = deskSel; deskClear(); prev.focus(); return; }
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("li.row")) { e.preventDefault(); deskSelect(e.target); }
+    });
+    $("agency").addEventListener("change", deskClear);
+    if (deskMQ.addEventListener) deskMQ.addEventListener("change", function () { deskClear(); if (!deskMQ.matches) Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row[tabindex]"), function (li) { li.removeAttribute("tabindex"); }); else deskMark(); });
+  })();
+
   // ---- wiring ----
   function tab(name) {
     ["opps", "board", "map", "osbm", "marks", "how"].forEach(function (k) {
@@ -685,6 +768,33 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
     var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
     download("my_decisions.csv", [CSVH].concat(Object.keys(marks).map(function (k) { return by[k]; }).filter(Boolean).map(csvRow))); });
   $("marks-clear").addEventListener("click", function () { if (!Object.keys(marks).length || !confirm("Clear all your Pursue, Maybe and Pass marks in this browser?")) return; marks = {}; saveMarks(); renderMarks(); show(); });
+
+  // ---- PROJECTOR ----
+  function setProj(on) {
+    document.body.classList.toggle("proj", on); $("proj").setAttribute("aria-pressed", on ? "true" : "false"); $("proj-exit").hidden = !on; lsSet("ffm_proj_v1", on);
+    if (on && $("v-opps").hidden) tab("opps");
+    if (P) show(true);
+    if (on) window.scrollTo(0, 0);
+  }
+  function stepAgency(d) {
+    var sel = $("agency"), i = sel.selectedIndex + d;
+    if (i < 1 || i >= sel.options.length) return;
+    sel.selectedIndex = i; sel.dispatchEvent(new Event("change"));
+  }
+  $("proj").addEventListener("click", function () { setProj(!document.body.classList.contains("proj")); });
+  $("proj-exit").addEventListener("click", function () { setProj(false); });
+  document.addEventListener("keydown", function (e) {
+    var t = e.target, tag = t && t.tagName; if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable);
+    var on = document.body.classList.contains("proj");
+    if (e.key === "Escape" && on) { e.preventDefault(); setProj(false); return; }
+    if (typing) return;
+    if ((e.key === "p" || e.key === "P")) { e.preventDefault(); setProj(!on); return; }
+    if (on && e.key === "ArrowRight") { e.preventDefault(); stepAgency(1); }
+    if (on && e.key === "ArrowLeft") { e.preventDefault(); stepAgency(-1); }
+  });
+  if (lsGet("ffm_proj_v1", false) || /[?&]present=1/.test(location.search)) { document.body.classList.add("proj"); $("proj").setAttribute("aria-pressed", "true"); $("proj-exit").hidden = false; }
+  // ---- end PROJECTOR ----
 
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
     P = p; CSD = p.closing_soon_days || 14;
