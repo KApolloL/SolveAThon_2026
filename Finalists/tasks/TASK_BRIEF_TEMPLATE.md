@@ -1,6 +1,6 @@
 # Task brief
 
-Copy this file to `tasks/NN_short-name.md`, fill it in, and send the path or paste it to the teammate. Keep it to one page. When done, move it to `tasks/done/`.
+Copy this file to `tasks/NN_short-name.md`, fill it in, and send the path or paste it to the teammate. Keep it to one page. When done, move it to `archive/tasks-done/`.
 
 **Task name:**
 **Task #:**

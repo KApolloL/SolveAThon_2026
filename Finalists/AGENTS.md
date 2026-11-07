@@ -37,7 +37,7 @@ Do not commit, push, merge, rebase or force-push unless the brief says to. Never
 ## Safety
 - No personal, participant or patient data in any file. If you see some, stop and tell Kent.
 - No API keys or secrets in files you write.
-- Do not run commands that delete files. Move to a dated `stale/` folder instead.
+- Do not run commands that delete files. Move to a dated `archive/stale/` folder instead.
 
 ## Logging
 Add one row to `AI_USAGE_LOG.md`: when, tool and model, what for, whether the output was used, and what a human checked. The team must disclose AI use and name at least one place an AI was wrong.
