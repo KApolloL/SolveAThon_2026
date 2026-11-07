@@ -67,3 +67,23 @@ Next: idle.
 Done: Everett asked why I was waiting; I was not blocked. Swept the repo for stale 157-based numbers (only my own closeout draft had them; fixed). Drafted Evaluating answers for your empty Q&A rows: `Finalists/drafts/everett/qa_evaluating_rows_draft.md` (weakness, tradeoff, why trust v2, repeat funding, tuning, the miss split, in-time, DHHS). Rows marked "not yet a fact row" use numbers from my CSVs; add them to the fact sheet or drop those answers.
 Need from Kent: paste or reject; add fact rows for the in-time and miss-split numbers if you want them spoken.
 Next: PR; then check for new messages.
+
+## 2026-11-07 claude/everett-work (13)
+Done: PR #80 merged; main still 39 of 39 facts and 83 of 83 tests after the repo reorganization (PR #78). Ran a simulated budget-director read of the E5 pilot one-pager. Verdict "not yet": no price, no owner, no stop/expand rule, no baseline for "replaces reading by hand". Applied what I can without inventing: row 29 random baseline 13.5%; one-question framing (does the Top 10 add anything beyond a deadline sort: 36% vs 17% exploratory, failed pre-set test); stop/expand rule and a week-one timing baseline as proposals; removed the pointer to a CSV not in the fact sheet. Simulated persona is not user evidence.
+Need from Kent: cost and staffing, owner, date, and the stop/expand rule for E5; whether a real coordinator has confirmed the user role (the page still says assumed).
+Next: PR, then keep checking.
+
+## 2026-11-07 claude/everett-work (14)
+Done: Everett said labeling is only a supplement; I stopped watching it and went to the final deliverables. Drafted `Finalists/drafts/everett/field_notes_evaluation_draft.md`: (A) the evaluation results for the field notes' open `[TO FILL]` on recall versus shortlist length (Top 10, 20, 50 of 159; rows 26, 27, 29), the five recorded failures, the miss split and in-time (marked not fact rows); (B) four AI-error rows for section 7, all from this Saturday's work with how each was caught.
+Need from Noah or Kent: paste into `drafts/claude/docs/field_notes_draft.md` sections 9 and 7 (Noah's draft; I did not edit it). Add fact rows for Top 20, in-time and the miss split if you want them stated.
+Next: PR; then look for other deliverable gaps (README promotion, results list).
+
+## 2026-11-07 claude/everett-work-2 (15)
+Done: read your bonus-1 reach rows (fact row 31, f40 to f42) and `backtest_framing.md`. The numbers are internally consistent (both = 34 - 12 = 22; ours = 22 + 36 = 58). Added a Q&A row for it in `drafts/everett/qa_evaluating_rows_draft.md`, worded as you instruct (a stand-in newest-first alert, never "manual monitoring", and 12 programs the alert reaches that ours misses). One thing a judge may ask: the pre-set test lost to a deadline sort, but this comparison wins against a newest-first list; both lists are stand-ins, so say which one when quoting.
+Need from Kent: nothing.
+Next: more deliverable gaps.
+
+## 2026-11-07 claude/everett-work-3 (16)
+Done: PR #87 merged. Slide 3 had "Figure: ... NEEDED: teammate draws". Drew it: `Finalists/outs/figures/slide3_how_it_works.svg` (Read, Score, Show; wording from your slide 3 text; project colors; no numbers, so nothing to verify against the fact sheet). I did not edit `slide_brief.md`.
+Need from Kent: tell the slide builder to use the SVG (or ask for a PNG; no converter on this Mac, only a Quick Look render). The brief's "Colors: NEEDED" can use #1F3A5F, #C8791B and #9AA5B1 from `FIG_COLORS`.
+Next: look for more gaps (slide 6 decision, owner, date are yours).
