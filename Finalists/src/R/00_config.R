@@ -92,7 +92,12 @@ GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colo
   "Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico",
   "New York","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota",
   "Tennessee","Texas","Utah","Vermont","Virginia","Wisconsin","Wyoming","Great Lakes","Pacific Northwest","Northern Forest",
-  "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake")
+  "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake",
+  # Added Sat Nov 7 evening (Kent, after the hostile-judge pass found RESTORE Act Gulf Coast at DEQ #3). Each checked against
+  # open titles: none names NC. Left out on purpose: "Atlanta" (EDA's Atlanta region serves NC), "Pacific Islands" alone
+  # (appears in the HIV Part B formula title, which NC gets), "Southeast" (NC is in it), "Native Hawaiian" (a population).
+  "Gulf Coast","Gulf States","RESTORE Act","Great Basin","North Atlantic","Hawai\\S{0,8}-Pacific","Great Plains",
+  "Rocky Mountain","Colorado River","Everglades","New England","Northeast Corridor","Midwest","Southwest","American Samoa")
 
 # Program map: a hand table (data/manual/program_map.csv) naming Assistance Listing numbers that belong to an
 # agency regardless of keywords. A mapped pair gets fit of at least MAP_FIT_FLOOR (0.8, confirmed by Kent in person Nov 7; a team judgment) and a note saying why.
