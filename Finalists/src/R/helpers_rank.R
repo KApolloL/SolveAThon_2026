@@ -141,6 +141,27 @@ assign_eligibility <- function(agency_id, codes, text) {
     elig_quote  = if_else(!(yes_code | he_ok) & ask_code & decided, tx$text_quote, NA_character_))
 }
 
+# Display text: decode numeric HTML entities (&#8211;), drop zero-width characters, turn narrow and
+# no-break spaces into spaces, split PDF ligatures (fi, fl, ff) so snippets read cleanly.
+clean_text <- function(x) {
+  x <- ifelse(is.na(x), NA_character_, x)
+  dec <- function(s) {
+    if (is.na(s)) return(s)
+    m <- gregexpr("&#[0-9]+;", s)[[1]]
+    if (m[1] == -1) return(s)
+    for (e in unique(regmatches(s, list(m))[[1]])) {
+      cp <- as.integer(gsub("[^0-9]", "", e))
+      r <- if (cp %in% c(8203L, 65279L)) "" else if (cp %in% c(8239L, 160L)) " " else intToUtf8(cp)
+      s <- gsub(e, r, s, fixed = TRUE)
+    }
+    s
+  }
+  x <- vapply(x, dec, character(1), USE.NAMES = FALSE)
+  for (lig in list(c("\ufb00", "ff"), c("\ufb01", "fi"), c("\ufb02", "fl"), c("\ufb03", "ffi"), c("\ufb04", "ffl")))
+    x <- gsub(lig[1], lig[2], x, fixed = TRUE)
+  str_squish(x)
+}
+
 # TRUE when a title names another US state or region and not North Carolina.
 geo_other <- function(title) {
   t <- ifelse(is.na(title), "", title)
