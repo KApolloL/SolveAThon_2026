@@ -1,0 +1,29 @@
+> Copy of the vault note `Qualifier/Solveathon_QualifierRetro.md` made Nov 6, 2026. The vault is the source; edit there.
+
+- Qualifier retrospective. Drafted 10.23.26 from `QualifierChallenge/handoff.md` (added); Kent to correct
+	- What we built
+		- A tool for a mid-level DHHS grant writer: 1,662 Grants.gov opportunities sorted by whose signature is needed (Tiers 1 to 3), plus Tier 4 for research a university would lead
+		- No single score across piles; the impact score only orders within a pile
+		- The LLM only labels with quoted evidence; it never assigns a tier
+	- Verified numbers (handoff section 3)
+		- 296 open and state-eligible opportunities; 272 are NIH research; only 6 posted non-NIH opportunities are genuine DHHS candidates
+		- Opening scenario for DHHS: 27 in Tier 1, 24 in Tier 2, 3 in Tier 3, 366 in Tier 4
+		- AI v.s. 60 blind hand labels: 93 to 94% on stated facts (match, capital project, designation); 67% administrable by a state agency; 59% DHHS alignment; 46% domain
+	- What worked
+		- One tier-rule file (`tiering.js`) run by both R and the tool
+		- Every opportunity accounted for on screen (1,662)
+		- Caches committed, so a rebuild needs no key or model; 24 facts and 32 tests passed
+		- Naming weaknesses openly in the notebook
+	- Weaknesses we named
+		- Tiers 1 to 3 were not hand spot-checked; the 60 hand labels are the evidence
+		- AI weaker on judgment calls than on stated facts
+		- Appropriation line is a $1M placeholder with no published NC rule
+		- Prompt history: v2 over-generous (wildfire and Sierra Leone programs labeled DHHS-aligned), v3 over-corrected (rejected Title X), v3.1 frozen
+		- 355 "posted" opportunities had closed or been archived six weeks after the pull
+	- Lessons for the finals (added; my inference from the handoff, Kent to confirm)
+		- At the handoff (Sept 29 night) the slides and video were not yet built and recent changes were uncommitted: build the slide brief and commit earlier
+		- The handoff says to rotate the Census API key because it was pasted in chat
+		- Write test cases before looking at results (Deloitte rule)
+	- Reusable for the finals
+		- Config in one file, cached fetch, hand-label sample method, fact-check script, single-file tool, notebook shell
+		- Generalized in `Finalists/src` (pipeline skeleton)

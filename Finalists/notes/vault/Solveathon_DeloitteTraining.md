@@ -1,0 +1,276 @@
+> Copy of the vault note `Finals/Solveathon_DeloitteTraining.md` made Nov 6, 2026. The vault is the source; edit there.
+
+- Deloitte finalist training (Zoom, 10.22.26, 6 pm, not recorded)
+	- Joseph Phan - Deloitte Consultant Manager
+	- Framework and mindsets for consulting/case studies/etc
+	- Starting with large cluster of data, how do you deal with the problem
+	- Four phases: Discover → Build → Test → Present
+	- Slide content is merged into each phase below and marked (slide)
+	- The training hour (slide)
+		- 0:00 Kickoff: the challenge and the consultant mindset
+		- 0:05 Discovery: activity 1, write your user and 3-5 criteria
+		- 0:20 Build: see how weights change a ranking
+		- 0:35 Test: activity 2, red-team a neighbor's criteria
+		- 0:45 Present: activity 3, deliver a 60-second pitch
+		- 0:55 Wrap: your three-day plan and questions
+- Core idea
+	- Consultants win by solving the right problem instead of building the fanciest model
+	- Start with the user, not the data
+		- Put self in their shoes, understand pain points
+		- User problem should guide and be supported by data
+	- Solveathon is very similar to real world
+		- Situations where clients give a ton of information
+		- Write down goals before jumping into data
+	- Think about the approach: discover → build → test → present, then you will do well
+		- Repetition is the best way to practice and learn
+	- Clear well thought out thought process
+		- Articulate and be specific
+		- Tell more than whats obvious, think outside the box
+	- Why pick specific agencies and the purpose/goal behind it
+	- Write probing questions
+	- Choose the job based on what is enjoyed and what you care to work on
+	- Finalist challenge revealed on Friday morning
+		- Qualifier was meant to set up for the final challenge
+		- (added) The organizer email says registration is Fri 5:30 PM and the client discovery workshop is Fri 6:30 PM. Trust the email over "Friday morning" (unverified which is right)
+- Discover
+	- Who are the specific people and users that this would impact or need to talk to
+	- Think about clear and solvable problems
+		- Infinite problems to look into and distract people from the goal
+		- Ask clear questions to drive conversations instead of letting data drive
+		- Short term v.s. long term: what would affect the department in the future (measurable)
+	- Anchoring on past data to persuade for specific methods
+	- Four questions before any spreadsheet (slide)
+		- Who is the user?
+			- A specific person with a job, a deadline, and limited time
+			- Not "the state"
+		- What decision do they make?
+			- Example: chase this grant or skip it
+			- Name the action your result should trigger
+		- What does a good match look like?
+			- Three to five criteria you could explain to a stranger
+			- They are your compass
+		- What would make them distrust it?
+			- Jargon
+			- A black-box score
+			- One obviously bad recommendation
+	- Turn "good" into criteria you can measure (slide)
+		- "Relevant to the agency"
+			- Measurable: topic matches a goal in the agency's strategic plan
+			- Likely data field: title and description text
+		- "We can apply"
+			- Measurable: eligible applicants include state governments
+			- Likely data field: eligibility fields
+		- "Enough time"
+			- Measurable: deadline is at least 30 days away
+			- Likely data field: close date
+		- "Worth the effort"
+			- Measurable: award size clears a minimum the agency would chase
+			- Likely data field: award ceiling or floor
+		- Examples are from the training's grants scenario; the finals problem may differ (added)
+- Build
+	- Consider constraints and build based on the timeline and budget
+	- Give clients different options
+		- Course of action (COA), pros and cons for each
+		- Talk about tradeoffs, help client see thought process and logic to do it
+		- Client pays consultant to research the project and expertise since they don't have time
+			- Nike case study: expand and create loyal fanbase to have good activewear and casual wear
+				- Consultants determine how to implement tools/data into their ideas
+				- Consultants have to tell clients what they need to hear instead of what they want to hear
+		- What is their "bread and butter"
+		- DOT case study
+			- Charlotte: good metro and DOT
+			- Austin: increased traffic due to growth ratio over infrastructure
+		- How do you measure if they should follow a plan/idea or not: show thinking through the ideas
+		- What is the client's goals short and long term
+			- Build rapport and why to solve each problem through the process you choose
+	- Pick the simplest method that works
+		- Verify and test that each level works before expanding complexity
+		- Solve the first problem then continue solving the next problems in the workflow
+		- Anticipate what the client is thinking and what they might say
+		- Look at the edge cases
+			- Going after the competitive huge ones are completely different from small easy ones
+		- What needs to be built to meet a need
+	- Filter, score, rank, explain (slide)
+		- 1 Filter: drop what the user cannot use (ineligible or already closed)
+		- 2 Score: give each remaining grant points for each criterion
+		- 3 Rank: sort by total score and keep the top 10 to 20
+		- 4 Explain: show why each result ranked where it did
+		- Reproducible test: a teammate should rerun your steps on the raw file and get the same top 10
+- Test
+	- Test the failure cases: try and break it
+	- How might the client verify and test the cases
+	- Write out the expected outcome, actual outcome, how it might break
+		- Scientific method
+		- Test in every scenario possible
+	- Test in each and every persona
+	- Add in time for testing and giving to the client to make sure the model doesn't break
+		- Plan for the worst possible: the client always drives the prototypes
+	- Can we trust the recommendation? (slide)
+		- Testing means checking whether your solution works and where it can fail
+		- Why test
+			- Catch mistakes before a decision-maker acts
+			- Check whether the ranking matches the user's criteria
+			- Be honest about limitations
+		- How to test well
+			- 1 Set the rule: write pass/fail criteria before looking
+			- 2 Try real examples: check top-ranked grants against agency fit, eligibility, deadline, award
+			- 3 Look for misses: inspect lower-ranked grants and misleading keyword matches
+			- 4 Report honestly: show what worked, what failed, and what to improve
+		- Testing types (each builds on the last)
+			- Unit test: does one piece work?
+				- Example: eligibility filter excludes ineligible applicants
+			- Integration test: do the pieces work together?
+				- Example: filters, scoring, and ranking produce a usable shortlist
+			- User acceptance test: can the intended user use it?
+				- Example: a state-agency staff member can understand the shortlist and choose a next action
+		- Don't test to prove you're right
+			- Test to learn whether someone can trust and use your answer
+	- Testing is a team sport (slide)
+		- Test team
+			- Test lead: plans the checks, assigns work, tracks issues
+			- Testers: follow cases and record actual results
+			- Integration testers: check data and handoffs between tools/steps
+			- User acceptance testers: represent real users and decide if it's useful for the job
+		- Testing playbook
+			- Test case: one check, with inputs + expected result
+			- Test script: step-by-step instructions to run the check
+			- Example: search "broadband" → expected: eligible, relevant grants appear
+		- If it fails
+			- 1 Capture actual result + evidence
+			- 2 Log what happened and how to reproduce it
+			- 3 Triage: data, instructions, or solution?
+			- 4 Fix or explain; rerun and update the status
+		- A failed test is useful evidence, not a reason to hide the result
+- Present
+	- Lead with the answer
+	- What is success
+	- Engage, ask questions, have the judges participate
+	- Show that the project works
+	- Consultants are paid to look at the non-obvious and think outside the box
+		- Combination of research and other things
+		- Always ask questions and clarifications
+			- If you don't they will assume it will be perfect
+		- Think about every side of the problem and each criteria that could ever be considered
+		- Knowing extra pieces of information is always useful
+			- Ex. fiscal year ends Sept 30 and starts Oct 1, so grant funding probably comes in end of Sept since more people have to give out the money
+	- How should we present?
+		- What are you trying to prove
+		- If good prototype show it
+		- If bad prototype or stronger speakers, have slides and things
+		- Always start with the problem and solution
+		- ENGAGE THE AUDIENCE
+			- They might ask things that are not related to the prototype
+			- Be strategic with the presentation
+	- Five-part structure (slide)
+		- 1 The ask: apply to these five grants by these dates
+		- 2 Why: one line per grant, tied to the user's criteria
+		- 3 How: three plain sentences on the method, no jargon
+		- 4 Limits: where it can mislead, and what to check first
+		- 5 Next step: who does what this week
+	- Earning trust: make your recommendation easy to act on (slide)
+		- Great presentations do not just share findings, they drive decisions
+		- 1 Lead with the answer ("What should we do?")
+			- State your recommendation up front
+			- Keep it specific and actionable
+		- 2 Show the evidence ("What did the data tell us?")
+			- Highlight key facts and findings
+			- Use clear, visual evidence
+		- 3 Explain the trade-offs ("What could go wrong or be missed?")
+			- Surface risks, assumptions, and limitations
+			- Set realistic expectations
+		- 4 Make the next step clear ("Who does what, by when?")
+			- Define the decision needed
+			- Assign owners and timelines
+		- Worked example on the slide (grants challenge)
+			- Recommend: review these 3 grant opportunities first
+			- Evidence: agency priority fit, eligibility checked, deadline verified
+			- Caveat: confirm details on Grants.gov before applying; funding levels, agency priorities, and eligibility may change
+			- Decision needed: which opportunity should the agency validate first
+			- Owner: Grants Team, by May 30
+		- Simple. Specific. Actionable.
+- Three days at a glance (slide)
+	- Day 1, Discover: one agency, one user, written criteria, data explored
+	- Day 2, Build and test: working ranking, spot-checks done, one failure found
+	- Day 3, Test and present: clear ask, honest limits, rehearsed pitch
+	- Suggestion: do not open the dataset until your user and criteria are on paper
+- Rubric map (assumed same five as the qualifier; confirm at release)
+	- Understanding: criteria specific to this agency and user → Discover
+	- Framing: problem and requirements → Discover
+	- Solving: sensible, reproducible, wanted by an agency → Build
+	- Evaluating: named real weakness and its tradeoff → Test
+	- Driving Impact: a non-technical decision maker knows the next step → Present
+	- Gate rule: do not open the dataset until the user and 3-5 criteria are on paper
+
+- Weekend plan (added)
+	- Built from the organizer schedule in `Solveathon` and the three-day plan above
+	- Reality check
+		- Official working time is short: Fri 6:30-9:15 PM and Sat 9:00 AM-8:00 PM, with meals and check-ins inside that
+		- Presentation submission is due Sun 9:00 AM, so Deloitte's Day 3 (test and present) happens Saturday night and early Sunday
+		- Presentations are 5 minutes plus 2 minute Q&A, in person, 10:00 AM to 12:30 PM Sunday
+		- Slides are built near the end by a teammate using their own AI agent, so the slide brief must be ready by Saturday evening
+	- Fri Nov 6 (Manning 209)
+		- 5:30-6:00 Registration and dinner
+			- Laptops open, repo cloned, `Finalists/` folder ready
+			- Agree roles: Kent builds, one note-taker, one asker, one timekeeper
+		- 6:00-6:30 Welcome from NC government sponsors
+			- Write down the agency, the user, and any decision named (roles only, no personal data)
+		- 6:30-7:30 Client Discovery Workshop with NC government staff
+			- Only live access to the client: spend it on probing questions
+			- Ask the four discovery questions: user, decision, good match, distrust
+			- Ask about short term v.s. long term goals and constraints (budget, timeline, fiscal year)
+			- Note-taker records answers word for word; Kent asks follow-ups
+			- Close by stating back: "the user is X and must decide Y"
+		- 7:30-8:45 Solution Design Sprint
+			- Do not open the dataset until the user and criteria are on paper
+			- Write the user, the decision, 3-5 measurable criteria and a data field for each, the success test, and how it could fail
+			- Write 2-3 options (COA) with pros, cons, tradeoffs; pick the simplest that works
+			- Fill the Problem section of the Finalists `CLAUDE.md`
+		- 8:45-9:15 Check-ins with mentor (optional; faculty mentor Weitong Zhang)
+			- Show the one-page framing and ask them to red-team the criteria
+		- After 9:15
+			- Optional: Kent loads the data into `data/raw/` and writes expected outcomes before any results
+			- Sleep; no building until the framing is written
+	- Sat Nov 7 (Manning Library)
+		- 9:00-9:30 Check-in
+			- Restate the framing in one sentence; confirm who does which task
+		- 9:30-1:00 Morning build session and technical office hours
+			- Kent builds filter → score → rank → explain
+			- Teammates write test cases (input + expected result) before results exist
+			- Use office hours for data and R questions, not framing
+			- Reproducible test: a teammate reruns the steps on the raw file and gets the same top 10
+		- 1:00-2:00 Lunch and mid-day check-in
+			- Gate: a working ranking exists; if not, cut scope
+		- 2:00-6:00 Afternoon build session
+			- Run unit, integration, and user acceptance tests; run persona role-plays
+			- Find at least one real failure and write it up honestly
+			- 2:00-4:00 Industry mentor drop-ins with Aries Rosales (GeniusLabsAI): bring the failure and the draft ask
+			- By about 5:00: slide brief and figures handed to the teammate with the AI agent
+		- 6:00-7:00 Dinner
+			- Decide the main weakness, its tradeoff, and the ask
+		- 7:00-8:00 Work wrap up
+			- Code freeze at the end of this block
+			- Fact sheet complete; every slide number traceable
+			- First slide draft exists
+		- Late block (optional, decide Friday)
+			- Finish slides; rehearse out loud with a timer
+			- Set a hard stop time and sleep
+	- Sun Nov 8 (Manning 209)
+		- Before 9:00 Presentation submission deadline
+			- Final check of slides against the fact sheet
+			- One full rehearsal at 5 minutes
+		- 9:30-10:00 Team and judge check-in
+		- 10:00-12:30 Presentations: 5 minutes plus 2 minute Q&A
+			- Suggested split of the 5 minutes (added): ask 0:30, why 1:15, how 0:45, limits 1:00, next step 0:45, buffer 0:45; about 650 to 750 spoken words
+			- Q&A: answer from the fact sheet and the Q&A cheat sheet
+		- 12:30-1:30 Lunch, judges convene
+		- 1:30-2:00 Awards and closing
+- Open items
+	- Ask organizers on GroupMe
+		- What exactly is the 9:00 AM Sunday "presentation submission" (likely Devpost per Kent; confirm what it needs)
+		- Answered by Kent 10.23.26: teams can likely work anywhere (so the Sat late block is free), a live demo is allowed, eduroam is on campus
+	- Deloitte competition in January: the Deloitte Consulting Undergraduate Case Competition (confirmed by Kent)
+		- [Deloitte page](https://www.deloitte.com/us/en/careers/join-deloitte-consulting-undergraduate-case-competition.html)
+		- [UNC careerhub event](https://careerhub.unc.edu/event/deloitte-undergrad-case-competition/)
+		- Found no official 2027 dates yet (web lookup, unverified)
+		- Past cycles: local rounds about mid-January to mid-February, national event in March
+		- Listed as for freshmen and sophomores on teams of four; check the current rules

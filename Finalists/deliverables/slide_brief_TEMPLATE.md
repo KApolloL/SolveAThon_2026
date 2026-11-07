@@ -3,9 +3,9 @@
 Copy to `deliverables/slide_brief.md` and fill in. Kent and Claude fill it; the teammate pastes it into their AI agent along with the figure files from `outs/figures/`. Draft format. Adjust after a trial run with the teammate.
 
 ## Constraints
-- Talk: **6 minutes plus 2 minute Q&A**, in person. A live demo is allowed.
+- Talk: **6 minutes with a brief demo plus 2 minute Q&A**, in person (released brief; an earlier email said 5 plus 2, confirm).
 - Audience: judges and NC government staff. Non-technical decision makers. No jargon.
-- Submission: Devpost, due **Sunday 9:00 AM** (confirm what it needs: slides file, link, video, text fields).
+- Submission: Final Submission form, due **Sunday 9:00 AM**: slides, Solution Design and GenAI Field Notes, repository, and a link to the working product.
 - Maximum slides: 6 to 8 (about 45 seconds each). One idea per slide.
 - Numbers: use only the numbers listed here. Each comes from `src/docs/fact_sheet.md`. Do not invent, round differently, or add figures.
 - Do not add content not in this brief. If something is missing, write "NEEDED" on the slide and tell Kent.
@@ -59,5 +59,5 @@ Follow the five-part structure: ask, why, how, limits, next step.
 
 ## Checks before submitting
 - Every number on every slide matches `fact_sheet.md`.
-- Total speaking time is 6 minutes or less when read aloud.
+- Total speaking time is 6 minutes or less, including the demo when read aloud.
 - Slide 1 states the recommendation before any method.

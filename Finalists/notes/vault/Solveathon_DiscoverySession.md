@@ -1,0 +1,141 @@
+> Copy of the vault note `Finals/Solveathon_DiscoverySession.md` made Nov 6, 2026. The vault is the source; edit there.
+
+- Organized from raw notes in the vault (Kent, Everett, Marco; raw note not copied because it names state staff), Fri 11.06.26 kickoff and client discovery session. Source tags: (K) Kent, (E) Everett, (M) Marco. Untagged = in two or more sets of notes
+- Kickoff talks
+	- SDIS research director
+		- Solve-a-thon practices the full problem solving pipeline
+		- Students work on real data from government partners
+	- SDIS professor of practice, also NC OSBM chief scientist
+		- Goal: make sure NC pulls down the federal funds it is entitled to compete for
+		- Many federal entities push out dollars; some are competitive between states
+		- State struggles to know the opportunities exist, and to learn of them in time
+		- Result: federal dollars NC qualifies for are missed
+		- Example: school bus funding
+			- Part of the bipartisan infrastructure law, a few years ago
+			- Over $5B across the US (unverified)
+			- One tranche let states apply for new or replacement (environmentally friendly) school buses
+			- Run through the state environmental agency (M wrote "Dept environmental equality", unverified)
+			- NC missed the deadline the first year; did not notice in time
+			- Many details to follow; could not collect everything and apply in time
+		- Wants an approach that avoids missed opportunities, plus high-quality applications
+		- "Users don't know what they want"
+			- Bring everything forward
+			- A different vision may beat the user's original one
+			- Create something unexpected (E)
+		- Sunday explanation of the product
+			- How it was built
+			- Why it was built
+			- Who the audience is (E)
+			- How to continue building it
+			- How it can be put to use; who it affects beyond the user
+		- Curiosity, intention, focus on the people this serves
+- Deloitte manager (acts as project manager while we are the consultants)
+	- Discovery session = chance to ask the client as many questions as possible
+	- Question types
+		- Who is this for? How will they use it? Stakeholder or daily user?
+		- User ability: user friendly? Need training? Retrain or find a new workforce?
+		- Features and functionality
+		- Standard operating procedure (SOP): same across divisions? Levels at each office? Procurement?
+		- Scope and budget (services and the solution)
+		- What is used now
+		- Success criteria: what do you want out of this work?
+		- Fit with the organization: restrictions, clearances, business rules
+		- COTS (commercial off the shelf) vs tailored solution
+- Who was in the room (roles; spelling unverified)
+	- Grants lead, NC Department of Natural and Cultural Resources (Office of the Secretary; parks, museums, aquariums, archives)
+	- Public instruction (DPI)
+	- Emerging technologies / AI project management: (name withheld)
+	- K-12 cybersecurity: (name withheld)
+	- State Dept of IT, Office of AI (applications and sustaining AI): a project manager and an IT architect
+	- OSBM
+	- Mentors from ThermoFisher and GeniusLabsAI (E)
+- How grants work today
+	- Application process varies wildly; depends on the funding notice and criteria
+	- Grants.gov is the main source; it is meant to consolidate but is not comprehensive or very good (E)
+	- Other sources
+		- Mailing lists, notices from other agencies, institutional knowledge
+		- SAM.gov
+		- Federal agencies often post their own (DOT posts separately from Grants.gov)
+		- USAspending.gov and other sites
+		- Private foundations and legislation also fund; those are not on Grants.gov
+		- Track the federal budget (earmarks) and state eligibility; budget is a place to start
+	- What is available is always changing
+- Who searches
+	- NCDNCR: one person writes grants and constantly screens Grants.gov
+	- DPI: asked to pursue a grant once; nobody she knew is in charge of scanning; each person scans on a mini scale
+	- There is no "grant explorer" position (E)
+	- Some agencies have dedicated grant workers
+	- Everyone has many other things to do (3 things to do, 10 needs)
+- The core problem
+	- Do not know how many grants are missed
+		- Do not know how many are pulled, or the total possible
+	- Past attempt: crowdsource (a point of contact per agency, periodic survey)
+		- Did not work: you do not know what you do not know
+	- Before AI there was no feasible way to solve this
+	- Hard to tell in advance whether a grant matches requirements; criteria are often unclear
+	- Many things pop up without people understanding or knowing them
+	- Unclear which agency each opportunity is relevant to (E: about 30 AI grants posted now)
+	- One agency member spent a month trying to apply (E; note cut off)
+- Project-first or grant-first
+	- Both
+	- A project can be tabled for lack of funding; a grant may later reignite it, but staff and criteria may have changed
+	- Sometimes a project needs new features and a grant pays for it
+	- Chicken-and-egg loop; discovery continues throughout a project; go back to the client when a problem appears
+- Why opportunities were missed
+	- No time, no dedicated personnel
+	- Deadline too short (bus example)
+	- Do not know who is supposed to apply
+	- Eligibility is hard to check
+		- Need certain community partners or staff; must describe a plan
+		- No way to tell if the agency has the specific staff
+		- The tool, not the person, must sort for eligibility (E)
+		- A user may not know the answer to a criterion; the system should guide them to what makes most sense
+- What makes a grant worth it
+	- Payoff vs work required is the key tradeoff (E)
+	- No agency will chase something with no payoff; a small grant is not worth it for an agency serving the whole state
+	- Which grants are most competitive: no one knows; all are competitive; the question is how to be as competitive as possible (analyze the competition pool) (E)
+	- The average person cannot tell grant types apart
+	- Past trends on which agencies need grants most: all of them
+	- Look at grants the agency has won before (E)
+	- Prioritization questions: how long is the proposal, how urgent is the need, what is the need
+	- Strategic plans state general goals, not specific events
+	- Applications can be collaborative with other states (E)
+	- Need a place to implement the funds (E)
+	- Example: SLGCP-style cybersecurity grant (K: "slcgp"; likely the State and Local Cybersecurity Grant Program, added)
+		- A lot of work, competitive, submission quality variable
+		- About 350 K-12 districts to support (K, unclear)
+	- A tool that also drafts the proposal would be top tier (E, M: "fill out the forms for us")
+- TIME IS THE KEY THING
+	- People do not have time because of their actual jobs
+	- Not on any SOP: no state SOP for grant searching
+		- Grants are presented to agencies; applications can span agencies; want them easy to get into
+	- Speed: you cannot wait 4 minutes for a prompt answer (E)
+	- Wants: quick, fast, easy, likely successful (E)
+	- More work for the user = bad; presenting the solution = good
+	- Do not ask more questions of busy users
+	- People get bored and need things quickly
+- Budget, staffing and training
+	- Tokens: how much can be spent (M)
+	- Users are not technical; AI use cases must ask who can use it, what training is needed, who manages it
+	- OSBM will not have a dedicated team; likely a cross-agency partnership
+	- Turnover means some training is needed (M)
+	- Sustainable, resilient, easy to use
+		- Can be complex under the hood; must be simple and accurate for users
+		- Average person who does not normally do grants must be able to use it
+- Privacy
+	- Risk: what data is the AI fed? Feeding it gives advantage to others using that AI
+	- Cannot send sensitive information to a random LLM (E)
+		- E recorded the answer as "Local Model". Conflicts with the Azure requirement; resolve (unverified how Azure OpenAI handles this)
+	- Federal opportunities, agency details, federal grant information and the state budget are public and open
+		- Use what is publicly available: strategic plans, websites, data, budgets
+- Q: simple system with more setup, or complex with better outcome? (K asked; answer: simple. See time, ease of use)
+- Presentation advice
+	- Keep it simple ("keep it simple stupid")
+	- Explain time and prioritization throughout
+	- Ask how the presentation changes how they think about it
+	- Go into meetings with background research on each person and plan
+- Open items from the notes
+	- Resolve the privacy answer (local model) against the Azure rule
+	- Confirm spellings of names; keep names out of the repo
+	- Verify the $5B figure and the bus program before quoting
+	- Which agency do we serve? Not answered in the notes

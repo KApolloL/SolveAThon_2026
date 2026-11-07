@@ -9,7 +9,7 @@ Material to judge: pasted below under MATERIAL
 How to judge:
 - Judge only what is in the material and the context. Do not assume the team did something it did not say. If a claim has no number or source, say so.
 - Score each judging criterion 1 to 5 with one sentence of evidence, quoting at most 12 words from the material: Understanding, Framing, Solving, Evaluating, Driving Impact. Be stingy. A 5 is rare.
-- Check the pitch fits 6 minutes: about 130 to 150 spoken words per minute, so roughly 780 to 900 words. Say how far over or under it is, and which part to cut.
+- Check the pitch fits 6 minutes including a brief demo: about 130 to 150 spoken words per minute, so roughly 780 to 900 words minus demo time. Say how far over or under it is, and which part to cut.
 - Check the structure: does it lead with the answer, then why, how, limits, next step? Name what is missing or out of order.
 - Check that a non-technical budget director could say what to do next. If not, say exactly where it breaks.
 - Mark anything you cannot assess as [cannot assess] and say why. Mark guesses [uncertain].
