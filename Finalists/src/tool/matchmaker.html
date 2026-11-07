@@ -49,45 +49,118 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
 .reason.muted { color: var(--text-muted); font-style: italic; }
 .stub { background:#fde8c8; color:#5a3700; padding:6px 12px; text-align:center; font-weight:700; }
 @media (max-width: 520px) { li.row { grid-template-columns: 1fr; } .days { text-align:left; } }
+
+header { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; }
+header .spacer { flex:1; }
+header button, .tabs button, .toolbar button, .toolbar select { font: inherit; font-size:.9rem; padding:5px 12px; border:1px solid var(--border); border-radius:14px; background:var(--surface-2); color:var(--text-primary); cursor:pointer; }
+.tabs { display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 4px; }
+.tabs button[aria-selected="true"] { background:var(--accent); color:var(--surface-2); border-color:var(--accent); }
+body.large { font-size:19px; }
+.tiles { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 4px; }
+.tile { flex:1 1 130px; text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; cursor:pointer; font:inherit; color:var(--text-primary); }
+.tile b { display:block; font-size:1.5rem; line-height:1.1; color:var(--accent); }
+.tile span { font-size:.82rem; color:var(--text-secondary); }
+.tile[aria-pressed="true"] { outline:2px solid var(--accent); }
+.toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0; }
+.toolbar label { margin:0; font-weight:600; display:inline; }
+.badge { display:inline-block; font-size:.78rem; font-weight:700; padding:1px 8px; border-radius:10px; margin-right:6px; background:var(--accent-soft); color:var(--accent); }
+.badge.urgent { background:#f6d9d3; color:var(--bad); } .badge.new { background:#d8efd8; color:var(--good); }
+.days.urgent b { color:var(--bad); }
+details.drawer { margin-top:6px; font-size:.9rem; color:var(--text-secondary); }
+details.drawer summary { cursor:pointer; color:var(--accent); }
+details.drawer dl { margin:6px 0 0; display:grid; grid-template-columns:max-content 1fr; gap:2px 12px; }
+details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wrap:anywhere; }
+.board { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.board ul { list-style:none; margin:0; padding:0; }
+.board li.item { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:8px 10px; margin-bottom:8px; cursor:pointer; font-size:.92rem; }
+.board li.item[aria-selected="true"] { outline:2px solid var(--accent); }
+.board li.item small { display:block; color:var(--text-muted); }
+.board h3 { margin:10px 0 6px; font-size:1rem; }
+.board textarea, .board input[type=text] { font:inherit; width:100%; padding:6px; margin:4px 0; }
+.fit { height:6px; background:var(--accent-soft); border-radius:3px; margin-top:4px; } .fit i { display:block; height:100%; background:var(--accent); border-radius:3px; }
+.prose p, .prose li { max-width:70ch; } .prose h2 { font-size:1.1rem; margin:18px 0 4px; }
+.note { color:var(--text-muted); font-size:.85rem; }
+@media (max-width: 700px) { .board { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
 <div id="stub" class="stub" hidden>STUB DATA: not real opportunities</div>
 <header>
-  <h1>Federal Funds Matchmaker</h1>
-  <div class="sub" id="asof">Loading data...</div>
+  <div><h1>Federal Funds Matchmaker</h1><div class="sub" id="asof">Loading data...</div></div>
+  <div class="spacer"></div>
+  <button type="button" id="large" aria-pressed="false" title="Enlarge text for a projector">Larger text</button>
 </header>
 <main>
-  <label for="agency">Pick your agency</label>
-  <select id="agency" aria-label="Agency"><option value="">Choose an agency</option></select>
-  <div id="banner"></div>
-  <p class="counts" id="counts" role="status"></p>
-  <ol id="top"></ol>
-  <details class="panel" id="coming" hidden><summary id="coming-h"></summary><ol id="coming-l"></ol></details>
-  <details class="panel" id="hidden" hidden><summary id="hidden-h"></summary><ol id="hidden-l"></ol></details>
+  <div class="tabs" role="tablist" aria-label="Views">
+    <button type="button" role="tab" id="tab-opps" aria-selected="true" data-tab="opps">Opportunities</button>
+    <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
+    <button type="button" role="tab" id="tab-marks" aria-selected="false" data-tab="marks">My decisions</button>
+    <button type="button" role="tab" id="tab-how" aria-selected="false" data-tab="how">How this works</button>
+  </div>
+
+  <section id="v-opps" role="tabpanel" aria-labelledby="tab-opps">
+    <label for="agency">Pick your agency</label>
+    <select id="agency" aria-label="Agency"><option value="">Choose an agency</option></select>
+    <div id="banner"></div>
+    <div class="tiles" id="tiles" hidden role="group" aria-label="Views of this agency's list"></div>
+    <div class="toolbar" id="toolbar" hidden>
+      <label for="order">Order by</label>
+      <select id="order" aria-label="Order by"><option value="rank">Best match</option><option value="deadline">Soonest deadline</option></select>
+      <button type="button" id="csv">Export CSV</button>
+    </div>
+    <p class="counts" id="counts" role="status"></p>
+    <ol id="top"></ol>
+    <details class="panel" id="refine" hidden><summary>Refine (optional)</summary>
+      <label style="font-weight:400"><input type="checkbox" id="opt-forecast"> Also list forecasts (not open yet) in the main list</label>
+      <label style="font-weight:400"><input type="checkbox" id="opt-hidden"> Also list items hidden as not eligible in the main list</label>
+      <p class="note">The list works with this closed. These only change what is shown, never the ranking.</p>
+    </details>
+    <details class="panel" id="coming" hidden><summary id="coming-h"></summary><ol id="coming-l"></ol></details>
+    <details class="panel" id="hidden" hidden><summary id="hidden-h"></summary><ol id="hidden-l"></ol></details>
+  </section>
+
+  <section id="v-board" role="tabpanel" aria-labelledby="tab-board" hidden>
+    <label for="b-agency">Agency</label>
+    <select id="b-agency" aria-label="Board agency"></select>
+    <p class="note">Click a plan goal or one of your projects to rank grants. Click a grant to see which goals and projects it fits. Fit bars compare items inside one list only; they are never compared across the two directions. Grants here are the best matches loaded for each agency, not every open grant.</p>
+    <div class="board">
+      <div>
+        <h3>Plan goals</h3><ul id="b-goals"></ul>
+        <h3>Your projects</h3>
+        <input type="text" id="b-new" placeholder="Describe a project in a few words" aria-label="New project">
+        <button type="button" id="b-add" class="act" style="font:inherit;padding:3px 10px">Add project</button>
+        <ul id="b-projects"></ul>
+      </div>
+      <div><h3 id="b-right-h">Grants</h3><ul id="b-grants"></ul></div>
+    </div>
+  </section>
+
+  <section id="v-marks" role="tabpanel" aria-labelledby="tab-marks" hidden>
+    <p class="note">Saved in this browser only. Nothing is sent anywhere.</p>
+    <div class="toolbar"><button type="button" id="marks-csv">Export decisions CSV</button><button type="button" id="marks-clear">Clear all</button></div>
+    <p class="counts" id="marks-count"></p><ol id="marks-list"></ol>
+  </section>
+
+  <section id="v-how" role="tabpanel" aria-labelledby="tab-how" hidden class="prose"></section>
 </main>
 <script>
 (function () {
-  // Where the payload comes from: the app route /payload.json (reads Blob), else ?payload=<path> for local tests.
   var src = new URLSearchParams(location.search).get("payload") || "payload.json";
-  var P = null;
+  var P = null, CSD = 14;
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-
   function safeUrl(u) { return /^https?:\/\//i.test(u || "") ? u : null; }
+  function lsGet(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 
-  function daysBlock(r) {
-    var d = el("div", "days");
-    if (r.days_left == null) { d.className += " none"; d.appendChild(el("b", null, r.date_note || "No date listed")); }
-    else { d.appendChild(el("b", null, String(r.days_left))); d.appendChild(el("span", null, r.days_left === 1 ? "day left" : "days left")); }
-    return d;
-  }
   var ELIG = { yes: "Yes", no: "No", ask: "Ask" };
-  // Pursue / Maybe / Pass: saved in this browser only (localStorage), never sent anywhere.
-  var LS = "ffm_marks_v1";
-  function loadMarks() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
-  function saveMarks(m) { try { localStorage.setItem(LS, JSON.stringify(m)); } catch (e) {} }
-  var marks = loadMarks();
+  var ELIG_WORDS = { yes: "State agency can apply", no: "Not eligible", ask: "Check the notice" };
+  var SRC = { code: "applicant-type codes", rule: "a fixed text rule", reader: "the notice reader" };
+  var TIER = { writer: "You can start", supervisor: "Needs your boss", leadership: "Needs leadership", unknown: "Unknown" };
+
+  // ---- marks (Pursue / Maybe / Pass), browser only ----
+  var marks = lsGet("ffm_marks_v1", {});
+  function saveMarks() { lsSet("ffm_marks_v1", marks); }
   function actions(r) {
     var box = el("div", "act"), key = r.agency_id + "|" + r.opp_id;
     box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision");
@@ -96,12 +169,42 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
       b.setAttribute("aria-pressed", marks[key] === name ? "true" : "false");
       b.addEventListener("click", function () {
         if (marks[key] === name) delete marks[key]; else marks[key] = name;
-        saveMarks(marks);
+        saveMarks();
         Array.prototype.forEach.call(box.children, function (c) { c.setAttribute("aria-pressed", marks[key] === c.textContent ? "true" : "false"); });
+        renderMarks();
       });
       box.appendChild(b);
     });
     return box;
+  }
+
+  // ---- row ----
+  var newIds = {};
+  function daysBlock(r) {
+    var d = el("div", "days");
+    if (r.days_left == null) { d.className += " none"; d.appendChild(el("b", null, r.date_note || "No date listed")); }
+    else {
+      if (r.days_left <= CSD && r.status !== "forecasted") d.className += " urgent";
+      d.appendChild(el("b", null, String(r.days_left))); d.appendChild(el("span", null, r.days_left === 1 ? "day left" : "days left"));
+    }
+    return d;
+  }
+  function drawer(r) {
+    var det = el("details", "drawer"); det.appendChild(el("summary", null, "Details and rule"));
+    var dl = el("dl");
+    function add(k, v) { if (v == null || v === "") return; dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, String(v))); }
+    add("Opportunity number", r.opp_number);
+    add("Closes", r.close_date || r.date_note);
+    add("Eligibility rule", r.eligibility ? ELIG_WORDS[r.eligibility] + (r.elig_source ? " (from " + (SRC[r.elig_source] || r.elig_source) + ")" : "") : null);
+    add("Quote behind it", r.elig_quote);
+    add("Notice reader", r.reader_label ? r.reader_label + (r.reader_quote ? ": " + r.reader_quote : "") : null);
+    add("Signature needed", TIER[r.signature_tier] || "Unknown");
+    add("Award ceiling", r.award_ceiling != null ? "$" + Number(r.award_ceiling).toLocaleString() : "not listed");
+    add("Assistance listing", r.cfda_list);
+    add("NC has won this program before", r.nc_won_before == null ? null : (r.nc_won_before ? "Yes (shown only; not part of the ranking)" : "No record"));
+    add("Why it is ranked here", r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
+    add("Summary", r.opp_snippet);
+    det.appendChild(dl); return det;
   }
   function rowEl(r) {
     var li = el("li", "row"), body = el("div");
@@ -111,53 +214,219 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
     else t.textContent = r.title || r.opp_number || r.opp_id;
     body.appendChild(t);
     var meta = el("div");
+    if (newIds[r.opp_id]) meta.appendChild(el("span", "badge new", "New since last visit"));
+    if (r.days_left != null && r.days_left <= CSD && r.status !== "forecasted") meta.appendChild(el("span", "badge urgent", "Closing soon"));
+    if (r.status === "forecasted") meta.appendChild(el("span", "badge", "Not open yet"));
     var e = r.eligibility || "ask";
     meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), "Eligible: " + (ELIG[e] || "Ask")));
-    if (e === "ask") meta.appendChild(document.createTextNode(" check the notice"));
+    meta.appendChild(document.createTextNode(e === "ask" ? " check the notice" : " " + ELIG_WORDS[e]));
     body.appendChild(meta);
     if (r.goal_snippet) { var rs = el("div", "reason", "Matches plan goal: " + r.goal_snippet); rs.title = r.goal_snippet; body.appendChild(rs); }
     else body.appendChild(el("div", "reason muted", "No plan goal matched"));
+    body.appendChild(drawer(r));
     body.appendChild(actions(r));
-    li.appendChild(body);
-    return li;
+    li.appendChild(body); return li;
   }
   function fill(list, rows) { list.innerHTML = ""; rows.forEach(function (r) { list.appendChild(rowEl(r)); }); }
 
-  function show(id) {
-    var top = $("top"), banner = $("banner");
-    banner.innerHTML = "";
-    ["coming", "hidden"].forEach(function (k) { $(k).hidden = true; });
-    if (!id) { top.innerHTML = ""; $("counts").textContent = "Pick an agency to see its top 10 open opportunities."; return; }
-    var ag = P.agencies.filter(function (a) { return a.agency_id === id; })[0];
+  // ---- opportunities tab ----
+  var cur = { id: "", tile: "top", order: "rank" };
+  function groups(id) {
     var mine = P.rows.filter(function (r) { return r.agency_id === id; });
     var open = mine.filter(function (r) { return r.status === "posted"; });
-    var coming = mine.filter(function (r) { return r.status === "forecasted"; });
-    var hidden = open.filter(function (r) { return r.eligibility === "no"; });
-    var shown = open.filter(function (r) { return r.in_top10 && r.eligibility !== "no"; })
-      .sort(function (a, b) { return a.rank - b.rank; });
+    var g = { mine: mine, open: open };
+    g.coming = mine.filter(function (r) { return r.status === "forecasted" && r.eligibility !== "no"; });
+    g.hidden = mine.filter(function (r) { return r.eligibility === "no"; });
+    g.top = open.filter(function (r) { return r.in_top10 && r.eligibility !== "no"; }).sort(function (a, b) { return a.rank - b.rank; });
+    g.soon = g.top.filter(function (r) { return r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; });
+    g.ask = mine.filter(function (r) { return r.eligibility === "ask" && r.status !== "forecasted"; });
+    g.fresh = mine.filter(function (r) { return newIds[r.opp_id] && r.eligibility !== "no"; });
+    g.notices = mine.filter(function (r) { return r.status === "notice"; }).length;
+    return g;
+  }
+  var TILES = [["top", "Top 10", "open, best match"], ["soon", "Closing soon", "14 days or fewer"], ["fresh", "New since last visit", "this browser"], ["ask", "Check eligibility", "applicant list unclear"], ["coming", "Coming up", "not open yet"]];
+  function listFor(g) {
+    var rows = { top: g.top, soon: g.soon, fresh: g.fresh, ask: g.ask, coming: g.coming }[cur.tile] || g.top;
+    if ($("opt-forecast").checked && cur.tile === "top") rows = rows.concat(g.coming);
+    if ($("opt-hidden").checked && cur.tile === "top") rows = rows.concat(g.hidden);
+    rows = rows.slice();
+    if (cur.order === "deadline") rows.sort(function (a, b) { return (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left); });
+    return rows;
+  }
+  function show() {
+    var id = cur.id, banner = $("banner"); banner.innerHTML = "";
+    ["coming", "hidden", "refine"].forEach(function (k) { $(k).hidden = true; });
+    $("tiles").hidden = $("toolbar").hidden = !id;
+    if (!id) { $("top").innerHTML = ""; $("counts").textContent = "Pick an agency to see its top 10 open opportunities."; return; }
+    var ag = P.agencies.filter(function (a) { return a.agency_id === id; })[0];
+    var seen = lsGet("ffm_seen_v1", {}), first = !seen[id];
+    newIds = {};
+    var g0 = P.rows.filter(function (r) { return r.agency_id === id; });
+    if (!first) { var prev = {}; seen[id].forEach(function (x) { prev[x] = 1; }); g0.forEach(function (r) { if (!prev[r.opp_id]) newIds[r.opp_id] = 1; }); }
+    var g = groups(id);
     if (ag && ag.plan_stale) banner.appendChild(el("div", "banner", "This agency's plan may be out of date. Treat matches with care."));
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
-    var notices = mine.filter(function (r) { return r.status === "notice"; }).length;
-    var below = open.length - hidden.length - shown.length;
-    // open_total (per agency, proposed to Kent) is the true count; without it, say only what was loaded.
-    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : open.length + " open opportunities among the best matches loaded";
-    $("counts").textContent = "Showing " + shown.length + " of " + ofText + ". " +
-      hidden.length + " hidden as not eligible, " + below + " ranked below the top 10, " + coming.length + " not open yet" + (notices ? ", " + notices + " notice" + (notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
-    fill(top, shown);
-    if (coming.length) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + coming.length; fill($("coming-l"), coming); }
-    if (hidden.length) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + hidden.length; fill($("hidden-l"), hidden); }
+    if (first) banner.appendChild(el("div", "banner", "First visit for this agency in this browser. Next time, anything added since will be marked New."));
+    var tiles = $("tiles"); tiles.innerHTML = "";
+    TILES.forEach(function (t) {
+      var b = el("button", "tile"); b.type = "button"; b.setAttribute("aria-pressed", cur.tile === t[0] ? "true" : "false");
+      b.appendChild(el("b", null, String(g[t[0]].length))); b.appendChild(el("span", null, t[1] + " · " + t[2]));
+      b.addEventListener("click", function () { cur.tile = t[0]; show(); }); tiles.appendChild(b);
+    });
+    var below = g.open.length - g.hidden.filter(function (r) { return r.status === "posted"; }).length - g.top.length;
+    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open opportunities among the best matches loaded";
+    var shown = listFor(g);
+    $("counts").textContent = "Showing " + shown.length + " of " + ofText + " (" + TILES.filter(function (t) { return t[0] === cur.tile; })[0][1] + "). " +
+      g.hidden.length + " hidden as not eligible, " + Math.max(0, below) + " ranked below the top 10, " + g.coming.length + " not open yet" +
+      (g.notices ? ", " + g.notices + " notice" + (g.notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
+    fill($("top"), shown);
+    $("refine").hidden = false;
+    if (cur.tile !== "coming" && g.coming.length && !$("opt-forecast").checked) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + g.coming.length; fill($("coming-l"), g.coming); }
+    if (g.hidden.length && !$("opt-hidden").checked) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + g.hidden.length; fill($("hidden-l"), g.hidden); }
+    // remember what this browser has now seen for this agency (after the New badges were decided)
+    seen[id] = g0.map(function (r) { return r.opp_id; }); lsSet("ffm_seen_v1", seen);
   }
 
+  // ---- CSV (cells starting with = + - @ get a leading apostrophe so spreadsheets do not run them) ----
+  function csvCell(v) { var s = v == null ? "" : String(v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; }
+  function download(name, rows) {
+    var blob = new Blob(["\ufeff" + rows.map(function (r) { return r.map(csvCell).join(","); }).join("\r\n")], { type: "text/csv" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  var CSVH = ["agency", "rank", "title", "opportunity number", "status", "days left", "close date", "eligible", "eligibility rule", "plan goal matched", "award ceiling", "link", "your decision"];
+  function csvRow(r) {
+    var ag = P.agencies.filter(function (a) { return a.agency_id === r.agency_id; })[0];
+    return [ag ? ag.agency_name : r.agency_id, r.rank, r.title, r.opp_number, r.status, r.days_left, r.close_date || r.date_note, ELIG[r.eligibility] || "Ask",
+      ELIG_WORDS[r.eligibility] || "", r.goal_snippet, r.award_ceiling, r.url, marks[r.agency_id + "|" + r.opp_id] || ""];
+  }
+
+  // ---- decisions tab ----
+  function renderMarks() {
+    var keys = Object.keys(marks), list = $("marks-list"); list.innerHTML = "";
+    var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
+    var rows = keys.map(function (k) { return by[k]; }).filter(Boolean);
+    var c = { Pursue: 0, Maybe: 0, Pass: 0 }; keys.forEach(function (k) { if (c[marks[k]] != null) c[marks[k]]++; });
+    $("marks-count").textContent = rows.length ? "Pursue " + c.Pursue + " · Maybe " + c.Maybe + " · Pass " + c.Pass : "No decisions yet. Use Pursue, Maybe or Pass on a row.";
+    rows.sort(function (a, b) { var o = { Pursue: 0, Maybe: 1, Pass: 2 }; return o[marks[a.agency_id + "|" + a.opp_id]] - o[marks[b.agency_id + "|" + b.opp_id]]; });
+    rows.forEach(function (r) { list.appendChild(rowEl(r)); });
+  }
+
+  // ---- match board: TF-IDF keyword fit (same function both directions) ----
+  var STOP = {}; "a an and are as at be by for from has have in into is it its of on or that the their this to was were will with your our we us you can may not all any more new per than also such other which who these those been being than use used using".split(" ").forEach(function (w) { STOP[w] = 1; });
+  function tokens(t) { return String(t || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).filter(function (w) { return w.length > 2 && !STOP[w]; }); }
+  var DF = {}, NDOC = 0;
+  function buildIdf() {
+    var docs = P.rows.map(function (r) { return r.title + " " + (r.opp_snippet || ""); }).concat((P.goals || []).map(function (g) { return g.goal_text; }));
+    docs.forEach(function (d) { var seen = {}; tokens(d).forEach(function (w) { if (!seen[w]) { seen[w] = 1; DF[w] = (DF[w] || 0) + 1; } }); }); NDOC = docs.length;
+  }
+  function vec(text) { var v = {}, n = 0; tokens(text).forEach(function (w) { v[w] = (v[w] || 0) + 1; });
+    Object.keys(v).forEach(function (w) { v[w] = (1 + Math.log(v[w])) * Math.log(1 + NDOC / (DF[w] || 1)); n += v[w] * v[w]; }); v.__n = Math.sqrt(n) || 1; return v; }
+  function cos(a, b) { var s = 0; Object.keys(a).forEach(function (w) { if (w !== "__n" && b[w]) s += a[w] * b[w]; }); return s / (a.__n * b.__n); }
+  var B = { sel: null }; // {kind: "goal"|"project"|"grant", key}
+  var projects = lsGet("ffm_projects_v1", []);
+  function boardAgency() { return $("b-agency").value; }
+  function boardRows() { var a = boardAgency(); return P.rows.filter(function (r) { return r.status !== "notice" && r.eligibility !== "no" && (a === "ALL" || r.agency_id === a); }); }
+  function itemLi(title, sub, key, kind, fit) {
+    var li = el("li", "item"); li.setAttribute("role", "option"); li.tabIndex = 0;
+    li.setAttribute("aria-selected", B.sel && B.sel.kind === kind && B.sel.key === key ? "true" : "false");
+    li.appendChild(el("span", null, title)); if (sub) li.appendChild(el("small", null, sub));
+    if (fit != null) { var f = el("div", "fit"); var i = el("i"); i.style.width = Math.round(fit * 100) + "%"; f.appendChild(i); li.appendChild(f); }
+    var act = function () { B.sel = (B.sel && B.sel.kind === kind && B.sel.key === key) ? null : { kind: kind, key: key }; renderBoard(); };
+    li.addEventListener("click", act); li.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); act(); } });
+    return li;
+  }
+  function agName(id) { var a = P.agencies.filter(function (x) { return x.agency_id === id; })[0]; return a ? a.agency_name : id; }
+  function renderBoard() {
+    var ag = boardAgency(), goals = (P.goals || []).filter(function (g) { return ag === "ALL" || g.agency_id === ag; });
+    var gl = $("b-goals"), pl = $("b-projects"), rl = $("b-grants"); gl.innerHTML = pl.innerHTML = rl.innerHTML = "";
+    var sel = B.sel, rows = boardRows(), selVec = null, leftFits = null;
+    if (sel && sel.kind === "goal") { var g = goals.filter(function (x) { return x.agency_id + "|" + x.goal_id === sel.key; })[0]; selVec = g ? vec(g.goal_text) : null; }
+    if (sel && sel.kind === "project") { var p = projects[Number(sel.key)]; selVec = p ? vec(p) : null; }
+    var gRows = rows;
+    if (selVec) {
+      var sc = rows.map(function (r) { return [r, cos(selVec, vec(r.title + " " + (r.opp_snippet || "")))]; }).filter(function (x) { return x[1] > 0; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 15);
+      var mx = sc.length ? sc[0][1] : 1; gRows = null;
+      $("b-right-h").textContent = "Grants ranked for your selection (" + sc.length + ")";
+      sc.forEach(function (x) { rl.appendChild(itemLi(x[0].title, agName(x[0].agency_id) + " · " + (x[0].days_left == null ? (x[0].date_note || "no date") : x[0].days_left + " days left"), x[0].agency_id + "|" + x[0].opp_id, "grant", x[1] / mx)); });
+      if (!sc.length) rl.appendChild(el("li", null, "No grants share words with this. Try other words."));
+    }
+    if (sel && sel.kind === "grant") {
+      var gr = rows.concat(P.rows).filter(function (r) { return r.agency_id + "|" + r.opp_id === sel.key; })[0];
+      var gv = gr ? vec(gr.title + " " + (gr.opp_snippet || "")) : null;
+      if (gv) {
+        var gf = goals.map(function (x) { return [x, cos(gv, vec(x.goal_text))]; }).filter(function (x) { return x[1] > 0; }).sort(function (a, b) { return b[1] - a[1]; }).slice(0, 12);
+        var m1 = gf.length ? gf[0][1] : 1; leftFits = { goals: {} }; gf.forEach(function (x) { leftFits.goals[x[0].agency_id + "|" + x[0].goal_id] = x[1] / m1; });
+        var pf = projects.map(function (t, i) { return [i, cos(gv, vec(t))]; }).filter(function (x) { return x[1] > 0; }).sort(function (a, b) { return b[1] - a[1]; });
+        var m2 = pf.length ? pf[0][1] : 1; leftFits.projects = {}; pf.forEach(function (x) { leftFits.projects[x[0]] = x[1] / m2; });
+        $("b-right-h").textContent = "Selected grant";
+        rl.appendChild(itemLi(gr.title, agName(gr.agency_id), sel.key, "grant", null));
+        goals = goals.filter(function (x) { return leftFits.goals[x.agency_id + "|" + x.goal_id] != null; }).sort(function (a, b) { return leftFits.goals[b.agency_id + "|" + b.goal_id] - leftFits.goals[a.agency_id + "|" + a.goal_id]; });
+      }
+    }
+    if (gRows) {
+      $("b-right-h").textContent = "Grants (" + gRows.length + " loaded, best match order per agency)";
+      gRows.slice().sort(function (a, b) { return (b.fit_score || 0) - (a.fit_score || 0); }).slice(0, 30).forEach(function (r) {
+        rl.appendChild(itemLi(r.title, agName(r.agency_id) + " · " + (r.days_left == null ? (r.date_note || "no date") : r.days_left + " days left"), r.agency_id + "|" + r.opp_id, "grant", null)); });
+    }
+    var lastAg = null;
+    goals.forEach(function (x) {
+      if (ag === "ALL" && x.agency_id !== lastAg) { gl.appendChild(el("li", "note", agName(x.agency_id))); lastAg = x.agency_id; }
+      var key = x.agency_id + "|" + x.goal_id;
+      gl.appendChild(itemLi(x.goal_text, x.goal_id, key, "goal", leftFits ? leftFits.goals[key] : null));
+    });
+    if (!goals.length) gl.appendChild(el("li", "note", "No plan goals loaded for this choice."));
+    projects.forEach(function (t, i) {
+      if (leftFits && leftFits.projects[i] == null) return;
+      pl.appendChild(itemLi(t, null, String(i), "project", leftFits ? leftFits.projects[i] : null));
+    });
+  }
+  function initBoard() {
+    var s = $("b-agency"); s.appendChild(Object.assign(el("option", null, "All NC"), { value: "ALL" }));
+    P.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) { s.appendChild(Object.assign(el("option", null, a.agency_name), { value: a.agency_id })); });
+    s.addEventListener("change", function () { B.sel = null; renderBoard(); });
+    $("b-add").addEventListener("click", function () {
+      var t = $("b-new").value.trim().slice(0, 300); if (!t) return; projects.push(t); lsSet("ffm_projects_v1", projects); $("b-new").value = ""; renderBoard(); });
+  }
+
+  // ---- how this works (counts come from the loaded payload, not typed in) ----
+  function renderHow() {
+    var v = $("v-how"), n = P.rows.length, hid = P.rows.filter(function (r) { return r.eligibility === "no"; }).length;
+    function p(t) { v.appendChild(el("p", null, t)); } function h(t) { v.appendChild(el("h2", null, t)); }
+    h("What this is"); p("A list builder for an agency grant coordinator. It reads federal funding opportunities and ranks them against the agency's own strategic plan. A person makes every decision.");
+    h("How the list is ranked"); p("Each opportunity is scored by keyword overlap between its title and summary and the agency's plan goals. No AI model decides rank. Award history is shown in the details but never changes the order.");
+    h("Eligibility"); p("Yes, No or Ask comes from the applicant-type codes first, then fixed text rules. An item is hidden only when a code or quote says state agencies cannot apply. Anything unclear stays visible as Ask. Hidden items stay one click away.");
+    h("What is loaded right now"); p(n + " rows are loaded across " + P.agencies.length + " agencies: the best matches per agency, not every open opportunity. " + hid + " of these rows are marked not eligible. Data as of " + (P.data_as_of || "unknown") + ".");
+    h("Closing soon, New, and your decisions"); p("Closing soon means " + CSD + " days or fewer left. New since last visit and your Pursue, Maybe and Pass marks live only in this browser. Nothing is sent to a server or by email.");
+    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature tier is not set yet, so it reads Unknown. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
+    h("Not shown"); p("County reach, need maps and a capability-gap table need data this payload does not carry. They are not shown rather than guessed.");
+  }
+
+  // ---- wiring ----
+  function tab(name) {
+    ["opps", "board", "marks", "how"].forEach(function (k) {
+      $("v-" + k).hidden = k !== name; $("tab-" + k).setAttribute("aria-selected", k === name ? "true" : "false"); });
+    if (name === "board") renderBoard(); if (name === "marks") renderMarks();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
+  $("large").addEventListener("click", function (e) { var on = document.body.classList.toggle("large"); e.target.setAttribute("aria-pressed", on); });
+  $("order").addEventListener("change", function () { cur.order = this.value; show(); });
+  $("opt-forecast").addEventListener("change", show); $("opt-hidden").addEventListener("change", show);
+  $("csv").addEventListener("click", function () { if (!cur.id) return; download("opportunities_" + cur.id + ".csv", [CSVH].concat(listFor(groups(cur.id)).map(csvRow))); });
+  $("marks-csv").addEventListener("click", function () {
+    var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
+    download("my_decisions.csv", [CSVH].concat(Object.keys(marks).map(function (k) { return by[k]; }).filter(Boolean).map(csvRow))); });
+  $("marks-clear").addEventListener("click", function () { if (!Object.keys(marks).length || !confirm("Clear all your Pursue, Maybe and Pass marks in this browser?")) return; marks = {}; saveMarks(); renderMarks(); show(); });
+
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
-    P = p;
+    P = p; CSD = p.closing_soon_days || 14;
     $("asof").textContent = "Data as of " + (p.data_as_of || "unknown");
     if (p.stub === true || /stub/i.test(String(p.data_as_of))) $("stub").hidden = false;
     var sel = $("agency");
     p.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) {
-      var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o);
-    });
-    sel.addEventListener("change", function () { show(sel.value); });
-    show("");
+      var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o); });
+    sel.addEventListener("change", function () { cur.id = sel.value; cur.tile = "top"; show(); });
+    buildIdf(); initBoard(); renderHow(); show();
   }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
 })();
 </script>
