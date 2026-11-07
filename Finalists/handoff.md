@@ -26,8 +26,10 @@ What changed since your PR 102:
 - `ffm-app` runs image **v19** (older tool, no swipe) with **min replicas 1** already, so it is billed all night.
 - Daily job `ffm-daily-refresh` exists on image v4, cron 11:00 UTC, but **`JOB_DRY_RUN=1`**: it writes nothing. It has never run on schedule. Do not claim daily refresh as live.
 - Deploy script default tag v4 = the job's image; always pass a NEW tag (`TAG=v21 ...`).
-- On this Mac, az 2.92 cannot run `az acr build` (`'NoneType' object has no attribute 'from_blob_url'`) or the `containerapp` extension (macOS blocks a library). A workaround script built **v20** from this branch through the ACR REST API (see the build note below). Image v20 is NOT yet pointed at the app.
-- **Your next step:** confirm tag v20 exists (`az acr repository show-tags -n ffmacrteam15 --repository ffm-app`), then run `az containerapp update -n ffm-app -g rg-primary-unc-sdis-solveathon-team15 --image ffmacrteam15.azurecr.io/ffm-app:v20` from your machine (or rebuild v21 there with `TAG=v21 DEPLOY=yes sh app/deploy_azure.sh`). Then load `?agency=dpi`, type the school bus query, and check that DERA comes first.
+- On this Mac, az 2.92 cannot run `az acr build` (`'NoneType' object has no attribute 'from_blob_url'`) or the `containerapp` extension (macOS blocks a library). A REST workaround (upload URL + scheduleRun) also failed three times with "failed to download context". **No v20 image exists. Nothing new is deployed.**
+- **Your next step, from your own machine:** `cd Finalists && TAG=v20 DEPLOY=yes sh app/deploy_azure.sh` (new tag; never v4, the job's image). Then load `?agency=dpi`, type "clean diesel school buses, I have 4 weeks" and check DERA comes first; check `?agency=dst` shows no embassy or tribal grants.
+- Fact row 17 ("71 closing within 14 days") includes 7 Top 10 rows with 0 days left (already closed on the data date); the page hides them, the pipeline does not. Recount before quoting it.
+- The rank is plan fit only (award size, cost share and runway weights are 0 in `criteria.csv`); script the "payoff versus effort" answer. Slide 10's "4 plans ended before 2026" has no fact row.
 
 **Still open:**
 - Kent confirms the fact rows and the new slide/Q&A lines.
