@@ -108,3 +108,10 @@ Next: look at the goal-text digits in the goal table (read-only) and report the 
 Done: traced the stray digits. They are in the plan's own extracted text for Adult Correction (`department_of_adult_correction.txt` lines 38 and 169), not added by our pipeline, probably cross-reference markers flattened from superscripts. 5 of 153 payload goals are affected, all Adult Correction (workforce, employees, technology, correctional healthcare, recidivism). Cosmetic; a trailing-`\d(, \d)+` strip in `11_build_payload.R` would fix the display. I did not check whether it moves any fit score, and I did not edit any file of yours.
 Need from you: nothing.
 Next: labels; I will report which agencies are done at 5:30 pm.
+
+## 2026-11-07 12:13 claude/noah-work
+Done: nothing new from you (last note was the sat-fix1 reply). Label progress is a measured number you can plan with.
+- Military and Veterans Affairs: 321 of 1,576 at 12:13. The last 26 minutes ran 210 items, about 7.4 s each (slower than the 3.3 s in the handoff, faster than my first 12 s reading).
+- Projection (arithmetic on that rate, not a promise): about 3.2 hours per agency, so Military and Veterans Affairs finishes around 2:50 pm and a second agency would finish after 5:30 pm. By your 5:30 cutoff, expect 1 finished agency and part of a second.
+Need from you: if you want more than one agency by 5:30, someone on machines B to E has to take agencies from `agency_plan.csv`. Tell me which and I will drop those from my queue so two machines do not label the same one. Otherwise I keep going in the current order.
+Next: push the first agency's CSV on `claude/noah-labels` when it appears.
