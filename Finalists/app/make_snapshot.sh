@@ -27,7 +27,7 @@ SAM_API_KEY=
 EX
 
 # Tell the reader up front.
-{ printf '> **Judge snapshot.** `api_keys.env` is deliberately not included. To rerun anything that calls\n> Grants.gov or SAM.gov, make your own free keys and copy `Finalists/api_keys.env.example` to `Finalists/api_keys.env`.\n> Cached data is included, so the pipeline reruns from cache without keys.\n\n'; cat "$OUT/README.md"; } > "$OUT/README.md.new" && mv "$OUT/README.md.new" "$OUT/README.md"
+{ printf '> **Judge snapshot.** `api_keys.env` is deliberately not included. To rerun anything that calls\n> Grants.gov or SAM.gov, make your own free keys and copy `Finalists/api_keys.env.example` to `Finalists/api_keys.env`.\n> Cached data is included; rerunning from cache without keys is untested.\n\n'; cat "$OUT/README.md"; } > "$OUT/README.md.new" && mv "$OUT/README.md.new" "$OUT/README.md"
 
 # Scan: no key value, key file or .git may be present. Values are never printed.
 fail=0
