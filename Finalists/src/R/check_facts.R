@@ -1,7 +1,7 @@
 # check_facts.R: every number used on a slide is a row in data/manual/facts.csv with an R
 # expression that reproduces it from the pipeline outputs. Presentation numbers must pass here.
 # Columns: fact_id, fact, expr, expected, tol. Expressions can use `items`, `ranking`,
-# `dropped`, `all_items`, `criteria`, `payload` (payload.json) and `backtest` (rankings_backtest.csv) and `bt_result` (backtest_result.csv, Everett) and `bt_v2` (backtest_v2_result.csv). Prints "N of N rows pass".
+# `dropped`, `all_items`, `criteria`, `payload` (payload.json) and `backtest` (rankings_backtest.csv) and `bt_result` (backtest_result.csv, Everett) and `bt_v2` (backtest_v2_result.csv) and `bt_tune` (backtest_tune_result.csv). Prints "N of N rows pass".
 # Run from Finalists/src: Rscript R/check_facts.R
 
 here::i_am("src/R/check_facts.R")
@@ -20,6 +20,8 @@ payload <- if (file.exists(PAYLOAD_JSON)) jsonlite::fromJSON(PAYLOAD_JSON) else 
 backtest <- if (file.exists(BACKTEST_CSV)) read_csv(BACKTEST_CSV, show_col_types = FALSE) else NULL
 bt_result <- if (file.exists(file.path(DIR_PROCESSED, "backtest_result.csv"))) read_csv(file.path(DIR_PROCESSED, "backtest_result.csv"), show_col_types = FALSE) else NULL
 bt_v2 <- if (file.exists(file.path(DIR_PROCESSED, "backtest_v2_result.csv"))) read_csv(file.path(DIR_PROCESSED, "backtest_v2_result.csv"), show_col_types = FALSE) else NULL
+
+bt_tune <- if (file.exists(file.path(DIR_PROCESSED, "backtest_tune_result.csv"))) read_csv(file.path(DIR_PROCESSED, "backtest_tune_result.csv"), show_col_types = FALSE) else NULL
 
 facts <- read_csv(FACTS_FILE, show_col_types = FALSE, col_types = cols(.default = col_character()))
 facts$got <- NA_character_; facts$pass <- FALSE
