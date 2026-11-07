@@ -11,7 +11,7 @@ Every number used on a slide or in a handout is listed here with the script that
 | 5 | Open opportunities with no usable close date (rolling date listed, or a forecast whose date has passed) | 488 | `data/manual/facts.csv` f4 | Claude; Kent to confirm | 2026-11-07 |
 | 6 | Open opportunities with no usable award ceiling (blank or 0) | 887 | `data/manual/facts.csv` f5 | Claude; Kent to confirm | 2026-11-07 |
 | 7 | Agency by opportunity pairs hidden as clearly not eligible (applicant code, then fixed text rules; a text "no" carries the exact quote) | 3,030 | `data/manual/facts.csv` f6, `src/R/helpers_rank.R` `assign_eligibility()` | Claude; Kent to confirm | 2026-11-07 |
-| 8 | Agency by opportunity pairs marked check eligibility (shown, not hidden) | 16,540 | `data/manual/facts.csv` f7 | Claude; Kent to confirm | 2026-11-07 |
+| 8 | Agency by opportunity pairs marked check eligibility (shown, not hidden) | 16,924 | `data/manual/facts.csv` f7 | Claude; Kent to confirm | 2026-11-07 |
 | 9 | Agencies in `payload.json` | 32 | `data/manual/facts.csv` f10, `src/R/11_build_payload.R` | Claude; Kent to confirm | 2026-11-07 |
 | 10 | Most Top 10 rows for one agency (open items only; forecasts go to Coming up, hidden-ineligible examples are kept apart) | 10 | `data/manual/facts.csv` f11 | Claude; Kent to confirm | 2026-11-07 |
 | 11 | Rows in `payload.json` (320 Top 10, 320 Coming up, 320 hidden examples) | 960 | `data/manual/facts.csv` f12 | Claude; Kent to confirm | 2026-11-07 |
