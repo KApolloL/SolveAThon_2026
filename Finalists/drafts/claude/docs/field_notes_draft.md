@@ -199,6 +199,7 @@ Do not guess any of these. Leave `[TO FILL]` visible until a person has the real
 
 **Evidence (never predict)**
 - [ ] Evaluation results: recall in the top N against the 70% bar, recall versus shortlist length (the named weakness), keyword baseline, two or more recorded failures. Numbers go in `src/docs/fact_sheet.md` first, from a script.
+  - Partly answered (Noah's Claude, Sat Nov 7, from `src/docs/fact_sheet.md` rows 15 and 16, both still "Everett and Kent to confirm"): the award-history backtest on 4-week windows FAILS the 50% bar. DPI 2 of 3 programs (67%), DEQ 3 of 7 (43%), DHHS 4 of 11 (36%), so 1 of 3 agencies pass where the bar needs 2 of 3. The soonest-deadline baseline beats the model in all 3 agencies. This is a second recorded failure beside the label gate. Recall versus shortlist length is still `[TO FILL]`: not in the fact sheet.
 - [ ] The drawn pool and the label sheet, written down before scoring (decision 12). Record the date and time they were fixed.
 - [x] Held-out label check (model labels): done by Noah and Matthew, blind to model output; method and result in `drafts/claude/docs/holdout/label_check_result.md`. Result: gate FAIL, both readings. Figures are not in the fact sheet yet: `[TO FILL: Kent to add to src/docs/fact_sheet.md]`.
 - [ ] Team labels: who labelled each item (two per item), how many items (60 planned), agreement between labelers, whether they saw scores. Call them team-labelled, not ground truth.
