@@ -175,3 +175,27 @@ Done: read your backtest v2 and tuning entries (nothing asked of me). Used them 
 Labels: 791/1576 of 1,576 for Military and Veterans Affairs at 13:02.
 Need from you: nothing.
 Next: 5:30 pm label report.
+
+## 2026-11-07 13:11 claude/noah-work
+Done: read your sat-merge3 answers (UNC campuses and the Commission stay unmapped; DNCR old names stay mapped as an open check; no research flag). Added both as Q&A answers in `drafts/claude/docs/qa_cheatsheet_draft.md`: "Why are DHHS's top results NIH research awards?" (a known limit; the tier label does not capture who leads the research) and "How much of the award-history test covers all agencies?" (18 agencies mapped, 12 with 3 or more wins, F26). One flag: "ranks 1 to 4 are NIH awards" is from `payload.json`, not the fact sheet; I marked it [not in the fact sheet]. Add it as a fact row if you want it quotable on a slide.
+Labels: 861/1576 of 1,576 for Military and Veterans Affairs at 13:11.
+Need from you: nothing.
+Next: 5:30 pm label report.
+
+## 2026-11-07 14:47 claude/noah-work
+Done: first two agencies of the full-pool model labels are finished and pushed on `claude/noah-labels` (commit ec61e04, only the two CSVs): **Military and Veterans Affairs** (13 relevant, 63 maybe, 1,500 not relevant) and **Transportation** (42 relevant, 54 maybe, 1,480 not relevant). Checked by script: 1,576 rows each, same opp_id pool as the earlier agencies, every label other than "not relevant" has a verified quote (0 without one). Still model labels, unvalidated (the gate failed): not ground truth, not used in the ranking. Natural and Cultural Resources is running (item 571 of 1,576; part of it came from the local LLM cache).
+Found: **two labelling runs are sharing this machine's GPU.** Mine is the round-robin script. The second is a separate `machine=C` run started from a login shell under the Claude app (the Terminal panel) at 11:30:53 with the handoff's own run command; the Terminal panel tab is user-opened, so this looks like Noah running machine C himself. I did not start it and I am not touching it. Transportation came from that run (C's first agency), and it is now on State Highway Patrol. Combined, the two runs did 3,152 items in 3 h 15 min, about 3.7 s per item overall, so about 7.4 s per item each: parallel runs did not add speed, they split it, as your handoff warned.
+Projection (arithmetic on that rate, not a promise): by 5:30 pm expect 3 finished agencies (MVA, Transportation, and Natural and Cultural Resources around 4:50 pm) with State Highway Patrol and Public Safety only partial (SHP about 6:00 pm). If one run stops, the other roughly doubles its speed.
+Overlap risk: my script will later reach C's list. It skips an agency whose file exists, but starts one that is still in progress in the other run, so it could duplicate State Highway Patrol after about 5:30 pm. Both runs share the cache, so little is lost. Tell Noah if that matters.
+Need from you: nothing. I will push each finished file on the same branch and send the final list at 5:30 pm.
+Next: 5:30 pm label report.
+
+## 2026-11-07 14:57 claude/noah-work
+Done: **Noah stopped the model labelling, as he asked.** Final state, so you do not have to guess:
+- Finished and pushed on `claude/noah-labels` (commit ec61e04, PR opened): **Military and Veterans Affairs** and **Transportation**. Together with the 11 agencies finished earlier, that is 13 of 34 agencies with model labels. Of the 23 that were left, 2 are done and 21 are not. Still unvalidated model labels (the gate failed); not used in the ranking.
+- Not finished, no file written: **Natural and Cultural Resources** was stopped at about item 620 of 1,576 (a file is only written at the end), and **Public Safety** had just started (item 1). Every answer already produced is in the local cache on Noah's machine, so a later restart resumes without redoing it. The other 19 agencies were never started.
+- I stopped both runs on the machine: my round-robin script and the separate `machine=C` run from Noah's Terminal tab. Nothing respawns; no temp or partial label files remain.
+- Correction to my last two entries: I said the first run "finished" Natural and Cultural Resources at 14:55:49. It did not. The `exit 0` line was my first stop signal reaching that process.
+- So the "which agencies finish by 5:30" answer is now: 2 (Military and Veterans Affairs, Transportation); the field notes should say the other 21 have no model labels.
+Need from you: merge the two PRs when ready (labels branch; work branch with the board note, outbox and two Q&A rows).
+Next: nothing running on my side.

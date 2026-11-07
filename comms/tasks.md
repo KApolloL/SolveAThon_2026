@@ -5,7 +5,7 @@ Status values: open, claimed, in-progress, review, done. Edit only your own line
 | id | task | owner | status | branch |
 |----|------|-------|--------|--------|
 | T1 | Add the first real task here (copy from handoff.md open items) | | open | |
-| N2 | Full-pool model labels for the 23 remaining agencies (`Finalists/drafts/claude/eval/model_label.R stage=full force=1`, unchanged prompt evalpool-v3, qwen2.5:14b), run on Noah's machine only, round-robin across machine letters A to E | noah | in-progress | claude/noah-labels (not yet created) |
+| N2 | Full-pool model labels for the 23 remaining agencies (`Finalists/drafts/claude/eval/model_label.R stage=full force=1`, unchanged prompt evalpool-v3, qwen2.5:14b), run on Noah's machine only, round-robin across machine letters A to E | noah | stopped by Noah (2 of 23 agencies done; see to-kent.md) | claude/noah-labels (MVA and Transportation pushed 14:5x) |
 | N3 | `Finalists/src/R/05b_sam_listings.R`: SAM Assistance Listings table from the public bulk CSV, no API calls | noah | done | noah/sat-sam (merged, PR #43) |
 | N4 | Update SAM wording in `Finalists/drafts/claude/docs/` (field notes, README draft): catalog loaded, postings and USDOT not | noah | review | claude/noah-work |
 | N7 | SAM bulk-file source note in `Finalists/data/raw/README.md` (Kent asked, Sat 11:35) | noah | review | claude/noah-work |
