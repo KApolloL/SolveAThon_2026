@@ -273,6 +273,7 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
   .picker label { font-size:1.15rem; }
   .picker .selwrap { display:block; }
   .picker select { font-size:1.2rem; min-width:0; width:100%; text-overflow:ellipsis; }
+  @media (max-width:420px) { .picker select { font-size:1rem; } }
   .elig, .badge { white-space:normal; }
   .steps { padding:8px 12px; } .steps ol { gap:4px 16px; } .steps li { font-size:.88rem; }
   details.drawer dl, dl.gloss { grid-template-columns:1fr; } details.drawer dt { margin-top:4px; }
@@ -490,11 +491,12 @@ body.swiping { overflow:hidden; }
 .sw-fund { font-size:1.25rem; font-weight:800; line-height:1.2; } .sw-dept { font-size:.85rem; opacity:.85; font-weight:600; }
 .sw-flag { background:var(--warn-soft); color:var(--on-warn-soft); font-weight:700; font-size:.85rem; padding:6px 20px; }
 .sw-title { margin:14px 20px 4px; font-size:1.02rem; line-height:1.3; color:var(--text-secondary); font-weight:600; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-.sw-nums { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:12px 20px; flex:1; align-content:center; }
-.sw-num { background:var(--surface-3); border-radius:14px; padding:14px 12px; text-align:center; display:flex; flex-direction:column; justify-content:center; }
+.sw-nums { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; padding:12px 20px; flex:1; align-content:center; }
+.sw-num { min-width:0; overflow-wrap:anywhere; background:var(--surface-3); border-radius:14px; padding:14px 12px; text-align:center; display:flex; flex-direction:column; justify-content:center; }
 .sw-num b { font-size:2.4rem; font-weight:800; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; color:var(--text-primary); }
 .sw-num span { font-size:.82rem; color:var(--text-muted); margin-top:6px; font-weight:600; }
-.sw-num.urgent b { color:var(--bad); } .sw-num.na b { font-size:1.3rem; color:var(--text-muted); } .sw-num.stars b { font-size:1.55rem; letter-spacing:.04em; color:#b8860b; }
+.sw-num.urgent b { color:var(--bad); } .sw-num.na b { font-size:1.3rem; color:var(--text-muted); } .sw-num.stars b { font-size:1.55rem; letter-spacing:.04em; color:#b8860b; } .sw-num.who b { font-size:1.55rem; letter-spacing:0; }
+.cmp-need { margin:6px 0 0; } .cmp-go:disabled { opacity:.55; cursor:not-allowed; }
 .sw-note { margin:0 20px 16px; font-size:.85rem; color:var(--on-warn-soft); background:var(--warn-soft); border-radius:8px; padding:6px 10px; font-weight:600; }
 .sw-btns { display:flex; gap:22px; align-items:center; }
 .sw-btns button { width:72px; height:72px; border-radius:50%; border:none; font-size:1.8rem; font-weight:800; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; box-shadow:0 6px 18px rgba(0,0,0,.16); background:var(--surface-2); }
@@ -505,7 +507,7 @@ body.swiping { overflow:hidden; }
 .sw-end h3 { margin:0; font-size:1.4rem; } .sw-end p { color:var(--text-secondary); margin:0 0 8px; }
 .sw-end button { font:inherit; font-weight:700; min-width:220px; padding:10px 18px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); cursor:pointer; min-height:46px; }
 .sw-end button.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
-@media (max-width:560px) { .sw-num b { font-size:1.9rem; } .sw-btns button { width:64px; height:64px; } .sw-keys { display:none; } }
+@media (max-width:560px) { .sw-num b { font-size:1.9rem; } .sw-num.who b, .sw-num.stars b { font-size:1.3rem; } .sw-btns button { width:64px; height:64px; } .sw-keys { display:none; } }
 
 /* ---- compare ---- */
 dialog.sheet.wide { width:min(1000px, calc(100vw - 24px)); }
@@ -655,12 +657,12 @@ body.proj .tour-card { font-size:1.2rem; }
     <details class="panel" id="gloss"><summary>Words used here</summary>
       <dl class="gloss">
         <dt>Best match</dt><dd>How many words a grant's title and summary share with your agency's plan goals. It is a keyword score, not a judgment of quality. Compare scores only inside one agency's list.</dd>
-        <dt>Your agency can apply</dt><dd>The listing's list of who can apply, or a quoted line in the notice, says state agencies are allowed.</dd>
-        <dt>Eligibility unclear</dt><dd>The applicant list is unclear. The notice's own words are shown under the title; read the notice (the link on the title) before spending time.</dd>
-        <dt>Who signs</dt><dd>Who has to approve an application: you can start now, your boss must sign, or leadership must sign. Shown only when the notice makes it clear.</dd>
+        <dt>Your agency can apply</dt><dd>The listing's list of who can apply, or a quoted line in the announcement, says state agencies are allowed.</dd>
+        <dt>Eligibility unclear</dt><dd>The applicant list is unclear. The announcement's own words are shown under the title; read the announcement (the link on the title) before spending time.</dd>
+        <dt>Who signs</dt><dd>Who has to approve an application: you can start now, your boss must sign, or leadership must sign. Shown only when the announcement makes it clear.</dd>
         <dt>Closing soon</dt><dd>14 days or fewer left to apply.</dd>
         <dt>Coming up</dt><dd>Forecasts: the funder says it plans to post this. You cannot apply yet, but you can plan.</dd>
-        <dt>Rolling</dt><dd>No close date is listed. Check the notice for how long it stays open.</dd>
+        <dt>Rolling</dt><dd>No close date is listed. Check the announcement for how long it stays open.</dd>
         <dt>Pursue, Maybe, Pass</dt><dd>Your own marks, saved only in this browser. Pursue puts the grant in your cart and opens a plan. Nothing is sent anywhere.</dd>
         <dt>Tier 1, 2, 3</dt><dd>Who has to sign, as in the qualifier tool. Tier 1: you can start. Tier 2: your boss signs (matching money). Tier 3: leadership signs (matching money on an award of $1M or more).</dd>
         <dt>Odds</dt><dd>A rough read of competition from the listing: how many awards will be made, who else is allowed to apply, and whether NC has won this program before. Good, Fair, Long shot, or Unknown when the listing says nothing. It never changes the ranking.</dd>
@@ -751,24 +753,24 @@ body.proj .tour-card { font-size:1.2rem; }
 {
   "agencies": { "value": 32, "fact": 2 },
   "open_ranked": { "value": 1576, "fact": 3 },
-  "closing_soon_top10": { "value": 73, "fact": 17 },
+  "closing_soon_top10": { "value": 71, "fact": 17 },
   "backtest": {
     "fact": "26, 29, 31",
-    "won_programs": 159,
-    "question": "NC agencies later won 159 federal programs. Four weeks before each closed, how many were already in that agency's top 10?",
+    "won_programs": 157,
+    "question": "NC agencies later won 157 federal programs. Four weeks before each closed, how many were already in that agency's top 10?",
     "rows": [
-      { "label": "This tool", "count": 58, "pct": 36.48, "ours": true },
-      { "label": "Newest-posted alert", "count": 34, "pct": 21.38, "note": "Stands in for the usual new-postings email; not measured with coordinators." },
-      { "label": "Soonest deadline first", "count": null, "pct": 17 },
-      { "label": "Ten picked at random", "count": null, "pct": 13.5, "note": "Exact expected value." }
+      { "label": "This tool", "count": 61, "pct": 38.85, "ours": true },
+      { "label": "Newest-posted alert", "count": 35, "pct": 22.29, "note": "Stands in for the usual new-postings email; not measured with coordinators." },
+      { "label": "Soonest deadline first", "count": null, "pct": 19.7 },
+      { "label": "Ten picked at random", "count": null, "pct": 14.1, "note": "Exact expected value." }
     ],
-    "fails": "Where it fails: 101 of the 159 won programs were not in the top 10. Reading the top 50 reaches 97 of 159 (61%). Keyword matching misses grants worded differently from the plan, and only 4 of 12 agencies clear our 50% bar.",
+    "fails": "Where it fails: 96 of the 157 won programs were not in the top 10. Reading the top 50 reaches 98 of 157 (62%). Keyword matching misses grants worded differently from the plan, and only 4 of 12 agencies clear our 50% bar.",
     "source": "Award-history backtest, 12 agencies with 3 or more won programs, 4-week windows, Nov 2024 to Nov 2026. Exploratory."
   },
   "intime": {
-    "fact": 32, "won": 159, "days": 21,
-    "points": [ { "weeks": 2, "all": 59, "intime": 52 }, { "weeks": 4, "all": 58, "intime": 42 }, { "weeks": 6, "all": 55, "intime": 35 } ],
-    "say": "Checking every 2 weeks, 52 of the 159 still had 21 or more days left to apply. Checking every 6 weeks, only 35 did. That gap is why the tool is built to refresh every day."
+    "fact": 32, "won": 157, "days": 21,
+    "points": [ { "weeks": 2, "all": 61, "intime": 53 }, { "weeks": 4, "all": 61, "intime": 41 }, { "weeks": 6, "all": 55, "intime": 34 } ],
+    "say": "Checking every 2 weeks, 53 of the 157 still had 21 or more days left to apply. Checking every 6 weeks, only 34 did. That gap is why the tool shows the data date and has a daily refresh job (built; its schedule is not verified yet)."
   }
 }
 </script>
@@ -791,8 +793,8 @@ body.proj .tour-card { font-size:1.2rem; }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 
   var ELIG = { yes: "Yes", no: "No", ask: "Ask" };
-  var ELIG_WORDS = { yes: "State agency can apply", no: "Not eligible", ask: "Check the notice" };
-  var SRC = { code: "the listing's list of who can apply", rule: "a fixed wording check", reader: "an automatic read of the notice" };
+  var ELIG_WORDS = { yes: "State agency can apply", no: "Not eligible", ask: "Check the announcement" };
+  var SRC = { code: "the listing's list of who can apply", rule: "a fixed wording check", reader: "an automatic read of the announcement" };
   var TIER = { writer: "You can start", supervisor: "Needs your boss", leadership: "Needs leadership", unknown: "Unknown" };
 
   // ---- marks (Pursue / Maybe / Pass), browser only ----
@@ -824,17 +826,17 @@ body.proj .tour-card { font-size:1.2rem; }
     s.appendChild(el("p", "ps-days", r.days_left != null ? r.days_left + (r.days_left === 1 ? " day left" : " days left") + " (closes " + r.close_date + ")" : (r.date_note || "No close date listed")));
     var dl = el("dl");
     function add(k, v) { if (v == null || v === "") return; dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, String(v))); }
-    add("Can we apply?", ({ yes: "Yes, state agencies are allowed", no: "No", ask: "Not sure: read the notice before spending time" }[r.eligibility] || "Not sure: read the notice") + (r.elig_quote ? ' (notice: "' + r.elig_quote + '")' : ""));
+    add("Can we apply?", ({ yes: "Yes, state agencies are allowed", no: "No", ask: "Not sure: read the announcement before spending time" }[r.eligibility] || "Not sure: read the announcement") + (r.elig_quote ? ' (notice: "' + r.elig_quote + '")' : ""));
     add("Why it fits our plan", r.goal_snippet || "No plan goal matched");
-    add("Who has to sign", r.signature_tier && TIER[r.signature_tier] && r.signature_tier !== "unknown" ? TIER[r.signature_tier] + (r.tier_reason ? ". " + r.tier_reason : "") : "Not stated in the notice");
+    add("Who has to sign", r.signature_tier && TIER[r.signature_tier] && r.signature_tier !== "unknown" ? TIER[r.signature_tier] + (r.tier_reason ? ". " + r.tier_reason : "") : "Not stated in the announcement");
     add("Award ceiling", r.award_ceiling != null ? "$" + Number(r.award_ceiling).toLocaleString() : "Not listed by the funder");
     add("Opportunity number", r.opp_number);
-    add("Assistance listing", r.cfda_list);
+    add("Federal program number", r.cfda_list);
     add("Summary", r.opp_snippet);
-    add("Notice", safeUrl(r.url));
+    add("Grant announcement", safeUrl(r.url));
     s.appendChild(dl);
     var sign = el("div", "ps-sign"); ["Pursue / Pass", "Name", "Date"].forEach(function (t) { sign.appendChild(el("div", null, t)); }); s.appendChild(sign);
-    s.appendChild(el("p", "ps-foot", "Ranked by keyword fit between the notice and the agency's strategic plan. No AI model decides rank or eligibility. A person makes the decision."));
+    s.appendChild(el("p", "ps-foot", "Ranked by keyword fit between the announcement and the agency's strategic plan. No AI model decides rank or eligibility. A person makes the decision."));
     document.body.classList.add("printing");
     var done = function () { document.body.classList.remove("printing"); window.removeEventListener("afterprint", done); };
     window.addEventListener("afterprint", done);
@@ -863,7 +865,7 @@ body.proj .tour-card { font-size:1.2rem; }
     card.appendChild(ul);
     if (EV.intime) card.appendChild(curveEl(EV.intime, box.id));
     var fl = el("p", "fails"); fl.appendChild(el("b", null, "Where it falls short")); fl.appendChild(document.createTextNode(b.fails.replace(/^Where it fails:\s*/, ""))); card.appendChild(fl);
-    card.appendChild(el("p", "src", b.source + " Alert baseline: " + b.rows[1].note + " Fact sheet rows " + b.fact + "."));
+    card.appendChild(el("p", "src", b.source + " Alert baseline: " + b.rows[1].note));
     box.appendChild(card);
   }
   function curveEl(c, uid) {
@@ -884,7 +886,7 @@ body.proj .tour-card { font-size:1.2rem; }
       var last = c.points[c.points.length - 1]; mk("text", { x: X(last.weeks) + 10, y: Y(last[L[0]]) + 4, "class": "lab " + L[2] }, L[1] + ": " + last[L[0]]);
     });
     wrap.appendChild(svg);
-    wrap.appendChild(el("p", "src", "Same 159 won programs. " + c.days + " days is a team assumption. Fact sheet row " + c.fact + "."));
+    wrap.appendChild(el("p", "src", "Same " + c.won + " won programs. " + c.days + " days is a team assumption."));
     return wrap;
   }
   function fmtAsOf(s) {
@@ -946,17 +948,21 @@ body.proj .tour-card { font-size:1.2rem; }
     return { level: lvl, weeks: lvl ? EFFORT_WEEKS[lvl] : null, label: lvl ? { easy: "Easy", medium: "Medium effort", hard: "Hard" }[lvl] : "Effort unknown", why: why };
   }
   function payoff(r) { if (r.eligibility === "ask" && limitedTo(r)) return null; var m = money(r).max, e = effort(r); return m && e.weeks ? m / e.weeks : null; }
+  function cap(t) { t = String(t || ""); return t.charAt(0).toUpperCase() + t.slice(1); }
   function tierInfo(r) { return { writer: [1, "Tier 1: you can start"], supervisor: [2, "Tier 2: your boss signs"], leadership: [3, "Tier 3: leadership signs"] }[r.signature_tier] || [0, "Who signs: not stated"]; }
   function tight(r) { var e = effort(r); return r.days_left != null && r.days_left >= 0 && e.weeks && r.days_left < e.weeks * 7; }
 
   // ---- quick filters (dropdowns, plain-English box, keyword search). Own view only; unknown values are never hidden. ----
-  var F = { q: "", sign: "", match: "", min: 0, max: 0, weeks: 0, work: 0, odds: "", funder: "", topic: [], need: "", region: "", focus: "", matchAmt: null };
+  var F = { q: "", sign: "", match: "", min: 0, max: 0, weeks: 0, work: 0, odds: "", funder: "", topic: [], need: "", region: "", focus: "", matchAmt: null, exact: "", when: "", stars: "" };
   var SYN = { kid: ["child", "youth", "student"], kids: ["child", "youth", "student"], children: ["child", "youth", "student"], child: ["child", "youth"], teen: ["youth", "adolescent"], teens: ["youth", "adolescent"], bus: ["bus", "diesel", "vehicle"], buses: ["bus", "diesel", "vehicle"], car: ["vehicle"], cars: ["vehicle"], opioid: ["opioid", "substance"], drug: ["substance", "drug"], drugs: ["substance", "drug"], vet: ["veteran"], vets: ["veteran"], elderly: ["older", "aging"], seniors: ["older", "aging"], internet: ["broadband"], wifi: ["broadband"], fire: ["fire", "wildfire"], farm: ["agricultur", "farm"], farms: ["agricultur", "farm"], farmer: ["agricultur", "farm"], farmers: ["agricultur", "farm"], police: ["law enforcement", "police"], cops: ["law enforcement", "police"], jail: ["correction", "jail"], prison: ["correction", "prison"], housing: ["housing", "homeless"], water: ["water"], storm: ["disaster", "hurricane", "storm"], hurricane: ["disaster", "hurricane"] };
   function expandWord(w) { return SYN[w] || [w]; }
   var SAY_STOP = {}; ("have need needs want wants looking look find grant grants funding fund funds money matching match cost share sharing week weeks month months days least most award awards easy easier quick ones only good odds best chance payoff worth biggest large small soonest deadline urgent crunch staff people person team agency agencies department program programs project projects state north carolina something anything about related help would could like just also some more than with without into from that this those these there their they them what when where which while your ours mine myself boss supervisor leadership sign signs plan planning forecast forecasts coming open time apply application really very").split(" ").forEach(function (w) { SAY_STOP[w] = 1; });
   function stem(w) { return w.length > 4 ? w.replace(/(ies|es|s)$/, function (x) { return x === "ies" ? "y" : ""; }) : w; }
   function topicHits(r) { if (!F.topic.length) return 0; var hay = [r.title, r.opp_snippet, r.funder, r.goal_snippet].join(" ").toLowerCase(); return F.topic.filter(function (w) { return w.split("|").some(function (x) { return hay.indexOf(x) >= 0; }); }).length; }
   var ORDER_LABEL = { track: "track record", focus: "focus group", rank: "best match", payoff: "best payoff", money: "biggest money", deadline: "soonest deadline", odds: "best odds", easy: "easiest first", priority: "my plan priorities" };
+  var WHEN = { "This week": [0, 7], "Next week": [8, 14], "In 3-4 weeks": [15, 28], "In 1-2 months": [29, 60], "Later": [61, 1e9], "No fixed date": [null, null] };
+  var TIER_WORD = ["Who signs not stated", "You can start", "Your boss signs", "Leadership signs"];
+  function chartFilterText() { var t = []; if (F.exact !== "") t.push(TIER_WORD[+F.exact]); if (F.when) t.push("closes " + F.when.toLowerCase()); if (F.stars !== "") t.push(F.stars + " stars"); return t.join(", "); }
   function passF(r) {
     if (F.q) {
       var hay = [r.title, r.opp_snippet, r.funder, r.goal_snippet, r.opp_number, r.cfda_list].join(" ").toLowerCase();
@@ -975,6 +981,9 @@ body.proj .tour-card { font-size:1.2rem; }
     if (F.region && regionsOf(r).indexOf(F.region) < 0) return false;
     if (F.focus && focusOf(r).indexOf(F.focus) < 0) return false;
     if (F.matchAmt === 0 && r.cost_sharing === "Yes") return false;
+    if (F.exact !== "" && String(tierInfo(r)[0]) !== F.exact) return false;
+    if (F.when) { var wd = WHEN[F.when]; if (!wd || (wd[0] == null ? r.days_left != null : (r.days_left == null || r.days_left < wd[0] || r.days_left > wd[1]))) return false; }
+    if (F.stars !== "" && String(track(r).stars) !== F.stars) return false;
     return true;
   }
   function sortRows(rows) {
@@ -1083,35 +1092,35 @@ body.proj .tour-card { font-size:1.2rem; }
     if (own) D = (ef.weeks || 4) * 7 + 14;
     var S = [
       [0, "Decide to go for it", "Tell your boss you plan to apply. Mark it Pursue (done)."],
-      [0.1, "Read the whole notice", "Confirm your agency can apply. Write down page limits, required forms and the exact closing time."],
-      [0.2, "Check your logins", "Make sure your agency's SAM.gov registration (UEI) and your Grants.gov account are active. Fixing these can take weeks."],
+      [0.1, "Read the whole grant announcement", "Confirm your agency can apply. Write down page limits, required forms and the exact closing time."],
+      [0.2, "Check your logins", "Make sure your agency's SAM.gov registration (its federal ID number, called a UEI) and your Grants.gov account are active. Fixing these can take weeks."],
       [0.45, "Gather the pieces", "Partners, letters of support and budget numbers" + (cs ? ", plus a written commitment of the matching money" : "") + "."],
       [0.7, "Write the first draft", "Project narrative, budget and budget justification."],
       [0.85, ti === 3 ? "Leadership review and signature" : ti === 2 ? "Your boss reviews and signs" : "Someone else proofreads", ti === 3 ? "Book this early: leadership calendars fill up." : "Fix what they find."],
       [-1, "Submit on Grants.gov", "Aim " + SUBMIT_EARLY_DAYS + " days early. The system is slow on deadline day."],
-      [-2, own ? "Your target date" : "Deadline", own ? "No fixed deadline is listed, so this plan sets one for you." : "Closes " + r.close_date + ". Check the notice for the exact time."]
+      [-2, own ? "Your target date" : "Deadline", own ? "No fixed deadline is listed, so this plan sets one for you." : "Closes " + r.close_date + ". Check the announcement for the exact time."]
     ];
-    var ref = refDate(); if (!own && /^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "")) ref = new Date(new Date(r.close_date + "T00:00:00").getTime() - D * 864e5);
+    var ref = refDate(); if (!own && /^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "")) { ref = new Date(r.close_date + "T00:00:00"); ref.setDate(ref.getDate() - D); }
     var prev = 0;
     return S.map(function (s) {
       var day = s[0] === -2 ? D : s[0] === -1 ? Math.max(0, D - SUBMIT_EARLY_DAYS) : Math.round(D * s[0]);
       day = Math.max(prev, Math.min(day, D)); prev = day;
-      var dt = new Date(ref.getTime() + day * 864e5);
+      var dt = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() + day);
       return { day: day, date: dt, title: s[1], text: s[2], own: own };
     });
   }
   function reqs(r) {
     var out = [], ef = effort(r), m = money(r), t = r.applicant_types ? String(r.applicant_types).split("|") : [];
-    out.push(["Your agency is allowed to apply", r.eligibility === "yes" ? "Yes: the listing allows state agencies." : "Not clear yet: read the eligibility section of the notice." + (r.elig_quote ? ' It says: "' + String(r.elig_quote).slice(0, 220) + '"' : "")]);
-    out.push(["Matching money", r.cost_sharing === "Yes" ? "Required. Get the amount approved before you write." : r.cost_sharing === "No" ? "Not required." : "Not stated in the listing. Check the notice."]);
-    out.push(["Who signs", tierInfo(r)[1].replace(/^Tier \d: /, "") + "."]);
+    out.push(["Your agency is allowed to apply", r.eligibility === "yes" ? "Yes: the listing allows state agencies." : "Not clear yet: read the eligibility section of the announcement." + (r.elig_quote ? ' It says: "' + String(r.elig_quote).slice(0, 220) + '"' : "")]);
+    out.push(["Matching money", r.cost_sharing === "Yes" ? "Required. Get the amount approved before you write." : r.cost_sharing === "No" ? "Not required." : "Not stated in the listing. Check the announcement."]);
+    out.push(["Who signs", cap(tierInfo(r)[1].replace(/^Tier \d: /, "")) + "."]);
     out.push(["Staff time", ef.weeks ? "Roughly " + ef.weeks + " weeks of one person's time (a guess from who signs and matching money)." : "Unknown. Plan for at least 4 weeks."]);
     out.push(["Award size", m.max ? "Up to " + usd(m.max) + " per award" + (m.min ? ", at least " + usd(m.min) : "") + "." : "Not listed by the funder."]);
-    out.push(["SAM.gov registration", "Active registration with a Unique Entity ID (UEI). Needed for every federal grant."]);
+    out.push(["SAM.gov registration", "Your agency needs an active SAM.gov registration and its federal ID number (Unique Entity ID, or UEI). Needed for every federal grant."]);
     out.push(["Grants.gov account", "Someone at your agency with the role that can submit."]);
-    out.push(["Forms and attachments", "The notice lists them. Typical: SF-424, budget form, project narrative."]);
+    out.push(["Forms and attachments", "The grant announcement lists them. Typical: the standard federal cover form (SF-424), a budget form and a project narrative."]);
     var tn = t.filter(function (x) { return x !== "other"; }).map(function (x) { return x === "unrestricted" ? "anyone" : x.replace(/_/g, " "); });
-    if (tn.length) out.push(["Who else can apply", tn.join(", ") + "."]); else if (t.length) out.push(["Who else can apply", "The listing says \"see the notice\". Read its eligibility section."]);
+    if (tn.length) out.push(["Who else can apply", tn.join(", ") + "."]); else if (t.length) out.push(["Who else can apply", "The listing says \"see the announcement\". Read its eligibility section."]);
     return out;
   }
   window.ffmOpenFirstPlan = function () { var li = document.querySelector("#start li.row"); var r = li && deskRowFor(li); if (r) openPlan(r); return !!r; };
@@ -1122,24 +1131,29 @@ body.proj .tour-card { font-size:1.2rem; }
     var h = el("h2", null, r.title || r.opp_number || r.opp_id); h.id = "plan-title"; head.appendChild(h);
     box.appendChild(head);
     var facts = el("div", "plan-facts");
-    [[r.days_left != null ? String(r.days_left) : "No date", r.days_left != null ? (r.days_left === 1 ? "day left" : "days left") : (r.date_note || "rolling")], [usd(money(r).max) || "Not listed", "max per award"], [tierInfo(r)[1].split(": ")[1] || "Not stated", "who signs"], [odds(r).label, "chance of winning"]].forEach(function (f, i) {
+    [[r.days_left != null ? String(r.days_left) : "No date", r.days_left != null ? (r.days_left === 1 ? "day left" : "days left") : (r.date_note || "rolling")], [usd(money(r).max) || "Not listed", "max per award"], [cap(tierInfo(r)[1].split(": ")[1] || "Not stated"), "who signs"], [odds(r).label, "chance of winning"]].forEach(function (f, i) {
       var d = el("div", "pf" + (i === 0 && r.days_left != null && r.days_left <= CSD ? " urgent" : "")); d.appendChild(el("b", null, f[0])); d.appendChild(el("span", null, f[1])); facts.appendChild(d); });
     box.appendChild(facts);
     var btns = el("div", "plan-btns"), u = safeUrl(r.url);
-    if (u) { var a = el("a", "btn-primary", "Open the notice on Grants.gov"); a.href = u; a.target = "_blank"; a.rel = "noopener"; btns.appendChild(a); }
+    if (u) { var a = el("a", "btn-primary", "Open the grant announcement on Grants.gov"); a.href = u; a.target = "_blank"; a.rel = "noopener"; btns.appendChild(a); }
     if (/^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "")) { var cb = el("button", null, "Add deadline to my calendar"); cb.type = "button"; cb.addEventListener("click", function () { saveFile("deadline_" + r.opp_id + ".ics", icsText([r]), "text/calendar;charset=utf-8"); }); btns.appendChild(cb); }
     var pb = el("button", null, "Print brief for my boss"); pb.type = "button"; pb.addEventListener("click", function () { dlg.close(); printBrief(r); }); btns.appendChild(pb);
     box.appendChild(btns);
-    if (tight(r)) box.appendChild(el("p", "plan-warn", "Tight: this usually takes about " + effort(r).weeks + " weeks of work, and only " + r.days_left + " days are left. Decide today, or pass."));
+    if (tight(r) && r.days_left > 2) box.appendChild(el("p", "plan-warn", "Tight: this usually takes about " + effort(r).weeks + " weeks of work, and only " + r.days_left + " days are left. Decide today, or pass."));
     box.appendChild(el("h3", null, "Your timeline"));
     var steps = planSteps(r), tl = el("ol", "timeline");
-    if (steps[0].own) box.appendChild(el("p", "note", "No deadline is listed, so these dates count back from a target " + steps[steps.length - 1].day + " days out. Change it once you read the notice."));
-    steps.forEach(function (s, i) {
+    if (!steps[0].own && steps[steps.length - 1].day <= 2) {
+      var dd0 = steps[steps.length - 1].day;
+      box.appendChild(el("p", "plan-warn", (dd0 === 0 ? "This closes today." : dd0 === 1 ? "This closes tomorrow." : "This closes in 2 days.") + " There is no time for a full plan. Submit " + (dd0 === 0 ? "today" : "today or tomorrow") + " only if the application is already written and your SAM.gov and Grants.gov logins work. Otherwise pass and watch for the next round."));
+      tl = null;
+    }
+    if (steps[0].own) box.appendChild(el("p", "note", (r.status === "forecasted" ? "This grant is not posted yet" + (r.date_note ? " (" + r.date_note.toLowerCase() + ")" : "") + ", so" : "No deadline is listed, so") + " these dates count back from a target " + steps[steps.length - 1].day + " days out. Change it once you read the grant announcement."));
+    if (tl) steps.forEach(function (s, i) {
       var li = el("li", i === steps.length - 1 ? "last" : i === 0 ? "first" : null);
       li.appendChild(el("time", null, fmtDay(s.date) + (s.day ? " · day " + s.day : " · today")));
       li.appendChild(el("b", null, s.title)); li.appendChild(el("span", null, s.text)); tl.appendChild(li);
     });
-    box.appendChild(tl);
+    if (tl) box.appendChild(tl);
     box.appendChild(el("h3", null, "What you will need"));
     var cl = el("ul", "checklist"), mine = checks[key] || {};
     reqs(r).forEach(function (q, i) {
@@ -1149,7 +1163,7 @@ body.proj .tour-card { font-size:1.2rem; }
       li.appendChild(cbx); li.appendChild(lab); cl.appendChild(li);
     });
     box.appendChild(cl);
-    box.appendChild(el("p", "note", "Requirements come from the Grants.gov listing. The notice has the full list. Your ticks stay in this browser only."));
+    box.appendChild(el("p", "note", "Requirements come from the Grants.gov listing. The grant announcement has the full list. Your ticks stay in this browser only."));
     if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute("open", "");
     dlg.scrollTop = 0;
   }
@@ -1176,7 +1190,7 @@ body.proj .tour-card { font-size:1.2rem; }
       dd.appendChild(el("b", null, r.days_left != null ? String(r.days_left) : "–")); dd.appendChild(el("span", null, r.days_left != null ? "days" : "no date")); li.appendChild(dd);
       var mid = el("div", "cl-mid"); mid.appendChild(el("b", null, r.title || r.opp_id)); mid.appendChild(el("span", null, (usd(money(r).max) || "Amount not listed") + " · " + (r.funder || "") + " · " + agName(r.agency_id)));
       var det = el("dl", "cl-det"), tk = track(r), ft = fedTrend(r), ef = effort(r);
-      [["Track record", starStr(tk.stars) + " " + tk.label + (tk.why[0] ? ". " + tk.why[0] : "")], ["Who signs", tierInfo(r)[1]], ["Chance", odds(r).label], ["Effort", ef.label + (ef.weeks ? " (~" + ef.weeks + " wks)" : "")], ["Matching money", r.cost_sharing === "Yes" ? "Required" : r.cost_sharing === "No" ? "Not required" : "Not stated"], ["Federal budget", ft ? (ft.fy26 != null ? usd(ft.fy26) + " planned FY 26" : usd(ft.fy25) + " in FY 25") + (ft.dir ? " (" + ft.dir + ")" : "") : "Not reported"], ["Vs. agency budget", shareOfBudget(r) || "Unknown"]].forEach(function (x) { det.appendChild(el("dt", null, x[0])); det.appendChild(el("dd", null, x[1])); });
+      [["Track record", starStr(tk.stars) + " " + tk.label + (tk.why[0] ? ". " + tk.why[0] : "")], ["Who signs", tierInfo(r)[1]], ["Chance", odds(r).label], ["Effort", ef.label + (ef.weeks ? " (~" + ef.weeks + " wks)" : "")], ["Matching money", r.cost_sharing === "Yes" ? "Required" : r.cost_sharing === "No" ? "Not required" : "Not stated"], ["Federal budget", ft ? (ft.fy26 != null ? usd(ft.fy26) + " planned for 2026" : usd(ft.fy25) + " in FY 25") + (ft.dir ? " (" + ft.dir + ")" : "") : "Not reported"], ["Vs. agency budget", shareOfBudget(r) || "Unknown"]].forEach(function (x) { det.appendChild(el("dt", null, x[0])); det.appendChild(el("dd", null, x[1])); });
       mid.appendChild(det); li.appendChild(mid);
       var ck = el("input"); ck.type = "checkbox"; ck.className = "cl-ck"; ck.setAttribute("aria-label", "Pick " + (r.title || "grant") + " to compare"); ck.dataset.key = r.agency_id + "|" + r.opp_id; li.insertBefore(ck, li.firstChild);
       var act = el("div", "cl-act"), op = el("button", "primary", "Plan"); op.type = "button"; op.addEventListener("click", function () { $("cart-dlg").close(); openPlan(r); });
@@ -1185,11 +1199,14 @@ body.proj .tour-card { font-size:1.2rem; }
       act.appendChild(op); act.appendChild(rm); li.appendChild(act); ul.appendChild(li);
     });
     box.appendChild(ul);
-    var cmpb = el("button", "primary", "Compare the ones I ticked (up to 4)"); cmpb.type = "button"; cmpb.className = "cmp-go";
-    cmpb.addEventListener("click", function () { var by = {}; rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; }); var pick = [].slice.call(box.querySelectorAll(".cl-ck:checked")).map(function (c) { return by[c.dataset.key]; }); $("cart-dlg").close(); openCompare(pick.length ? pick : rows.slice(0, 4)); });
-    box.appendChild(cmpb);
+    var cmpb = el("button", "primary", "Compare the ones I ticked (2 to 4)"); cmpb.type = "button"; cmpb.className = "cmp-go";
+    var cmpn = el("p", "note cmp-need", "Tick 2 to 4 grants above to compare them side by side."); cmpn.setAttribute("role", "status");
+    var cmpSync = function () { var k = box.querySelectorAll(".cl-ck:checked").length; cmpb.disabled = k < 2; cmpn.textContent = k < 2 ? "Tick " + (2 - k) + " more " + (k === 1 ? "grant" : "grants") + " above to compare them side by side." : k > 4 ? "Only the first 4 ticked grants will show." : k + " ticked."; };
+    box.addEventListener("change", function (e) { if (e.target.classList && e.target.classList.contains("cl-ck")) cmpSync(); });
+    cmpb.addEventListener("click", function () { var by = {}; rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; }); var pick = [].slice.call(box.querySelectorAll(".cl-ck:checked")).map(function (c) { return by[c.dataset.key]; }); if (pick.length < 2) return; $("cart-dlg").close(); openCompare(pick); });
+    if (rows.length >= 2) { box.appendChild(cmpb); box.appendChild(cmpn); cmpSync(); }
     var mr = maybeRows(); if (mr.length) { var mb = el("button", null, "Compare my " + mr.length + " maybes"); mb.type = "button"; mb.className = "cmp-go"; mb.addEventListener("click", function () { $("cart-dlg").close(); openCompare(mr); }); box.appendChild(mb); }
-    var needM = ur.filter(function (r) { return r.cost_sharing === "Yes"; }).length; if (needM) box.appendChild(el("p", "plan-warn", needM + (needM === 1 ? " grant here needs" : " grants here need") + " matching money" + (F.matchAmt != null ? "; you said you can commit " + usd(F.matchAmt) : "") + ". Check each notice for the share."));
+    var needM = ur.filter(function (r) { return r.cost_sharing === "Yes"; }).length; if (needM) box.appendChild(el("p", "plan-warn", needM + (needM === 1 ? " grant here needs" : " grants here need") + " matching money" + (F.matchAmt != null ? "; you said you can commit " + usd(F.matchAmt) : "") + ". Check each grant announcement for the share."));
     var bar = el("div", "cart-btns");
     [["Download all deadlines (.ics)", "marks-ics"], ["Copy briefs for all", "marks-brief"], ["Export spreadsheet (CSV)", "marks-csv"]].forEach(function (b) { var x = el("button", null, b[0]); x.type = "button"; x.addEventListener("click", function () { $(b[1]).click(); if (b[1] !== "marks-csv") { $("cart-dlg").close(); tab("marks"); } }); bar.appendChild(x); });
     box.appendChild(bar);
@@ -1292,11 +1309,13 @@ body.proj .tour-card { font-size:1.2rem; }
   function titleCase(x) { return String(x).toLowerCase().replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); }).replace(/\bNc\b/g, "NC"); }
   function starStr(n) { return "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n); }
   function fedTrend(r) {
-    var a = r.fed_fy25, b = r.fed_fy26; if (a == null && b == null) return null;
+    // SAM.gov often leaves a year at $0 when it was not reported; show that year as unknown, not as a cut to $0.
+    var nz = function (v) { return v === 0 || v === "0" ? null : v; };
+    var a = nz(r.fed_fy25), b = nz(r.fed_fy26), c = nz(r.fed_fy24); if (a == null && b == null) return null;
     var dir = null, ch = (a > 0 && b != null) ? (b - a) / a : null;
     if (ch != null) dir = ch > 0.1 ? "growing" : ch < -0.1 ? "shrinking" : "steady";
-    return { fy24: r.fed_fy24, fy25: a, fy26: b, dir: dir,
-      text: "Federal spending on this program: " + (r.fed_fy24 != null ? usd(r.fed_fy24) + " in FY 24, " : "") + (a != null ? usd(a) + " in FY 25" : "") + (b != null ? ", " + usd(b) + " planned for FY 26" : "") + (dir ? " (" + dir + ")" : "") + ". Source: SAM.gov Assistance Listings." };
+    return { fy24: c, fy25: a, fy26: b, dir: dir,
+      text: "Federal spending on this program: " + (c != null ? usd(c) + " in 2024, " : "") + (a != null ? usd(a) + " in 2025" : "") + (b != null ? ", " + usd(b) + " planned for 2026" : "") + (dir ? " (" + dir + ")" : "") + " (federal budget years). Source: SAM.gov program listings." };
   }
   function agBudget(id) { var a = P.agencies.filter(function (x) { return x.agency_id === id; })[0]; return a && a.gf_base_fy2526 ? Number(a.gf_base_fy2526) : null; }
   function shareOfBudget(r) {
@@ -1332,12 +1351,12 @@ body.proj .tour-card { font-size:1.2rem; }
     c.appendChild(el("h3", "sw-title", r.title || r.opp_number || r.opp_id));
     var g4 = el("div", "sw-nums");
     function num(big, small, cls) { var x = el("div", "sw-num" + (cls ? " " + cls : "")); x.appendChild(el("b", null, big)); x.appendChild(el("span", null, small)); g4.appendChild(x); }
-    num(r.days_left != null ? String(r.days_left) : "–", r.days_left != null ? (r.days_left === 1 ? "day left" : "days left") : (r.date_note || "no fixed date"), r.days_left != null && r.days_left <= CSD && r.status !== "forecasted" ? "urgent" : null);
+    num(r.days_left != null ? String(r.days_left) : "–", r.days_left != null ? (r.days_left === 1 ? "day left" : "days left") : (cap(r.date_note) || "No fixed date"), r.days_left != null && r.days_left <= CSD && r.status !== "forecasted" ? "urgent" : null);
     num(usd(money(r).max) || "Not listed", "max per award", money(r).max ? null : "na");
     num(starStr(tr.stars), tr.label, "stars");
-    num(ti[0] ? "Tier " + ti[0] : "?", ti[0] ? ti[1].split(": ")[1] : "who signs not stated");
+    num(ti[0] ? ["", "You", "Your boss", "Leadership"][ti[0]] : "?", ti[0] ? (ti[0] === 1 ? "can start it" : "signs") + " · Tier " + ti[0] : "who signs not stated", "who");
     c.appendChild(g4);
-    if (r.eligibility === "ask") c.appendChild(el("p", "sw-note", limitedTo(r) ? "May be only for " + limitedTo(r) + ". Check eligibility." : "Check eligibility in the notice."));
+    if (r.eligibility === "ask") c.appendChild(el("p", "sw-note", limitedTo(r) ? "May be only for " + limitedTo(r) + ". Check eligibility." : "Check eligibility in the announcement."));
     return c;
   }
   function renderSwipe() {
@@ -1358,18 +1377,19 @@ body.proj .tour-card { font-size:1.2rem; }
     var card = swCard(SW.deck[SW.i], 0); stack.appendChild(card); dragify(card);
   }
   function swDecide(kind) {
-    var r = SW.deck[SW.i]; if (!r) return;
+    var r = SW.deck[SW.i]; if (!r || SW.busy) return;
     var key = r.agency_id + "|" + r.opp_id, prev = marks[key];
     var name = kind === "right" ? "Pursue" : kind === "up" ? "Maybe" : "Pass";
     SW.hist.push({ i: SW.i, key: key, prev: prev, name: name });
     marks[key] = name; saveMarks(); syncMarkButtons(key);
     if (name === "Pursue") SW.added++; if (name === "Maybe") SW.maybes++;
     var card = document.querySelector("#sw-stack .sw-card:not(.behind)");
-    var go = function () { SW.i++; renderMarks(); renderSwipe(); };
-    if (card && !matchMedia("(prefers-reduced-motion: reduce)").matches) { card.classList.add("fly-" + kind); setTimeout(go, 220); } else go();
+    var go = function () { SW.i++; SW.busy = false; renderMarks(); renderSwipe(); };
+    if (card && !matchMedia("(prefers-reduced-motion: reduce)").matches) { SW.busy = true; card.classList.add("fly-" + kind); setTimeout(go, 220); } else go();
     $("sw-live").textContent = name === "Pursue" ? "Added to cart" : name === "Maybe" ? "Set aside as maybe" : "Passed";
   }
   function swUndo() {
+    if (SW.busy) return;
     var h = SW.hist.pop(); if (!h) return;
     if (h.prev) marks[h.key] = h.prev; else delete marks[h.key];
     if (h.name === "Pursue") SW.added--; if (h.name === "Maybe") SW.maybes--;
@@ -1407,9 +1427,9 @@ body.proj .tour-card { font-size:1.2rem; }
         ["Effort", function (r) { var e = effort(r); return e.label + (e.weeks ? " (~" + e.weeks + " wks)" : ""); }],
         ["Payoff", function (r) { return payoff(r) ? usd(payoff(r)) + " per week of work" : "Unknown"; }],
         ["Matching money", function (r) { return r.cost_sharing === "Yes" ? "Required" : r.cost_sharing === "No" ? "Not required" : "Not stated"; }],
-        ["Federal program budget", function (r) { var f = fedTrend(r); return f ? (f.fy26 != null ? usd(f.fy26) + " planned FY 26" : usd(f.fy25) + " FY 25") + (f.dir ? ", " + f.dir : "") : "Not reported"; }],
+        ["Federal program budget", function (r) { var f = fedTrend(r); return f ? (f.fy26 != null ? usd(f.fy26) + " planned for the 2026 federal budget" : usd(f.fy25) + " in the 2025 federal budget") + (f.dir ? ", " + f.dir : "") : "Not reported"; }],
         ["Size vs. agency budget", function (r) { return shareOfBudget(r) || "Unknown"; }],
-        ["Can apply?", function (r) { return limitedTo(r) ? "May be only for " + limitedTo(r) : ({ yes: "Yes", ask: "Check the notice", no: "No" }[r.eligibility] || "Check the notice"); }]
+        ["Can apply?", function (r) { return limitedTo(r) ? "May be only for " + limitedTo(r) : ({ yes: "Yes", ask: "Check the announcement", no: "No" }[r.eligibility] || "Check the announcement"); }]
       ];
       var hr = el("tr"); hr.appendChild(el("th", null, ""));
       rows.forEach(function (r) { var th = el("th"); th.style.borderTop = "6px solid " + fundColor(r); th.appendChild(el("span", null, r.title)); hr.appendChild(th); }); t.appendChild(hr);
@@ -1417,7 +1437,7 @@ body.proj .tour-card { font-size:1.2rem; }
       var ar = el("tr"); ar.appendChild(el("th", null, ""));
       rows.forEach(function (r) { var td = el("td"), key = r.agency_id + "|" + r.opp_id, b = el("button", "primary", marks[key] === "Pursue" ? "✓ In my cart" : "Add to cart"); b.type = "button";
         b.addEventListener("click", function () { marks[key] = "Pursue"; saveMarks(); syncMarkButtons(key); renderMarks(); b.textContent = "✓ In my cart"; });
-        var x = el("button", null, "Pass"); x.type = "button"; x.addEventListener("click", function () { marks[key] = "Pass"; saveMarks(); syncMarkButtons(key); renderMarks(); openCompare(rows.filter(function (q) { return q !== r; })); });
+        var x = el("button", null, marks[key] === "Pursue" ? "Pass (removes from cart)" : "Pass"); x.type = "button"; x.addEventListener("click", function () { marks[key] = "Pass"; saveMarks(); syncMarkButtons(key); renderMarks(); openCompare(rows.filter(function (q) { return q !== r; })); });
         td.appendChild(b); td.appendChild(x); ar.appendChild(td); }); t.appendChild(ar);
       wrap.appendChild(t); box.appendChild(wrap);
     }
@@ -1471,25 +1491,25 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function renderGlance(rows) {
     var box = $("glance-body"); box.innerHTML = ""; $("glance").hidden = !rows.length || document.body.classList.contains("proj"); if (!rows.length) return;
-    var wk = [["This week", 0, 7], ["Next week", 8, 14], ["In 3-4 weeks", 15, 28], ["In 1-2 months", 29, 60], ["Later", 61, 1e9], ["No fixed date", null, null]].map(function (w) {
+    var wk = Object.keys(WHEN).map(function (k) { return [k, WHEN[k][0], WHEN[k][1]]; }).map(function (w) {
       var n = rows.filter(function (r) { return w[1] == null ? r.days_left == null : r.days_left != null && r.days_left >= w[1] && r.days_left <= w[2]; }).length;
       return { k: w[0], v: n, lab: String(n), cls: w[2] != null && w[2] <= 14 && n ? "hot" : null };
     });
-    bars(box, "When they close", "Grants in your list, by time left.", wk, function (x) { cur.order = "deadline"; syncF(); show(true); });
+    bars(box, "When they close", "Grants in your list, by time left. Click a bar to show only those.", wk, function (x) { F.when = F.when === x.k ? "" : x.k; show(true); });
     var nm = {}, ns = {}; rows.forEach(function (r) { var nn = needs(r); if (!nn.length) nn = ["?"]; nn.forEach(function (n) { var k = n === "?" ? "Not labeled" : (NEED[n] || n); nm[k] = (nm[k] || 0) + 1; ns[k] = (ns[k] || 0) + (money(r).max || 0); }); });
-    var ni = Object.keys(nm).sort(function (a, b) { return ns[b] - ns[a] || nm[b] - nm[a]; }).slice(0, 6).map(function (k) { return { k: k, v: ns[k], lab: (usd(ns[k]) || "$0") + " · " + nm[k], tip: k + ": " + nm[k] + " grants, up to " + (usd(ns[k]) || "$0") + " per award added up" }; });
+    var ni = Object.keys(nm).sort(function (a, b) { return ns[b] - ns[a] || nm[b] - nm[a]; }).slice(0, 6).map(function (k) { return { k: k, v: ns[k], lab: ((ns[k] > 0 && usd(ns[k])) || "amount not listed") + " · " + nm[k], tip: k + ": " + nm[k] + " grants" + ((ns[k] > 0 && usd(ns[k])) ? ", up to " + usd(ns[k]) + " per award added up" : "; no award amount listed") }; });
     bars(box, "What the money is for", "Most money one award can be, added up, by Grants.gov need type. Click to filter.", ni, function (x) { if (x.k === "Not labeled") return; F.need = x.k; show(true); syncF(); });
     var tc = [0, 0, 0, 0]; rows.forEach(function (r) { tc[tierInfo(r)[0]]++; });
-    bars(box, "Who has to sign", "Tier 1 you, Tier 2 your boss, Tier 3 leadership. Click to show only what you can handle.", [{ k: "Tier 1: you", v: tc[1], lab: String(tc[1]), s: "1" }, { k: "Tier 2: boss", v: tc[2], lab: String(tc[2]), s: "2" }, { k: "Tier 3: leadership", v: tc[3], lab: String(tc[3]), s: "" }, { k: "Not stated", v: tc[0], lab: String(tc[0]), s: "" }], function (x) { F.sign = x.s; syncF(); show(true); });
+    bars(box, "Who has to sign", "Click a bar to show only those grants.", [{ k: "You can start", v: tc[1], lab: String(tc[1]), s: "1" }, { k: "Your boss signs", v: tc[2], lab: String(tc[2]), s: "2" }, { k: "Leadership signs", v: tc[3], lab: String(tc[3]), s: "3" }, { k: "Not stated", v: tc[0], lab: String(tc[0]), s: "0" }], function (x) { F.exact = F.exact === x.s ? "" : x.s; show(true); });
     var sc = [0, 0, 0, 0, 0, 0]; rows.forEach(function (r) { sc[track(r).stars]++; });
-    bars(box, "Track record", "Stars from past awards and competition.", [5, 4, 3, 2, 1].map(function (n) { return { k: starStr(n), v: sc[n], lab: String(sc[n]), cls: "stars" }; }), function () { cur.order = "track"; syncF(); show(true); });
+    bars(box, "Track record", "Stars from past awards and competition. Click a bar to show only those.", [5, 4, 3, 2, 1].map(function (n) { return { k: starStr(n), v: sc[n], lab: String(sc[n]), cls: "stars", s: String(n) }; }), function (x) { F.stars = F.stars === x.s ? "" : x.s; show(true); });
   }
 
   // ---- row ----
   var newIds = {}, newByAg = {}, newFirst = {};
   function daysBlock(r) {
     var d = el("div", "days");
-    if (r.days_left == null) { d.className += " none"; d.appendChild(el("b", null, r.date_note || "No date listed")); }
+    if (r.days_left == null) { d.className += " none"; d.appendChild(el("b", null, cap(r.date_note) || "No date listed")); }
     else {
       if (r.days_left <= CSD && r.status !== "forecasted") d.className += " urgent";
       d.appendChild(el("b", null, String(r.days_left))); d.appendChild(el("span", null, r.days_left === 1 ? "day left" : "days left"));
@@ -1516,10 +1536,10 @@ body.proj .tour-card { font-size:1.2rem; }
     add("Closes", r.close_date || r.date_note);
     add("Eligibility rule", r.eligibility ? ELIG_WORDS[r.eligibility] + (r.elig_source ? " (from " + (SRC[r.elig_source] || r.elig_source) + ")" : "") : null);
     add("Quote behind it", r.elig_quote);
-    add("Automatic notice check", r.reader_label ? r.reader_label + (r.reader_quote ? ": " + r.reader_quote : "") : null);
-    add("Signature needed", (TIER[r.signature_tier] || "Unknown") + (r.tier_reason ? ". " + r.tier_reason : " (the notice does not say whether cost share is required)"));
+    add("Automatic check of the announcement", r.reader_label ? r.reader_label + (r.reader_quote ? ": " + r.reader_quote : "") : null);
+    add("Signature needed", (TIER[r.signature_tier] || "Unknown") + (r.tier_reason ? ". " + r.tier_reason : " (the announcement does not say whether cost share is required)"));
     add("Award ceiling", r.award_ceiling != null ? "$" + Number(r.award_ceiling).toLocaleString() : "not listed");
-    add("Assistance listing", r.cfda_list);
+    add("Federal program number", r.cfda_list);
     add("NC has won this program before", r.nc_won_before == null ? null : (r.nc_won_before ? "Yes (shown only; not part of the ranking)" : "No record"));
     add("Keyword fit", r.fit_score != null ? Math.round(Number(r.fit_score) * 100) + " of 100 (title and summary against the plan goals; compare only inside one agency's list)" : null);
     add("Why it is ranked here", r.rank_note || r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
@@ -1546,8 +1566,8 @@ body.proj .tour-card { font-size:1.2rem; }
     var tk = track(r); box.appendChild(chip("c-track s" + tk.stars, starStr(tk.stars) + " " + tk.label, tk.why.join(". ")));
     var ft = fedTrend(r); if (ft && ft.dir && ft.dir !== "steady") box.appendChild(chip("c-fed " + ft.dir, "Federal budget " + ft.dir, ft.text));
     if (F.matchAmt > 0 && r.cost_sharing === "Yes") box.appendChild(chip("c-warn", "Needs matching money: check the % against your " + usd(F.matchAmt)));
-    box.appendChild(chip("c-elig " + e, { yes: "Can apply", no: "Can't apply", ask: "Check eligibility" }[e] || "Check eligibility", e === "ask" && r.elig_quote ? "The notice says: " + r.elig_quote : null));
-    if (limitedTo(r)) box.appendChild(chip("c-warn", "May be only for " + limitedTo(r), "The summary names this group. Read the notice's eligibility section."));
+    box.appendChild(chip("c-elig " + e, { yes: "Can apply", no: "Can't apply", ask: "Check eligibility" }[e] || "Check eligibility", e === "ask" && r.elig_quote ? "The announcement says: " + r.elig_quote : null));
+    if (limitedTo(r)) box.appendChild(chip("c-warn", "May be only for " + limitedTo(r), "The summary names this group. Read the announcement's eligibility section."));
     if (tight(r)) box.appendChild(chip("c-warn", "Tight: needs ~" + ef.weeks + " wks"));
     failsK(r).forEach(function (m) { box.appendChild(chip("c-warn", m)); });
     return box;
@@ -1576,6 +1596,15 @@ body.proj .tour-card { font-size:1.2rem; }
   function isResearch(r) { return RES_RE.test(r.title || ""); }
   var W = lsGet("ffm_w_v1", {});
   function saveK() { lsSet("ffm_k_v1", K); } function saveW() { lsSet("ffm_w_v1", W); }
+  // Days left count from the data date (data_as_of), not the pipeline's run date. A posted grant whose
+  // close date is before the data date has closed: it is dropped so it never shows as open or swipeable.
+  function dataDay() { var s = P && P.data_as_of ? String(P.data_as_of).slice(0, 10) : ""; return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : ""; }
+  function dropClosed() {
+    var dd = dataDay(); if (!dd) return;
+    var t0 = Date.parse(dd + "T00:00:00");
+    P.rows = P.rows.filter(function (r) { return !(r.status === "posted" && /^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "") && r.close_date < dd); });
+    P.rows.forEach(function (r) { if (/^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "")) r.days_left = Math.round((Date.parse(r.close_date + "T00:00:00") - t0) / 864e5); });
+  }
   function applyRef() {
     if (!P) return;
     var t = K.ref ? Date.parse(K.ref + "T00:00:00") : NaN;
@@ -1635,7 +1664,7 @@ body.proj .tour-card { font-size:1.2rem; }
     g.notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     return g;
   }
-  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "soonest first"], ["fresh", "New", "since your last visit"], ["ask", "Read the notice", "not sure we can apply"], ["coming", "Coming up", "not open yet"]];
+  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "soonest first"], ["fresh", "New", "since your last visit"], ["ask", "Check eligibility", "not sure we can apply"], ["coming", "Coming up", "not open yet"]];
   function listFor(g) {
     var rows = { top: g.top, soon: g.soon, fresh: g.fresh, ask: g.ask, coming: g.coming }[cur.tile] || g.top;
     if ($("opt-forecast").checked && cur.tile === "top") rows = rows.concat(g.coming);
@@ -1741,19 +1770,20 @@ body.proj .tour-card { font-size:1.2rem; }
       b.addEventListener("click", function () { cur.tile = t[0]; show(); }); tiles.appendChild(b);
     });
     var below = g.open.length - g.hidden.filter(function (r) { return r.status === "posted"; }).length - g.top.length;
-    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open opportunities among the best matches loaded";
+    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open grants loaded for this agency";
     fillFacetSelects(g);
     var shown = listFor(g);
     var nh = (ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length;
     $("counts").textContent = "Showing " + shown.length + " " + TILES.filter(function (t) { return t[0] === cur.tile; })[0][1].toLowerCase() + " of " + ofText + ". " +
       "Not shown: " + nh + " grants your agency cannot apply for (examples under Hidden as not eligible)" + (g.coming.length ? "; " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " are not open yet" : "") +
-      (g.notices ? "; " + g.notices + " notice" + (g.notices === 1 ? " is" : "s are") + " not ranked" : "") + ".";
+      (g.notices ? "; " + g.notices + " Federal Register notice" + (g.notices === 1 ? " is" : "s are") + " not ranked" : "") + ".";
     var fs = $("f-funder"), keep = F.funder, fl = {}; g.open.concat(g.coming).forEach(function (r) { if (r.funder && r.eligibility !== "no") fl[r.funder] = (fl[r.funder] || 0) + 1; });
     fs.innerHTML = ""; fs.appendChild(Object.assign(el("option", null, "Any funder"), { value: "" }));
     Object.keys(fl).sort().forEach(function (f) { fs.appendChild(Object.assign(el("option", null, f + " (" + fl[f] + ")"), { value: f })); });
     if (keep && !fl[keep]) F.funder = ""; fs.value = F.funder;
-    var nF = ["q", "sign", "match", "min", "max", "work", "weeks", "odds", "funder", "need", "region", "focus"].filter(function (k) { return F[k]; }).length + (F.topic.length ? 1 : 0);
-    $("f-count").textContent = nF ? nF + (nF === 1 ? " filter" : " filters") + " on: showing " + shown.length + (shown.length === 1 ? " grant." : " grants.") + " Grants with an unknown amount, date or signer are kept." : "";
+    var nF = ["q", "sign", "match", "min", "max", "work", "weeks", "odds", "funder", "need", "region", "focus", "when"].filter(function (k) { return F[k]; }).length + (F.topic.length ? 1 : 0) + (F.exact !== "" ? 1 : 0) + (F.stars !== "" ? 1 : 0);
+    var cft = chartFilterText();
+    $("f-count").textContent = nF ? nF + (nF === 1 ? " filter" : " filters") + " on: showing " + shown.length + (shown.length === 1 ? " grant." : " grants.") + (cft ? " From the charts: " + cft + "." : "") + (cft ? " Chart filters show only exact matches." : " Grants with an unknown amount, date or signer are kept.") : "";
     $("f-reset").hidden = !nF && !$("scenario").value;
     renderExamples();
     $("swipe-cta").hidden = false;
@@ -1797,11 +1827,12 @@ body.proj .tour-card { font-size:1.2rem; }
     rows.forEach(function (r) {
       var d = r.close_date, start = d.replace(/-/g, ""), nx = new Date(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10) + 1));
       var end = nx.toISOString().slice(0, 10).replace(/-/g, ""), title = r.title || r.opp_number || String(r.opp_id), u = safeUrl(r.url);
-      var desc = title + "\nAgency: " + agName(r.agency_id) + "\nCloses: " + d + (r.opp_number ? "\nOpportunity number: " + r.opp_number : "") + (u ? "\nGrants.gov: " + u : "") + "\nFrom the Federal Funds Matchmaker. Check the notice for the exact closing time.";
+      var ad = r.days_left != null ? Math.max(0, Math.min(CSD, r.days_left - 1)) : CSD; // reminder: CSD days before, but never before today
+      var desc = title + "\nAgency: " + agName(r.agency_id) + "\nCloses: " + d + (r.opp_number ? "\nOpportunity number: " + r.opp_number : "") + (u ? "\nGrants.gov: " + u : "") + "\nFrom the Federal Funds Matchmaker. Check the announcement for the exact closing time.";
       L.push("BEGIN:VEVENT", "UID:" + icsEsc("ffm-" + r.agency_id + "-" + r.opp_id + "@federal-funds-matchmaker"), "DTSTAMP:" + stamp,
         "DTSTART;VALUE=DATE:" + start, "DTEND;VALUE=DATE:" + end, "SUMMARY:" + icsEsc("Grant closes: " + title), "DESCRIPTION:" + icsEsc(desc));
       if (u) L.push("URL:" + u);
-      L.push("TRANSP:TRANSPARENT", "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsEsc(CSD + " days until this grant closes: " + title), "TRIGGER:-P" + CSD + "D", "END:VALARM", "END:VEVENT");
+      L.push("TRANSP:TRANSPARENT", "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsEsc((ad ? ad + (ad === 1 ? " day" : " days") + " until this grant closes: " : "This grant closes today: ") + title), ad ? "TRIGGER:-P" + ad + "D" : "TRIGGER:PT9H", "END:VALARM", "END:VEVENT");
     });
     L.push("END:VCALENDAR");
     return L.map(icsFold).join("\r\n") + "\r\n";
@@ -1840,11 +1871,11 @@ body.proj .tour-card { font-size:1.2rem; }
   function briefText(r) {
     var ag = agName(r.agency_id), L = [r.title || r.opp_number || r.opp_id, "Agency: " + ag];
     L.push("Closes: " + (r.close_date || r.date_note || "no date listed") + (r.days_left != null ? " (" + r.days_left + " days left)" : ""));
-    L.push("Can we apply: " + ({ yes: "Yes, state agencies are allowed", no: "No", ask: "Not sure, read the notice" }[r.eligibility] || "Not sure, read the notice") + (r.elig_quote ? " (notice says: " + r.elig_quote + ")" : ""));
+    L.push("Can we apply: " + ({ yes: "Yes, state agencies are allowed", no: "No", ask: "Not sure, read the announcement" }[r.eligibility] || "Not sure, read the announcement") + (r.elig_quote ? " (announcement says: " + r.elig_quote + ")" : ""));
     if (r.goal_snippet) L.push("Why it fits: " + r.goal_snippet);
     if (r.signature_tier && r.signature_tier !== "unknown" && TIER[r.signature_tier]) L.push("Who signs: " + TIER[r.signature_tier]);
     if (r.award_ceiling != null) L.push("Award ceiling: $" + Number(r.award_ceiling).toLocaleString());
-    if (r.url) L.push("Notice: " + r.url);
+    if (r.url) L.push("Grant announcement: " + r.url);
     L.push("Prepared from this tool's data; a person makes the decision.");
     return L.join("\n");
   }
@@ -1940,10 +1971,10 @@ body.proj .tour-card { font-size:1.2rem; }
     h("Eligibility"); p("Yes, No or Ask comes from the applicant-type codes first, then fixed text rules. An item is hidden only when a code or quote says state agencies cannot apply. Anything unclear stays visible as Ask. Hidden items stay one click away.");
     h("What is loaded right now"); p(n + " rows are loaded across " + P.agencies.length + " agencies: the best matches per agency, not every open opportunity. " + hid + " of these rows are marked not eligible. " + fmtAsOf(P.data_as_of) + ".");
     h("Closing soon, New, and your decisions"); p("Closing soon means " + CSD + " days or fewer left. New since last visit and your Pursue, Maybe and Pass marks live only in this browser. Nothing is sent to a server or by email.");
-    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature needed comes from two notice fields only, cost share and award size; it does not check whether the agency has the staff or capabilities, and it reads Unknown when the notice does not state cost share. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
+    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature needed comes from two fields in the Grants.gov listing only, cost share and award size; it does not check whether the agency has the staff or capabilities, and it reads Unknown when the announcement does not state cost share. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
     h("How well it works"); var evb = el("div"); evb.id = "evidence-how"; v.appendChild(evb); renderEvidence(evb);
     h("What it deliberately does not do"); var nd = el("ul");
-    ["Decide for you. It ranks and explains; a person marks Pursue, Maybe or Pass.", "Let an AI model set rank or eligibility. Model labels are advisory and must quote the notice.", "Use past awards to rank. Award history is shown for context only, so new programs are not buried.", "Send anything anywhere. Your marks stay in this browser.", "Check staff capacity or matching funds. The notices do not carry that, so it reads Unknown rather than guessing."].forEach(function (t) { nd.appendChild(el("li", null, t)); });
+    ["Decide for you. It ranks and explains; a person marks Pursue, Maybe or Pass.", "Let an AI model set rank or eligibility. Model labels are advisory and must quote the announcement.", "Use past awards to rank. Award history is shown for context only, so new programs are not buried.", "Send anything anywhere. Your marks stay in this browser.", "Check staff capacity or matching funds. The notices do not carry that, so it reads Unknown rather than guessing."].forEach(function (t) { nd.appendChild(el("li", null, t)); });
     v.appendChild(nd);
     h("County map and capabilities"); p("The County map tab shows 18 public county measures from the qualifier round. The capability table appears for DHHS and DMVA only, the two agencies where we built it. Per-grant county reach, impact sliders and a scatter are not shown: the payload carries no county list per grant, and we do not guess one.");
   }
@@ -2050,7 +2081,7 @@ body.proj .tour-card { font-size:1.2rem; }
     deskClear(); deskSel = li; li.classList.add("desk-sel");
     var pn = $("desk-panel"); pn.innerHTML = "";
     pn.appendChild(el("h2", null, r.title || r.opp_number || r.opp_id));
-    var u = safeUrl(r.url); if (u) { var a = el("a", "open", "Open the notice on Grants.gov"); a.href = u; a.target = "_blank"; a.rel = "noopener"; pn.appendChild(a); }
+    var u = safeUrl(r.url); if (u) { var a = el("a", "open", "Open the grant announcement on Grants.gov"); a.href = u; a.target = "_blank"; a.rel = "noopener"; pn.appendChild(a); }
     var top2 = el("div", "desk-top"); top2.appendChild(daysBlock(r)); top2.appendChild(moneyBlock(r)); pn.appendChild(top2);
     pn.appendChild(chipsFor(r));
     if (r.goal_snippet) { var pg = el("p", "plan"); pg.appendChild(el("b", null, "Plan goal it matches: ")); pg.appendChild(document.createTextNode(r.goal_snippet)); pn.appendChild(pg); }
@@ -2120,7 +2151,7 @@ body.proj .tour-card { font-size:1.2rem; }
   var fq; $("f-q").addEventListener("input", function () { clearTimeout(fq); var v = this.value; fq = setTimeout(function () { F.q = v.trim(); show(true); }, 150); });
   [["f-sign", "sign"], ["f-match", "match"], ["f-odds", "odds"], ["f-funder", "funder"]].forEach(function (x) { $(x[0]).addEventListener("change", function () { F[x[1]] = this.value; show(true); }); });
   [["f-min", "min"], ["f-weeks", "weeks"]].forEach(function (x) { $(x[0]).addEventListener("change", function () { F[x[1]] = Number(this.value) || 0; show(true); }); });
-  $("f-reset").addEventListener("click", function () { F = { q: "", sign: "", match: "", min: 0, max: 0, weeks: 0, work: 0, odds: "", funder: "", topic: [], need: "", region: "", focus: "", matchAmt: null }; cur.order = "rank"; $("f-matchamt").value = ""; $("scenario").value = ""; $("chips").innerHTML = ""; syncF(); show(true); });
+  $("f-reset").addEventListener("click", function () { F = { q: "", sign: "", match: "", min: 0, max: 0, weeks: 0, work: 0, odds: "", funder: "", topic: [], need: "", region: "", focus: "", matchAmt: null, exact: "", when: "", stars: "" }; cur.order = "rank"; $("f-matchamt").value = ""; $("scenario").value = ""; $("chips").innerHTML = ""; syncF(); show(true); });
   $("plan-x").addEventListener("click", function () { $("plan-dlg").close(); });
   $("cart-x").addEventListener("click", function () { $("cart-dlg").close(); });
   ["plan-dlg", "cart-dlg"].forEach(function (id) { $(id).addEventListener("click", function (e) { if (e.target === this) this.close(); }); });
@@ -2133,6 +2164,7 @@ body.proj .tour-card { font-size:1.2rem; }
   $("cmp-dlg").addEventListener("click", function (e) { if (e.target === this) this.close(); });
   document.addEventListener("keydown", function (e) {
     if ($("swipe").hidden || $("cmp-dlg").open) return;
+    if (e.repeat && e.key !== "Escape") { e.preventDefault(); return; }
     if (e.key === "ArrowRight") { e.preventDefault(); swDecide("right"); } else if (e.key === "ArrowLeft") { e.preventDefault(); swDecide("left"); }
     else if (e.key === "ArrowUp") { e.preventDefault(); swDecide("up"); } else if (e.key === "Backspace" || e.key === "z") { e.preventDefault(); swUndo(); } else if (e.key === "Escape") { e.preventDefault(); exitSwipe(); }
   }, true);
@@ -2195,7 +2227,8 @@ body.proj .tour-card { font-size:1.2rem; }
   // the Azure container sleeps when idle: say so instead of looking broken
   var warm = setTimeout(function () { if (!P) $("asof").textContent = "Loading data... the server is waking up, this can take up to 40 seconds."; }, 4000);
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
-    P = p; CSD = p.closing_soon_days || 14;
+    P = p; CSD = p.closing_soon_days || 14; dropClosed();
+    P.rows.forEach(function (r) { if (r.date_note === "date listed has passed") r.date_note = "Expected date passed; not posted yet"; });
     $("asof").textContent = fmtAsOf(p.data_as_of); $("asof").parentNode.title = "Data as of " + (p.data_as_of || "unknown");
     if (p.stub === true || /stub/i.test(String(p.data_as_of))) $("stub").hidden = false;
     var sel = $("agency");
@@ -2231,7 +2264,7 @@ body.proj .tour-card { font-size:1.2rem; }
       { t: "Or swipe through them", b: "Short on time? Start swiping shows one grant at a time with just the big numbers: who is giving the money, days left, money per award, track record stars, and who signs. Right adds it to your cart, left passes, up sets it aside as maybe. Undo if you change your mind; Exit any time.", sel: "#swipe-cta" },
       { t: "4. Read a card in 5 seconds", b: "Big number on the left: days left to apply. Big number on the right: the most money one award can be. In the middle: the funder, who has to sign (Tier 1: you, Tier 2: your boss, Tier 3: leadership), your chance of winning, the effort, and the payoff for the work. Open \"Why it fits\" for the reasons.", sel: "#start li" },
       { t: "5. Like it? Press Pursue", b: "Pursue puts the grant in your cart and opens your application plan. Maybe or Pass if not. Nothing is sent anywhere; it stays in this browser.", sel: "#start li" },
-      { t: "6. Your application plan", b: "The plan gives you the link to the full notice, a timeline worked back from the deadline (read, check logins, gather, draft, sign-off, submit two days early), and a checklist of what you will need. You can add the deadline to your calendar or print a one-page brief for your boss.", sel: "#start li", act: ["Open an example plan", function () { if (window.ffmOpenFirstPlan) window.ffmOpenFirstPlan(); close(false); var d = $("plan-dlg"), resume = idx + 1, iv2 = setInterval(function () { if (d && d.open) return; clearInterval(iv2); idx = Math.min(resume, steps.length - 1); render(); }, 300); }] },
+      { t: "6. Your application plan", b: "The plan gives you the link to the full grant announcement, a timeline worked back from the deadline (read, check logins, gather, draft, sign-off, submit two days early), and a checklist of what you will need. You can add the deadline to your calendar or print a one-page brief for your boss.", sel: "#start li", act: ["Open an example plan", function () { if (window.ffmOpenFirstPlan) window.ffmOpenFirstPlan(); close(false); var d = $("plan-dlg"), resume = idx + 1, iv2 = setInterval(function () { if (d && d.open) return; clearInterval(iv2); idx = Math.min(resume, steps.length - 1); render(); }, 300); }] },
       { t: "7. Your grant cart", b: "Everything you Pursue lands here with the details: track record, who signs, matching money, federal budget trend, and size against your agency's budget. Tick two to four to compare side by side, and download every deadline to Outlook in one click.", sel: "#cart-open" },
       { t: "8. Want more control?", b: "Open More options for keyword search, sort order (best payoff, biggest money, soonest deadline), who signs, smallest award, time you need, odds and funder.", sel: "#more-filters" },
       { t: "That is it", b: "Describe your situation, look at the top 3, Pursue the good ones, follow the plan. Replay this tour any time with the Tour button at the top.", sel: null }

@@ -75,18 +75,34 @@ ELIG_TEXT_NO  <- c("state governments are not eligible", "state agencies are not
                    "applications from federal, state, or tribal governments will not be considered",
                    "tribal governments only", "federally recognized tribes only", "individuals only")
 ELIG_TEXT_YES <- c("state governments", "state government agencies", "state agencies", "agencies of state")
+# Tribal programs (gate: "tribal-only items are hidden"). An item whose eligibility is still "ask" (code 25 or none)
+# and whose TITLE names a tribal program becomes "no", quoting the title words. Titles that also name a State or
+# States are left alone ("for State, Territorial, and Tribal", "for States and Tribes"). Kent, Sat Nov 7 evening,
+# after the hostile-judge pass found TCUP at DPI #1. 21 open titles match; none with a state-government code.
+ELIG_TRIBAL_TITLE <- "\\bTribal\\b|\\bTribes\\b|Indian Reservations?|\\bTCUP\\b"
 ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government|agenc)"
 
 # Geography: fit is multiplied by GEO_PENALTY when the opportunity TITLE names another US state or
 # region and does not name North Carolina. Titles only: summaries list many states in passing.
 # 0.5 confirmed by Kent in person (Nov 7); a team judgment, not derived. The item is demoted, never hidden.
 GEO_PENALTY <- 0.5
+
+# Overseas posts: a notice whose funder (Grants.gov agency name) is a U.S. Embassy, U.S. Mission or Consulate
+# is run by a post abroad for applicants in that country. criteria.csv filter "us_based" drops it. Matched on the
+# funder field, not the title. Checked Sat Nov 7: 60 of 1,472 open notices, all State Department posts; Washington
+# bureaus (fellowships, ECA, TIP) stay in. Kent's call (Nov 7), after embassy notices showed up in agency lists.
+OVERSEAS_POST_PATTERN <- "^\\s*U\\.?S\\.? (Mission|Embassy)\\b|\\bEmbassy\\b|\\bConsulate\\b"
 GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida",
   "Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts",
   "Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico",
   "New York","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota",
   "Tennessee","Texas","Utah","Vermont","Virginia","Wisconsin","Wyoming","Great Lakes","Pacific Northwest","Northern Forest",
-  "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake")
+  "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake",
+  # Added Sat Nov 7 evening (Kent, after the hostile-judge pass found RESTORE Act Gulf Coast at DEQ #3). Each checked against
+  # open titles: none names NC. Left out on purpose: "Atlanta" (EDA's Atlanta region serves NC), "Pacific Islands" alone
+  # (appears in the HIV Part B formula title, which NC gets), "Southeast" (NC is in it), "Native Hawaiian" (a population).
+  "Gulf Coast","Gulf States","RESTORE Act","Great Basin","North Atlantic","Hawai\\S{0,8}-Pacific","Great Plains",
+  "Rocky Mountain","Colorado River","Everglades","New England","Northeast Corridor","Midwest","Southwest","American Samoa")
 
 # Program map: a hand table (data/manual/program_map.csv) naming Assistance Listing numbers that belong to an
 # agency regardless of keywords. A mapped pair gets fit of at least MAP_FIT_FLOOR (0.8, confirmed by Kent in person Nov 7; a team judgment) and a note saying why.

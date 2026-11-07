@@ -141,6 +141,15 @@ assign_eligibility <- function(agency_id, codes, text) {
     elig_quote  = if_else(!(yes_code | he_ok) & ask_code & decided, tx$text_quote, NA_character_))
 }
 
+# Tribal-program title on an item still marked "ask" -> "no" with the title words as the quote.
+tribal_title_rule <- function(elig, title) {
+  t <- ifelse(is.na(title), "", title)
+  q <- str_extract(t, regex(ELIG_TRIBAL_TITLE, ignore_case = TRUE))
+  hit <- elig$eligibility == "ask" & !is.na(q) & !str_detect(t, regex("\\bStates?\\b", ignore_case = TRUE))
+  elig$eligibility[hit] <- "no"; elig$elig_source[hit] <- "rule"; elig$elig_quote[hit] <- paste0("Title: ", q[hit])
+  elig
+}
+
 # Display text: decode numeric HTML entities (&#8211;), drop zero-width characters, turn narrow and
 # no-break spaces into spaces, split PDF ligatures (fi, fl, ff) so snippets read cleanly.
 clean_text <- function(x) {
@@ -167,6 +176,11 @@ geo_other <- function(title) {
   t <- ifelse(is.na(title), "", title)
   other <- str_detect(t, regex(paste0("\\b(", paste(GEO_OTHER_PLACES, collapse = "|"), ")\\b"), ignore_case = TRUE))
   other & !str_detect(t, regex("\\bNorth Carolina\\b|\\bNC\\b", ignore_case = TRUE))
+}
+
+# TRUE when the funder is a U.S. Embassy, Mission or Consulate abroad (see OVERSEAS_POST_PATTERN).
+overseas_post <- function(funder) {
+  !is.na(funder) & str_detect(funder, regex(OVERSEAS_POST_PATTERN, ignore_case = TRUE))
 }
 
 # Program map: adds map_note and lifts fit to MAP_FIT_FLOOR for agency x Assistance Listing pairs in the table.
@@ -236,9 +250,10 @@ build_items <- function(opps, ag, plans, pmap) {
     left_join(opps[, c("opp_id", "opp_number", "title", "status", "post_date", "close_date", "date_note", "days_left",
                        "award_ceiling", "log_ceiling", "cost_sharing", "applicant_types", "eligibility_text")], by = "opp_id") |>
     mutate(id = paste(agency_id, opp_id, sep = ":"))
-  items <- bind_cols(items, assign_eligibility(items$agency_id, items$applicant_types, items$eligibility_text))
+  items <- bind_cols(items, tribal_title_rule(assign_eligibility(items$agency_id, items$applicant_types, items$eligibility_text), items$title))
   items$eligibility_text <- NULL
   items$geo_other <- geo_other(items$title)
+  items$overseas_post <- overseas_post(opps$agency[match(items$opp_id, opps$opp_id)])
   items$fit <- ifelse(items$geo_other, items$fit * GEO_PENALTY, items$fit)
   apply_program_map(items, opps$cfda_list[match(items$opp_id, opps$opp_id)], pmap)
 }

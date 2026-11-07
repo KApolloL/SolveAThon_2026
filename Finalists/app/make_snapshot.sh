@@ -15,7 +15,8 @@ git archive HEAD -- . \
   ':(exclude)Finalists/api_keys.env' \
   ':(exclude)Finalists/tasks/everett_api_keys.md' \
   ':(exclude).claude' ':(exclude)Finalists/.claude' \
-  ':(exclude)comms' ':(exclude)Finalists/archive/graphify-out' \
+  ':(exclude)comms' ':(exclude)Finalists/archive/graphify-out' ':(exclude)Finalists/archive/stale' \
+  ':(exclude)Finalists/graphify-out' ':(exclude)Finalists/stale' \
   | tar -x -C "$OUT"
 
 # Placeholder so a developer knows what to create.
@@ -27,7 +28,7 @@ SAM_API_KEY=
 EX
 
 # Tell the reader up front.
-{ printf '> **Judge snapshot.** `api_keys.env` is deliberately not included. To rerun anything that calls\n> Grants.gov or SAM.gov, make your own free keys and copy `Finalists/api_keys.env.example` to `Finalists/api_keys.env`.\n> Cached data is included; rerunning from cache without keys is untested.\n\n'; cat "$OUT/README.md"; } > "$OUT/README.md.new" && mv "$OUT/README.md.new" "$OUT/README.md"
+{ printf '> **Judge snapshot.** `api_keys.env` is deliberately not included. To rerun anything that calls\n> Grants.gov or SAM.gov, make your own free keys and copy `Finalists/api_keys.env.example` to `Finalists/api_keys.env`.\n> Cached data is included. Checked Sat Nov 7 on a snapshot with no keys: from `Finalists/src`, `Rscript R/10_run_ranking.R`,\n> then `Rscript tests/run_tests.R` (84 of 84) and `Rscript R/check_facts.R` (49 of 49); `R/11_build_payload.R` rebuilt payload.json byte-identical.\n\n'; cat "$OUT/README.md"; } > "$OUT/README.md.new" && mv "$OUT/README.md.new" "$OUT/README.md"
 
 # Scan: no key value, key file or .git may be present. Values are never printed.
 fail=0
@@ -38,7 +39,7 @@ if [ -f Finalists/api_keys.env ]; then
     if grep -rqF -- "$v" "$OUT"; then echo "FAIL: value of $k found in snapshot"; fail=1; fi
   done < Finalists/api_keys.env
 fi
-for bad in .git .RData .Renviron api_keys.env; do
+for bad in .git .RData .Renviron api_keys.env everett_api_keys.md stale graphify-out; do
   if find "$OUT" -name "$bad" | grep -q .; then echo "FAIL: $bad present"; fail=1; fi
 done
 [ $fail -eq 0 ] || { echo "Snapshot NOT safe. Removing."; rm -rf "$OUT"; exit 1; }

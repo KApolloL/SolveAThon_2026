@@ -54,6 +54,9 @@ check("unit: score", "contains is plain text, not a regex", identical(rule_eval(
 check("unit: score", "dropped_by holds filter ids", identical(rank_items(d2, fo, ref, "id", "name")$dropped$dropped_by[1], "f"))
 
 check("display text", "entities, zero-width and ligatures are cleaned", identical(clean_text(c("A &#8211; B", "x&#8203;y&#65279;", "\ufb01nancial", NA)), c("A \u2013 B", "xy", "financial", NA)))
+check("eligibility", "tribal title on an ask item is hidden, state+tribal titles are not", identical(tribal_title_rule(tibble(eligibility = c("ask","ask","yes","ask"), elig_source = "code", elig_quote = NA_character_), c("Tribal Colleges and Universities Program (TCUP)","Grants for States and Tribes","Tribal Self-Governance","Clean air grants"))$eligibility, c("no","ask","yes","ask")))
+check("geography", "overseas post funder is flagged", identical(overseas_post(c("U.S. Mission to Italy","U.S. Embassy Praia","Bureau of Educational and Cultural Affairs","Environmental Protection Agency",NA)), c(TRUE,TRUE,FALSE,FALSE,FALSE)))
+check("geography", "out-of-region names are flagged, NC-serving ones are not", identical(geo_other(c("RESTORE Act Direct Component","Partner with the Hawai&#699;i-Pacific Islands CESU","Atlanta EDA Planning","HIV Care Part B States/Territories (Pacific Islands)","Southeast region schools")), c(TRUE,TRUE,FALSE,FALSE,FALSE)))
 check("geography", "other state in title is flagged", identical(geo_other(c("Grant for California schools","Great Lakes Unit","Texas and North Carolina pilot","Clean air grants",NA)), c(TRUE,TRUE,FALSE,FALSE,FALSE)))
 
 check("program map", "mapped listing lifts fit to the floor and notes why", {
