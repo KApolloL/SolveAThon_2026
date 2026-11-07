@@ -100,6 +100,7 @@ COMING_UP_N     <- 10L    # forecasted items kept per agency ("Coming up")
 HIDDEN_N        <- 10L    # best-fitting clearly-ineligible items kept per agency so the tool can show the toggle
 BACKTEST_TOP_N  <- 50L    # ranked items written per agency and window in rankings_backtest.csv
 SNIPPET_CHARS   <- 240L   # opp_snippet length
+CLOSING_SOON_DAYS <- 14L  # [assumed] a Top 10 row with this many days left or fewer counts as closing soon
 
 PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")
