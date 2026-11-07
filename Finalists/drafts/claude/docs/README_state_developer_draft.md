@@ -1,6 +1,6 @@
 # Federal Funds Matchmaker: guide for a state developer (DRAFT)
 
-> **DRAFT, refreshed Sat Nov 7, ~12:40 (Noah's Claude).** Sections 1, 4, 5 and 11 were rewritten against the repo on main at that time. Commands in sections 4 and 11 were run on a fresh worktree (offline, from cache) and the results are stated there. Sections 2, 3 and 6 to 10 are still the Friday-night text and may be out of date; they are marked where I know. It is meant to replace `Finalists/README.md` after Kent edits it. Anything not built is tagged **[PLANNED, not built]**; anything not run is tagged **[not run]**.
+> **DRAFT, refreshed Sat Nov 7, 12:2x (Noah's Claude).** Sections 1, 4, 5 and 11 were rewritten against the repo on main at that time. Commands in sections 4 and 11 were run on a fresh worktree (offline, from cache) and the results are stated there. Sections 2, 3 and 6 to 10 are still the Friday-night text and may be out of date; they are marked where I know. It is meant to replace `Finalists/README.md` after Kent edits it. Anything not built is tagged **[PLANNED, not built]**; anything not run is tagged **[not run]**.
 
 Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt. Built for the Solve-A-Thon 2026 Final Quest, sponsor NC OSBM. Organizer text: `docs/QUEST_BRIEF.md`.
 
@@ -245,7 +245,7 @@ Rscript tests/run_tests.R
 Rscript R/check_facts.R
 ```
 
-**Results on a fresh worktree, Sat Nov 7, ~12:30 (offline, after installing readr, tidyr and janitor):**
+**Results on a fresh worktree, Sat Nov 7, 12:2x (offline, after installing readr, tidyr and janitor):**
 - `tests/run_tests.R`: **79 of 80 tests pass.** The one failing row is a placeholder in the "R and JS agree" section named "agreement test pending new ranker for contract-shape payload.json". It is a known gap, not a regression, but it is a visible failing test; Kent to decide whether to remove or implement it.
 - `R/check_facts.R`: **29 of 29 rows pass.** (The 29 rows come from `data/manual/facts.csv`; the Friday text of this README said the fact sheet was empty and is out of date.)
 - Both print "one or more parsing issues" warnings from `readr`. They did not change the results; I have not traced them.
