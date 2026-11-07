@@ -1,0 +1,400 @@
+{
+  "data_as_of": "2026-11-07T09:30:00-05:00",
+  "window_days": 14,
+  "stub": true,
+  "agencies": [
+    {
+      "agency_id": "dpi",
+      "agency_name": "Department of Public Schools",
+      "plan_files": ["department_of_public_schools.pdf", "state_board_of_education_plan.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": ["State Board of Education Plan"]
+    },
+    {
+      "agency_id": "ncccs",
+      "agency_name": "NC Community College System",
+      "plan_files": ["nc_community_college_system.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "unc",
+      "agency_name": "University of North Carolina System",
+      "plan_files": ["university_of_north_carolina_system.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "osbm",
+      "agency_name": "Office of State Budget and Management",
+      "plan_files": ["office_of_state_budget_and_management.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "ncdit",
+      "agency_name": "Department of Information Technology",
+      "plan_files": ["department_of_information_technology.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "hfa",
+      "agency_name": "NC Housing Finance Agency",
+      "plan_files": ["nc_housing_finance_agency.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dmva",
+      "agency_name": "Department of Military and Veterans Affairs",
+      "plan_files": ["department_of_military_and_veterans_affairs.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "oshr",
+      "agency_name": "Office of State Human Resources",
+      "plan_files": ["office_of_state_human_resources.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "sos",
+      "agency_name": "Department of Secretary of State",
+      "plan_files": ["department_of_secretary_of_state.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "osa",
+      "agency_name": "Office of the State Auditor",
+      "plan_files": ["office_of_the_state_auditor.pdf"],
+      "plan_stale": true,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dst",
+      "agency_name": "Department of State Treasurer",
+      "plan_files": ["department_of_state_treasurer.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "doi",
+      "agency_name": "Department of Insurance",
+      "plan_files": ["department_of_insurance.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "osfm",
+      "agency_name": "Office of State Fire Marshal",
+      "plan_files": ["office_of_state_fire_marshal.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "doa",
+      "agency_name": "Department of Administration",
+      "plan_files": ["department_of_administration.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "osc",
+      "agency_name": "Office of the State Controller",
+      "plan_files": ["office_of_the_state_controller.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dor",
+      "agency_name": "Department of Revenue",
+      "plan_files": ["department_of_revenue.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "ncsbe",
+      "agency_name": "State Board of Elections",
+      "plan_files": ["state_board_of_elections.pdf"],
+      "plan_stale": true,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "oah",
+      "agency_name": "Office of Administrative Hearings",
+      "plan_files": ["office_of_administrative_hearings.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dhhs",
+      "agency_name": "Department of Health and Human Services",
+      "plan_files": ["department_of_health_and_human_services.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "ids",
+      "agency_name": "Judicial Branch - Indigent Defense",
+      "plan_files": ["judicial_branch_indigent_defense.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dac",
+      "agency_name": "Department of Adult Correction",
+      "plan_files": ["department_of_adult_correction.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "doj",
+      "agency_name": "Department of Justice",
+      "plan_files": ["department_of_justice.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dps",
+      "agency_name": "Department of Public Safety",
+      "plan_files": ["department_of_public_safety.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "sbi",
+      "agency_name": "State Bureau of Investigation",
+      "plan_files": ["state_bureau_of_investigation.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "shp",
+      "agency_name": "State Highway Patrol",
+      "plan_files": ["state_highway_patrol.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dacs",
+      "agency_name": "Department of Agriculture and Consumer Services",
+      "plan_files": ["department_of_agriculture_and_consumer_services.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dol",
+      "agency_name": "Department of Labor",
+      "plan_files": ["department_of_labor.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "dncr",
+      "agency_name": "Department of Natural and Cultural Resources",
+      "plan_files": ["department_of_natural_and_cultural_resources.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "deq",
+      "agency_name": "Department of Environmental Quality",
+      "plan_files": ["department_of_environmental_quality.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "wrc",
+      "agency_name": "Wildlife Resources Commission",
+      "plan_files": ["wildlife_resources_commission.pdf"],
+      "plan_stale": true,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "commerce",
+      "agency_name": "Department of Commerce",
+      "plan_files": ["department_of_commerce.pdf"],
+      "plan_stale": true,
+      "plan_thin": null,
+      "folded_from": []
+    },
+    {
+      "agency_id": "ncdot",
+      "agency_name": "Department of Transportation",
+      "plan_files": ["department_of_transportation.pdf"],
+      "plan_stale": false,
+      "plan_thin": null,
+      "folded_from": []
+    }
+  ],
+  "rows": [
+    {
+      "agency_id": "deq",
+      "opp_id": "363936",
+      "opp_number": "EPA-OAR-OTAQ-26-01",
+      "title": "2026 Diesel Emissions Reduction Act (DERA) National Program",
+      "status": "posted",
+      "close_date": "2027-01-22",
+      "days_left": 76,
+      "date_note": null,
+      "fit_score": null,
+      "rank": 1,
+      "in_top10": true,
+      "eligibility": "ask",
+      "elig_source": null,
+      "elig_quote": null,
+      "reader_label": null,
+      "reader_quote": null,
+      "goal_id": null,
+      "goal_snippet": null,
+      "opp_snippet": null,
+      "cfda_list": "66.039",
+      "award_ceiling": 12000000,
+      "signature_tier": "unknown",
+      "tier_source": null,
+      "nc_won_before": false,
+      "url": "https://www.grants.gov/search-results-detail/363936"
+    },
+    {
+      "agency_id": "dhhs",
+      "opp_id": "359142",
+      "opp_number": "RFA-AI-28-025",
+      "title": "Implementation and Evaluation of Databases to Examine AIDS",
+      "status": "forecasted",
+      "close_date": "2027-05-27",
+      "days_left": 201,
+      "date_note": null,
+      "fit_score": null,
+      "rank": 1,
+      "in_top10": false,
+      "eligibility": "ask",
+      "elig_source": null,
+      "elig_quote": null,
+      "reader_label": null,
+      "reader_quote": null,
+      "goal_id": null,
+      "goal_snippet": null,
+      "opp_snippet": null,
+      "cfda_list": "93.233|93.242|93.279|93.310|93.393|93.394|93.399|93.837|93.838|93.839|93.840|93.847|93.855|93.865|93.866|93.989",
+      "award_ceiling": null,
+      "signature_tier": "unknown",
+      "tier_source": null,
+      "nc_won_before": false,
+      "url": "https://www.grants.gov/search-results-detail/359142"
+    },
+    {
+      "agency_id": "dhhs",
+      "opp_id": "328026",
+      "opp_number": "SFOP0007154",
+      "title": "Notice of Intent on Upcoming 2020 TIP Office Funding Opportunity",
+      "status": "posted",
+      "close_date": null,
+      "days_left": null,
+      "date_note": "rolling or no date listed",
+      "fit_score": null,
+      "rank": 2,
+      "in_top10": true,
+      "eligibility": "ask",
+      "elig_source": null,
+      "elig_quote": null,
+      "reader_label": null,
+      "reader_quote": null,
+      "goal_id": null,
+      "goal_snippet": null,
+      "opp_snippet": null,
+      "cfda_list": "19.019",
+      "award_ceiling": null,
+      "signature_tier": "unknown",
+      "tier_source": null,
+      "nc_won_before": false,
+      "url": "https://www.grants.gov/search-results-detail/328026"
+    },
+    {
+      "agency_id": "dhhs",
+      "opp_id": "fr:2025-19823",
+      "opp_number": null,
+      "title": "Final Determination: Adoption of Energy Efficiency Standards for New Construction of HUD- and USDA-Financed Housing; Additional Extension of HUD Compliance Dates",
+      "status": "notice",
+      "close_date": null,
+      "days_left": null,
+      "date_note": "rolling or no date listed",
+      "fit_score": null,
+      "rank": 3,
+      "in_top10": false,
+      "eligibility": "ask",
+      "elig_source": null,
+      "elig_quote": null,
+      "reader_label": null,
+      "reader_quote": null,
+      "goal_id": null,
+      "goal_snippet": null,
+      "opp_snippet": null,
+      "cfda_list": null,
+      "award_ceiling": null,
+      "signature_tier": "unknown",
+      "tier_source": null,
+      "nc_won_before": false,
+      "url": "https://www.federalregister.gov/documents/2025/11/10/2025-19823/final-determination-adoption-of-energy-efficiency-standards-for-new-construction-of-hud--and"
+    },
+    {
+      "agency_id": "dpi",
+      "opp_id": "363936",
+      "opp_number": "EPA-OAR-OTAQ-26-01",
+      "title": "2026 Diesel Emissions Reduction Act (DERA) National Program",
+      "status": "posted",
+      "close_date": "2027-01-22",
+      "days_left": 76,
+      "date_note": null,
+      "fit_score": null,
+      "rank": 1,
+      "in_top10": true,
+      "eligibility": "ask",
+      "elig_source": null,
+      "elig_quote": null,
+      "reader_label": null,
+      "reader_quote": null,
+      "goal_id": null,
+      "goal_snippet": null,
+      "opp_snippet": null,
+      "cfda_list": "66.039",
+      "award_ceiling": 12000000,
+      "signature_tier": "unknown",
+      "tier_source": null,
+      "nc_won_before": false,
+      "url": "https://www.grants.gov/search-results-detail/363936"
+    }
+  ]
+}

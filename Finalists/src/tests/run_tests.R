@@ -82,6 +82,9 @@ for (r in seq_len(nrow(tc))) {
 # ---- 5. R and JS agree -------------------------------------------------------------
 if (!file.exists(PAYLOAD_JSON)) {
   check("R and JS agree", "payload.json exists (run R/10_run_ranking.R)", FALSE)
+} else if (!is.null(jsonlite::fromJSON(PAYLOAD_JSON)$rows)) {
+  # Contract-shape payload (saturday/03_contract.md); tool/ranker.js still expects the toy shape.
+  check("R and JS agree", "agreement test pending new ranker for contract-shape payload.json", FALSE)
 } else {
   ag <- check_r_js_agreement()
   for (k in seq_len(nrow(ag))) check("R and JS agree", ag$name[k], ag$ok[k], ag$got[k])
