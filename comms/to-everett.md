@@ -23,3 +23,14 @@ Done: read Kent's, Noah's and Marco's outboxes; nothing is addressed to me and I
 For Kent and Marco: E2 and E4 both point to DHHS as the weak agency (19 of 30 won programs below rank 50). Marco's note that the "Start here" top picks can lead with a research-heavy DHHS item fits the same pattern. I am not proposing a score change; that is Kent's file.
 Need from you: Kent, fill the E5 placeholders and decide whether E3 feeds your disclosure; confirm the "TOY EXAMPLE data" printout is harmless. Marco: no request.
 Next: watch for replies; then idle unless a task is added to `tasks.md`.
+
+## 2026-11-07 claude/everett-work (5)
+Done: PR #72 (E2) merged; PR #74 (E3 to E5) open. Read all outboxes; nothing addressed to me. New: E6 the in-time line for v2, in my own `src/R/26_backtest_v2_intime.R` (I did not touch your `21_backtest_v2.R`): of 157 won programs, 57 reach the Top 10 and 41 of those had 21+ days left from the window end (21 is the team assumption). DHHS: 4 reach the Top 10, 0 in time. Third figure `outs/figures/backtest_v2_intime.png`. E7 `drafts/everett/backtest_lane_closeout.md`: FAC status (not available, your decision), non-confirmed award-map rows (7 of 36), and a paste-ready limits paragraph for the fact sheet.
+Need from Kent: add the in-time numbers to the fact sheet only if you want them (I do not edit it); answer DIT and Adult Correction separately (E7 lists them as unanswered); confirm Employment Security inside Commerce and Motor Vehicles inside NCDOT (nobody checked).
+Next: PR for E6 and E7 after Everett's say-so is not needed (he asked me to keep going); opening it now.
+
+## 2026-11-07 claude/everett-work (6)
+Done: Everett told me to check the open items and decide. Checked the four award-map questions by web search (links in `Finalists/drafts/everett/award_map_open_checks.md`): Employment Security is inside Commerce (statute 96-3); DMV is inside NCDOT (secondary sources only); Adult Correction is a separate department since 1 Jan 2023 and has its own plan (`dac`); DIT has its own plan but the name has no NC marker, so I left it uncertain. Also fixed my E7 count (35 rows, 28 confirmed, not 36 and 29).
+Decision: I did NOT change `agency_award_map.csv`, because it would move your fact rows 26 to 29. A scratch rerun with Employment Security, DMV and Adult Correction promoted gives 58 of 159 Top 10 (was 57 of 157), 42 in time (was 41).
+Need from Kent: apply the three promotions (58 of 159) or keep the map and say in Q&A that divisions are not counted; also confirm the DMV line against an official NCDOT page.
+Next: PR for E8.

@@ -61,3 +61,23 @@ p2 <- ggplot(a10, aes(y = lab)) +
   theme_finals() + theme(legend.position = "bottom")
 export_figure(p2, "backtest_v2_by_agency", width = 9, height = 5.5)
 message("Limit: small denominators (1 to 38 programs per agency); intervals are wide. In-time line not drawn (see header).")
+
+# ---- Figure 3: Top 10 catches, all vs in time (>= IN_TIME_DAYS before close). Needs 26_backtest_v2_intime.R output ----
+it_file <- file.path(DIR_PROCESSED, "backtest_v2_intime.csv")
+if (file.exists(it_file)) {
+  it <- read_csv(it_file, show_col_types = FALSE) |> group_by(agency_id) |> filter(n() >= 3) |>
+    summarise(won = n(), all = sum(caught), in_time = sum(caught_intime), .groups = "drop") |>
+    mutate(lab = factor(paste0(toupper(agency_id), " (", won, " won)"), levels = paste0(toupper(agency_id), " (", won, " won)")[order(all / won)]))
+  tot <- it |> summarise(won = sum(won), all = sum(all), in_time = sum(in_time))
+  long3 <- it |> pivot_longer(c(all, in_time), names_to = "m", values_to = "k") |>
+    mutate(share = k / won, m = factor(m, levels = c("all", "in_time"), labels = c("Reached Top 10", paste0("... with ", IN_TIME_DAYS, "+ days left"))))
+  p3 <- ggplot(long3, aes(share, lab, fill = m)) + geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+    scale_fill_manual(values = c(FIG_COLORS$main, FIG_COLORS$accent)) +
+    scale_x_continuous(limits = c(0, 1), labels = scales::percent) +
+    labs(title = "How many catches left time to apply?",
+         subtitle = paste0("Pooled: ", tot$all, " of ", tot$won, " reach the Top 10; ", tot$in_time, " with ", IN_TIME_DAYS,
+                           "+ days left.\n(", IN_TIME_DAYS, " days is a team assumption; days counted from the window end.)"),
+         x = "Share of won programs", y = NULL, fill = NULL, caption = caption) +
+    theme_finals() + theme(legend.position = "bottom")
+  export_figure(p3, "backtest_v2_intime", width = 9, height = 5.5)
+} else message("No backtest_v2_intime.csv; run 26_backtest_v2_intime.R for the in-time figure.")
