@@ -22,3 +22,5 @@ Every number used on a slide or in a handout is listed here with the script that
 | 16 | Soonest-deadline baseline beats the model on 4-week windows in all 3 agencies | 3 of 3 agencies | `data/manual/facts.csv` f22 | Claude; Everett and Kent to confirm | 2026-11-07 |
 | 17 | Top 10 rows closing within 14 days (`CLOSING_SOON_DAYS`, [assumed] 14) across all agencies | 73 | `data/manual/facts.csv` f23, `src/R/11_build_payload.R` | Claude; Kent to confirm | 2026-11-07 |
 | 18 | Agencies with at least one Top 10 row closing within 14 days | 26 | `data/manual/facts.csv` f24 | Claude; Kent to confirm | 2026-11-07 |
+| 19 | Plan goals carried in `payload.json` for the match board (goal text cut to 240 characters) | 153 | `data/manual/facts.csv` f25, `src/R/11_build_payload.R` | Claude; Kent to confirm | 2026-11-07 |
+| 20 | Agencies with at least one plan goal in `payload.json` | 32 | `data/manual/facts.csv` f26 | Claude; Kent to confirm | 2026-11-07 |

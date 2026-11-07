@@ -277,7 +277,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open opportunities among the best matches loaded";
     var shown = listFor(g);
     $("counts").textContent = "Showing " + shown.length + " of " + ofText + " (" + TILES.filter(function (t) { return t[0] === cur.tile; })[0][1] + "). " +
-      g.hidden.length + " hidden as not eligible, " + Math.max(0, below) + " ranked below the top 10, " + g.coming.length + " not open yet" +
+      ((ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length) + " hidden as not eligible, " + Math.max(0, below) + " ranked below the top 10, " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " not open yet" +
       (g.notices ? ", " + g.notices + " notice" + (g.notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
     fill($("top"), shown);
     $("refine").hidden = false;
