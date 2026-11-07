@@ -32,3 +32,26 @@ Source of truth for what we build. Anything here overrides the "chosen option" l
 3. Sat 1:00 PM gate: working ranking per agency, recall number, Clean School Bus (CFDA 66.045 [uncertain]) appears for education and environment, deterministic rerun.
 4. Sat 1:00 to 7:00 PM: Azure reasons with the quote check; the JS tool with agency picker, sliders and breakdown; tiers; presets; feedback button only if time holds. Fact sheet, field notes, slide brief, Q&A sheet from verified numbers only.
 5. Sat 7:00 PM code freeze. Sun before 9:00 AM submit slides, field notes, repo and product link.
+
+## Amendments after the plan review (Kent, Fri Nov 6 night, grilling interview)
+These override the numbered decisions above where they differ. Settings live in `src/R/00_config.R` ("Evaluation, refresh and feedback").
+
+| # | Decision | Changes |
+|---|---|---|
+| A | Fit is scored first by keyword similarity (TF-IDF or BM25) in R, behind one swappable scoring function. Azure embeddings replace it when Azure OpenAI works; recall is reported for both. | Decision 7 no longer waits on Azure OpenAI |
+| B | Pool labels: hand-labelled first, then labelled by Kent's local model. Model labels may scale the pool beyond the hand set only if, on the hand set, the model catches at least 80% of hand "relevant" items and Cohen's kappa is at least 0.6 on relevant (relevant plus maybe) versus not relevant. If it fails, report recall on hand labels only and report the failure. | Decision 12 labels |
+| C | Pool draw: per agency, half from the agency's matching Grants.gov `category` (Education for DPI, Environment for DEQ, Health for DHHS), half random from the rest. Fixed seed; the draw script is committed before any scoring runs. Clean School Bus and other named cases are separate named tests, not pool items. | Decision 12 draw |
+| D | No threshold tuning on the pool. The flag is the top N = 10 per agency per window. | Decision 3 (tuning on the reported pool was circular) |
+| E | The window is user-selectable in the UI, default 2 weeks. Evaluation is a backtest over closed items since 2024-11-06, replayed window by window at 2, 4 and 6 weeks. | Decisions 3 and 11 |
+| F | The curve shows two lines: all catches, and in-time catches (at least X = 21 days left before close at the end of the window). The gap between the lines is the case for frequent refresh and deadline alerts. X = 21 is a team assumption, not a sponsor number. | Decision 11 named weakness, now measured |
+| G | A daily Azure Container Apps Job (`MODE=job`) pulls new Grants.gov items (cached), scores them, writes `payload.json` to Blob and stamps "data as of". In the demo, trigger the job once by hand if the schedule cannot be shown. | Decision 6 refresh |
+| H | Bonus 2 (deadline alerts): an in-app "Closing soon / New since last visit" panel. Last visit is kept in the browser's localStorage. No email. | Deadline alerts |
+| I | Bonus 3 (feedback): `POST /feedback` on the Container App accepts agency, opportunity ID and good or bad only (no free text, no personal data), with input validation and a rate limit, stored in Azure Table or Blob. The daily job applies Rocchio profile updates (good items added to the agency profile, bad items subtracted, fixed small weights). Pin and hide are the instant visible effect. Measured by simulating feedback from half the hand labels and reporting the in-time recall change on the other half. | Decision 10 |
+| J | Bonus 1 (coverage): the backtest catch counts from E and F. "Missed" keeps the meaning in decision 2. | Decision 2 |
+| K | Outside test: a mentor at the Sat 2:00 to 4:00 PM drop-ins (discovery sponsors are not there) does one timed task: find one grant to act on for DPI or DEQ. Log confusions and one change made because of it in the field notes; call them mentors, not agency users. Needs a clickable build by 2:00 PM. | Understand gap |
+| L | Cut order, first cut first: presets, LLM tier upgrade, model-label scale-up, Azure chat reasons (keyword snippets shown instead), feedback endpoint plus Rocchio, Azure embeddings swap (keyword stays; embeddings go on the roadmap). Never cut: keyword-fit table with the agency picker, hide-ineligible and "check eligibility", the in-time recall curve on hand labels, the daily job, the closing-soon panel, and the quote check on any reason that ships. | Decision 15 |
+
+### Still open
+- Judges' access to the private repo: add them as collaborators, or submit a zip or public mirror without `api_keys.env`. Check what the Final Submission form expects.
+- School bus "about one month" application window is from discovery notes; verify against Grants.gov before it goes on a slide.
+- X = 21 days is a team assumption; say so in Q&A.
