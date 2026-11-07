@@ -39,6 +39,19 @@ check("unit: criteria", "missing field is rejected", fails(rank_items(toy, mutat
 check("unit: criteria", "duplicate ids are rejected", fails(rank_items(toy, bind_rows(base_cr, base_cr), ref)))
 check("unit: criteria", "scale not allowed on a filter", fails(rank_items(toy, mutate(base_cr, type = "filter"), ref)))
 
+# ---- 2b. Unit: score.R defects from the Nov 6 triage ---------------------------------
+d2 <- tibble(id = c("a", "b", "c"), name = c("A", "B", "C"), x = c(1, NA, 2), y = c(NA, NA, 1))
+two <- bind_rows(base_cr, mutate(base_cr, id = "s2", field = "y", value = "0|1"))
+rk2 <- rank_items(d2, two, ref, "id", "name")
+check("unit: score", "missing part is dropped and weights rescale", isTRUE(all.equal(rk2$all$total[rk2$all$id == "a"], 50)))
+check("unit: score", "item with every part missing gets NA total and ranks last", is.na(rk2$all$total[rk2$all$id == "b"]) && tail(rk2$ranked$id, 1) == "b")
+check("unit: score", "all weights zero is an error", fails(rank_items(d2, mutate(two, weight = 0), ref, "id", "name")))
+fo <- tibble(id = "f", type = "filter", label = "F", field = "x", rule = "gte", value = "2", weight = NA_real_)
+check("unit: score", "filter-only table does not crash", !fails(rank_items(d2, fo, ref, "id", "name")))
+check("unit: score", "duplicate item ids are rejected", fails(rank_items(bind_rows(d2, d2[1, ]), base_cr, ref, "id", "name")))
+check("unit: score", "contains is plain text, not a regex", identical(rule_eval(c("a.b", "axb"), "contains", ".", ref), c(TRUE, FALSE)))
+check("unit: score", "dropped_by holds filter ids", identical(rank_items(d2, fo, ref, "id", "name")$dropped$dropped_by[1], "f"))
+
 # ---- 3. Integration: whole pipeline on the project data -----------------------------
 i <- "integration"
 items <- read_any(ITEMS_FILE)
@@ -48,13 +61,12 @@ rk <- rank_items(items, cr, REF_DATE, ID_COL, NAME_COL)
 check(i, "every item is ranked or dropped exactly once", nrow(rk$ranked) + nrow(rk$dropped) == nrow(items),
       paste(nrow(rk$ranked), "+", nrow(rk$dropped), "of", nrow(items)))
 check(i, "ids are unique", !anyDuplicated(items[[ID_COL]]))
-check(i, "totals are between 0 and 100", all(rk$ranked$total >= 0 & rk$ranked$total <= 100))
+check(i, "totals are between 0 and 100", all(rk$ranked$total >= 0 & rk$ranked$total <= 100, na.rm = TRUE))
 check(i, "ranking is sorted by total", !is.unsorted(rev(rk$ranked$total)))
 check(i, "rerun gives the same ranking (reproducible)", identical(rk$ranked$id, rank_items(items, cr, REF_DATE, ID_COL, NAME_COL)$ranked$id))
 sc <- cr$id[cr$type == "score"]
 if (length(sc)) {
-  zero_w <- rank_items(items, cr, REF_DATE, ID_COL, NAME_COL, weights = setNames(rep(0, length(sc)), sc))
-  check(i, "all weights zero gives total 0, no crash", all(zero_w$ranked$total == 0))
+  check(i, "all weights zero stops with an error", fails(rank_items(items, cr, REF_DATE, ID_COL, NAME_COL, weights = setNames(rep(0, length(sc)), sc))))
 }
 filt <- cr$id[cr$type == "filter"]
 if (length(filt)) {
@@ -73,7 +85,7 @@ for (r in seq_len(nrow(tc))) {
     ranks_above    = t$item_id %in% ranked$id && t$other_id %in% ranked$id &&
                        match(t$item_id, ranked$id) < match(t$other_id, ranked$id),
     not_in_ranking = !(t$item_id %in% ranked$id),
-    dropped_by     = grepl(cr$label[cr$id == t$filter_id], rk$dropped$dropped_by[rk$dropped$id == t$item_id], fixed = TRUE),
+    dropped_by     = grepl(t$filter_id, rk$dropped$dropped_by[rk$dropped$id == t$item_id], fixed = TRUE),
     points_equal   = isTRUE(all.equal(rk$all[[paste0("pts_", t$criterion_id)]][match(t$item_id, rk$all$id)], as.numeric(t$expected))),
     FALSE)
   check("your test cases", paste0(t$case_id, ": ", t$description), ok)

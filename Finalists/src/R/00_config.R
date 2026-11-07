@@ -13,12 +13,12 @@ invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
 # =============================================================================
 # FILL IN AT RELEASE
 # =============================================================================
-PROJECT_TITLE <- "Finals project (rename at release)"
+PROJECT_TITLE <- "Federal Funds Matchmaker"
 PROJECT_SUB   <- "Solve-A-Thon 2026 Final Quest"
 
 ID_COL     <- "id"                                   # unique key of one item
-NAME_COL   <- "name"                                 # what the user sees as the item's name
-SHOW_FIELDS <- c("agency", "close_date", "award_usd") # extra columns shown next to each result
+NAME_COL   <- "title"                                # what the user sees as the item's name
+SHOW_FIELDS <- c("agency_id", "close_date", "award_ceiling") # extra columns shown next to each result
 
 REF_DATE   <- as.Date("2026-11-06")  # "today" for deadline rules, so reruns are reproducible
 TOP_N      <- 20L                    # how many ranked results the outputs keep
@@ -48,6 +48,21 @@ ITEMS_FILE      <- pick_file(file.path(DIR_PROCESSED, "items.csv"),      file.pa
 CRITERIA_FILE   <- pick_file(file.path(DIR_MANUAL, "criteria.csv"),      file.path(DIR_EXAMPLE, "criteria_example.csv"))
 TEST_CASES_FILE <- pick_file(file.path(DIR_MANUAL, "test_cases.csv"),    file.path(DIR_EXAMPLE, "test_cases_example.csv"))
 FACTS_FILE      <- pick_file(file.path(DIR_MANUAL, "facts.csv"),         file.path(DIR_EXAMPLE, "facts_example.csv"))
+
+# Pipeline scripts call this first with the input files they read: a real run must never
+# rank toy data by accident. Tests and the notebook may still run on the toy files.
+stop_if_toy <- function(...) {
+  files <- c(...)
+  toy <- if (length(files)) any(startsWith(normalizePath(files, mustWork = FALSE), normalizePath(DIR_EXAMPLE, mustWork = FALSE))) else USING_EXAMPLE
+  if (toy) stop("Real input missing, refusing to run on TOY example data. See the NOTE lines above.", call. = FALSE)
+}
+
+OPPS_FILE       <- file.path(DIR_PROCESSED, "opportunities.csv")
+AGENCY_MAP_FILE <- file.path(DIR_MANUAL, "agency_map.csv")
+GOALS_FILE      <- here("src", "docs", "agency_goal_summaries.csv")
+BACKTEST_CSV    <- file.path(DIR_PROCESSED, "rankings_backtest.csv")
+OPEN_STATUSES   <- c("posted", "forecasted", "notice")   # rows in payload.json; closed go to the backtest
+FAR_FUTURE_DATE <- as.Date("2030-01-01")   # close dates on or after this read "rolling or no date listed" (decision 8)
 
 PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")
