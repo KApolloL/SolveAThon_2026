@@ -105,6 +105,9 @@ parts <- lapply(1:3, function(k) label_items(df, "id", "txt", "Does it serve rur
 ids_seen <- sort(unlist(lapply(parts, `[[`, "id")))
 check(l, "shards cover every item exactly once", identical(ids_seen, 1:7))
 
+# ---- 7. Ingest: merged opportunities table -----------------------------------------
+source(here::here("src", "tests", "test_ingest.R"))
+
 # ---- Report ------------------------------------------------------------------------
 rep <- bind_rows(results)
 dir.create(DIR_OUTS, showWarnings = FALSE, recursive = TRUE)
