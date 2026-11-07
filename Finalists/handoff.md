@@ -12,7 +12,7 @@ _Update this at each checkpoint (about every 6 hours) and before ending any long
 | Piece | State (not started / in progress / done / blocked) | Owner | Notes |
 |---|---|---|---|
 | Quest brief saved (`docs/QUEST_BRIEF.md`) | done | Kent / Claude | Docs updated from it Fri am |
-| Azure access and environment | in progress | Marco | Logged in; team subscription `unc-sdis-solveathon-team15`; East US. Created: storage `ffmdatateam15` + container `ffm-data`, `ffm-logs`, registry `ffmacrteam15`, env `ffm-env`. NOT yet: Azure OpenAI, container app/URL, budget alerts. Hello app written in `app/`, not built. Spending limit is $500. Plan for Sat: [src/docs/azure_setup.md](src/docs/azure_setup.md) |
+| Azure access and environment | in progress | Marco | `ffm-app` live at https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/ (Shiny fallback at `/`, qualifier JS tool at `/tool.html`, image `ffm-app:v1`, 0.5 vCPU, 1 Gi, min 0, max 1, managed identity pull). Budget alerts `ffm-guard` at $50, $100, $250, $400; alerts do not stop spending. Azure OpenAI not created; waits for the Sat 9:00 check. Details: [src/docs/azure_setup.md](src/docs/azure_setup.md) |
 | Problem framing and user | not started | Kent | Waits for 6:30 pm workshop and 7:30 pm sprint; user is [assumed] |
 | Data ingestion (opportunities feed) | done for Grants.gov, Simpler, Federal Register, USAspending (Nov 6 night) | Kent / Claude | `Rscript R/02a..02e`, `03_merge_opportunities.R` -> `data/processed/opportunities.csv/.json` (6,523 rows: 882 posted + 2 API-only, 588 forecasted, 4,947 closed since 2024-11-06, 104 Federal Register notices). Tests: `tests/test_ingest.R`. Not pulled: SAM.gov catalog (10 requests per page of 10 listings, 2,873 listings, key allows too few calls), USDOT page (transportation.gov returns 403 to scripts; not worked around). Details in "Data setup notes" below |
 | Agency profiles from strategic plans | not started | Kent / teammate | 34 OSBM plan PDFs downloaded to `data/raw/agency_plans/` (see `MANIFEST.csv`). Text extractability not yet checked. Starter Kit says serve ONE agency; sponsor picks tonight |
@@ -28,6 +28,8 @@ _Update this at each checkpoint (about every 6 hours) and before ending any long
 | Q&A cheat sheet + hostile-judge pass | not started | Kent / Claude | |
 | Presentation rehearsal | not started | Team | |
 | AI-usage disclosure | not started | Teammate | Written from `AI_USAGE_LOG.md` |
+
+**Update Sat Nov 7, 12:45 am (Marco):** tool proposals for Kent are in [planning/09_tool_plan_update.md](planning/09_tool_plan_update.md); Saturday plan in [planning/08_saturday_plan.md](planning/08_saturday_plan.md). Field notes, README and diagram drafts are in `drafts/claude/`. Rows above may be out of date; scoring and ranking are with other teammates.
 
 ## Decisions made (and why)
 - Keep R and Quarto as the core, add a small deployable front end on Azure. Reason: reuse qualifier plumbing (Kent, Nov 6). Revisit if Azure hosting of R is painful.
