@@ -23,3 +23,6 @@
 - Kent is on the critical path and does every merge. If a merge window runs over 20 minutes, the next window moves, not the gate.
 - 38-second cold start during the 11:00 mentor demo: set min replicas 1 during the day if T3 confirms it is cheap.
 - Spending: Azure does not enforce the $500 budget. Keep model calls capped in config and cached.
+
+## Decided
+- Row 7 (Sat Nov 7): county need stays a display column and does not enter the score. No opportunity carries a county, and the data was built for the qualifier's county-level user. It can feed county reach and the need map once `rows[].counties` exists. Decided by Kent, delegated to Claude; logged in `AI_USAGE_LOG.md`.

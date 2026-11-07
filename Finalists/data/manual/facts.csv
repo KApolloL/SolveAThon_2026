@@ -21,3 +21,5 @@ f19,DPI programs caught in 4-week windows (of 3 won),"bt_result$caught[bt_result
 f20,DEQ programs caught in 4-week windows (of 7 won),"bt_result$caught[bt_result$agency_id == 'deq' & bt_result$window_weeks == 4]",3,0
 f21,DHHS programs caught in 4-week windows (of 11 won),"bt_result$caught[bt_result$agency_id == 'dhhs' & bt_result$window_weeks == 4]",4,0
 f22,Agencies where the soonest-deadline baseline beats the model on 4-week windows,"sum(bt_result$baseline_deadline_pct[bt_result$window_weeks == 4] > bt_result$pct[bt_result$window_weeks == 4])",3,0
+f23,Top 10 rows closing within 14 days (all agencies),"sum(payload$rows$in_top10 & !is.na(payload$rows$days_left) & payload$rows$days_left >= 0 & payload$rows$days_left <= 14)",73,0
+f24,Agencies with at least one Top 10 row closing within 14 days,"sum(payload$agencies$n_closing_soon > 0)",26,0

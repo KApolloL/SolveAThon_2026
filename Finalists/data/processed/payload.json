@@ -9,7 +9,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": ["State Board of Education Plan"],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "ncccs",
@@ -18,7 +19,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 45
+      "n_hidden_ineligible": 45,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "unc",
@@ -27,7 +29,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 45
+      "n_hidden_ineligible": 45,
+      "n_closing_soon": 0
     },
     {
       "agency_id": "osbm",
@@ -36,7 +39,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "ncdit",
@@ -45,7 +49,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "hfa",
@@ -54,7 +59,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 0
     },
     {
       "agency_id": "dmva",
@@ -63,7 +69,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 3
     },
     {
       "agency_id": "oshr",
@@ -72,7 +79,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "sos",
@@ -81,7 +89,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 4
     },
     {
       "agency_id": "osa",
@@ -90,7 +99,8 @@
       "plan_stale": true,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 2
     },
     {
       "agency_id": "dst",
@@ -99,7 +109,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 3
     },
     {
       "agency_id": "doi",
@@ -108,7 +119,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "osfm",
@@ -117,7 +129,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 2
     },
     {
       "agency_id": "doa",
@@ -126,7 +139,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 2
     },
     {
       "agency_id": "osc",
@@ -135,7 +149,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "dor",
@@ -144,7 +159,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 0
     },
     {
       "agency_id": "ncsbe",
@@ -153,7 +169,8 @@
       "plan_stale": true,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 0
     },
     {
       "agency_id": "oah",
@@ -162,7 +179,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "dhhs",
@@ -171,7 +189,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 3
     },
     {
       "agency_id": "ids",
@@ -180,7 +199,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 5
     },
     {
       "agency_id": "dac",
@@ -189,7 +209,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 5
     },
     {
       "agency_id": "doj",
@@ -198,7 +219,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 8
     },
     {
       "agency_id": "dps",
@@ -207,7 +229,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 8
     },
     {
       "agency_id": "sbi",
@@ -216,7 +239,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 9
     },
     {
       "agency_id": "shp",
@@ -225,7 +249,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "dacs",
@@ -234,7 +259,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "dol",
@@ -243,7 +269,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 0
     },
     {
       "agency_id": "dncr",
@@ -252,7 +279,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 5
     },
     {
       "agency_id": "deq",
@@ -261,7 +289,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 2
     },
     {
       "agency_id": "wrc",
@@ -270,7 +299,8 @@
       "plan_stale": true,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "commerce",
@@ -279,7 +309,8 @@
       "plan_stale": true,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 1
     },
     {
       "agency_id": "ncdot",
@@ -288,7 +319,8 @@
       "plan_stale": false,
       "plan_thin": null,
       "folded_from": [],
-      "n_hidden_ineligible": 98
+      "n_hidden_ineligible": 98,
+      "n_closing_soon": 0
     }
   ],
   "rows": [
