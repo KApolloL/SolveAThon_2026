@@ -25,11 +25,11 @@ Signed in as `gullotto@AD.UNC.EDU` (CLI 2.92.0, installed with Homebrew; `contai
 | Container Registry | `ffmacrteam15` (Basic) | created |
 | Container Apps environment | `ffm-env` | created |
 | Proof app | `Finalists/app/` (image `ffm-app:v1`, display only) | **built and live**; replaced the hello skeleton |
-| Azure OpenAI resource | `ffm-aoai-team15` | **not created** (Marco had not answered; no Azure OpenAI exists in the subscription) |
+| Azure OpenAI resource | `ffm-aoai-team15` (S0, East US) | **created Sat 12:50 am**; `gpt-4o-mini` (DataZoneStandard, capacity 10) and `text-embedding-3-small` (Standard, capacity 10); both test calls returned 200 |
 | Container App | `ffm-app` | **created and live**: https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/ |
 | Budget alerts | `ffm-guard` | **created**: $50, $100, $250, $400. Alerts only; they do not stop spending |
 
-Tested Friday night: see "Browser check" below. Azure OpenAI is still not created.
+Tested Friday night: see "Browser check" below.
 
 ## Plan for Saturday (in order)
 
@@ -148,3 +148,19 @@ Independent of the subagent's curl checks, in a real browser:
 Finding: the "school bus" results are noisy. The search matches each word separately across all columns, and the top rows are unrelated to buses. Do not use this search as evidence of matching quality. It may be a useful picture of what plain keyword search does, once measured.
 
 Still untested: `MODE=job` in the cloud, venue Wi-Fi and phone hotspot, V8 on the server. The cause of one early hung `curl` right after creation is unknown.
+
+### Azure OpenAI (Sat Nov 7, about 12:50 am, Marco asked for it now, replacing the wait for the 9:00 check)
+Nobody has yet confirmed it is ours to create, so confirm at the 9:00 check-in. If the answer is no, delete `ffm-aoai-team15` (ask Marco first).
+
+```bash
+az cognitiveservices account create -n ffm-aoai-team15 -g rg-primary-unc-sdis-solveathon-team15 -l eastus --kind OpenAI --sku S0 --custom-domain ffm-aoai-team15 --yes
+az cognitiveservices account deployment create -n ffm-aoai-team15 -g rg-primary-unc-sdis-solveathon-team15 --deployment-name text-embedding-3-small --model-name text-embedding-3-small --model-version 1 --model-format OpenAI --sku-name Standard --sku-capacity 10
+az cognitiveservices account deployment create -n ffm-aoai-team15 -g rg-primary-unc-sdis-solveathon-team15 --deployment-name gpt-4o-mini --model-name gpt-4o-mini --model-version 2024-07-18 --model-format OpenAI --sku-name DataZoneStandard --sku-capacity 10
+```
+
+- Endpoint: `https://ffm-aoai-team15.openai.azure.com/`. API version tested: `2024-10-21`. Key: `$AOAI_KEY`, read from `az cognitiveservices account keys list` into a shell variable. Never write it to a file.
+- Failure and fix: `gpt-4o-mini` on `Standard` was refused (`ServiceModelDeprecated`, deprecated since 03/31/2026). `DataZoneStandard` worked; it processes within the US data zone [per Azure SKU naming; read the docs before claiming this].
+- Model retirement dates listed by Azure: `gpt-4o-mini` 2027-04-14, `text-embedding-3-small` 2028-02-09.
+- Tests: chat 200 (15 tokens), embeddings 200 (4 tokens, 1,536 dimensions).
+- Cost so far: under one cent for these tests. No fixed monthly charge is expected for pay-per-token deployments [from list pricing, not confirmed on the bill].
+- Not done: wired into the app or pipeline; no call cap in code yet; data-handling terms not read, so privacy stays [uncertain].

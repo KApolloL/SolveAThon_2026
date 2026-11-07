@@ -38,7 +38,7 @@ Measured on 1,472 open and upcoming items (quick pattern match; codes still need
 
 1. **Codes.** Closed lists without state are No, adjusted by agency type: higher-education-only is No for DEQ and may be Yes for the UNC System and Community Colleges. Tribal-only is No for all.
 2. **Fixed rules.** Clear phrases and funder patterns. A first pattern test left 285 of 427 "other" items unresolved, so rules alone cannot do it.
-3. **Notice reader.** Labels: state agency can lead, partner only, not eligible, unclear, with an exact quote a script checks. Code maps the label to Yes or No. **Needs Azure OpenAI (9:00 check).** The local model was never tested on eligibility `[reported]`.
+3. **Notice reader.** Labels: state agency can lead, partner only, not eligible, unclear, with an exact quote a script checks. Code maps the label to Yes or No. **Uses Azure OpenAI, created Sat 12:50 am and tested; confirm at 9:00 that it is ours to use.** The local model was never tested on eligibility `[reported]`.
 4. **Accuracy gate.** A label sorts automatically only after a hand check of about 100 items at 90% or better for Yes and for No [proposed bar]. Hand-check capacity is short, so scale this to what the team can do, or everything stays Ask.
 
 Items are hidden only with a verified quote or a clear code. Caution: the qualifier's model matched hand labels only 67% on a similar label ("administrable by a state agency"). **If Azure OpenAI is refused, or the gate fails, steps 1 and 2 still run, unresolved items stay Ask, and the pitch says so.**
@@ -73,7 +73,7 @@ My `drafts/claude/eval` sheets (6/6/8) are retired by this. Keep the scoring cod
 - Daily job (`MODE=job`) refreshes, scores, writes `payload.json` to Blob and stamps "data as of". This is the core cloud story.
 - Container App serves the JS tool. Shiny stays as the fallback.
 - `/feedback` per amendment I, with validation and rate limit. It needs a written answer on what it stores, who reads it, and retention (reviewer 04).
-- Azure OpenAI: decide at 9:00. Uses: notice reader first, then chat reasons, then embeddings. About $0.60 per pass over all open items, estimated.
+- Azure OpenAI: created and tested, not wired in. Confirm at 9:00. Uses: notice reader first, then chat reasons, then embeddings. About $0.60 per pass over all open items, estimated.
 
 ## Pilot ask
 - 60 days. The tool is open to all agencies.
@@ -88,7 +88,7 @@ My `drafts/claude/eval` sheets (6/6/8) are retired by this. Keep the scoring cod
 From the triage: write `criteria.csv`; make `00_config.R` fail loudly on toy data; fix `score.R` (drop-and-rescale, 2099 dates, ceiling 0 as unknown, duplicates, all-zero weights); apply eligibility rules so codes 25 and 99 are not hidden; add agency and window to the ranking; replace the Clean School Bus gate case.
 
 ## Saturday order
-1. 9:00: Azure OpenAI answer; Kent rules on the questions below.
+1. 9:00: confirm Azure OpenAI is ours to use; Kent rules on the questions below.
 2. To 1:00: criteria, `score.R` fixes, keyword ranking for all agencies, eligibility steps 1 and 2, award backtest, payload.
 3. To 2:00: first screen on Azure, clickable for the mentor test.
 4. 2:00 to 7:00: daily job, closing-soon panel, then notice reader if approved, then feedback, then reasons.
