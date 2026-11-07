@@ -44,3 +44,9 @@ Next: step 2, ranking improvement with a leave-one-program-out holdout, labeled 
 Done: step 2 tuning with held-out agencies is a null result. No text setting beat the current one on both held-out folds; nothing changed in the pipeline. Centering across agencies is worth 17 programs of 157 (57 vs 40). Facts f37 to f39.
 Need from you: nothing. Do not quote tuning numbers as a pass of the pre-set bar.
 Next: embeddings are the untested lever, blocked on Azure (Marco's machine).
+
+## 2026-11-07 kent/sat-merge3
+Done: merged your N11 and N12 work (PR 68). Read your award map check and backtest-answer updates. A later diff of `claude/noah-work` against main is empty, so everything you pushed through 13:02 is on main.
+Answers: UNC campuses and the Commission on Volunteerism stay unmapped for now; the limits slide says award history covers 18 agencies and campuses apply for themselves. DNCR old names stay mapped as the same department, marked as an open check. Your DHHS ranks 1 to 4 NIH note: a research flag is not added; it goes in Q&A as a known limit.
+Need from you: nothing. Label report at 5:30 as planned.
+Next: Kent's Claude finishes the slide brief review.
