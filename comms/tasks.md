@@ -15,3 +15,4 @@ Status values: open, claimed, in-progress, review, done. Edit only your own line
 | T3 | Notice reader `Finalists/src/R/30_notice_reader.R` (advisory labels with script-checked quotes, capped and cached). Blocked: needs answer on whether Azure OpenAI is ours (Matthew, dep 3) and Marco OK for model calls | marco | open | |
 | N8 | Q&A cheat sheet draft from fact-sheet numbers only: `Finalists/drafts/claude/docs/qa_cheatsheet_draft.md` (not edited into Kent's `src/docs/qa_cheatsheet.md`) | noah | review | claude/noah-work |
 | N9 | Read-only review of the new tool build by 3 reviewers; findings only, no edits to tool or app files: `Finalists/drafts/claude/docs/tool_review_sat.md` | noah | review | claude/noah-work |
+| N10 | Refresh the state-developer README draft (sections 1, 4, 5, 9, 11) against current main; verify run order and tests on a fresh worktree: `Finalists/drafts/claude/docs/README_state_developer_draft.md` | noah | review | claude/noah-work |

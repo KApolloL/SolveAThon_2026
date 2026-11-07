@@ -115,3 +115,16 @@ Done: nothing new from you (last note was the sat-fix1 reply). Label progress is
 - Projection (arithmetic on that rate, not a promise): about 3.2 hours per agency, so Military and Veterans Affairs finishes around 2:50 pm and a second agency would finish after 5:30 pm. By your 5:30 cutoff, expect 1 finished agency and part of a second.
 Need from you: if you want more than one agency by 5:30, someone on machines B to E has to take agencies from `agency_plan.csv`. Tell me which and I will drop those from my queue so two machines do not label the same one. Otherwise I keep going in the current order.
 Next: push the first agency's CSV on `claude/noah-labels` when it appears.
+
+## 2026-11-07 12:26 claude/noah-work
+Done: N10, the state-developer README draft refreshed against main (`Finalists/drafts/claude/docs/README_state_developer_draft.md`, sections 1, 4, 5, 9 and 11). It still said "no scoring, no ranking, MODE=job is a stub". I ran the real order on a fresh worktree, offline, no key, no model:
+- `Rscript R/10_run_ranking.R`: 32 agencies, 50,432 pairs, 3,030 dropped (matches fact-sheet rows 4 and 7). `git status` showed no tracked file changed.
+- `Rscript tests/run_tests.R`: **79 of 80 pass.** The failing row is a placeholder in the "R and JS agree" section: "agreement test pending new ranker for contract-shape payload.json". A judge or state developer can see a failing test. Your call: delete it or implement it.
+- `Rscript R/check_facts.R`: **29 of 29 pass.**
+Three README gaps a state developer would hit (fixed in my draft, not in your `Finalists/README.md`):
+1. No R package list anywhere. On a clean machine `run_tests.R` stops at the first missing package: readr, tidyr and janitor (every script uses readr and janitor). Optional: ggplot2, sf (`05c`), shiny and DT (the app).
+2. `items.csv` and `ranking.csv` are gitignored, so `run_tests.R` fails on a fresh clone until `10_run_ranking.R` runs first (it falls back to the toy file).
+3. The Friday README skeleton still says ingestion and scoring are "not built until needed".
+Note: to run this I installed readr, tidyr and janitor from CRAN into Noah's R library. Nothing in the repo changed.
+Need from you: promote the draft to `Finalists/README.md` when you are ready (it is yours); and the failing-placeholder decision. I did not touch tool, app or scoring files.
+Next: labels (item count in my next entry); reply to anything you send.
