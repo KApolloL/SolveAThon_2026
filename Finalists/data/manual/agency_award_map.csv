@@ -1,0 +1,9 @@
+recipient,agency_id,certainty,note
+NORTH CAROLINA DEPARTMENT OF PUBLIC INSTRUCTION,dpi,confirmed,Exact state agency name for DPI. Plan name is Department of Public Schools; USAspending name is Department of Public Instruction. Same agency.
+"PUBLIC INSTRUCTION, NORTH CAROLINA DEPARTMENT OF",dpi,confirmed,Same agency as line above; inverted name order. CFDA subset of line above (84.027 and 84.173 overlap).
+NORTH CAROLINA DEPARTMENT OF ENVIRONMENTAL QUALITY,deq,confirmed,Exact state agency name for DEQ. Only DEQ recipient in nc_awards_by_cfda.csv.
+NORTH CAROLINA DEPARTMENT OF HEALTH & HUMAN SERVICES,dhhs,confirmed,Exact state agency name for DHHS.
+"HEALTH & HUMAN SERVICES, NORTH CAROLINA DEPARTMENT OF",dhhs,confirmed,Same agency; inverted name order. CFDA already in line above.
+DEPARTMENT OF HEALTH & HUMAN SERVICES NORTH CAROLINA,dhhs,confirmed,Same agency; word order variant. CFDA already in line above.
+DHHS STATE PUBLIC HEALTH LAB,,uncertain,Unclassified in nc_awards_recipients.csv (2 awards); absent from nc_awards_by_cfda.csv. Possible DHHS division [uncertain]. Excluded from won set until verified. Not used in score.
+DURHAM PUBLIC SCHOOLS,,excluded,Local school district (local_or_other); not DPI state agency. Listed as near miss so DPI is not over counted.
