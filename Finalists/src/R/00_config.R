@@ -74,6 +74,21 @@ SAM_AL_BASE        <- "https://api.sam.gov/assistance-listings/v1"  # key: SAM_A
 USDOT_GRANTS_URL   <- "https://www.transportation.gov/grants"        # [uncertain] verify page before scraping
 
 # =============================================================================
+# Evaluation, refresh and feedback (plan review amendments, planning/08_product_decisions.md)
+# =============================================================================
+FLAG_TOP_N          <- 10L               # flagged items per agency per window (amendment D)
+WINDOW_WEEKS        <- c(2L, 4L, 6L)     # backtest windows for the recall curve (amendment E)
+WINDOW_DEFAULT_WEEKS <- 2L               # UI default and headline window
+IN_TIME_DAYS        <- 21L               # catch counts as in time if this many days remain (team assumption, amendment F)
+POOL_PER_AGENCY     <- 20L               # hand-labelled pool size per agency
+POOL_SEED           <- 20261106L         # fixed seed for the pool draw (amendment C)
+POOL_CATEGORY_SHARE <- 0.5               # share drawn from the agency's matching Grants.gov category
+MODEL_LABEL_MIN_CATCH <- 0.80            # model must catch this share of hand "relevant" items (amendment B)
+MODEL_LABEL_MIN_KAPPA <- 0.60            # and reach this kappa on relevant vs not relevant
+ROCCHIO_GOOD_WEIGHT <- 0.25              # feedback: weight of "good" items added to the profile (amendment I)
+ROCCHIO_BAD_WEIGHT  <- 0.10              # feedback: weight of "bad" items subtracted [assumed, untested]
+
+# =============================================================================
 # Tool controls
 # =============================================================================
 WEIGHT_RANGE <- c(0, 3)

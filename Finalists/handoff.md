@@ -54,6 +54,12 @@ _Update this at each checkpoint (about every 6 hours) and before ending any long
 ## Discovery session
 Findings and plan changes: [planning/07_discovery_findings.md](planning/07_discovery_findings.md). Organized notes: [notes/vault/Solveathon_DiscoverySession.md](notes/vault/Solveathon_DiscoverySession.md).
 
+## Product decisions (Nov 6 night)
+15 decisions confirmed by Kent after a grilling interview: [planning/08_product_decisions.md](planning/08_product_decisions.md). It overrides older "not started" assumptions in the status table. Next: pool rules and labels, criteria.csv, profile, pipeline, Sat 1:00 PM gate.
+
+## Plan review amendments (Nov 6 night)
+Twelve amendments (A to L) from a grilling review are appended to [planning/08_product_decisions.md](planning/08_product_decisions.md) and override the 15 decisions where they differ. Short form: keyword fit first with embeddings as a swap; pool hand-labelled then model-labelled (model labels count only at 80% catch of hand "relevant" and kappa 0.6); category-stratified pool with fixed seed; flag = top 10 per agency per window, no tuning; backtest curve at 2, 4, 6 weeks with all vs in-time (21 days) catches; daily Container Apps Job; closing-soon panel; `POST /feedback` with Rocchio updates; mentor test at Sat 2:00 PM; new cut order. Repo stays private (Kent, Nov 6). Open: how judges get repo access; verify the school bus window; X = 21 days is an assumption.
+
 ## Next three steps
 Friday night owners and teammate AI prompts: [planning/06_tonight_plan.md](planning/06_tonight_plan.md). Marco owns Azure; Noah and Matthew check plan text; Kent owns planning.
 

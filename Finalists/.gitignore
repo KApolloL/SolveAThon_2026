@@ -15,3 +15,7 @@ data/cache/api/grantsgov_extract/
 
 # compiled OCR helper (rebuild: swiftc -O -o data/cache/ocr_vision src/tools/ocr_vision.swift)
 data/cache/ocr_vision
+
+# graphify intermediates (keep graph.json and GRAPH_REPORT.md)
+graphify-out/.*
+graphify-out/cache/

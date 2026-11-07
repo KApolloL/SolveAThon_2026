@@ -14,10 +14,10 @@ For all five of us. Kent fills the names in "Roles" by Thursday. Times are the o
 | Role | Name | Job all weekend |
 |---|---|---|
 | Kent | Kent | Technical lead. Frames with the team, builds the pipeline, makes final calls on criteria and scope, merges code. |
-| A: Client lead | | Leads the questions in the workshop. Then researches the agency's goals and drafts the user persona. Runs the persona role-plays. |
-| B: Data and testing | | Takes workshop notes. Then writes test cases before results exist, hand-labels a blind sample, spot-checks results against the raw data. Runs the test-breaker. |
-| C: Story and slides | | Follows up in the workshop. Then builds the slides with their AI from Kent's slide brief and owns the demo script and the final submission form entry. |
-| D: Q&A and proof | | Keeps time in the workshop. Then builds the Q&A cheat sheet, runs the hostile judge, checks every slide number against the fact sheet, and keeps the AI-use log and the disclosure. |
+| A: Client lead | Noah | Leads the questions in the workshop. Then researches the agency's goals and drafts the user persona. Runs the persona role-plays. |
+| B: Data and testing | Everett | Takes workshop notes. Then writes test cases before results exist, hand-labels a blind sample, spot-checks results against the raw data. Runs the test-breaker. |
+| C: Story and slides | Matthew | Follows up in the workshop. Then builds the slides with their AI from Kent's slide brief and owns the demo script and the final submission form entry. |
+| D: Q&A and proof | Marco and Kent (Marco also owns Azure) | Keeps time in the workshop. Then builds the Q&A cheat sheet, runs the hostile judge, checks every slide number against the fact sheet, and keeps the AI-use log and the disclosure. |
 
 ## Friday Nov 6 (Manning 209)
 - **5:30 to 6:00 Registration and dinner:** everyone has a charged laptop and a notebook. Kent checks the repo and Claude work.
