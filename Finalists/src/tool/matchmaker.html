@@ -260,12 +260,12 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     add("Eligibility rule", r.eligibility ? ELIG_WORDS[r.eligibility] + (r.elig_source ? " (from " + (SRC[r.elig_source] || r.elig_source) + ")" : "") : null);
     add("Quote behind it", r.elig_quote);
     add("Notice reader", r.reader_label ? r.reader_label + (r.reader_quote ? ": " + r.reader_quote : "") : null);
-    add("Signature needed", TIER[r.signature_tier] || "Unknown");
+    add("Signature needed", (TIER[r.signature_tier] || "Unknown") + (r.tier_reason ? ". " + r.tier_reason : " (the notice does not say whether cost share is required)"));
     add("Award ceiling", r.award_ceiling != null ? "$" + Number(r.award_ceiling).toLocaleString() : "not listed");
     add("Assistance listing", r.cfda_list);
     add("NC has won this program before", r.nc_won_before == null ? null : (r.nc_won_before ? "Yes (shown only; not part of the ranking)" : "No record"));
     add("Keyword fit", r.fit_score != null ? Math.round(Number(r.fit_score) * 100) + " of 100 (title and summary against the plan goals; compare only inside one agency's list)" : null);
-    add("Why it is ranked here", r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
+    add("Why it is ranked here", r.rank_note || r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
     add("Summary", r.opp_snippet);
     det.appendChild(dl); return det;
   }
@@ -529,7 +529,7 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     h("Eligibility"); p("Yes, No or Ask comes from the applicant-type codes first, then fixed text rules. An item is hidden only when a code or quote says state agencies cannot apply. Anything unclear stays visible as Ask. Hidden items stay one click away.");
     h("What is loaded right now"); p(n + " rows are loaded across " + P.agencies.length + " agencies: the best matches per agency, not every open opportunity. " + hid + " of these rows are marked not eligible. Data as of " + (P.data_as_of || "unknown") + ".");
     h("Closing soon, New, and your decisions"); p("Closing soon means " + CSD + " days or fewer left. New since last visit and your Pursue, Maybe and Pass marks live only in this browser. Nothing is sent to a server or by email.");
-    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature tier is not set yet, so it reads Unknown. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
+    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature needed comes from two notice fields only, cost share and award size; it does not check whether the agency has the staff or capabilities, and it reads Unknown when the notice does not state cost share. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
     h("County map and capabilities"); p("The County map tab shows 18 public county measures from the qualifier round. The capability table appears for DHHS and DMVA only, the two agencies where we built it. Per-grant county reach, impact sliders and a scatter are not shown: the payload carries no county list per grant, and we do not guess one.");
   }
 

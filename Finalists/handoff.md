@@ -99,3 +99,15 @@ Official schedule is in the vault hub `Projects/Competitions/Solveathon/Solveath
 - Noah's Claude is running the 23-agency labels on his machine (N2). Marco's Claude: snapshot repo (T2), notice reader (T3, blocked).
 - Checked Sat Nov 7 (Kent's Claude): rerun of `10_run_ranking.R` then `11_build_payload.R` gives an identical `payload.json` (md5 fa2e2a6c1c8fca628cf7bc30bea7f21e). DERA ranks 1 for DEQ and 3 for DPI, both eligibility "ask". `check_facts.R` 24 of 24. Azure is Marco's computer's job.
 - Qualifier data now in the tool (PR from `kent/sat-data2`): County map tab (18 measures from the qualifier caches: CDC PLACES, ACS 2023, HRSA, NCHS, OpenFEMA; outlines from the tigris cache via `05c_county_shapes.R`) and the DHHS and DMVA capability table (28 hand-built rows). Not carried, with reasons: CDC WONDER all-cause death file (crude rate over 1999 to 2020, not age adjusted, unused even in the qualifier), ACS by congressional district (no grant field to join), USAspending awards and Grants.gov enrichment (Finals already has its own `nc_awards_by_cfda.csv` and `grantsgov_extract.csv`). Per-grant county reach does not exist in any source.
+
+## Scoring pass (Sat Nov 7, Kent's Claude, branch kent/sat-scoring)
+- Signature tier now comes from notice fields (`signature_tier()` in `src/R/helpers_rank.R`): cost share Yes and award at or above `TIER_APPROPRIATION_USD` ($1M) is leadership; Yes below that is supervisor; No is writer; missing is unknown. Top 10: 259 known, 61 unknown (notices state no cost share). It does not check agency capabilities, and the tool says so.
+- `payload.json` rows gain `tier_reason` and `rank_note` (additive). The tool shows both under Details.
+- The "R and JS agree" pending test is replaced by a check that payload rank order equals fit_score order in every agency, and matches the full ranking. `tool/ranker.js` serves the toy payload only. Tests 83 of 83, facts 31 of 31.
+- Weights were NOT tuned. `20_backtest_awards.R` fixes its pass bar (50 percent on 4-week windows, 2 of 3 agencies) before the run and says not to retune after seeing results. Current 4-week recall: DPI 67 percent, DEQ 43, DHHS 36, so the bar is failed (1 of 3) and sits at or under the deadline baseline. That stays reported as evidence in the field notes. Tuning on the same 3 agencies would void the bar.
+
+## Backtest v2 (step 1, measure fix)
+- Original bar (50% on 4-week windows, 2 of 3 agencies) failed 1 of 3 and stays reported. Not retuned.
+- `src/R/21_backtest_v2.R` fixes the denominator (full window pool, not stored top 50), adds Top 20 and 50 and 15 more agencies by exact-name map rows in `data/manual/agency_award_map.csv`. Facts f32 to f36, fact sheet rows 26 to 29. Exploratory.
+- Result: Top 10 57 of 157 won programs (36%), deadline sort about 17%, random about 13%.
+- Step 2 (improve the ranking with a leave-one-program-out holdout) not started; see to-noah and the board.

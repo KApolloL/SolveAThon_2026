@@ -24,3 +24,10 @@ Keyword fit to the plan text is the likeliest source of misses. A program can be
 
 ## Open
 - Kent to confirm this framing before it goes on a slide.
+
+## Step 1 fix of the measure (v2, exploratory; the failed bar above stands)
+- Problem found in the first test: a won program only counted if it already sat in the stored top 50, so the denominator was shaped by the ranking being tested. Recall could not be widened past Top 10 and was inflated by that filter.
+- v2 (`src/R/21_backtest_v2.R`) counts every won program with an open notice in the agency's full pool for the window, adds Top 20 and Top 50, and adds 15 more agencies mapped by exact recipient name (18 in all, 12 with 3 or more won programs). Same ranking, same 4-week windows. Baselines use the same pool.
+- Result, 4-week windows, 12 agencies, 157 won programs: Top 10 reaches 57 (36%), Top 20 reaches 72 (46%), Top 50 reaches 95 (61%). A soonest-deadline sort reaches about 17% at Top 10 and a random 10 about 13%. Four of 12 agencies are at or above 50% in the Top 10.
+- Reading: the ranking beats both baselines once the denominator is fair, but most won programs still do not reach the Top 10. This does not rescue the pre-set bar: the original test failed it and that stays reported. v2 is exploratory and was built after seeing the first result.
+- Still true: program-level match favors repeat funding; denominators are small for many agencies (see `backtest_v2_result.csv` for intervals); notice-level match is impossible because the award data has no link to a notice. Exact-name agency rows were assigned by Claude and need Kent's confirmation (DNCR's older "Cultural Resources" names are the least certain).

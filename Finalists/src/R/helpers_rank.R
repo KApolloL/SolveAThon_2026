@@ -180,6 +180,37 @@ apply_program_map <- function(items, cfda_list, pmap) {
   items
 }
 
+# Signature tier from notice fields only (who has to sign), following the qualifier's rules that need
+# nothing but cost share and award size. No model, no text guess: a missing cost-share field stays unknown.
+#   Yes and award >= TIER_APPROPRIATION_USD -> leadership   (likely needs a state appropriation)
+#   Yes otherwise                            -> supervisor   (a supervisor must approve the match)
+#   No                                       -> writer       (no match; capabilities not checked, so "can start" only)
+# Returns signature_tier, tier_source ("fields" or NA) and tier_reason (one plain sentence or NA).
+signature_tier <- function(cost_sharing, award_ceiling, appropriation = TIER_APPROPRIATION_USD) {
+  cs <- tolower(trimws(as.character(cost_sharing))); aw <- suppressWarnings(as.numeric(award_ceiling))
+  big <- !is.na(aw) & aw > 0 & aw >= appropriation
+  tier <- case_when(cs == "yes" & big ~ "leadership", cs == "yes" ~ "supervisor", cs == "no" ~ "writer", TRUE ~ "unknown")
+  tibble(signature_tier = tier,
+         tier_source = ifelse(tier == "unknown", NA_character_, "fields"),
+         tier_reason = case_when(
+           tier == "leadership" ~ paste0("Cost share is required on an award of about $", format(aw, big.mark = ",", scientific = FALSE),
+                                         ", which likely needs a state appropriation."),
+           tier == "supervisor" ~ "Cost share is required, so a supervisor must approve the match.",
+           tier == "writer" ~ "No cost share is listed; capabilities are not checked here.",
+           TRUE ~ NA_character_))
+}
+
+# One sentence on how a row's keyword fit was reached, from the fields that moved it.
+rank_note <- function(fit, rank, in_top10, map_note, geo_other, n_open) {
+  f <- suppressWarnings(round(100 * as.numeric(fit)))
+  base <- ifelse(is.na(f), "No keyword fit could be computed.",
+    paste0("Keyword fit ", f, " of 100 against this agency's best match",
+           ifelse(!is.na(rank) & in_top10, paste0("; rank ", rank, " of ", n_open, " open eligible items"), ""), "."))
+  paste0(base,
+    ifelse(!is.na(map_note) & map_note != "", paste0(" Raised to at least ", round(100 * MAP_FIT_FLOOR), " by the program map: ", map_note), ""),
+    ifelse(!is.na(geo_other) & geo_other, " Halved because the title names another state.", ""))
+}
+
 # ---- Shared steps for 10_run_ranking.R, 11_build_payload.R and 12_backtest.R ------------
 read_criteria <- function(path = CRITERIA_FILE) {
   cr <- read_csv(path, show_col_types = FALSE, col_types = cols(.default = col_character()))
