@@ -121,6 +121,10 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
 .act button.primary[aria-pressed="true"] { color:var(--surface-2); }
 .help { font-size:.9rem; }
 dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; font-size:.92rem; } dl.gloss dt { font-weight:700; } dl.gloss dd { margin:0; }
+#more-tabs { display:contents; } #more-tabs[hidden] { display:none !important; }
+.steps { background:var(--accent-soft); border-radius:var(--radius); padding:10px 14px; margin:8px 0; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.steps ol { display:flex; gap:18px; flex-wrap:wrap; margin:0; padding:0; list-style:none; flex:1; } .steps li { font-size:.95rem; }
+.brief { width:100%; min-height:7em; font:inherit; font-size:.9rem; margin-top:6px; }
 </style>
 </head>
 <body>
@@ -134,12 +138,17 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
 <main id="main" tabindex="-1">
   <div class="tabs" role="tablist" aria-label="Views">
     <button type="button" role="tab" id="tab-opps" aria-selected="true" data-tab="opps">Opportunities</button>
-    <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
-    <button type="button" role="tab" id="tab-map" aria-selected="false" data-tab="map">County map</button>
     <button type="button" role="tab" id="tab-osbm" aria-selected="false" data-tab="osbm">OSBM overview</button>
     <button type="button" role="tab" id="tab-marks" aria-selected="false" data-tab="marks">My decisions</button>
+    <button type="button" id="tab-more" aria-expanded="false" aria-controls="more-tabs">More ▾</button>
+    <span id="more-tabs" hidden>
+    <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
+    <button type="button" role="tab" id="tab-map" aria-selected="false" data-tab="map">County map</button>
     <button type="button" role="tab" id="tab-how" aria-selected="false" data-tab="how">How this works</button>
+    </span>
   </div>
+
+  <div id="steps" class="steps" hidden><ol><li><b>1.</b> Pick your agency</li><li><b>2.</b> Read "Start here"</li><li><b>3.</b> Mark Pursue, Maybe or Pass</li></ol><button type="button" id="steps-x">Got it</button></div>
 
   <section id="v-opps" role="tabpanel" aria-labelledby="tab-opps">
     <label for="agency">Pick your agency</label>
@@ -183,6 +192,7 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
         <label>Usable runway, days (flag items closing sooner)<input type="number" id="k-run" min="0" step="1" placeholder="0 = off"></label>
         <label>Minimum award ceiling, $ (flag lower)<input type="number" id="k-min" min="0" step="1000" placeholder="0 = off"></label>
       </div>
+      <label style="font-weight:400"><input type="checkbox" id="k-res"> Hide awards that look research-led (guessed from title words like clinical trial, R01, NIH, EPSCoR; the ranking itself is unchanged)</label>
       <label style="font-weight:400"><input type="checkbox" id="k-hide"> Hide items that fail my runway or minimum award (unknown values are never hidden)</label>
       <h4>Plan goal priorities</h4>
       <p class="note">Weight 1 = as ranked. Moving a slider re-orders the loaded matches for this agency by keyword fit times your weight. Saved in this browser only.</p>
@@ -224,7 +234,8 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
 
   <section id="v-marks" role="tabpanel" aria-labelledby="tab-marks" hidden>
     <p class="note">Saved in this browser only. Nothing is sent anywhere.</p>
-    <div class="toolbar"><button type="button" id="marks-csv">Export decisions CSV</button><button type="button" id="marks-clear">Clear all</button></div>
+    <div class="toolbar"><button type="button" id="marks-csv">Export decisions CSV</button><button type="button" id="marks-clear">Clear all</button><button type="button" id="marks-brief">Copy briefs for all Pursue items</button></div>
+    <textarea id="marks-brief-box" class="brief" readonly hidden aria-label="Briefs for all Pursue items"></textarea>
     <p class="counts" id="marks-count"></p><ol id="marks-list"></ol>
   </section>
 
@@ -323,7 +334,9 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   // ---- opportunities tab ----
 
   // ---- Refine: constraints, goal priorities, scenario text (display and own-view order only) ----
-  var K = lsGet("ffm_k_v1", { ref: "", run: 0, min: 0, hide: false });
+  var K = lsGet("ffm_k_v1", { ref: "", run: 0, min: 0, hide: false, res: false });
+  var RES_RE = /clinical trial|\bR\d\d\b|\bU\d\d\b|\bP\d\d\b|research (project|grant|award|infrastructure|enhancement|program)|\bPAR-|\bNIH\b|\bNSF\b|EPSCoR|scholarship|fellowship|\bSBIR\b|\bSTTR\b|career development|training grant/i;
+  function isResearch(r) { return RES_RE.test(r.title || ""); }
   var W = lsGet("ffm_w_v1", {});
   function saveK() { lsSet("ffm_k_v1", K); } function saveW() { lsSet("ffm_w_v1", W); }
   function applyRef() {
@@ -363,8 +376,8 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
       row.appendChild(lab); row.appendChild(rng); row.appendChild(val); box.appendChild(row);
     });
   }
-  function syncK() { $("k-ref").value = K.ref || ""; $("k-run").value = K.run || ""; $("k-min").value = K.min || ""; $("k-hide").checked = !!K.hide; }
-  function resetAll() { K = { ref: "", run: 0, min: 0, hide: false }; W = {}; saveK(); saveW(); syncK(); applyRef(); $("chips").innerHTML = ""; $("scenario").value = ""; cur.order = "rank"; $("order").value = "rank"; $("opt-forecast").checked = false; $("opt-hidden").checked = false; show(); }
+  function syncK() { $("k-ref").value = K.ref || ""; $("k-run").value = K.run || ""; $("k-min").value = K.min || ""; $("k-hide").checked = !!K.hide; $("k-res").checked = !!K.res; }
+  function resetAll() { K = { ref: "", run: 0, min: 0, hide: false, res: false }; W = {}; saveK(); saveW(); syncK(); applyRef(); $("chips").innerHTML = ""; $("scenario").value = ""; cur.order = "rank"; $("order").value = "rank"; $("opt-forecast").checked = false; $("opt-hidden").checked = false; show(); }
   var PRESETS = [
     ["Deadline crunch", function () { K.run = 21; K.hide = false; cur.order = "deadline"; $("order").value = "deadline"; }],
     ["Big awards only", function () { K.min = 500000; K.hide = false; }],
@@ -405,6 +418,7 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
     if ($("opt-hidden").checked && cur.tile === "top") rows = rows.concat(g.hidden);
     rows = rows.slice();
     if (K.hide) rows = rows.filter(function (r) { return !failsK(r).length; });
+    if (K.res) rows = rows.filter(function (r) { return !isResearch(r); });
     if (cur.order === "priority") rows.sort(function (a, b) { return (b.fit_score || 0) * wOf(b) - (a.fit_score || 0) * wOf(a); });
     if (cur.order === "deadline") rows.sort(function (a, b) { return (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left); });
     return rows;
@@ -414,7 +428,7 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   // ---- Start here: the three best open matches, one next step each ----
   function renderStart(g, id) {
     var box = $("start"); box.innerHTML = "";
-    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 0; }).filter(function (r) { return !K.hide || !failsK(r).length; }).slice(0, 3);
+    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 0; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).slice(0, 3);
     box.hidden = cur.tile !== "top" || !pick.length; if (box.hidden) return;
     box.appendChild(el("h2", null, "Start here: your 3 best open matches"));
     var soon = g.soon.length;
@@ -479,7 +493,27 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
     var c = { Pursue: 0, Maybe: 0, Pass: 0 }; keys.forEach(function (k) { if (c[marks[k]] != null) c[marks[k]]++; });
     $("marks-count").textContent = rows.length ? "Pursue " + c.Pursue + " · Maybe " + c.Maybe + " · Pass " + c.Pass : "No decisions yet. Use Pursue, Maybe or Pass on a row.";
     rows.sort(function (a, b) { var o = { Pursue: 0, Maybe: 1, Pass: 2 }; return o[marks[a.agency_id + "|" + a.opp_id]] - o[marks[b.agency_id + "|" + b.opp_id]]; });
-    rows.forEach(function (r) { list.appendChild(rowEl(r)); });
+    rows.forEach(function (r) {
+      var li = rowEl(r);
+      if (marks[r.agency_id + "|" + r.opp_id] === "Pursue") { var cb = el("button", null, "Copy one-page brief"); cb.type = "button"; cb.style.marginTop = "6px"; cb.addEventListener("click", function () { showBrief(li, briefText(r)); }); li.lastChild.appendChild(cb); }
+      list.appendChild(li);
+    });
+  }
+  function briefText(r) {
+    var ag = agName(r.agency_id), L = [r.title || r.opp_number || r.opp_id, "Agency: " + ag];
+    L.push("Closes: " + (r.close_date || r.date_note || "no date listed") + (r.days_left != null ? " (" + r.days_left + " days left)" : ""));
+    L.push("Can we apply: " + ({ yes: "Yes, state agencies are allowed", no: "No", ask: "Not sure, read the notice" }[r.eligibility] || "Not sure, read the notice") + (r.elig_quote ? " (notice says: " + r.elig_quote + ")" : ""));
+    if (r.goal_snippet) L.push("Why it fits: " + r.goal_snippet);
+    if (r.signature_tier && r.signature_tier !== "unknown" && TIER[r.signature_tier]) L.push("Who signs: " + TIER[r.signature_tier]);
+    if (r.award_ceiling != null) L.push("Award ceiling: $" + Number(r.award_ceiling).toLocaleString());
+    if (r.url) L.push("Notice: " + r.url);
+    L.push("Prepared from this tool's data; a person makes the decision.");
+    return L.join("\n");
+  }
+  function showBrief(li, text) {
+    var ta = li.querySelector("textarea.brief"); if (!ta) { ta = el("textarea", "brief"); ta.readOnly = true; ta.setAttribute("aria-label", "One-page brief"); li.lastChild.appendChild(ta); }
+    ta.value = text; ta.focus(); ta.select();
+    try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch (e) {}
   }
 
   // ---- match board: TF-IDF keyword fit (same function both directions) ----
@@ -658,12 +692,17 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   }
 
   // ---- wiring ----
+  function setMore(on) { $("more-tabs").hidden = !on; $("tab-more").setAttribute("aria-expanded", on ? "true" : "false"); $("tab-more").textContent = on ? "More ▴" : "More ▾"; }
   function tab(name) {
     ["opps", "board", "map", "osbm", "marks", "how"].forEach(function (k) {
       $("v-" + k).hidden = k !== name; $("tab-" + k).setAttribute("aria-selected", k === name ? "true" : "false"); });
+    if (["board", "map", "how"].indexOf(name) >= 0) setMore(true);
     if (name === "map") renderMap(); if (name === "osbm") renderOsbm(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
   }
-  Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
+  Array.prototype.forEach.call(document.querySelectorAll(".tabs button[data-tab]"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
+  if (!lsGet("ffm_steps_v1", false)) $("steps").hidden = false;
+  $("steps-x").addEventListener("click", function () { $("steps").hidden = true; lsSet("ffm_steps_v1", true); });
+  $("tab-more").addEventListener("click", function () { setMore($("more-tabs").hidden); });
   function setLarge(on) { document.body.classList.toggle("large", on); $("large").setAttribute("aria-pressed", on); lsSet("ffm_large_v1", on); }
   $("large").addEventListener("click", function () { setLarge(!document.body.classList.contains("large")); });
   if (lsGet("ffm_large_v1", false) || /[?&]present=1/.test(location.search)) setLarge(true);
@@ -675,6 +714,7 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   $("k-run").addEventListener("change", function () { K.run = Math.max(0, Number(this.value) || 0); saveK(); show(true); });
   $("k-min").addEventListener("change", function () { K.min = Math.max(0, Number(this.value) || 0); saveK(); show(true); });
   $("k-hide").addEventListener("change", function () { K.hide = this.checked; saveK(); show(true); });
+  $("k-res").addEventListener("change", function () { K.res = this.checked; saveK(); show(true); });
   $("k-reset").addEventListener("click", resetAll);
   $("scn-go").addEventListener("click", function () { var ch = parseScenario($("scenario").value); saveK(); syncK(); var box = $("chips"); box.innerHTML = ""; ch.forEach(function (c) { box.appendChild(el("span", "chip" + (c[1] ? " ignored" : ""), c[0])); }); show(true); });
   PRESETS.forEach(function (pr) { var b = el("button", null, pr[0]); b.type = "button"; b.addEventListener("click", function () { pr[1](); saveK(); syncK(); show(true); }); $("presets").appendChild(b); });
@@ -684,6 +724,12 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   $("marks-csv").addEventListener("click", function () {
     var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
     download("my_decisions.csv", [CSVH].concat(Object.keys(marks).map(function (k) { return by[k]; }).filter(Boolean).map(csvRow))); });
+  $("marks-brief").addEventListener("click", function () {
+    var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
+    var t = Object.keys(marks).filter(function (k) { return marks[k] === "Pursue" && by[k]; }).map(function (k) { return briefText(by[k]); }).join("\n\n----\n\n");
+    var box = $("marks-brief-box"); box.hidden = false; box.value = t || "No Pursue items yet."; box.focus(); box.select();
+    try { if (navigator.clipboard && t) navigator.clipboard.writeText(t); } catch (e) {}
+  });
   $("marks-clear").addEventListener("click", function () { if (!Object.keys(marks).length || !confirm("Clear all your Pursue, Maybe and Pass marks in this browser?")) return; marks = {}; saveMarks(); renderMarks(); show(); });
 
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
