@@ -11,6 +11,8 @@
 # adds more agencies (exact-name state agency rows in agency_award_map.csv), Top 10/20/50, and a flag for
 # agencies at or above 50%. The 50% line is the same team judgment; here it is descriptive, not a new bar.
 # Notice-level match is NOT possible: the award data (nc_awards_by_cfda.csv) has no link to a notice.
+# Reach (bonus 1): newest-posted-first stands in for a new-postings alert, the usual manual monitoring; only_model
+# counts won programs our Top N caught that the alert Top N did not.
 # Limit beside every result: program-level match favors repeat funding; award data never enters the score.
 
 here::i_am("src/R/21_backtest_v2.R")
@@ -59,9 +61,10 @@ pool <- bind_rows(lapply(seq_len(nrow(grid)), function(g) {
   rk |> filter(post_date <= w$window_end, close_date >= w$window_start) |>
     group_by(agency_id) |>
     mutate(m_rank = rank(-total, ties.method = "first"), d_rank = rank(close_date, ties.method = "first"),
+           n_rank = rank(-as.numeric(post_date), ties.method = "first"),   # newest posted first (a new-postings alert)
            pool_n = n()) |>
     ungroup() |>
-    transmute(agency_id, window_weeks = w$window_weeks, window_start = w$window_start, opp_id, cfda_list, m_rank, d_rank, pool_n)
+    transmute(agency_id, window_weeks = w$window_weeks, window_start = w$window_start, opp_id, cfda_list, m_rank, d_rank, n_rank, pool_n)
 }))
 pool <- pool |> separate_longer_delim(cfda_list, delim = "|") |> mutate(cfda = trimws(cfda_list)) |> filter(cfda != "")
 message("Pool rows (notice x program x window): ", nrow(pool))
@@ -72,7 +75,7 @@ calc <- function(ag, wk, N) {
   p <- pool |> filter(agency_id == ag, window_weeks == wk, cfda %in% won$cfda[won$agency_id == ag])
   if (nrow(p) == 0) return(NULL)
   per_prog <- p |> group_by(cfda) |>
-    summarise(model = any(m_rank <= N), deadline = any(d_rank <= N), .groups = "drop") |> as.data.frame()
+    summarise(model = any(m_rank <= N), deadline = any(d_rank <= N), newest = any(n_rank <= N), .groups = "drop") |> as.data.frame()
   # Random baseline: chance a random N catches the program in a window is 1 - P(no draw of its k notices);
   # combined over windows as 1 - prod(1 - p).
   per_win <- p |> group_by(cfda, window_start) |> summarise(k = n(), M = first(pool_n), .groups = "drop") |>
@@ -81,6 +84,8 @@ calc <- function(ag, wk, N) {
   n <- nrow(per_prog); k <- sum(per_prog$model); ci <- binom_ci(k, n)
   tibble(agency_id = ag, window_weeks = wk, top_n = N, won_in_pool = n, caught = k, pct = k / n,
          ci_low = ci[1], ci_high = ci[2], deadline_pct = mean(per_prog$deadline), random_pct = mean(per_prog$rand),
+         newest_pct = mean(per_prog$newest), only_model = sum(per_prog$model & !per_prog$newest),
+         only_newest = sum(per_prog$newest & !per_prog$model),
          median_pool = median(unique(p[c("window_start", "pool_n")])$pool_n))
 }
 combos <- expand.grid(ag = sort(unique(won$agency_id)), wk = WINDOW_WEEKS, N = TOP_NS, stringsAsFactors = FALSE)
