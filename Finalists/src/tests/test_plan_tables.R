@@ -28,4 +28,11 @@ local({
     !is.na(pg) && grepl(squish(gl$goal_text_exact[i]), pg, fixed = TRUE)
   }, logical(1))
   check(s, "every goal quote is found on its cited plan page", all(ok), paste(sum(!ok), "misses"))
+  has <- !is.na(gl$goal_statement) & nzchar(gl$goal_statement)
+  ok2 <- vapply(which(has), function(i) {
+    stem <- sub("\\.pdf$", "", gl$plan_file[i])
+    pg <- cache[[stem]][gl$plan_page[i]]
+    !is.na(pg) && grepl(squish(gl$goal_statement[i]), pg, fixed = TRUE)
+  }, logical(1))
+  check(s, "every goal_statement is found on its cited plan page", all(ok2), paste(sum(has), "statements,", sum(!ok2), "misses"))
 })
