@@ -10,6 +10,7 @@
 #                     0 ships FINALISTS_DIR/data/processed/payload.json as it is (then data_as_of is NOT restamped)
 #   JOB_OUT           also write the stamped payload to this local file (use a scratch path when testing)
 #   JOB_DRY_RUN       1 (default): write nothing to Blob. 0: upload.
+#   PAYLOAD_IN        payload to ship when not scoring (default: FINALISTS_DIR/data/processed/payload.json, then app/data/payload.json)
 #   JOB_TODAY         YYYY-MM-DD override of "today" (tests only)
 #   BLOB_WRITE_SAS    write SAS for the one blob; else managed identity (needs Storage Blob Data Contributor)
 suppressPackageStartupMessages(library(jsonlite))
@@ -30,8 +31,16 @@ iso <- function(t) sub("([+-]\\d\\d)(\\d\\d)$", "\\1:\\2", format(t, "%Y-%m-%dT%
 script_dir <- tryCatch(dirname(normalizePath(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[1]))),
                        error = function(e) getwd())
 root <- env("FINALISTS_DIR", if (dir.exists(file.path(script_dir, "..", "src"))) normalizePath(file.path(script_dir, "..")) else "/srv/finalists")
-if (!dir.exists(file.path(root, "src", "R"))) die("no src/R under", root, "; set FINALISTS_DIR")
-payload_path <- file.path(root, "data", "processed", "payload.json")
+have_tree <- dir.exists(file.path(root, "src", "R"))
+# The app image (ffm-app) has no src/ and no scoring inputs, only a baked copy at data/payload.json.
+# There the job cannot score: it checks and ships that copy (data_as_of is not restamped). Use the
+# job image (Dockerfile.job) for real daily scoring.
+if (!have_tree) { run_pipeline <- FALSE; msg("no src/R under", root, "; scoring skipped, shipping the baked payload") }
+payload_path <- env("PAYLOAD_IN", file.path(root, "data", "processed", "payload.json"))
+if (!file.exists(payload_path)) {
+  for (alt in c(file.path(script_dir, "data", "payload.json"), "/srv/app/data/payload.json"))
+    if (file.exists(alt)) { payload_path <- alt; break }
+}
 
 # ---- 1. score from cache ------------------------------------------------------------------
 pipeline_ran <- FALSE
