@@ -18,5 +18,9 @@ Never modify files here. Contains no participant or patient data.
 | `simpler/` | https://api.simpler.grants.gov/v1/opportunities/search | yes (`SIMPLER_GRANTS_KEY`) | 2026-11-06 | 1,471 records. Key is never written to cache |
 | `federalregister/` | https://www.federalregister.gov/api/v1/documents.json | no | 2026-11-06 | Notices, last 12 months, 3 search phrases |
 | `usaspending/` | https://api.usaspending.gov/api/v2/search/spending_by_award/ | no | 2026-11-06 | NC government recipients, award types 02-05, FY2022-2026, 10,000 awards |
-| not pulled | SAM.gov Assistance Listings API; transportation.gov grants page | SAM key | | SAM pages 10 listings per call (2,873 listings); transportation.gov blocks scripted access (403) |
+| not pulled | SAM.gov Assistance Listings API (the bulk file below replaces it); transportation.gov grants page | SAM key | | SAM pages 10 listings per call (2,873 listings); transportation.gov blocks scripted access (403) |
 
+## Bulk files (Nov 7, 2026)
+| Folder or file | What | Source | Date added | Notes |
+|---|---|---|---|---|
+| `sam_assistance_listings/AssistanceListings_DataGov_PUBLIC_CURRENT.csv` | SAM.gov Assistance Listings (CFDA catalog): 2,875 rows, 38 columns, includes Authorization (040) | GSA, CC0. https://s3.amazonaws.com/falextracts/Assistance%20Listings/datagov/AssistanceListings_DataGov_PUBLIC_CURRENT.csv | 2026-11-07 (server last-modified 2026-11-01) | 22 MB, cp1252 encoding. No API calls, no key. Read by `src/R/05b_sam_listings.R` into `data/processed/sam_listings.csv`. All 2,875 rows are kept (210 have lettered numbers such as 11.63A; 2,672 have a statutory authority). `handoff.md` says 2,873 listings; the 2-row gap is not reconciled |

@@ -33,3 +33,15 @@ Need from you:
 - `data/raw/README.md` has no entry for the SAM bulk file (not my file). Add one if you want it: source URL and access date are in the header of `05b_sam_listings.R`.
 - The README draft lists the team as "Noah Goldblatt"; I have not verified that surname, so I left it. Noah to check.
 Next: push finished label files on `claude/noah-labels` once the run produces them.
+
+## 2026-11-07 11:50 claude/noah-work
+Done:
+- Read your 11:35 entry. Staying out of `src/tool/`, `app/`, `00_config.R`, `score.R`, `10_run_ranking.R`, `payload.json`. T5 and T6 are yours. Keeping the label split as is.
+- T7: added the SAM bulk-file source note to `Finalists/data/raw/README.md` (task line added).
+- **Bug found and fixed in my merged `05b_sam_listings.R`.** Its CFDA pattern accepted only `NN.NNN`, so it silently dropped 210 of 2,875 rows (lettered numbers such as 11.63A, 93.00B, 93.1CF). My earlier figures of 2,665 listings, 2,502 with authority and 1,456 pool matches were wrong. Corrected: 2,875 listings, 2,672 with a statutory authority, 1,457 of 1,459 pool rows with a CFDA match a listing. The script now warns if it drops any row. Fixed `data/processed/sam_listings.csv` is on this branch. Nothing reads that file, so no ranking or payload is affected.
+- I wrote the wrong counts into the README draft and my 11:30 and 11:20 entries here; the README draft is corrected, old entries stand and this one supersedes them.
+Blocked:
+- T2 labels: model download not finished. Notice-reader spot-check: `30_notice_reader.R` not on any branch yet.
+Need from you:
+- Please merge this branch's `05b` fix and CSV (PR from `claude/noah-work`; I have not opened one).
+Next: start labels when the model is ready; push finished files on `claude/noah-labels`.

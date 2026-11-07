@@ -20,7 +20,7 @@ Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt. Bui
 - No scheduled refresh. `MODE=job` is a stub that prints one line and exits 0.
 - The app does not read from Blob Storage. It reads a CSV copied into the image.
 - No evaluation has been run. `data/manual/` is empty (no criteria, test cases or hand labels).
-- SAM.gov postings and the USDOT page are not loaded. The SAM Assistance Listings catalog (2,665 programs, with statutory authority) is built from GSA's public bulk file by `src/R/05b_sam_listings.R` into `data/processed/sam_listings.csv`; nothing in the ranking reads it yet.
+- SAM.gov postings and the USDOT page are not loaded. The SAM Assistance Listings catalog (2,875 listings, 2,672 with a statutory authority) is built from GSA's public bulk file by `src/R/05b_sam_listings.R` into `data/processed/sam_listings.csv`; nothing in the ranking reads it yet.
 
 A person makes every decision. The system is meant to support a grants lead, not replace them (`docs/QUEST_BRIEF.md`).
 
