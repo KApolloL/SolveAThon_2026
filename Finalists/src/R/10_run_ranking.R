@@ -27,9 +27,10 @@ plans <- plan_texts(amap, file.path(DIR_PROCESSED, "agency_plan_text", "all"))
 pairs <- build_pairs(opps, ag, plans)
 items <- pairs |>
   dplyr::left_join(opps[, c("opp_id", "opp_number", "title", "status", "close_date", "date_note", "days_left",
-                            "award_ceiling", "log_ceiling", "cost_sharing")], by = "opp_id") |>
-  dplyr::mutate(id = paste(agency_id, opp_id, sep = ":"),
-                eligibility = NA_character_)   # TODO step 3: applicant codes -> yes / no / check eligibility
+                            "award_ceiling", "log_ceiling", "cost_sharing", "applicant_types", "eligibility_text")], by = "opp_id") |>
+  dplyr::mutate(id = paste(agency_id, opp_id, sep = ":"))
+items <- dplyr::bind_cols(items, assign_eligibility(items$agency_id, items$applicant_types, items$eligibility_text))
+items$eligibility_text <- NULL
 dir.create(DIR_PROCESSED, showWarnings = FALSE, recursive = TRUE)
 write_csv(items, file.path(DIR_PROCESSED, "items.csv"), na = "")
 

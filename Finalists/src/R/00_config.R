@@ -64,6 +64,19 @@ BACKTEST_CSV    <- file.path(DIR_PROCESSED, "rankings_backtest.csv")
 OPEN_STATUSES   <- c("posted", "forecasted", "notice")   # rows in payload.json; closed go to the backtest
 FAR_FUTURE_DATE <- as.Date("2030-01-01")   # close dates on or after this read "rolling or no date listed" (decision 8)
 
+# Eligibility (steps 1 and 2). Applicant-type codes checked against single-code rows in
+# opportunities.csv: 00 state governments, 06 public higher ed, 25 other (see text), 99 unrestricted.
+# Codes 01, 02, 04, 11 and 22 never appear alone in the data [uncertain]; they count as not state-eligible.
+ELIG_YES_CODES  <- c("00", "99")              # a state agency can apply
+ELIG_ASK_CODES  <- "25"                       # "other": read the text rules, else ask; never hidden
+ELIG_HIGHER_ED_CODE   <- "06"                 # public higher ed: eligible only for the agencies below
+ELIG_HIGHER_ED_AGENCIES <- c("unc", "ncccs")  # [assumed] the only agencies that are public higher ed
+ELIG_TEXT_NO  <- c("state governments are not eligible", "state agencies are not eligible",
+                   "applications from federal, state, or tribal governments will not be considered",
+                   "tribal governments only", "federally recognized tribes only", "individuals only")
+ELIG_TEXT_YES <- c("state governments", "state government agencies", "state agencies", "agencies of state")
+ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government|agenc)"
+
 PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")
 TOOL_HTML_OUT <- file.path(DIR_OUTS, "criteria_tool.html")

@@ -108,3 +108,33 @@ build_pairs <- function(opps, ag, plans, fit_fn = keyword_fit) {
   })
   bind_rows(out)
 }
+
+# ---- Eligibility ------------------------------------------------------------------
+# Step 2, fixed text rules, per opportunity. Returns "yes" / "no" / NA (undecided) and the
+# exact matched text as the quote. A "no" phrase wins; "yes" phrases are void when a
+# negation sits just before them.
+text_eligibility <- function(text) {
+  t <- ifelse(is.na(text), "", text)
+  no_re  <- regex(paste(ELIG_TEXT_NO, collapse = "|"), ignore_case = TRUE)
+  yes_re <- regex(paste(ELIG_TEXT_YES, collapse = "|"), ignore_case = TRUE)
+  neg_re <- regex(ELIG_TEXT_NEGATION, ignore_case = TRUE)
+  no_q <- str_extract(t, no_re); neg_q <- str_extract(t, neg_re); yes_q <- str_extract(t, yes_re)
+  call <- case_when(!is.na(no_q) | !is.na(neg_q) ~ "no", !is.na(yes_q) ~ "yes", TRUE ~ NA_character_)
+  tibble(text_call = call, text_quote = coalesce(no_q, neg_q, yes_q))
+}
+
+# Step 1 (codes) then step 2 (text) per agency x opportunity.
+# Returns eligibility yes | no | ask, elig_source code | rule, elig_quote (exact text or NA).
+assign_eligibility <- function(agency_id, codes, text) {
+  has <- function(c) vapply(codes, function(x) !is.na(x) && any(strsplit(x, "|", fixed = TRUE)[[1]] %in% c), logical(1))
+  yes_code <- has(ELIG_YES_CODES)
+  he_ok <- has(ELIG_HIGHER_ED_CODE) & agency_id %in% ELIG_HIGHER_ED_AGENCIES
+  ask_code <- has(ELIG_ASK_CODES) | is.na(codes) | codes == ""
+  tx <- text_eligibility(text)
+  decided <- !is.na(tx$text_call)
+  tibble(
+    eligibility = case_when(yes_code | he_ok ~ "yes", ask_code & decided ~ tx$text_call,
+                            ask_code ~ "ask", TRUE ~ "no"),
+    elig_source = case_when(yes_code | he_ok ~ "code", ask_code & decided ~ "rule", TRUE ~ "code"),
+    elig_quote  = if_else(!(yes_code | he_ok) & ask_code & decided, tx$text_quote, NA_character_))
+}
