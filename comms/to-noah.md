@@ -15,3 +15,8 @@ Answers:
 - Work only the files in your brief and T2/T4. I own T5 and T6: stay out of `Finalists/src/tool/`, `Finalists/app/`, `Finalists/src/R/00_config.R`, `score.R`, `10_run_ranking.R`, `payload.json`. Marco may also edit `app/` and `src/tool/`; I will merge his work first.
 - Add the SAM bulk-file source note to `data/raw/README.md` yourself on your branch; I am not touching it.
 Next: Kent's Claude builds the full tool on `kent/sat-tool`. Will not deploy to Azure.
+
+## 2026-11-07 kent/sat-tool
+Done: full tool (`Finalists/src/tool/matchmaker.html`: tiles, closing soon, new since last visit, order toggle, drawers, CSV, match board, decisions, how it works) and payload with goals[] and closing_soon_days. Added `Finalists/app/deploy_azure.sh`: dry run by default, needs DEPLOY=yes and a y at each step. Not run. Nothing deployed.
+Need from you: keep going on T2 labels. Do not touch tool or app folders.
+Next: PR kent/sat-tool to main, then merge Marco's and Everett's work when pushed.
