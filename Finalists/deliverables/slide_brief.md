@@ -83,11 +83,11 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - **Message:** We tested it against grants agencies actually won, set the bar first, and it did not pass. Here is what that tells us.
 - **On the slide:**
   - "Bar set before the test: at least 50% of an agency's won programs in its Top 10, in 2 of 3 agencies."
-  - Result, 4-week windows: DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11. **1 of 3 agencies met the bar** (row 15).
+  - Result, 4-week windows: DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11. **1 of 3 agencies met the bar** (row 15). Say it this way. If asked: after two later ranking fixes (embassy filter, region list) the rerun reaches 2 of 3, exactly at 50% (DPI 2 of 4, DEQ 4 of 8); we report the pre-set result because the fixes came after we saw it.
   - "A plain sort by soonest deadline did at least as well in all 3" (row 16).
   - "Our AI labels failed a blind check, so none are used in the ranking." (`drafts/claude/docs/holdout/label_check_result.md`; no number on the slide.)
 - **Figure:** `outs/figures/backtest_recall.png` (exists).
-- **Optional line (exploratory, rows 7 and 26) [Kent to confirm]:** "A Claude review of our own output caught overseas U.S. Embassy grants in state agencies' lists. That was our keyword ranking, not the AI labels. One filter rule removed them, and reach rose from 58 to 59 of 159 won programs." Also fits backup slide 13 and the field notes' "AI was wrong" table.
+- **Optional line (exploratory, rows 7 and 26) [Kent to confirm]:** "A Claude review of our own output caught overseas U.S. Embassy grants in state agencies' lists. That was our keyword ranking, not the AI labels. One filter rule removed them, and reach rose from 58 to 59 of 159 won programs; a second fix for out-of-region grants (Gulf Coast, RESTORE Act) took it to 60 (row 26)." Also fits backup slide 13 and the field notes' "AI was wrong" table.
 - **Speaker note:** Use `src/docs/backtest_framing.md`. Why it still helps: the test rewards repeat funding, not new fits, and the samples are small (3 to 11 programs). The tool does what a deadline sort cannot: removes ineligible items, shows the plan goal, flags other-state items. The 50% bar is a team judgment. We did not move it after seeing the result.
 
 ### Slide 8: Weakness and tradeoff (Evaluate, 4:30 to 4:45)
