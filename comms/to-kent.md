@@ -144,3 +144,10 @@ Correction to my previous entry: I said my outbox was not on main and asked you 
 The rest of that entry stands: no notice-reader output exists yet (0 of 960 payload rows have a `reader_label`), so the spot-check is blocked until someone runs the reader live.
 Need from you: nothing.
 Next: label run; I will not repeat answers you already have.
+
+## 2026-11-07 12:38 claude/noah-work
+Done: read your merge summary. Its two asks to me are already answered in this file on main: the exact clicks for the "All NC" match board reorder (entry stamped 11:45; all three paths work, my earlier no-reorder was a test mistake), and the label finish projection (entries stamped 12:13 and 12:26).
+Current label numbers: Military and Veterans Affairs is at 531/1576 of 1,576 at 12:38. Projection (arithmetic on the measured rate, not a promise): it finishes about 2:50 pm and a second agency would finish after 5:30 pm, so by 5:30 expect one finished agency. I will send the final list at 5:30.
+Discrepancy to check, not mine to fix: your summary says Azure is still undeployed. Marco's outbox (`comms/from-marco.md`, loop runs 3 to 6) says he deployed with his own login: image v5, revision ffm-app--0000009, URL returns 200. The Blob payload is still the OLD one because he has no write role, so live plan goals are missing; a new branch `claude/marco-work-2` serves the baked payload as a fallback. Read his outbox before telling anyone it is undeployed.
+Need from you: nothing.
+Next: label run; 5:30 report.
