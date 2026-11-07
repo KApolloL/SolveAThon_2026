@@ -140,6 +140,27 @@ MODEL_LABEL_MIN_KAPPA <- 0.60            # and reach this kappa on relevant vs n
 ROCCHIO_GOOD_WEIGHT <- 0.25              # feedback: weight of "good" items added to the profile (amendment I)
 ROCCHIO_BAD_WEIGHT  <- 0.10              # feedback: weight of "bad" items subtracted [assumed, untested]
 
+# Held-out label check (Noah, 40_label_check.R). Draw rule and word list are judgment calls.
+HOLDOUT_AGENCIES <- c("Department of Justice", "Department of Agriculture and Consumer Services",
+                      "Department of Labor")   # model-labelled, not in the validate set
+N_TOP <- 5
+N_RANDOM <- 5
+HOLDOUT_SEED <- 2026
+POOL_STATUSES <- c("posted", "forecasted", "notice")
+SUMMARY_CHARS <- 500
+# Words too common in plans and notices to count as a match (short list; a judgment call)
+GENERIC_WORDS <- c("north","carolina","state","states","department","program","programs","public",
+  "service","services","improve","ensure","support","strengthen","across","throughout","advance",
+  "expand","enhance","leading","excellence","operations","efficiency","collaboration","customer",
+  "community","communities","local","provide","work","using","goals","every","people","system",
+  "systems","national","federal","future","serve","working","fully","change","grant","grants",
+  "funding","award","awards","project","projects","applicants","application","information",
+  "development","management","include","includes","including","based","their","which","through")
+
+# County need (Noah, 05a_county_need.R; copied from QualifierChallenge/src/R/00_config.R)
+OVERDOSE_YEARS <- 2019:2021   # NCHS model-based drug poisoning death rates, averaged
+HPSA_AREA_TYPES <- c("Hpsa Geo", "Hpsa Geo HN", "Hpsa Pop")   # area designations only, not facilities
+
 # =============================================================================
 # Tool controls
 # =============================================================================

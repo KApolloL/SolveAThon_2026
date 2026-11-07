@@ -21,23 +21,8 @@
 # overstated; the random half is the guard. About 30 items cannot prove anything: one
 # item moves recall by several points.
 
-# TODO move to 00_config.R
-HOLDOUT_AGENCIES <- c("Department of Justice", "Department of Agriculture and Consumer Services",
-                      "Department of Labor")   # model-labelled, not in the validate set
-N_TOP <- 5
-N_RANDOM <- 5
-HOLDOUT_SEED <- 2026
-POOL_STATUSES <- c("posted", "forecasted", "notice")
-FAR_FUTURE <- as.Date("2029-12-31")   # decision 8: later dates read "rolling or no date listed"
-SUMMARY_CHARS <- 500
-# Words too common in plans and notices to count as a match (short list; a judgment call)
-GENERIC_WORDS <- c("north","carolina","state","states","department","program","programs","public",
-  "service","services","improve","ensure","support","strengthen","across","throughout","advance",
-  "expand","enhance","leading","excellence","operations","efficiency","collaboration","customer",
-  "community","communities","local","provide","work","using","goals","every","people","system",
-  "systems","national","federal","future","serve","working","fully","change","grant","grants",
-  "funding","award","awards","project","projects","applicants","application","information",
-  "development","management","include","includes","including","based","their","which","through")
+here::i_am("src/R/40_label_check.R")
+source(here::here("src", "R", "00_config.R"))   # holdout settings live there
 
 args <- commandArgs(TRUE)
 stage <- sub("^stage=", "", grep("^stage=", args, value = TRUE)[1])
@@ -176,7 +161,7 @@ stopifnot(nrow(m) == nrow(sel), !any(m$opp_id %in% validate_ids))
 is_notice <- m$status == "notice"
 cd <- suppressWarnings(as.Date(m$close_date))
 close_txt <- ifelse(is_notice, "no deadline (notice)", ifelse(is.na(cd), "no date listed",
-             ifelse(cd > FAR_FUTURE, "rolling or no date listed", format(cd))))
+             ifelse(cd >= FAR_FUTURE_DATE, "rolling or no date listed", format(cd))))
 aw <- suppressWarnings(as.numeric(m$award_ceiling))
 award_txt <- ifelse(is_notice, "none (notice)", ifelse(is.na(aw), "unknown",
              ifelse(aw == 0, "unknown (listed as 0)", format(aw, scientific = FALSE, big.mark = ","))))
