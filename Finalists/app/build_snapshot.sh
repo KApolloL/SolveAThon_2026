@@ -53,7 +53,7 @@ if [ -f "$KEYFILE" ]; then
   done < "$KEYFILE"
 fi
 PATTERNS='sk-[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{30,}|AIza[0-9A-Za-z_-]{35}|xox[abprs]-[A-Za-z0-9-]{10,}|AccountKey=[A-Za-z0-9+/=]{20,}|SharedAccessSignature=|-----BEGIN [A-Z ]*PRIVATE KEY-----|[Aa][Pp][Ii]_?[Kk][Ee][Yy][[:space:]]*[=:][[:space:]]*['"'"'"][A-Za-z0-9_-]{20,}'
-if grep -rlaE -e "$PATTERNS" "$OUT" | sed 's/^/FAIL: secret-like pattern in /; s#'"$OUT"'/##' | grep .; then fail=1; fi
+if grep -rlaE --exclude=build_snapshot.sh -e "$PATTERNS" "$OUT" | sed 's/^/FAIL: secret-like pattern in /; s#'"$OUT"'/##' | grep .; then fail=1; fi
 for bad in .git .RData .Renviron api_keys.env; do
   if find "$OUT" -name "$bad" | grep -q .; then echo "FAIL: $bad present"; fail=1; fi
 done
