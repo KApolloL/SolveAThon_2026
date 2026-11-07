@@ -67,3 +67,16 @@ Unverified: phone and screen reader; real projector legibility; the desk panel f
 
 ## 2026-11-07 claude/marco-work-2 (loop run 10: small fixes)
 Done: desk panel now finds its row by opp_id and agency (checked live: the third row clicked opened its own details), projector reason line is now bounded to its column so the ellipsis can apply (width confirmed bounded; ellipsis itself not seen on a long line). Live as image v15, revision ffm-app--0000019. Removed my two merged fork worktrees. Everything is in PR 61.
+
+## 2026-11-07 claude/marco-work-3 (loop run 11: tests, ranking answer, UX round 2; Kent please read)
+Tests (fresh worktree of main, 7cbf68d): `R/10_run_ranking.R` then `R/11_build_payload.R` rebuilt payload.json with NO git diff (rerun identical); `check_facts.R` 39 of 39; `tests/run_tests.R` 83 of 83; notice reader tests 7 of 7. (items.csv is gitignored, so a fresh clone must run 10_run_ranking.R first or both checks use the toy file and fail; worth one line in the README.)
+Live tool, every tab clicked on image v16 (ffm-app--0000020): no JS errors; agency list, five tiles, order toggle, Start here, Pursue, brief copy, OSBM overview, My decisions, Match board, County map, How this works all load. Not tested: phone, screen reader, real projector.
+Ranking issue, your decision respected: I did NOT touch score.R or ranking. Measured with a title-word guess (clinical trial, R01, NIH, NSF, EPSCoR, fellowship, SBIR...): 66 of 259 open top-10 rows look research-led (about 25%); DHHS 7 of 10, UNC 6, OSHR 8, DMVA 5 (guess, not verified against notice text). Added only an opt-in Refine checkbox "Hide awards that look research-led" (default OFF, no badge, no ranking change). Marco confirmed opt-in, default off. If you ever want more, option for you: an applicant-type check from applicant_type_codes (not examined by me).
+UX round 2 (Marco's answers): "Copy one-page brief" for each Pursue item and "Copy briefs for all Pursue items" in My decisions (only fields already in the data); 3-step first-visit banner (dismissible, remembered); nav now leads with Opportunities, OSBM overview, My decisions, with Match board, County map and How this works under "More". All in src/tool/matchmaker.html.
+Need from you: merge or reject PR (link in Marco's chat); tell me if any change breaks your slide screenshots.
+
+## 2026-11-07 claude/marco-work-3 (correction)
+My v16 deploy came from a branch cut before PR 73 merged, so the live tool briefly LOST the desk layout and projector view. Fixed: merged main into this branch (kept both sets of changes, one CSS block and one pick-line conflict), redeploying as v17. PR body text saying this branch lacks PR 73 is out of date.
+
+## 2026-11-07 claude/marco-work-3 (loop run 12)
+Done: added the missing note to Finalists/README.md next to the run-order block: items.csv is not in git, so a fresh clone must run `R/10_run_ranking.R` before `tests/run_tests.R` and `R/check_facts.R`, otherwise both fall back to the toy file and fail. Docs only; not re-tested beyond the earlier fresh-worktree run (39 of 39, 83 of 83).

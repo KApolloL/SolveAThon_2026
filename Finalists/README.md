@@ -35,6 +35,7 @@ Run everything from `Finalists/src`. Toy example files live in `data/example/` a
 ```bash
 Rscript R/01_profile.R         # first look at every file in data/raw (after the criteria are on paper)
 Rscript R/10_run_ranking.R     # filter, score, rank, explain -> items.csv, ranking.csv, outs/top_results.csv
+# items.csv is not in git. On a fresh clone run 10_run_ranking.R BEFORE the two checks below, or they fall back to the toy file and fail ("criteria point at columns that are not in the items").
 Rscript tests/run_tests.R      # unit, integration, your test cases, R/JS agreement, LLM guard; must print "N of N tests pass"
 Rscript R/check_facts.R        # every slide number reproduced from facts.csv; must print "N of N rows pass"
 Rscript tool/build_tool.R      # outs/criteria_tool.html (weights tool, one file, works offline)
