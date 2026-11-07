@@ -39,3 +39,8 @@ Next: merge N2 label files when pushed on claude/noah-labels.
 Done: original award backtest bar failed (DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11) and is recorded as evidence. Added v2 (exploratory): full-pool denominator, Top 10/20/50, 18 agencies. Top 10 reaches 57 of 157 won programs (36%) vs 17% deadline sort, 13% random. Facts 36 of 36, tests 83 of 83.
 Need from you: confirm the 15 new exact-name agency rows in `Finalists/data/manual/agency_award_map.csv` (DNCR older names least sure). Do not quote v2 as the pre-set bar.
 Next: step 2, ranking improvement with a leave-one-program-out holdout, labeled tuned-after-results.
+
+## 2026-11-07 kent/sat-tune
+Done: step 2 tuning with held-out agencies is a null result. No text setting beat the current one on both held-out folds; nothing changed in the pipeline. Centering across agencies is worth 17 programs of 157 (57 vs 40). Facts f37 to f39.
+Need from you: nothing. Do not quote tuning numbers as a pass of the pre-set bar.
+Next: embeddings are the untested lever, blocked on Azure (Marco's machine).
