@@ -1,5 +1,43 @@
 # Handoff: Finalists
 
+## Sat Nov 7, ~7:15 pm: back to Marco (from Kent's session on Everett's laptop)
+
+**Merged to `main` via PR 103** (session PRs 104 to 107 and 109 merged into it first). Checks on a clean rebuild (`Rscript R/10_run_ranking.R`, then `tests/run_tests.R` = **86 of 86**, `R/check_facts.R` = **49 of 49**).
+
+What changed since your PR 102:
+- **Ranking rules (Kent approved):**
+  - `us_based` filter drops notices from U.S. Embassies, Missions and Consulates abroad (60 open notices; before it, 110 of 960 payload rows).
+  - `GEO_OTHER_PLACES` gains Gulf Coast, RESTORE Act and the CESU regions (Atlanta and bare "Pacific Islands" are left out on purpose).
+  - `ELIG_TRIBAL_TITLE` hides tribal-program titles still marked check eligibility (TCUP was DPI #1).
+  - All in `00_config.R`, `helpers_rank.R` and `criteria.csv`, with unit tests.
+- **Numbers moved:** the backtest pool is now **157** won programs (not 159). The Top 10 reaches 61 (39%), the Top 50 reaches 98 (62%), and the baselines are 19.7% / 14.1%. The award pass bar is 2 of 3 on the rerun, but the **pre-set run was 1 of 3**; slides say the pre-set result. Dated change notes are at the bottom of `src/docs/fact_sheet.md`. **Kent to confirm** rows 4, 7, 8, 15, 17, 18, 24 to 32.
+- **Tool (`matchmaker.html`):**
+  - Fixes from the persona review: closed grants are hidden, plan dates are correct across daylight saving, swipe is locked during the animation, chart bars filter properly, plain words replace jargon, and money with no amount listed is labelled as such.
+  - The evidence card is on the new numbers.
+  - The refresh claim is reworded to what is true.
+- **Docs:**
+  - README rewritten for state developers.
+  - Field notes TO FILL items closed where the repo answers them.
+  - Slide brief and Q&A on the new numbers. The demo is DPI with "clean diesel school buses, I have 4 weeks".
+  - Hostile-judge review in `testing/transcripts/35_hostile_judge_pitch_20261107.md`.
+  - Deploy checklist in `saturday/deploy_checklist_sun.md`.
+
+**Azure (checked read-only, Sat ~6:30 pm, signed in as evfoo):**
+- `ffm-app` runs image **v19** (older tool, no swipe) with **min replicas 1** already, so it is billed all night.
+- Daily job `ffm-daily-refresh` exists on image v4, cron 11:00 UTC, but **`JOB_DRY_RUN=1`**: it writes nothing. It has never run on schedule. Do not claim daily refresh as live.
+- Deploy script default tag v4 = the job's image; always pass a NEW tag (`TAG=v21 ...`).
+- On this Mac, az 2.92 cannot run `az acr build` (`'NoneType' object has no attribute 'from_blob_url'`) or the `containerapp` extension (macOS blocks a library). A workaround script built **v20** from this branch through the ACR REST API (see the build note below). Image v20 is NOT yet pointed at the app.
+- **Your next step:** confirm tag v20 exists (`az acr repository show-tags -n ffmacrteam15 --repository ffm-app`), then run `az containerapp update -n ffm-app -g rg-primary-unc-sdis-solveathon-team15 --image ffmacrteam15.azurecr.io/ffm-app:v20` from your machine (or rebuild v21 there with `TAG=v21 DEPLOY=yes sh app/deploy_azure.sh`). Then load `?agency=dpi`, type the school bus query, and check that DERA comes first.
+
+**Still open:**
+- Kent confirms the fact rows and the new slide/Q&A lines.
+- Spend not read (the portal shows it).
+- Mentor log empty.
+- Demo backup video.
+- Odd keyword matches remain (e.g. Army research and NASA ROSES for Treasurer); this is a named weakness.
+- `api_keys.env` is tracked in git; the judge snapshot (`app/make_snapshot.sh`) excludes it.
+
+
 > **Saturday Nov 7 update:** `saturday/` (start at `saturday/README.md`) overrides this file where they differ.
 
 _Update this at each checkpoint (about every 6 hours) and before ending any long AI session. A fresh session reads this after CLAUDE.md._
