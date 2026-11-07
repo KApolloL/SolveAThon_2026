@@ -68,11 +68,36 @@ o <- opps[, c("opp_id", "summary", "cfda_list", "url", "nc_won_before")]
 ctx <- opps |> transmute(opp_id, funder = na_if(clean_text(agency), ""),
   award_floor_ctx = suppressWarnings(as.numeric(award_floor)), est_total_funding = suppressWarnings(as.numeric(est_total_funding)),
   n_awards = suppressWarnings(as.integer(n_awards)), cost_sharing_ctx = na_if(cost_sharing, ""),
-  applicant_types_ctx = na_if(applicant_types_named, ""))
+  applicant_types_ctx = na_if(applicant_types_named, ""), need_type = na_if(funding_activity, ""))
 ctx$award_floor_ctx[!is.na(ctx$award_floor_ctx) & ctx$award_floor_ctx <= 0] <- NA
 ctx$est_total_funding[!is.na(ctx$est_total_funding) & ctx$est_total_funding <= 0] <- NA
 ctx$n_awards[!is.na(ctx$n_awards) & ctx$n_awards <= 0] <- NA
 o <- left_join(o, ctx, by = "opp_id")
+
+# Track record and federal program budget (shown only; never enter fit, rank, eligibility or tier).
+# Track record: USAspending awards to NC recipients by program (nc_awards_by_cfda.csv), linked to our agencies through
+# the hand-checked recipient map (agency_award_map.csv, confirmed rows only). Federal budget: SAM.gov obligations (05e).
+aw <- read_csv(file.path(DIR_PROCESSED, "nc_awards_by_cfda.csv"), show_col_types = FALSE,
+               col_types = cols(cfda = col_character(), recipient = col_character(), .default = col_guess()))
+amap_aw <- read_csv(file.path(DIR_MANUAL, "agency_award_map.csv"), show_col_types = FALSE, col_types = cols(.default = col_character())) |>
+  filter(certainty == "confirmed", !is.na(agency_id), agency_id != "")
+aw <- left_join(aw, distinct(amap_aw[, c("recipient", "agency_id")]), by = "recipient")
+fob_file <- file.path(DIR_PROCESSED, "federal_obligations.csv")
+fob <- if (file.exists(fob_file)) read_csv(fob_file, show_col_types = FALSE, col_types = cols(cfda = col_character(), program = col_character(), .default = col_double())) else NULL
+cfdas_of <- function(x) { v <- trimws(unlist(strsplit(ifelse(is.na(x), "", x), "|", fixed = TRUE))); v[v != ""] }
+track_one <- function(ag, cf) {
+  c0 <- cfdas_of(cf); mine <- aw[!is.na(aw$agency_id) & aw$agency_id == ag, ]
+  hit <- mine[mine$cfda %in% c0, ]; other <- aw[aw$cfda %in% c0 & (is.na(aw$agency_id) | aw$agency_id != ag), ]
+  dept <- unique(substr(c0, 1, 2))
+  top_other <- if (nrow(other)) other$recipient[which.max(other$n_awards)] else NA_character_
+  f <- if (!is.null(fob)) fob[fob$cfda %in% c0, ] else NULL
+  sumna <- function(x) if (length(x) && any(!is.na(x))) sum(x, na.rm = TRUE) else NA_real_
+  list(ag_won_n = if (nrow(hit)) sum(hit$n_awards) else 0L, ag_won_usd = if (nrow(hit)) round(sum(hit$total_obligated)) else NA_real_,
+       ag_last_fy = if (nrow(hit)) max(hit$last_fy) else NA_integer_,
+       nc_other_n = if (nrow(other)) sum(other$n_awards) else 0L, nc_other_top = top_other,
+       ag_dept_programs = length(unique(mine$cfda[substr(mine$cfda, 1, 2) %in% dept & !(mine$cfda %in% c0)])),
+       fed_fy24 = sumna(f$fy24), fed_fy25 = sumna(f$fy25), fed_fy26 = sumna(f$fy26))
+}
 rows <- sel |>
   left_join(items, by = c("agency_id", "opp_id")) |>
   left_join(o, by = "opp_id") |>
@@ -90,7 +115,10 @@ rows <- sel |>
     cfda_list, award_ceiling = as.numeric(award_ceiling),
     signature_tier, tier_source, tier_reason, rank_note,
     nc_won_before = as.logical(nc_won_before), url,
-    funder, award_floor = award_floor_ctx, est_total_funding, n_awards, cost_sharing = cost_sharing_ctx, applicant_types = applicant_types_ctx)
+    funder, award_floor = award_floor_ctx, est_total_funding, n_awards, cost_sharing = cost_sharing_ctx, applicant_types = applicant_types_ctx, need_type)
+tr <- bind_rows(Map(function(ag, cf) as_tibble(track_one(ag, cf)), rows$agency_id, rows$cfda_list))
+rows <- bind_cols(rows, tr)
+message("Track record: ", sum(rows$ag_won_n > 0), " rows where the agency won the program before; federal budget on ", sum(!is.na(rows$fed_fy25)), " rows")
 
 # Notice reader (30_notice_reader.R, advisory): fill reader_label and reader_quote when its output exists.
 # Labels without a verified quote are already "unclear" there; skipped items stay null. Never changes rank or tier.
@@ -106,6 +134,12 @@ if (file.exists(NOTICE_READER_CSV)) {
 # this count lets it show a badge without scanning).
 soon <- rows[rows$in_top10 & !is.na(rows$days_left) & rows$days_left >= 0 & rows$days_left <= CLOSING_SOON_DAYS, ]
 for (i in seq_along(agencies)) agencies[[i]]$n_closing_soon <- sum(soon$agency_id == agencies[[i]]$agency_id)
+# State General Fund base budget per agency (05f_agency_budget.R, OSBM); context only. NA when the agency has no General Fund line.
+bud_file <- file.path(DIR_PROCESSED, "agency_budget.csv")
+if (file.exists(bud_file)) {
+  bud <- read_csv(bud_file, show_col_types = FALSE, col_types = cols(agency_id = col_character(), gf_base_fy2526 = col_double(), .default = col_character()))
+  for (i in seq_along(agencies)) { j <- match(agencies[[i]]$agency_id, bud$agency_id); agencies[[i]]$gf_base_fy2526 <- if (is.na(j)) NA_real_ else bud$gf_base_fy2526[j] }
+}
 
 # goals[] (additive, for the match board and the alignment view): each active agency's own plan goals.
 # Folded plans (State Board of Education) belong to the agency they fold into; duplicates and dropped plans are skipped.
