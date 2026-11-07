@@ -6,13 +6,15 @@ Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt. Bui
 
 ## 1. What it does and does not do today
 
+> **Update (Fri Nov 6 night).** Kent confirmed 15 product decisions (`planning/08_product_decisions.md` on `origin/main`, not yet merged here). They are all **[PLANNED, not built]**. The live deployment is unchanged and is still the display-only Shiny page.
+
 **Does today**
 - Loads federal funding opportunities from four public sources into one table of 6,523 rows: Grants.gov, Simpler.Grants.gov, Federal Register notices, and USAspending past awards. Counts and rules: `handoff.md` ("Data setup notes") and `src/docs/azure_setup.md`.
 - Holds text and goal tables for 34 NC agency strategic plans (`src/docs/plan_text_check.csv`, `src/docs/agency_goal_summaries.csv`, 158 goal rows per `handoff.md`).
-- Serves a display-only web page on Azure Container Apps. It lists the opportunity table with column filters and a link to the qualifier grant triage tool at `/tool.html`.
+- Serves a display-only R Shiny page on Azure Container Apps. It lists the opportunity table with column filters and links to the qualifier grant triage tool at `/tool.html`. That tool is a static HTML file copied from `../QualifierChallenge/outs/`; it runs in the browser on the qualifier's data, not on the Finalists opportunities.
 
 **Does not do today**
-- No scoring, ranking, matching of opportunities to agency goals, or fit reasons.
+- No scoring, ranking, matching of opportunities to agency goals, or fit reasons. The planned design is in section 2.
 - No AI summaries. No Azure OpenAI resource exists.
 - No user accounts, decision buttons (Pursue, Maybe, Pass), saved decisions or feedback.
 - No scheduled refresh. `MODE=job` is a stub that prints one line and exits 0.
@@ -24,7 +26,11 @@ A person makes every decision. The system is meant to support a grants lead, not
 
 ## 2. Architecture
 
-Data scripts in R pull public sources into CSV files under `data/processed/`. One container image holds an R Shiny app and a small entrypoint script. The entrypoint reads the `MODE` environment variable. `MODE=app` starts the web page on port 3838. `MODE=job` is meant to run a daily refresh but is a stub. The image is built in Azure Container Registry with `az acr build` and runs as one Azure Container App (0.5 vCPU, 1 Gi, 0 to 1 replicas) with a system-assigned identity that pulls from the registry. A Blob container `ffm-data` exists for future state files but the app does not use it yet. Source: `src/docs/azure_setup.md`. The design follows the organizers' Starter Kit (`src/docs/organizer_materials_notes.md`, section 1).
+**Live today.** Data scripts in R pull public sources into CSV files under `data/processed/`. One container image holds an R Shiny app and a small entrypoint script. The entrypoint reads the `MODE` environment variable. `MODE=app` starts the web page on port 3838. `MODE=job` is meant to run a daily refresh but is a stub. The image is built in Azure Container Registry with `az acr build` and runs as one Azure Container App (0.5 vCPU, 1 Gi, 0 to 1 replicas) with a system-assigned identity that pulls from the registry. A Blob container `ffm-data` exists but the app does not use it. Source: `src/docs/azure_setup.md`. The design follows the organizers' Starter Kit (`src/docs/organizer_materials_notes.md`, section 1).
+
+**Planned (decision 6, Kent, `planning/08_product_decisions.md`) [PLANNED, not built].** An R pipeline scores every opportunity against every agency and writes `payload.json`. Azure OpenAI makes embeddings (one score per opportunity and agency pair, cached) and short reasons with quotes for flagged or shown pairs only. A script checks each quote appears in its source. Blob Storage holds the payload and the cache. The qualifier's JavaScript tool (`../QualifierChallenge/src/tool/`) reads the payload in the browser and shows an agency picker, sliders and a per-item breakdown. Container Apps hosts it. Rules decide the flag and the score only orders. The model never decides. None of this exists yet: there is no Azure OpenAI resource, no payload, no `data/manual/criteria.csv`.
+
+**Fallback.** If the planned flow is not ready at the code freeze, the R Shiny page above stays as the deployed product (decision 6). Fields-only signature tiers ship if the labeling pass is untested (decision 13).
 
 ## 3. Repo map
 
@@ -173,7 +179,8 @@ Azure's cost data lags by hours. Check Cost analysis by hand. Total added by the
 
 ## 9. Known limits
 
-- Match quality is unmeasured because there is no matching yet.
+- Match quality is unmeasured because there is no matching yet. The planned test is three agencies (Public Schools, Environmental Quality, DHHS), 20 items each, two labelers, 70% recall in the top N. Labels will be team-labelled, not ground truth (decision 12) [PLANNED, not built].
+- The named weakness we plan to report is recall versus shortlist length (decision 11). Stale plans and the missing SAM.gov and USDOT sources are also limits.
 - The table includes 4,947 closed items next to 884 posted and 588 forecasted (`azure_setup.md`). A reader could mistake a closed item for an open one.
 - Missing values are common: of 1,472 open items, 723 have no award ceiling and 117 have no close date (`planning/08_saturday_plan.md`). They must display as unknown, never zero. The page does not yet do any special display for them.
 - 70 posted items have close dates after 2030, some in 2099, and one posted item has a past close date (`handoff.md`).
@@ -192,7 +199,7 @@ Azure's cost data lags by hours. Check Cost analysis by hand. Total added by the
 
 **Add a new data source.** Copy the pattern of `02c_usaspending.R` or `02d_federal_register.R`: fetch with a cache, write one CSV to `data/processed/`, then add the source to `03_merge_opportunities.R`. Keep missing values as missing. Add checks to `src/tests/test_ingest.R`. SAM.gov is the likely next source but is rate limited for our key; USDOT blocked scripts with a 403 and was not worked around (`handoff.md`).
 
-**Add scoring.** The method is meant to live in `data/manual/criteria.csv`, one row per criterion, with columns `id, type, label, field, rule, value, weight, if_missing, why, source` (`planning/02_framing_worksheet.md`, section 5). The engine is `src/R/score.R` and `10_run_ranking.R`. Neither has been run on real criteria. **[PLANNED, not built]**
+**Add scoring.** The planned method is decisions 3 to 5 and 7 in `planning/08_product_decisions.md`. The older sketch is as follows. The method is meant to live in `data/manual/criteria.csv`, one row per criterion, with columns `id, type, label, field, rule, value, weight, if_missing, why, source` (`planning/02_framing_worksheet.md`, section 5). The engine is `src/R/score.R` and `10_run_ranking.R`. Neither has been run on real criteria. **[PLANNED, not built]**
 
 **Read from Blob instead of the image [PLANNED, not built].** Planned layout in `azure_setup.md`: `profiles/{agency}.json`, `raw/{yyyy-mm-dd}/grants.json`, `opportunities/latest.json`, `scored/{agency}/latest.json`, `decisions/{agency}.json`, `eval/labels.json`, `runs/{timestamp}.json`.
 
