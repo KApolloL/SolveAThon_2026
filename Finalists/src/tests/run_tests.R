@@ -53,6 +53,7 @@ check("unit: score", "duplicate item ids are rejected", fails(rank_items(bind_ro
 check("unit: score", "contains is plain text, not a regex", identical(rule_eval(c("a.b", "axb"), "contains", ".", ref), c(TRUE, FALSE)))
 check("unit: score", "dropped_by holds filter ids", identical(rank_items(d2, fo, ref, "id", "name")$dropped$dropped_by[1], "f"))
 
+check("display text", "entities, zero-width and ligatures are cleaned", identical(clean_text(c("A &#8211; B", "x&#8203;y&#65279;", "\ufb01nancial", NA)), c("A \u2013 B", "xy", "financial", NA)))
 check("geography", "other state in title is flagged", identical(geo_other(c("Grant for California schools","Great Lakes Unit","Texas and North Carolina pilot","Clean air grants",NA)), c(TRUE,TRUE,FALSE,FALSE,FALSE)))
 
 check("program map", "mapped listing lifts fit to the floor and notes why", {

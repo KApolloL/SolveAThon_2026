@@ -79,7 +79,7 @@ ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government
 
 # Geography: fit is multiplied by GEO_PENALTY when the opportunity TITLE names another US state or
 # region and does not name North Carolina. Titles only: summaries list many states in passing.
-# [assumed] 0.5; the item is demoted, never hidden.
+# 0.5 confirmed by Kent in person (Nov 7); a team judgment, not derived. The item is demoted, never hidden.
 GEO_PENALTY <- 0.5
 GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida",
   "Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts",
@@ -89,7 +89,7 @@ GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colo
   "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake")
 
 # Program map: a hand table (data/manual/program_map.csv) naming Assistance Listing numbers that belong to an
-# agency regardless of keywords. A mapped pair gets fit of at least MAP_FIT_FLOOR [assumed] and a note saying why.
+# agency regardless of keywords. A mapped pair gets fit of at least MAP_FIT_FLOOR (0.8, confirmed by Kent in person Nov 7; a team judgment) and a note saying why.
 # It never overrides the eligibility filter.
 PROGRAM_MAP_FILE <- file.path(DIR_MANUAL, "program_map.csv")
 MAP_FIT_FLOOR    <- 0.8
@@ -100,6 +100,7 @@ COMING_UP_N     <- 10L    # forecasted items kept per agency ("Coming up")
 HIDDEN_N        <- 10L    # best-fitting clearly-ineligible items kept per agency so the tool can show the toggle
 BACKTEST_TOP_N  <- 50L    # ranked items written per agency and window in rankings_backtest.csv
 SNIPPET_CHARS   <- 240L   # opp_snippet length
+CLOSING_SOON_DAYS <- 14L  # [assumed] a Top 10 row with this many days left or fewer counts as closing soon
 
 PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")
@@ -139,6 +140,27 @@ MODEL_LABEL_MIN_CATCH <- 0.80            # model must catch this share of hand "
 MODEL_LABEL_MIN_KAPPA <- 0.60            # and reach this kappa on relevant vs not relevant
 ROCCHIO_GOOD_WEIGHT <- 0.25              # feedback: weight of "good" items added to the profile (amendment I)
 ROCCHIO_BAD_WEIGHT  <- 0.10              # feedback: weight of "bad" items subtracted [assumed, untested]
+
+# Held-out label check (Noah, 40_label_check.R). Draw rule and word list are judgment calls.
+HOLDOUT_AGENCIES <- c("Department of Justice", "Department of Agriculture and Consumer Services",
+                      "Department of Labor")   # model-labelled, not in the validate set
+N_TOP <- 5
+N_RANDOM <- 5
+HOLDOUT_SEED <- 2026
+POOL_STATUSES <- c("posted", "forecasted", "notice")
+SUMMARY_CHARS <- 500
+# Words too common in plans and notices to count as a match (short list; a judgment call)
+GENERIC_WORDS <- c("north","carolina","state","states","department","program","programs","public",
+  "service","services","improve","ensure","support","strengthen","across","throughout","advance",
+  "expand","enhance","leading","excellence","operations","efficiency","collaboration","customer",
+  "community","communities","local","provide","work","using","goals","every","people","system",
+  "systems","national","federal","future","serve","working","fully","change","grant","grants",
+  "funding","award","awards","project","projects","applicants","application","information",
+  "development","management","include","includes","including","based","their","which","through")
+
+# County need (Noah, 05a_county_need.R; copied from QualifierChallenge/src/R/00_config.R)
+OVERDOSE_YEARS <- 2019:2021   # NCHS model-based drug poisoning death rates, averaged
+HPSA_AREA_TYPES <- c("Hpsa Geo", "Hpsa Geo HN", "Hpsa Pop")   # area designations only, not facilities
 
 # =============================================================================
 # Tool controls

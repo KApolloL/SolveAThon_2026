@@ -42,10 +42,11 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
 .act { margin-top: 8px; display:flex; gap:6px; flex-wrap:wrap; }
 .act button { font: inherit; font-size:.85rem; padding: 3px 10px; border:1px solid var(--border); border-radius: 14px; background: var(--surface-2); color: var(--text-primary); cursor: pointer; }
 .act button[aria-pressed="true"] { background: var(--accent); color: var(--surface-2); border-color: var(--accent); }
-.reason { color: var(--text-secondary); font-size: .92rem; margin-top: 4px; }
+.reason { color: var(--text-secondary); font-size: .92rem; margin-top: 4px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 .panel { background: var(--surface-2); border:1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-top: 16px; }
 .panel summary { cursor: pointer; font-weight: 600; }
 .banner { background: var(--accent-soft); border-radius: var(--radius); padding: 8px 12px; margin: 10px 0; font-size:.9rem; }
+.reason.muted { color: var(--text-muted); font-style: italic; }
 .stub { background:#fde8c8; color:#5a3700; padding:6px 12px; text-align:center; font-weight:700; }
 @media (max-width: 520px) { li.row { grid-template-columns: 1fr; } .days { text-align:left; } }
 </style>
@@ -112,9 +113,10 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
     var meta = el("div");
     var e = r.eligibility || "ask";
     meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), "Eligible: " + (ELIG[e] || "Ask")));
-    if (e === "ask") meta.appendChild(document.createTextNode("check the notice"));
+    if (e === "ask") meta.appendChild(document.createTextNode(" check the notice"));
     body.appendChild(meta);
-    if (r.goal_snippet) body.appendChild(el("div", "reason", "Matches plan goal: " + r.goal_snippet));
+    if (r.goal_snippet) { var rs = el("div", "reason", "Matches plan goal: " + r.goal_snippet); rs.title = r.goal_snippet; body.appendChild(rs); }
+    else body.appendChild(el("div", "reason muted", "No plan goal matched"));
     body.appendChild(actions(r));
     li.appendChild(body);
     return li;
@@ -137,7 +139,9 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
     var notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     var below = open.length - hidden.length - shown.length;
-    $("counts").textContent = "Showing " + shown.length + " of " + open.length + " open opportunities. " +
+    // open_total (per agency, proposed to Kent) is the true count; without it, say only what was loaded.
+    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : open.length + " open opportunities among the best matches loaded";
+    $("counts").textContent = "Showing " + shown.length + " of " + ofText + ". " +
       hidden.length + " hidden as not eligible, " + below + " ranked below the top 10, " + coming.length + " not open yet" + (notices ? ", " + notices + " notice" + (notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
     fill(top, shown);
     if (coming.length) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + coming.length; fill($("coming-l"), coming); }

@@ -190,6 +190,6 @@ To replace the SAS with managed identity once roles exist: assign Reader to the 
 
 ### Not yet done
 - Real `payload.json` after Merge 2 (the Blob file is still Kent's stub).
-- Min replicas 1 for the mentor demo and Sunday: needs Marco's OK for the cost; ask T3.
-- Daily Container Apps Job (`MODE=job` is still the print-and-exit stub).
+- Min replicas: set to 1 on Sat Nov 7 at about 9:55 am with Marco's OK (about $0.054 per hour active at list price, about $1.30 per day; ask T3 whether there is a cheaper warm-up). Set back to 0 after Sunday's talk.
+- Daily Container Apps Job: `app/job.R` written (checks the payload shape, stamps `shipped_at`, uploads to Blob; dry run by default, tested locally on three inputs). Not yet built into an image or created as an Azure job. Writing to Blob needs a write SAS (`BLOB_WRITE_SAS`) or the Contributor role for the app identity, neither of which exists yet. Creating the job resource needs Marco's OK.
 - Phone check and warm-load timing.
