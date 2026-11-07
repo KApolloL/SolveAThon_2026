@@ -34,7 +34,7 @@ Run everything from `Finalists/src`. Toy example files live in `data/example/` a
 
 ```bash
 Rscript R/01_profile.R         # first look at every file in data/raw (after the criteria are on paper)
-Rscript R/10_run_ranking.R     # filter, score, rank, explain -> data/processed/ranking.csv, payload.json, outs/top_results.*
+Rscript R/10_run_ranking.R     # filter, score, rank, explain -> items.csv, ranking.csv, outs/top_results.csv
 Rscript tests/run_tests.R      # unit, integration, your test cases, R/JS agreement, LLM guard; must print "N of N tests pass"
 Rscript R/check_facts.R        # every slide number reproduced from facts.csv; must print "N of N rows pass"
 Rscript tool/build_tool.R      # outs/criteria_tool.html (weights tool, one file, works offline)

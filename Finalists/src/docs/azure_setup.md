@@ -164,3 +164,32 @@ az cognitiveservices account deployment create -n ffm-aoai-team15 -g rg-primary-
 - Tests: chat 200 (15 tokens), embeddings 200 (4 tokens, 1,536 dimensions).
 - Cost so far: under one cent for these tests. No fixed monthly charge is expected for pay-per-token deployments [from list pricing, not confirmed on the bill].
 - Not done: wired into the app or pipeline; no call cap in code yet; data-handling terms not read, so privacy stays [uncertain].
+
+## Saturday Nov 7: Blob wiring and tool deploy (Marco with Claude Code)
+No keys, tokens or SAS values are in this file.
+
+| What | State |
+|---|---|
+| Image | `ffm-app:v2` live (revision `ffm-app--0000002`), built with `az acr build` (about 1.5 min on Basic) |
+| Main page | `/` serves `src/tool/matchmaker.html` (agency picker, top 10). Old Shiny view at `/shiny`; qualifier tool at `/tool.html` |
+| `/payload.json` | Route in `app/app.R`. Fetches `ffm-data/payload.json` server-side, caches 60 s, `no-store` to the browser |
+| Auth to Blob | Read-only SAS on that one blob, expires 3 days from Sat Nov 7, stored as Container App secret `blob-sas`, passed as env `BLOB_SAS`. Managed identity code path exists as fallback |
+| Why a SAS | Marco's login cannot assign roles (`roleAssignments/write` refused: ABAC condition). Storage Blob Data Reader for the app identity and Contributor for Marco are still needed, from Kent or a subscription Owner |
+| Uploads | `payload.json` uploaded with account-key auth through the `az` login (key never printed or written). First a fake stub, then Kent's Merge 1 stub |
+| Scale | min 0, max 1 (unchanged). Cold start about 35 s; the first request after the deploy returned 404 once, then 200 |
+
+To replace the SAS with managed identity once roles exist: assign Reader to the app identity, remove env `BLOB_SAS`, delete secret `blob-sas`. The app then takes the managed-identity path.
+
+### Spend added Sat Nov 7 (estimates, list prices; Azure's own figure lags and was not re-read)
+| Item | Estimate |
+|---|---|
+| Build v2 | 1 min 23 s x 2 vCPU x $0.0001 = about $0.02 |
+| Storage and Blob reads | not itemized; far under $1 |
+| Model calls | none made today |
+| Total added today | well under $1; nowhere near the $50 stop line |
+
+### Not yet done
+- Real `payload.json` after Merge 2 (the Blob file is still Kent's stub).
+- Min replicas 1 for the mentor demo and Sunday: needs Marco's OK for the cost; ask T3.
+- Daily Container Apps Job (`MODE=job` is still the print-and-exit stub).
+- Phone check and warm-load timing.

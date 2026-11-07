@@ -1,0 +1,18 @@
+fact_id,fact,expr,expected,tol
+f1,Agencies ranked for,"length(unique(items$agency_id))",32,0
+f2,Open opportunities ranked (posted + forecasted + notice),"length(unique(items$opp_id))",1576,0
+f3,Agency by opportunity pairs scored,nrow(items),50432,0
+f4,Open opportunities with no usable close date (rolling date listed or forecast date has passed),"sum(is.na(items$days_left[items$agency_id == 'deq']))",488,0
+f5,Open opportunities with no usable award ceiling (blank or 0),"sum(is.na(items$award_ceiling[items$agency_id == 'deq']))",887,0
+f6,Agency by opportunity pairs hidden as clearly not eligible,nrow(dropped),3030,0
+f7,Agency by opportunity pairs marked check eligibility (shown with a badge),"sum(items$eligibility == 'ask')",16540,0
+f8,Pairs hidden by applicant code alone when the code is 25 or 99,"sum(items$eligibility == 'no' & items$elig_source == 'code' & items$applicant_types %in% c('25', '99'))",0,0
+f9,A higher-education-only grant is not hidden for UNC,"sum(dropped$id == 'unc:363549')",0,0
+f10,Agencies in payload.json,"nrow(payload$agencies)",32,0
+f11,Most Top 10 rows for any one agency in payload.json,"max(table(payload$rows$agency_id[payload$rows$in_top10]))",10,0
+f12,Rows in payload.json (Top 10 + Coming up + hidden examples),"nrow(payload$rows)",960,0
+f13,Rows in rankings_backtest.csv (top 50 per agency and window),"nrow(backtest)",152000,0
+f14,"Backtest windows (2, 4 and 6 weeks from 2024-11-06)","nrow(unique(backtest[, c('window_weeks','window_start')]))",95,0
+f15,Open opportunities whose title names another state or region (fit halved),"length(unique(items$opp_id[items$geo_other]))",40,0
+f16,DERA (opp 363936) is in the DEQ Top 10,"sum(payload$rows$opp_id == '363936' & payload$rows$agency_id == 'deq' & payload$rows$in_top10)",1,0
+f17,DERA (opp 363936) is in the DPI Top 10,"sum(payload$rows$opp_id == '363936' & payload$rows$agency_id == 'dpi' & payload$rows$in_top10)",1,0

@@ -1,7 +1,7 @@
 # check_facts.R: every number used on a slide is a row in data/manual/facts.csv with an R
 # expression that reproduces it from the pipeline outputs. Presentation numbers must pass here.
 # Columns: fact_id, fact, expr, expected, tol. Expressions can use `items`, `ranking`,
-# `dropped`, `all_items` and `criteria`. Prints "N of N rows pass".
+# `dropped`, `all_items`, `criteria`, `payload` (payload.json) and `backtest` (rankings_backtest.csv). Prints "N of N rows pass".
 # Run from Finalists/src: Rscript R/check_facts.R
 
 here::i_am("src/R/check_facts.R")
@@ -15,6 +15,9 @@ criteria <- read_csv(CRITERIA_FILE, show_col_types = FALSE, col_types = cols(.de
 criteria$weight <- if ("weight" %in% names(criteria)) suppressWarnings(as.numeric(criteria$weight)) else NA_real_
 rk <- rank_items(items, criteria, REF_DATE, ID_COL, NAME_COL)
 ranking <- rk$ranked; dropped <- rk$dropped; all_items <- rk$all
+
+payload <- if (file.exists(PAYLOAD_JSON)) jsonlite::fromJSON(PAYLOAD_JSON) else NULL
+backtest <- if (file.exists(BACKTEST_CSV)) read_csv(BACKTEST_CSV, show_col_types = FALSE) else NULL
 
 facts <- read_csv(FACTS_FILE, show_col_types = FALSE, col_types = cols(.default = col_character()))
 facts$got <- NA_character_; facts$pass <- FALSE
