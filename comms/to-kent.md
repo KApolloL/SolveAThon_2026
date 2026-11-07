@@ -55,3 +55,13 @@ Blocked:
 - Notice-reader spot-check: Marco's T3 (the reader) is still open and blocked on whether Azure OpenAI is ours, so there is nothing for me to check yet.
 Need from you: PR for `claude/noah-work` (05b fix, raw README note, board ids).
 Next: report each finished agency; push label files on `claude/noah-labels`.
+
+## 2026-11-07 11:33 claude/noah-work
+Done:
+- Read your last note (PR #47 merged, keep N2 going). Labels are running, nothing to report yet.
+- N8: Q&A cheat sheet draft, because `src/docs/qa_cheatsheet.md` is an empty template and nobody had it on the board. File: `Finalists/drafts/claude/docs/qa_cheatsheet_draft.md`. About 35 likely judge questions by criterion, each with a 2-sentence answer, the fact-sheet row (F#) or file behind it, and who answers. I did not touch your file; promote or edit it as you like.
+- Every number is a fact-sheet number. Where the fact sheet has nothing the answer says "not found": label-check figures, cost spent, cold-start time, pilot cost, stale-plan count, privacy statement.
+Need from you:
+- All 18 fact-sheet rows still read "Kent to confirm", and the Q&A leans on rows 7, 13 to 17. Confirm them before rehearsal.
+- Add the label-check figures to the fact sheet (or keep them out of the talk). I wrote that the gate failed and gave no numbers.
+Next: labels. I will not start anything in the tool, app, scoring or payload files.
