@@ -165,6 +165,16 @@ body.proj .start .reason { font-size:1.35rem; }
 @media (max-width: 700px) { body.proj .start li.row { grid-template-columns:1fr; } }
 @media (prefers-reduced-motion: reduce) { body.proj * { transition:none !important; animation:none !important; scroll-behavior:auto !important; } }
 </style>
+<style id="tour-css">
+/* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
+.tour-card { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(460px, calc(100vw - 24px)); z-index:1000; background:var(--surface-2); color:var(--text-primary); border:2px solid var(--accent, #2d5a8a); border-radius:12px; padding:14px 16px; box-shadow:0 8px 28px rgba(0,0,0,.35); }
+.tour-card h2 { margin:0 0 4px; font-size:1.05rem; } .tour-card p { margin:0 0 10px; font-size:.95rem; line-height:1.4; }
+.tour-card .tour-nav { display:flex; gap:8px; align-items:center; } .tour-card .tour-nav .tour-count { flex:1; font-size:.85rem; color:var(--text-muted); }
+.tour-card button { font:inherit; padding:6px 12px; border-radius:8px; cursor:pointer; }
+.tour-hl { outline:3px solid #f2a900 !important; outline-offset:3px; border-radius:6px; position:relative; z-index:999; }
+#tour-open { margin-left:6px; }
+body.proj .tour-card { font-size:1.2rem; }
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the list</a>
@@ -983,6 +993,58 @@ body.proj .start .reason { font-size:1.35rem; }
     if (pre) { sel.value = pre.agency_id; cur.id = pre.agency_id; cur.tile = "top"; }
     show();
   }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
+})();
+</script>
+<script id="tour-js">
+(function () {
+  var KEY = "ffm_tour_v1", idx = 0, card = null, hl = null, steps = null;
+  function $(id) { return document.getElementById(id); }
+  function seen() { try { return !!localStorage.getItem(KEY); } catch (e) { return false; } }
+  function mark() { try { localStorage.setItem(KEY, "1"); } catch (e) {} }
+  function visible(e) { return e && e.offsetParent !== null; }
+  function build() {
+    steps = [
+      { t: "Welcome", b: "This tool reads open federal grants and ranks them against your agency's own strategic plan. It saves a grant writer the search. A person makes every decision. This tour takes under a minute.", sel: null },
+      { t: "1. Pick your agency", b: "The list below is built for the agency you choose here. We started you on Environmental Quality so you can see a real result.", sel: "#agency" },
+      { t: "2. Start here", b: "These are the three best open matches, ranked by how closely each one fits the goals in that agency's plan. Open grants only.", sel: "#start" },
+      { t: "3. Read each row", b: "Each row shows days left, whether your agency can apply (green yes, amber unclear: read the notice), and which plan goal it matched. Click the title to open the real notice.", sel: "#start li" },
+      { t: "4. Mark your call", b: "Pursue, Maybe or Pass. Your marks stay in this browser only. Nothing is sent anywhere.", sel: "#start .act" },
+      { t: "5. Keep your shortlist", b: "My decisions collects what you marked. Export it as a CSV, copy briefs for Pursue items, or download deadlines for your calendar.", sel: "#tab-marks" },
+      { t: "That is it", b: "Below the top 3 you will find tiles for Closing soon, New since your last visit, Read the notice and Coming up. Replay this tour any time with the Tour button at the top.", sel: null }
+    ].filter(function (s) { return !s.sel || visible(document.querySelector(s.sel)); });
+  }
+  function clear() { if (hl) { hl.classList.remove("tour-hl"); hl = null; } }
+  function close(done) { clear(); if (card) { card.remove(); card = null; } if (done) mark(); document.removeEventListener("keydown", onKey, true); }
+  function onKey(e) { if (!card) return; if (e.key === "Escape") { close(true); } else if (e.key === "ArrowRight") { go(1); } else if (e.key === "ArrowLeft") { go(-1); } }
+  function go(d) { idx += d; if (idx < 0) idx = 0; if (idx >= steps.length) { close(true); return; } render(); }
+  function render() {
+    clear(); var s = steps[idx];
+    if (!card) { card = document.createElement("div"); card.className = "tour-card"; card.setAttribute("role", "dialog"); card.setAttribute("aria-label", "Quick tour"); document.body.appendChild(card); document.addEventListener("keydown", onKey, true); }
+    card.innerHTML = "";
+    var h = document.createElement("h2"); h.textContent = s.t; var p = document.createElement("p"); p.textContent = s.b;
+    var nav = document.createElement("div"); nav.className = "tour-nav";
+    var skip = document.createElement("button"); skip.type = "button"; skip.textContent = "Skip"; skip.addEventListener("click", function () { close(true); });
+    var cnt = document.createElement("span"); cnt.className = "tour-count"; cnt.textContent = (idx + 1) + " of " + steps.length;
+    var back = document.createElement("button"); back.type = "button"; back.textContent = "Back"; back.disabled = idx === 0; back.addEventListener("click", function () { go(-1); });
+    var next = document.createElement("button"); next.type = "button"; next.className = "primary"; next.textContent = idx === steps.length - 1 ? "Done" : "Next"; next.addEventListener("click", function () { go(1); });
+    [skip, cnt, back, next].forEach(function (x) { nav.appendChild(x); });
+    [h, p, nav].forEach(function (x) { card.appendChild(x); });
+    if (s.sel) { hl = document.querySelector(s.sel); if (hl) { hl.classList.add("tour-hl"); hl.scrollIntoView({ block: "center", behavior: "smooth" }); } }
+    next.focus({ preventScroll: true });
+  }
+  function start() { close(false); if (document.body.classList.contains("proj")) return; build(); idx = 0; if (steps.length) render(); }
+  // "Tour" button in the header, added here so the page markup stays Marco's
+  var hdr = document.querySelector("header"), btn = document.createElement("button");
+  btn.type = "button"; btn.id = "tour-open"; btn.textContent = "Tour"; btn.title = "Replay the quick tour"; btn.addEventListener("click", start);
+  if (hdr) hdr.appendChild(btn);
+  // Auto-start once for a new visitor, after data has loaded (the Azure container can take about 40 seconds to wake).
+  var q = location.search, forced = /[?&]tour=1/.test(q), tries = 0;
+  if (!forced && (seen() || /[?&]present=1/.test(q))) return;
+  var iv = setInterval(function () {
+    tries++; var ready = /^Data as of/.test(($("asof") || {}).textContent || "") && visible($("start"));
+    if (ready) { clearInterval(iv); var sx = $("steps"); if (sx) sx.hidden = true; start(); }
+    else if (tries > 300) clearInterval(iv);
+  }, 300);
 })();
 </script>
 </body>
