@@ -20,7 +20,7 @@ Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt. Bui
 - No scheduled refresh. `MODE=job` is a stub that prints one line and exits 0.
 - The app does not read from Blob Storage. It reads a CSV copied into the image.
 - No evaluation has been run. `data/manual/` is empty (no criteria, test cases or hand labels).
-- SAM.gov and USDOT listings are not loaded.
+- SAM.gov postings and the USDOT page are not loaded. The SAM Assistance Listings catalog (2,665 programs, with statutory authority) is built from GSA's public bulk file by `src/R/05b_sam_listings.R` into `data/processed/sam_listings.csv`; nothing in the ranking reads it yet.
 
 A person makes every decision. The system is meant to support a grants lead, not replace them (`docs/QUEST_BRIEF.md`).
 
@@ -180,7 +180,7 @@ Azure's cost data lags by hours. Check Cost analysis by hand. Total added by the
 ## 9. Known limits
 
 - Match quality is unmeasured because there is no matching yet. The planned test is three agencies (Public Schools, Environmental Quality, DHHS), 20 items each, two labelers, 70% recall in the top N. Labels will be team-labelled, not ground truth (decision 12) [PLANNED, not built].
-- The named weakness we plan to report is recall versus shortlist length (decision 11). Stale plans and the missing SAM.gov and USDOT sources are also limits.
+- The named weakness we plan to report is recall versus shortlist length (decision 11). Stale plans and the missing SAM.gov postings and USDOT sources are also limits.
 - The table includes 4,947 closed items next to 884 posted and 588 forecasted (`azure_setup.md`). A reader could mistake a closed item for an open one.
 - Missing values are common: of 1,472 open items, 723 have no award ceiling and 117 have no close date (`planning/08_saturday_plan.md`). They must display as unknown, never zero. The page does not yet do any special display for them.
 - 70 posted items have close dates after 2030, some in 2099, and one posted item has a past close date (`handoff.md`).
