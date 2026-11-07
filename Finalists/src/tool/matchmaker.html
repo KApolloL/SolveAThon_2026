@@ -311,6 +311,16 @@ body.proj .start .whyfit { font-size:1.3rem; color:#22303a; }
   #print-sheet .ps-foot { margin-top:22pt; font-size:9pt; color:#444; }
 }
 </style>
+<style id="tour-css">
+/* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
+.tour-card { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(460px, calc(100vw - 24px)); z-index:1000; background:var(--surface-2); color:var(--text-primary); border:2px solid var(--accent, #2d5a8a); border-radius:12px; padding:14px 16px; box-shadow:0 8px 28px rgba(0,0,0,.35); }
+.tour-card h2 { margin:0 0 4px; font-size:1.05rem; } .tour-card p { margin:0 0 10px; font-size:.95rem; line-height:1.4; }
+.tour-card .tour-nav { display:flex; gap:8px; align-items:center; } .tour-card .tour-nav .tour-count { flex:1; font-size:.85rem; color:var(--text-muted); }
+.tour-card button { font:inherit; padding:6px 12px; border-radius:8px; cursor:pointer; }
+.tour-hl { outline:3px solid #f2a900 !important; outline-offset:3px; border-radius:6px; position:relative; z-index:999; }
+#tour-open { margin-left:6px; }
+body.proj .tour-card { font-size:1.2rem; }
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the list</a>
@@ -374,7 +384,7 @@ body.proj .start .whyfit { font-size:1.3rem; color:#22303a; }
       <dl class="gloss">
         <dt>Best match</dt><dd>How many words a grant's title and summary share with your agency's plan goals. It is a keyword score, not a judgment of quality. Compare scores only inside one agency's list.</dd>
         <dt>Your agency can apply</dt><dd>Federal applicant-type codes or a quoted line in the notice say state agencies are allowed.</dd>
-        <dt>Not sure we can apply</dt><dd>The applicant list is unclear. Read the notice (the link on the title) before spending time.</dd>
+        <dt>Eligibility unclear</dt><dd>The applicant list is unclear. The notice's own words are shown under the title; read the notice (the link on the title) before spending time.</dd>
         <dt>Who signs</dt><dd>Who has to approve an application: you can start now, your boss must sign, or leadership must sign. Shown only when the notice makes it clear.</dd>
         <dt>Closing soon</dt><dd>14 days or fewer left to apply.</dd>
         <dt>Coming up</dt><dd>Forecasts: the funder says it plans to post this. You cannot apply yet, but you can plan.</dd>
@@ -619,9 +629,10 @@ body.proj .start .whyfit { font-size:1.3rem; color:#22303a; }
     if (r.status === "forecasted") meta.appendChild(el("span", "badge", "Not open yet"));
     failsK(r).forEach(function (m) { meta.appendChild(el("span", "badge warn", m)); });
     var e = r.eligibility || "ask";
-    var PLAIN = { yes: "Your agency can apply", no: "Your agency cannot apply", ask: "Not sure we can apply: read the notice" };
+    var PLAIN = { yes: "Your agency can apply", no: "Your agency cannot apply", ask: "Eligibility unclear: check the notice before you spend time" };
     meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), PLAIN[e] || PLAIN.ask));
     body.appendChild(meta);
+    if (e === "ask" && r.elig_quote) { var eq = String(r.elig_quote).replace(/\s+/g, " "); body.appendChild(el("div", "reason muted", "The notice says: “" + (eq.length > 160 ? eq.slice(0, 157).replace(/\s+\S*$/, "") + "…" : eq) + "”")); }
     if (r.goal_snippet) { var rs = el("div", "whyfit"); rs.appendChild(el("b", null, "Why it fits: ")); var gt = r.goal_snippet.replace(/^Goal\s*\d+\s*[–-]?\s*/i, ""); rs.appendChild(document.createTextNode(gt.length > 170 ? gt.slice(0, 167).replace(/\s+\S*$/, "") + "…" : gt)); rs.title = r.goal_snippet; body.appendChild(rs); }
     else body.appendChild(el("div", "reason muted", "No plan goal matched"));
     var sw = sharedWords(r); if (sw.length) body.appendChild(el("div", "matched", "Words in common: " + sw.join(", ")));
@@ -788,7 +799,7 @@ body.proj .start .whyfit { font-size:1.3rem; color:#22303a; }
   // ---- Start here: the three best open matches, one next step each ----
   function renderStart(g, id) {
     var box = $("start"); box.innerHTML = "";
-    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 0; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).slice(0, document.body.classList.contains("proj") ? 5 : 3);
+    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 1; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).slice(0, document.body.classList.contains("proj") ? 5 : 3);
     box.hidden = (cur.tile !== "top" && !document.body.classList.contains("proj")) || !pick.length; if (box.hidden) return;
     box.appendChild(el("h2", null, "Start here: your " + pick.length + " best open matches"));
     var soon = g.soon.length;
@@ -1218,6 +1229,8 @@ body.proj .start .whyfit { font-size:1.3rem; color:#22303a; }
   if (lsGet("ffm_proj_v1", false) || /[?&]present=1/.test(location.search)) { document.body.classList.add("proj"); $("proj").setAttribute("aria-pressed", "true"); $("proj-exit").hidden = false; }
   // ---- end PROJECTOR ----
 
+  // the Azure container sleeps when idle: say so instead of looking broken
+  var warm = setTimeout(function () { if (!P) $("asof").textContent = "Loading data... the server is waking up, this can take up to 40 seconds."; }, 4000);
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
     P = p; CSD = p.closing_soon_days || 14;
     $("asof").textContent = fmtAsOf(p.data_as_of); $("asof").parentNode.title = "Data as of " + (p.data_as_of || "unknown");
@@ -1237,6 +1250,63 @@ body.proj .start .whyfit { font-size:1.3rem; color:#22303a; }
     if (want && p.agencies.some(function (a) { return a.agency_id === want; })) { sel.value = want; cur.id = want; }
     deskClear(); show();
   }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
+})();
+</script>
+<script id="tour-js">
+(function () {
+  var KEY = "ffm_tour_v1", idx = 0, card = null, hl = null, steps = null;
+  function $(id) { return document.getElementById(id); }
+  function seen() { try { return !!localStorage.getItem(KEY); } catch (e) { return false; } }
+  function mark() { try { localStorage.setItem(KEY, "1"); } catch (e) {} }
+  function visible(e) { return e && e.offsetParent !== null; }
+  function build() {
+    steps = [
+      { t: "Welcome", b: "This tool reads open federal grants and ranks them against your agency's own strategic plan. It saves a grant writer the search. A person makes every decision. This tour takes under a minute.", sel: null },
+      { t: "1. Pick your agency", b: "The list below is built for the agency you choose here. We started you on Environmental Quality so you can see a real result.", sel: "#agency" },
+      { t: "2. Start here", b: "These are the three best open matches, ranked by how closely each one fits the goals in that agency's plan. Open grants only.", sel: "#start" },
+      { t: "3. Read each row", b: "Each row shows days left, whether your agency can apply (green yes, amber unclear: read the notice), and which plan goal it matched. Click the title to open the real notice.", sel: "#start li" },
+      { t: "4. Mark your call", b: "Pursue, Maybe or Pass. Your marks stay in this browser only. Nothing is sent anywhere.", sel: "#start .act" },
+      { t: "5. Keep your shortlist", b: "My decisions collects what you marked. Export it as a CSV, copy briefs for Pursue items, or download deadlines for your calendar.", sel: "#tab-marks" },
+      { t: "That is it", b: "Below the top 3 you will find tiles for Closing soon, New since your last visit, Read the notice and Coming up. Replay this tour any time with the Tour button at the top.", sel: null }
+    ].filter(function (s) { return !s.sel || visible(document.querySelector(s.sel)); });
+  }
+  function clear() { if (hl) { hl.classList.remove("tour-hl"); hl = null; } }
+  function close(done) { clear(); if (card) { card.remove(); card = null; } if (done) mark(); document.removeEventListener("keydown", onKey, true); }
+  function onKey(e) { if (!card) return; if (e.key === "Escape") { close(true); } else if (e.key === "ArrowRight") { go(1); } else if (e.key === "ArrowLeft") { go(-1); } }
+  function go(d) { idx += d; if (idx < 0) idx = 0; if (idx >= steps.length) { close(true); return; } render(); }
+  function render() {
+    clear(); var s = steps[idx];
+    if (!card) { card = document.createElement("div"); card.className = "tour-card"; card.setAttribute("role", "dialog"); card.setAttribute("aria-label", "Quick tour"); document.body.appendChild(card); document.addEventListener("keydown", onKey, true); }
+    card.innerHTML = "";
+    var h = document.createElement("h2"); h.textContent = s.t; var p = document.createElement("p"); p.textContent = s.b;
+    var nav = document.createElement("div"); nav.className = "tour-nav";
+    var skip = document.createElement("button"); skip.type = "button"; skip.textContent = "Skip"; skip.addEventListener("click", function () { close(true); });
+    var cnt = document.createElement("span"); cnt.className = "tour-count"; cnt.textContent = (idx + 1) + " of " + steps.length;
+    var back = document.createElement("button"); back.type = "button"; back.textContent = "Back"; back.disabled = idx === 0; back.addEventListener("click", function () { go(-1); });
+    var next = document.createElement("button"); next.type = "button"; next.className = "primary"; next.textContent = idx === steps.length - 1 ? "Done" : "Next"; next.addEventListener("click", function () { go(1); });
+    [skip, cnt, back, next].forEach(function (x) { nav.appendChild(x); });
+    [h, p, nav].forEach(function (x) { card.appendChild(x); });
+    if (s.sel) { hl = document.querySelector(s.sel); if (hl) { hl.classList.add("tour-hl"); hl.scrollIntoView({ block: "center", behavior: "smooth" }); } }
+    next.focus({ preventScroll: true });
+  }
+  function demoAgency() { // the home screen has no list yet: pick Environmental Quality so the tour has real rows to point at
+    var sel = $("agency"); if (!sel || sel.value) return;
+    var o = [].slice.call(sel.options).filter(function (x) { return /Environmental Quality/i.test(x.text); })[0];
+    if (o) { sel.value = o.value; sel.dispatchEvent(new Event("change", { bubbles: true })); }
+  }
+  function start() { close(false); if (document.body.classList.contains("proj")) return; demoAgency(); build(); idx = 0; if (steps.length) render(); }
+  // "Tour" button in the header, added here so the page markup stays Marco's
+  var hdr = document.querySelector("header"), btn = document.createElement("button");
+  btn.type = "button"; btn.id = "tour-open"; btn.textContent = "Tour"; btn.title = "Replay the quick tour"; btn.addEventListener("click", start);
+  if (hdr) hdr.appendChild(btn);
+  // Auto-start once for a new visitor, after data has loaded (the Azure container can take about 40 seconds to wake).
+  var q = location.search, forced = /[?&]tour=1/.test(q), tries = 0;
+  if (!forced && (seen() || /[?&]present=1/.test(q))) return;
+  var iv = setInterval(function () {
+    tries++; var ready = $("agency") && $("agency").options.length > 5;
+    if (ready) { clearInterval(iv); var sx = $("steps"); if (sx) sx.hidden = true; start(); }
+    else if (tries > 300) clearInterval(iv);
+  }, 300);
 })();
 </script>
 </body>
