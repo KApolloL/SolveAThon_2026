@@ -439,14 +439,35 @@ ul.cart-list li { display:grid; grid-template-columns:52px minmax(0,1fr); gap:4p
 body.proj #finder, body.proj #chartbox, body.proj .cartbtn, body.proj .start .c-pay, body.proj .start .c-elig { display:none !important; }
 body.proj .start li.row { grid-template-columns:220px minmax(0,1fr) 240px; } body.proj .start .money b { font-size:3rem; } body.proj .start .c2 { font-size:1rem; padding:6px 14px; } body.proj .start .funder { font-size:1.2rem; }
 @media (max-width:560px) { .cartbtn span { display:none; } .appbar .cartbtn { display:inline-flex !important; } }
+
+.say-help { margin:-2px 0 8px; color:var(--text-muted); font-size:.88rem; }
+details.more { margin-top:12px; border-top:1px solid var(--rule); padding-top:8px; }
+details.more > summary { cursor:pointer; color:var(--accent); font-weight:600; font-size:.9rem; min-height:40px; display:flex; align-items:center; gap:8px; list-style:none; }
+details.more > summary::-webkit-details-marker { display:none; }
+details.more > summary::before { content:""; width:7px; height:7px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(-45deg); transition:transform .15s; }
+details.more[open] > summary::before { transform:rotate(45deg); }
+details.more .dd { border-top:none; margin-top:6px; padding-top:4px; }
+.curve { margin-top:18px; padding-top:14px; border-top:1px solid var(--rule); }
+.curve h3 { margin:0 0 4px; font-size:1rem; }
+.curve-svg { width:100%; height:auto; display:block; overflow:visible; }
+.curve-svg .grid { stroke:var(--rule); } .curve-svg .ax { fill:var(--text-muted); font-size:10.5px; font-family:var(--font); }
+.curve-svg .ln { fill:none; stroke-width:2.5; } .curve-svg .ln.l-all { stroke:#9aa6a2; } .curve-svg .ln.l-in { stroke:var(--accent); }
+.curve-svg .pt { stroke:var(--surface-2); stroke-width:2; } .curve-svg .pt.l-all { fill:#9aa6a2; } .curve-svg .pt.l-in { fill:var(--accent); }
+.curve-svg .lab { font-size:11px; font-weight:700; font-family:var(--font); } .curve-svg .lab.l-all { fill:var(--text-secondary); } .curve-svg .lab.l-in { fill:var(--accent); }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
 .tour-card { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(460px, calc(100vw - 24px)); z-index:1000; background:var(--surface-2); color:var(--text-primary); border:2px solid var(--accent, #2d5a8a); border-radius:12px; padding:14px 16px; box-shadow:0 8px 28px rgba(0,0,0,.35); }
 .tour-card h2 { margin:0 0 4px; font-size:1.05rem; } .tour-card p { margin:0 0 10px; font-size:.95rem; line-height:1.4; }
 .tour-card .tour-nav { display:flex; gap:8px; align-items:center; } .tour-card .tour-nav .tour-count { flex:1; font-size:.85rem; color:var(--text-muted); }
-.tour-card button { font:inherit; padding:6px 12px; border-radius:8px; cursor:pointer; }
-.tour-hl { outline:3px solid #f2a900 !important; outline-offset:3px; border-radius:6px; position:relative; z-index:999; }
+.tour-card { padding:16px 18px 14px !important; border-radius:14px !important; border:none !important; box-shadow:0 12px 40px rgba(0,0,0,.35) !important; width:min(500px, calc(100vw - 24px)) !important; }
+.tour-card h2 { font-size:1.15rem !important; margin:10px 0 6px !important; } .tour-card p { font-size:1rem !important; line-height:1.5 !important; color:var(--text-secondary); }
+.tour-bar { height:4px; background:var(--surface-3); border-radius:2px; overflow:hidden; } .tour-bar i { display:block; height:100%; background:var(--accent); transition:width .2s; }
+.tour-card button { font:inherit; padding:8px 16px; border-radius:999px; cursor:pointer; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); min-height:40px; }
+.tour-card button.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); font-weight:700; }
+.tour-card button:disabled { opacity:.4; cursor:default; }
+.tour-card .tour-act { display:block; width:100%; margin:0 0 12px; border:2px dashed var(--accent); color:var(--accent); font-weight:700; background:var(--accent-soft); }
+.tour-hl { outline:4px solid #f2a900 !important; outline-offset:4px; border-radius:10px; position:relative; z-index:999; box-shadow:0 0 0 9999px rgba(10,20,25,.35); }
 #tour-open { margin-left:6px; }
 body.proj .tour-card { font-size:1.2rem; }
 </style>
@@ -501,10 +522,12 @@ body.proj .tour-card { font-size:1.2rem; }
     <section id="finder" class="finder" hidden aria-label="Narrow the list">
       <div class="say">
         <label for="scenario">Tell us your situation in plain words</label>
-        <div class="sayrow"><input type="text" id="scenario" placeholder="e.g. 4 weeks, no matching funds, at least $250k, easy ones" autocomplete="off"><button type="button" id="scn-go">Apply</button></div>
+        <p class="say-help">Say what you are looking for and what you can handle. We set the filters for you.</p>
+        <div class="sayrow"><input type="text" id="scenario" placeholder="e.g. rural broadband for schools, 4 weeks, no matching money, at least $250k" autocomplete="off"><button type="button" id="scn-go">Apply</button></div>
         <div class="examples" id="examples"></div>
         <div class="chips" id="chips" aria-live="polite"></div>
       </div>
+      <details class="more" id="more-filters"><summary>More options: keyword search, sort, who signs, money, time, odds, funder</summary>
       <div class="dd">
         <label class="dd-q">Search by keyword<input type="search" id="f-q" placeholder="e.g. opioid, broadband, school bus" autocomplete="off"></label>
         <label>Sort by<select id="order"><option value="rank">Best match to our plan</option><option value="payoff">Best payoff for the work</option><option value="money">Biggest money</option><option value="deadline">Soonest deadline</option><option value="odds">Best chance of winning</option><option value="easy">Easiest first</option><option value="priority">My plan priorities</option></select></label>
@@ -515,6 +538,7 @@ body.proj .tour-card { font-size:1.2rem; }
         <label>Chance of winning<select id="f-odds"><option value="">Any</option><option value="fair">Skip long shots</option><option value="good">Good odds only</option></select></label>
         <label class="dd-f">Funder<select id="f-funder"><option value="">Any funder</option></select></label>
       </div>
+      </details>
       <div class="frow"><span id="f-count" role="status"></span><button type="button" id="f-reset" hidden>Clear filters</button></div>
     </section>
     <div id="start" class="start" hidden></div>
@@ -638,6 +662,11 @@ body.proj .tour-card { font-size:1.2rem; }
     ],
     "fails": "Where it fails: 101 of the 159 won programs were not in the top 10. Reading the top 50 reaches 97 of 159 (61%). Keyword matching misses grants worded differently from the plan, and only 4 of 12 agencies clear our 50% bar.",
     "source": "Award-history backtest, 12 agencies with 3 or more won programs, 4-week windows, Nov 2024 to Nov 2026. Exploratory."
+  },
+  "intime": {
+    "fact": 32, "won": 159, "days": 21,
+    "points": [ { "weeks": 2, "all": 59, "intime": 52 }, { "weeks": 4, "all": 58, "intime": 42 }, { "weeks": 6, "all": 55, "intime": 35 } ],
+    "say": "Checking every 2 weeks, 52 of the 159 still had 21 or more days left to apply. Checking every 6 weeks, only 35 did. That gap is why the tool is built to refresh every day."
   }
 }
 </script>
@@ -730,9 +759,31 @@ body.proj .tour-card { font-size:1.2rem; }
       ul.appendChild(li);
     });
     card.appendChild(ul);
+    if (EV.intime) card.appendChild(curveEl(EV.intime, box.id));
     var fl = el("p", "fails"); fl.appendChild(el("b", null, "Where it falls short")); fl.appendChild(document.createTextNode(b.fails.replace(/^Where it fails:\s*/, ""))); card.appendChild(fl);
     card.appendChild(el("p", "src", b.source + " Alert baseline: " + b.rows[1].note + " Fact sheet rows " + b.fact + "."));
     box.appendChild(card);
+  }
+  function curveEl(c, uid) {
+    var wrap = el("div", "curve"), NS = "http://www.w3.org/2000/svg";
+    wrap.appendChild(el("h3", null, "Finding it early matters"));
+    wrap.appendChild(el("p", "q", c.say));
+    var W = 460, H = 190, ml = 40, mr = 120, mt = 14, mb = 34, ymax = 40;
+    var svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("class", "curve-svg"); svg.setAttribute("role", "img");
+    svg.setAttribute("aria-label", "Line chart. Won programs reaching the top 10, all versus with " + c.days + " or more days left: " + c.points.map(function (p) { return p.weeks + "-week checks " + p.all + " and " + p.intime; }).join("; ") + ", of " + c.won + ".");
+    function mk(tag, a, t) { var e = document.createElementNS(NS, tag); Object.keys(a).forEach(function (k) { e.setAttribute(k, a[k]); }); if (t != null) e.textContent = t; svg.appendChild(e); return e; }
+    var X = function (w) { return ml + (W - ml - mr) * (w - 2) / 4; }, Y = function (n) { return mt + (H - mt - mb) * (1 - (n / c.won * 100) / ymax); };
+    [0, 10, 20, 30, 40].forEach(function (v) { var y = mt + (H - mt - mb) * (1 - v / ymax); mk("line", { x1: ml, x2: W - mr, y1: y, y2: y, "class": "grid" }); mk("text", { x: ml - 6, y: y + 4, "text-anchor": "end", "class": "ax" }, v + "%"); });
+    c.points.forEach(function (p) { mk("text", { x: X(p.weeks), y: H - mb + 18, "text-anchor": "middle", "class": "ax" }, "every " + p.weeks + " wks"); });
+    mk("text", { x: (ml + W - mr) / 2, y: H - 2, "text-anchor": "middle", "class": "ax" }, "How often someone checks for new grants");
+    [["all", "Found at all", "l-all"], ["intime", "Found with " + c.days + "+ days left", "l-in"]].forEach(function (L) {
+      mk("polyline", { points: c.points.map(function (p) { return X(p.weeks) + "," + Y(p[L[0]]); }).join(" "), "class": "ln " + L[2] });
+      c.points.forEach(function (p) { var d = mk("circle", { cx: X(p.weeks), cy: Y(p[L[0]]), r: 5, "class": "pt " + L[2] }); var t = document.createElementNS(NS, "title"); t.textContent = L[1] + ", checking every " + p.weeks + " weeks: " + p[L[0]] + " of " + c.won + " (" + Math.round(p[L[0]] / c.won * 100) + "%)"; d.appendChild(t); });
+      var last = c.points[c.points.length - 1]; mk("text", { x: X(last.weeks) + 10, y: Y(last[L[0]]) + 4, "class": "lab " + L[2] }, L[1] + ": " + last[L[0]]);
+    });
+    wrap.appendChild(svg);
+    wrap.appendChild(el("p", "src", "Same 159 won programs. " + c.days + " days is a team assumption. Fact sheet row " + c.fact + "."));
+    return wrap;
   }
   function fmtAsOf(s) {
     var d = s ? new Date(s) : null; if (!d || isNaN(d)) return "Data as of " + (s || "unknown");
@@ -789,7 +840,10 @@ body.proj .tour-card { font-size:1.2rem; }
   function tight(r) { var e = effort(r); return r.days_left != null && r.days_left >= 0 && e.weeks && r.days_left < e.weeks * 7; }
 
   // ---- quick filters (dropdowns, plain-English box, keyword search). Own view only; unknown values are never hidden. ----
-  var F = { q: "", sign: "", match: "", min: 0, weeks: 0, odds: "", funder: "" };
+  var F = { q: "", sign: "", match: "", min: 0, weeks: 0, odds: "", funder: "", topic: [] };
+  var SAY_STOP = {}; ("have need needs want wants looking look find grant grants funding fund funds money matching match cost share sharing week weeks month months days least most award awards easy easier quick ones only good odds best chance payoff worth biggest large small soonest deadline urgent crunch staff people person team agency agencies department program programs project projects state north carolina something anything about related help would could like just also some more than with without into from that this those these there their they them what when where which while your ours mine myself boss supervisor leadership sign signs plan planning forecast forecasts coming open time apply application really very").split(" ").forEach(function (w) { SAY_STOP[w] = 1; });
+  function stem(w) { return w.length > 4 ? w.replace(/(ies|es|s)$/, function (x) { return x === "ies" ? "y" : ""; }) : w; }
+  function topicHits(r) { if (!F.topic.length) return 0; var hay = [r.title, r.opp_snippet, r.funder, r.goal_snippet].join(" ").toLowerCase(); return F.topic.filter(function (w) { return hay.indexOf(w) >= 0; }).length; }
   var ORDER_LABEL = { rank: "best match", payoff: "best payoff", money: "biggest money", deadline: "soonest deadline", odds: "best odds", easy: "easiest first", priority: "my plan priorities" };
   function passF(r) {
     if (F.q) {
@@ -802,10 +856,12 @@ body.proj .tour-card { font-size:1.2rem; }
     if (F.weeks && r.days_left != null && r.days_left < F.weeks * 7) return false;
     if (F.odds) { var o = odds(r).level; if (F.odds === "good" && o !== "good") return false; if (F.odds === "fair" && o === "long") return false; }
     if (F.funder && r.funder !== F.funder) return false;
+    if (F.topic.length && !topicHits(r)) return false;
     return true;
   }
   function sortRows(rows) {
     var o = cur.order, dl = function (r) { return r.days_left == null ? 1e9 : r.days_left; }, rk = function (r) { return r.rank == null ? 999 : r.rank; };
+    if (o === "rank" && F.topic.length) rows.sort(function (a, b) { return topicHits(b) - topicHits(a) || rk(a) - rk(b); });
     if (o === "priority") rows.sort(function (a, b) { return (b.fit_score || 0) * wOf(b) - (a.fit_score || 0) * wOf(a); });
     if (o === "deadline") rows.sort(function (a, b) { return dl(a) - dl(b); });
     if (o === "money") rows.sort(function (a, b) { return (money(b).max || -1) - (money(a).max || -1) || rk(a) - rk(b); });
@@ -826,6 +882,7 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function parseSay(t) {
     var chips = [], low = String(t || "").toLowerCase(), m;
+    F.weeks = 0; F.min = 0; F.match = ""; F.sign = ""; F.odds = ""; F.topic = [];
     if ((m = low.match(/(\d+(?:\.\d+)?)\s*(week|wk|day|month)/))) { var w = Math.max(1, Math.round(Number(m[1]) * (m[2] === "day" ? 1 / 7 : m[2] === "month" ? 4.3 : 1))); F.weeks = w; chips.push("I need " + w + (w === 1 ? " week" : " weeks") + " to apply"); }
     if ((m = low.match(/\$\s*(\d[\d,]*(?:\.\d+)?)\s*(k|m|million|thousand)?/)) || (m = low.match(/(?:award|over|above|at least|minimum)[^\d$]{0,12}(\d[\d,]*(?:\.\d+)?)\s*(k|m|million|thousand)?/))) {
       var n = Number(m[1].replace(/,/g, "")), u = m[2]; if (u === "k" || u === "thousand") n *= 1e3; if (u === "m" || u === "million") n *= 1e6;
@@ -839,13 +896,17 @@ body.proj .tour-card { font-size:1.2rem; }
     else if (/biggest|most money|large|big award/.test(low)) { cur.order = "money"; chips.push("Sorted by biggest money"); }
     else if (/soonest|deadline|urgent|crunch/.test(low)) { cur.order = "deadline"; chips.push("Sorted by soonest deadline"); }
     if (/forecast|planning|plan ahead|not open yet|coming up/.test(low)) { $("opt-forecast").checked = true; chips.push("Including grants not open yet"); }
-    if ((m = low.match(/(?:about|for|on|related to)\s+([a-z][a-z \-]{2,40}?)(?:,|\.|$| with| and| that| at| no )/))) { var q = m[1].trim(); if (!/^(the|a|an|my|me|us|our)$/.test(q) && q.split(" ").length <= 3) { F.q = q; chips.push('Keyword: "' + q + '"'); } }
+    var rest = low.replace(/\$\s*\d[\d,.]*\s*(k|m|million|thousand)?/g, " ").replace(/\d+(\.\d+)?\s*(weeks?|wks?|days?|months?)/g, " ");
+    var seen = {}; F.topic = [];
+    tokens(rest).forEach(function (w) { if (w.length < 4 || /\d/.test(w) || SAY_STOP[w] || LEARN_STOP[w]) return; var s0 = stem(w); if (!seen[s0]) { seen[s0] = 1; F.topic.push(s0); } });
+    F.topic = F.topic.slice(0, 6);
+    if (F.topic.length) chips.push("Looking for: " + F.topic.join(", "));
     return chips;
   }
   function renderSayChips(list) {
     var box = $("chips"); box.innerHTML = "";
     list.forEach(function (c) { box.appendChild(el("span", "chip", c)); });
-    if (!list.length && $("scenario").value.trim()) box.appendChild(el("span", "chip ignored", "Nothing recognised. Try: 4 weeks, no matching funds, at least $250k, easy, good odds, best payoff, about broadband"));
+    if (!list.length && $("scenario").value.trim()) box.appendChild(el("span", "chip ignored", "Nothing recognised. Try a topic (broadband, opioids, school buses) or limits like 4 weeks, no matching money, at least $250k"));
   }
 
   // ---- money vs time chart (one dot per grant in the current list) ----
@@ -1221,7 +1282,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var box = $("start"); box.innerHTML = "";
     var pick = sortRows(g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 1; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).filter(passF)).slice(0, document.body.classList.contains("proj") ? 5 : 3);
     box.hidden = (cur.tile !== "top" && !document.body.classList.contains("proj")) || !pick.length; if (box.hidden) return;
-    box.appendChild(el("h2", null, cur.order === "rank" ? "Start here: your " + pick.length + " best open matches" : "Start here: top " + pick.length + " by " + ORDER_LABEL[cur.order]));
+    box.appendChild(el("h2", null, cur.order === "rank" ? (pick.length === 1 ? "Start here: your best open match" : "Start here: your " + pick.length + " best open matches") : "Start here: top " + pick.length + " by " + ORDER_LABEL[cur.order]));
     box.appendChild(el("p", "note", "Big number on the left: days left. Right: the most money one award can be. Press Pursue to add a grant to your cart and get a step-by-step plan."));
     var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
   }
@@ -1259,9 +1320,10 @@ body.proj .tour-card { font-size:1.2rem; }
     fs.innerHTML = ""; fs.appendChild(Object.assign(el("option", null, "Any funder"), { value: "" }));
     Object.keys(fl).sort().forEach(function (f) { fs.appendChild(Object.assign(el("option", null, f + " (" + fl[f] + ")"), { value: f })); });
     if (keep && !fl[keep]) F.funder = ""; fs.value = F.funder;
-    var nF = ["q", "sign", "match", "min", "weeks", "odds", "funder"].filter(function (k) { return F[k]; }).length;
-    $("f-count").textContent = nF ? nF + (nF === 1 ? " filter" : " filters") + " on: showing " + shown.length + " grants. Grants with an unknown amount, date or signer are kept." : "";
+    var nF = ["q", "sign", "match", "min", "weeks", "odds", "funder"].filter(function (k) { return F[k]; }).length + (F.topic.length ? 1 : 0);
+    $("f-count").textContent = nF ? nF + (nF === 1 ? " filter" : " filters") + " on: showing " + shown.length + (shown.length === 1 ? " grant." : " grants.") + " Grants with an unknown amount, date or signer are kept." : "";
     $("f-reset").hidden = !nF && !$("scenario").value;
+    renderExamples();
     renderStart(g, id);
     renderChart(shown);
     fill($("top"), shown); renderLearn();
@@ -1588,7 +1650,7 @@ body.proj .tour-card { font-size:1.2rem; }
     if (name === "map") renderMap(); if (name === "osbm") renderOsbm(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
   }
   Array.prototype.forEach.call(document.querySelectorAll(".tabs button[data-tab]"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
-  if (!lsGet("ffm_steps_v1", false)) $("steps").hidden = false;
+  // the old 3-step strip is replaced by the tour (Tour button)
   $("steps-x").addEventListener("click", function () { $("steps").hidden = true; lsSet("ffm_steps_v1", true); });
   $("tab-more").addEventListener("click", function () { setMore($("more-tabs").hidden); });
   function setLarge(on) { document.body.classList.toggle("large", on); $("large").setAttribute("aria-pressed", on); lsSet("ffm_large_v1", on); }
@@ -1607,12 +1669,23 @@ body.proj .tour-card { font-size:1.2rem; }
   function applySay() { renderSayChips(parseSay($("scenario").value)); syncF(); show(true); }
   $("scn-go").addEventListener("click", applySay);
   $("scenario").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); applySay(); } });
-  [["4 weeks, no matching money", "4 weeks, no matching funds"], ["Easy ones I can start myself", "easy ones I can do myself"], ["At least $500K, good odds", "at least $500k with good odds"], ["Best payoff for the work", "best payoff"]].forEach(function (x) {
-    var b = el("button", null, x[0]); b.type = "button"; b.addEventListener("click", function () { $("scenario").value = x[1]; applySay(); }); $("examples").appendChild(b); });
+  // example chips follow the agency: the first one uses a topic word from that agency's own top grants
+  function agencyTopic(id) {
+    var c = {}, rows = P.rows.filter(function (r) { return r.agency_id === id && r.in_top10 && r.eligibility !== "no"; });
+    rows.forEach(function (r) { var seen = {}; tokens(r.title).forEach(function (w) { w = stem(w); if (w.length < 5 || /\d/.test(w) || SAY_STOP[w] || LEARN_STOP[w] || seen[w]) return; seen[w] = 1; c[w] = (c[w] || 0) + 1; }); });
+    return Object.keys(c).sort(function (a, b) { return c[b] - c[a] || (a < b ? -1 : 1); })[0] || "";
+  }
+  var exFor = null;
+  function renderExamples() {
+    if (!cur.id || exFor === cur.id) return; exFor = cur.id;
+    var t = agencyTopic(cur.id), box = $("examples"); box.innerHTML = "";
+    (t ? [[t.charAt(0).toUpperCase() + t.slice(1) + ", 4 weeks", t + ", I have 4 weeks"]] : []).concat([["Easy ones I can start myself", "easy ones I can do myself"], ["At least $500K, good odds", "at least $500k with good odds"], ["No matching money, best payoff", "no matching money, best payoff"]]).forEach(function (x) {
+      var b = el("button", null, x[0]); b.type = "button"; b.addEventListener("click", function () { $("scenario").value = x[1]; applySay(); }); box.appendChild(b); });
+  }
   var fq; $("f-q").addEventListener("input", function () { clearTimeout(fq); var v = this.value; fq = setTimeout(function () { F.q = v.trim(); show(true); }, 150); });
   [["f-sign", "sign"], ["f-match", "match"], ["f-odds", "odds"], ["f-funder", "funder"]].forEach(function (x) { $(x[0]).addEventListener("change", function () { F[x[1]] = this.value; show(true); }); });
   [["f-min", "min"], ["f-weeks", "weeks"]].forEach(function (x) { $(x[0]).addEventListener("change", function () { F[x[1]] = Number(this.value) || 0; show(true); }); });
-  $("f-reset").addEventListener("click", function () { F = { q: "", sign: "", match: "", min: 0, weeks: 0, odds: "", funder: "" }; cur.order = "rank"; $("scenario").value = ""; $("chips").innerHTML = ""; syncF(); show(true); });
+  $("f-reset").addEventListener("click", function () { F = { q: "", sign: "", match: "", min: 0, weeks: 0, odds: "", funder: "", topic: [] }; cur.order = "rank"; $("scenario").value = ""; $("chips").innerHTML = ""; syncF(); show(true); });
   $("plan-x").addEventListener("click", function () { $("plan-dlg").close(); });
   $("cart-x").addEventListener("click", function () { $("cart-dlg").close(); });
   ["plan-dlg", "cart-dlg"].forEach(function (id) { $(id).addEventListener("click", function (e) { if (e.target === this) this.close(); }); });
@@ -1704,13 +1777,16 @@ body.proj .tour-card { font-size:1.2rem; }
   function visible(e) { return e && e.offsetParent !== null; }
   function build() {
     steps = [
-      { t: "Welcome", b: "This tool reads open federal grants and ranks them against your agency's own strategic plan. It saves a grant writer the search. A person makes every decision. This tour takes under a minute.", sel: null },
-      { t: "1. Pick your agency", b: "The list below is built for the agency you choose here. We started you on Environmental Quality so you can see a real result.", sel: "#agency" },
-      { t: "2. Start here", b: "These are the three best open matches, ranked by how closely each one fits the goals in that agency's plan. Open grants only.", sel: "#start" },
-      { t: "3. Read each card", b: "Big number on the left: days left to apply. Right: the most money one award can be. In the middle: the funder, who has to sign (Tier 1 to 3), the chance of winning, the effort, and the payoff for the work. Open \"Why it fits\" for the reasons.", sel: "#start li" },
-      { t: "4. Pursue it", b: "Pursue adds the grant to your cart and opens a step-by-step plan: the notice link, a timeline back from the deadline, and a checklist of what you need. Maybe or Pass if not. Nothing is sent anywhere.", sel: "#start .act" },
-      { t: "5. Keep your shortlist", b: "My decisions collects what you marked. Export it as a CSV, copy briefs for Pursue items, or download deadlines for your calendar.", sel: "#tab-marks" },
-      { t: "That is it", b: "Below the top 3 you will find tiles for Closing soon, New since your last visit, Read the notice and Coming up. Replay this tour any time with the Tour button at the top.", sel: null }
+      { t: "Find grants in about a minute", b: "This tool reads every open federal grant and ranks them against your agency's own strategic plan. You tell it your situation, it shows the best bets, and you decide. Here is how, in 8 short steps.", sel: null },
+      { t: "1. Start here: tell us your situation", b: "Type what you are looking for and what you can handle, in plain words. For example: water quality, 4 weeks, no matching money. Press Apply. We turn your words into filters and show each one as a chip you can see.", sel: ".say", act: ["Show me an example", function () { var b = $("examples") && $("examples").firstChild; if (b) b.click(); }] },
+      { t: "2. Check your agency", b: "The list is built for the agency picked here. Change it any time.", sel: ".picker" },
+      { t: "3. Look at the top 3 first", b: "These are your best open matches for what you typed. Most days you only need these three.", sel: "#start" },
+      { t: "4. Read a card in 5 seconds", b: "Big number on the left: days left to apply. Big number on the right: the most money one award can be. In the middle: the funder, who has to sign (Tier 1: you, Tier 2: your boss, Tier 3: leadership), your chance of winning, the effort, and the payoff for the work. Open \"Why it fits\" for the reasons.", sel: "#start li" },
+      { t: "5. Like it? Press Pursue", b: "Pursue puts the grant in your cart and opens your application plan. Maybe or Pass if not. Nothing is sent anywhere; it stays in this browser.", sel: "#start li" },
+      { t: "6. Your application plan", b: "The plan gives you the link to the full notice, a timeline worked back from the deadline (read, check logins, gather, draft, sign-off, submit two days early), and a checklist of what you will need. You can add the deadline to your calendar or print a one-page brief for your boss.", sel: "#start li", act: ["Open an example plan", function () { var b = document.querySelector("#start .act button[data-m=Pursue]"); if (b && b.getAttribute("aria-pressed") !== "true") b.click(); else if (b) { var pl = b.parentNode.querySelector(".planbtn"); if (pl) pl.click(); } close(false); var d = $("plan-dlg"), resume = idx + 1, iv2 = setInterval(function () { if (d && d.open) return; clearInterval(iv2); idx = Math.min(resume, steps.length - 1); render(); }, 300); }] },
+      { t: "7. Your grant cart", b: "Everything you Pursue lands here, with the total money at stake, the weeks of work, and your next deadline. Download every deadline to Outlook in one click.", sel: "#cart-open" },
+      { t: "8. Want more control?", b: "Open More options for keyword search, sort order (best payoff, biggest money, soonest deadline), who signs, smallest award, time you need, odds and funder.", sel: "#more-filters" },
+      { t: "That is it", b: "Describe your situation, look at the top 3, Pursue the good ones, follow the plan. Replay this tour any time with the Tour button at the top.", sel: null }
     ].filter(function (s) { return !s.sel || visible(document.querySelector(s.sel)); });
   }
   function clear() { if (hl) { hl.classList.remove("tour-hl"); hl = null; } }
@@ -1728,7 +1804,10 @@ body.proj .tour-card { font-size:1.2rem; }
     var back = document.createElement("button"); back.type = "button"; back.textContent = "Back"; back.disabled = idx === 0; back.addEventListener("click", function () { go(-1); });
     var next = document.createElement("button"); next.type = "button"; next.className = "primary"; next.textContent = idx === steps.length - 1 ? "Done" : "Next"; next.addEventListener("click", function () { go(1); });
     [skip, cnt, back, next].forEach(function (x) { nav.appendChild(x); });
-    [h, p, nav].forEach(function (x) { card.appendChild(x); });
+    var bar = document.createElement("div"); bar.className = "tour-bar"; var fillb = document.createElement("i"); fillb.style.width = Math.round((idx + 1) / steps.length * 100) + "%"; bar.appendChild(fillb);
+    var kids = [bar, h, p];
+    if (s.act) { var ab = document.createElement("button"); ab.type = "button"; ab.className = "tour-act"; ab.textContent = s.act[0]; ab.addEventListener("click", function () { s.act[1](); }); kids.push(ab); }
+    kids.push(nav); kids.forEach(function (x) { card.appendChild(x); });
     if (s.sel) { hl = document.querySelector(s.sel); if (hl) { hl.classList.add("tour-hl"); hl.scrollIntoView({ block: "center", behavior: "smooth" }); } }
     next.focus({ preventScroll: true });
   }
