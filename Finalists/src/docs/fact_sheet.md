@@ -29,3 +29,7 @@ Every number used on a slide or in a handout is listed here with the script that
 | 23 | Capability rows (who controls what) for DHHS and DMVA, hand-built in the qualifier; other agencies have none | 28 | `data/manual/facts.csv` f29, `src/R/11_build_payload.R` | Claude; Kent to confirm | 2026-11-07 |
 | 24 | Top 10 rows (all agencies) with a known signature tier; the 61 notices read Unknown because they state no cost share | 259 | `data/manual/facts.csv` f30, `src/R/helpers_rank.R` signature_tier() | Claude; Kent to confirm | 2026-11-07 |
 | 25 | Top 10 rows needing leadership (cost share on an award of $1M or more) | 24 | `data/manual/facts.csv` f31 | Claude; Kent to confirm | 2026-11-07 |
+| 26 | v2 award backtest (exploratory, full-pool denominator, 18 agencies mapped by exact name, 12 with 3+ won programs), 4-week windows: won programs reaching the Top 10 | 57 of 157 (36%) | `data/manual/facts.csv` f32 to f35, `src/R/21_backtest_v2.R` | Claude; Kent to confirm | 2026-11-07 |
+| 27 | Same test, Top 50 | 95 of 157 (61%) | `data/manual/facts.csv` f35 | Claude; Kent to confirm | 2026-11-07 |
+| 28 | Same test, agencies at or above 50% in the Top 10 | 4 of 12 | `data/manual/facts.csv` f36 | Claude; Kent to confirm | 2026-11-07 |
+| 29 | Same test, share of won programs reached by a plain soonest-deadline sort and by a random 10 (pooled over the same 157; random is the exact expected value) | 17% and 13% | `src/R/21_backtest_v2.R` (`deadline_pct`, `random_pct` in `backtest_v2_result.csv`; pooled by won programs) | Claude; Kent to confirm | 2026-11-07 |

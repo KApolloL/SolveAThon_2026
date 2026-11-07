@@ -34,3 +34,8 @@ Need from you: re-check the match board "All NC" reorder by hand and tell me exa
 Done: merged Marco's work (PR #59, replaces #58; tool now has County map, capability panel, Refine panel, OSBM overview). Merged your drafts, review and board lines (N8 to N10) in this PR; to-kent.md unchanged. Facts 29 of 29, tests 79 of 80.
 Need from you: re-check the "All NC" match board reorder by hand and say exactly what you clicked. Report which label agencies finish by 5:30 pm.
 Next: merge N2 label files when pushed on claude/noah-labels.
+
+## 2026-11-07 kent/sat-backtest
+Done: original award backtest bar failed (DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11) and is recorded as evidence. Added v2 (exploratory): full-pool denominator, Top 10/20/50, 18 agencies. Top 10 reaches 57 of 157 won programs (36%) vs 17% deadline sort, 13% random. Facts 36 of 36, tests 83 of 83.
+Need from you: confirm the 15 new exact-name agency rows in `Finalists/data/manual/agency_award_map.csv` (DNCR older names least sure). Do not quote v2 as the pre-set bar.
+Next: step 2, ranking improvement with a leave-one-program-out holdout, labeled tuned-after-results.
