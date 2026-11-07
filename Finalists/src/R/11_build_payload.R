@@ -64,6 +64,15 @@ sel$rank <- as.integer(sel$rank)
 n_open <- table(items$agency_id[items$status != "forecasted" & items$eligibility != "no"])
 
 o <- opps[, c("opp_id", "summary", "cfda_list", "url", "nc_won_before")]
+# Context for the tool's money, odds and effort lines (shown only; never enters fit, rank, eligibility or tier).
+ctx <- opps |> transmute(opp_id, funder = na_if(clean_text(agency), ""),
+  award_floor_ctx = suppressWarnings(as.numeric(award_floor)), est_total_funding = suppressWarnings(as.numeric(est_total_funding)),
+  n_awards = suppressWarnings(as.integer(n_awards)), cost_sharing_ctx = na_if(cost_sharing, ""),
+  applicant_types_ctx = na_if(applicant_types_named, ""))
+ctx$award_floor_ctx[!is.na(ctx$award_floor_ctx) & ctx$award_floor_ctx <= 0] <- NA
+ctx$est_total_funding[!is.na(ctx$est_total_funding) & ctx$est_total_funding <= 0] <- NA
+ctx$n_awards[!is.na(ctx$n_awards) & ctx$n_awards <= 0] <- NA
+o <- left_join(o, ctx, by = "opp_id")
 rows <- sel |>
   left_join(items, by = c("agency_id", "opp_id")) |>
   left_join(o, by = "opp_id") |>
@@ -80,7 +89,8 @@ rows <- sel |>
     opp_snippet = str_sub(clean_text(summary), 1, SNIPPET_CHARS),
     cfda_list, award_ceiling = as.numeric(award_ceiling),
     signature_tier, tier_source, tier_reason, rank_note,
-    nc_won_before = as.logical(nc_won_before), url)
+    nc_won_before = as.logical(nc_won_before), url,
+    funder, award_floor = award_floor_ctx, est_total_funding, n_awards, cost_sharing = cost_sharing_ctx, applicant_types = applicant_types_ctx)
 
 # Notice reader (30_notice_reader.R, advisory): fill reader_label and reader_quote when its output exists.
 # Labels without a verified quote are already "unclear" there; skipped items stay null. Never changes rank or tier.
