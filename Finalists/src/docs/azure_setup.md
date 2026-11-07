@@ -3,13 +3,15 @@
 Written Fri Nov 6, 2026, late evening, by Marco with Claude Code. No keys, tokens or connection strings are in this file. Where a secret is needed, the placeholder is `$AOAI_KEY` etc.
 
 ## Rules that still apply
-- **Spending limit: $500** for the team subscription (told to us by the organizers). Stay on the cheapest tiers; see "Cost guard".
+- **$500 is a monthly budget alert, not a hard limit** (read from Azure Friday night; the subscription spending limit is off). Treat it as the ceiling anyway. Stay on the cheapest tiers; see "Cost guard".
 - Ask before every `az ... create`, delete, role assignment or install. One command at a time. On an error: show the exact command and error, propose one fix, no blind retries.
 - Never print or write a key. Read it into a shell variable from `az` and use it in the same command.
 - Work only on the branch `marco_testing`. No commits to `main`. Commit only when Marco says so; push only to `origin/marco_testing`, then open a PR for Kent. Before each work block: `git fetch origin`, then `git merge --ff-only origin/main`.
 - AI use for Friday is logged in `Finalists/AI_USAGE_LOG.md`; add a row for each new block of work.
 
 ## State at end of Friday
+_Updated Fri 10:50 pm: rows below show the state after the proof run. Details are in the proof sections further down._
+
 Signed in as `gullotto@AD.UNC.EDU` (CLI 2.92.0, installed with Homebrew; `containerapp` extension installed, preview). Default subscription: `unc-sdis-solveathon-team15`.
 
 | What | Name | State |
@@ -22,12 +24,12 @@ Signed in as `gullotto@AD.UNC.EDU` (CLI 2.92.0, installed with Homebrew; `contai
 | Log Analytics workspace | `ffm-logs` | created |
 | Container Registry | `ffmacrteam15` (Basic) | created |
 | Container Apps environment | `ffm-env` | created |
-| Hello app | `Finalists/app/app.R`, `Finalists/app/Dockerfile` (`rocker/shiny:4.4.2`, port 3838, `MODE` env var, `MODE=job` is a stub that exits 0) | written, **not built, not committed** |
+| Proof app | `Finalists/app/` (image `ffm-app:v1`, display only) | **built and live**; replaced the hello skeleton |
 | Azure OpenAI resource | `ffm-aoai-team15` | **not created** (Marco had not answered; no Azure OpenAI exists in the subscription) |
-| Container App | `ffm-app` | **not created** |
-| Budget alerts ($250, $400) | | **not created**; Claude offered, Marco did not answer |
+| Container App | `ffm-app` | **created and live**: https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/ |
+| Budget alerts | `ffm-guard` | **created**: $50, $100, $250, $400. Alerts only; they do not stop spending |
 
-Nothing has been tested yet. No URL exists yet.
+Tested Friday night: see "Browser check" below. Azure OpenAI is still not created.
 
 ## Plan for Saturday (in order)
 
@@ -82,3 +84,67 @@ These two answers decide steps 2 and 5. Do not guess.
 
 ## Rollback if anything goes wrong
 Delete only resources we created (all names above, in `rg-primary-unc-sdis-solveathon-team15`). Do not delete the resource group, `rg-networking`, `NetworkWatcherRG` or `rg-serviceHealthAlert`. Ask Marco before each delete.
+
+---
+
+# Proof run result (Fri Nov 6 night, Claude Code, Sonnet subagent)
+
+**URL:** https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/  (tool: `/tool.html`)
+Image `ffmacrteam15.azurecr.io/ffm-app:v1`. Only 1 of 5 allowed builds used. No keys, passwords or tokens were printed or written.
+
+## Resources created
+- Subscription budget `ffm-guard` ($500 monthly, actual-cost alerts at 10/20/50/80% = $50/$100/$250/$400, contactRoles Owner and Contributor, no emails; start 2026-11-01, end 2027-11-01).
+- Image `ffm-app:v1` in `ffmacrteam15`.
+- Container App `ffm-app` in `ffm-env`: external ingress, port 3838, `MODE=app`, 0.5 vCPU, 1.0Gi, min 0, max 1, system-assigned identity. The CLI granted that identity `AcrPull` on `ffmacrteam15` itself (confirmed in the role assignment list). The admin-user fallback was NOT needed or enabled.
+
+## Budget facts read first
+- Month-to-date actual cost at start: $6.67 (same as the Friday baseline).
+- Existing budgets: `unc-sdis-solveathon-team15-monthly-budget` is $500, Monthly, 2026-10-01 to 2036-10-01, one alert at 100% (emails to the organizers). There is also `unc-sdis-solveathon-team15-annual-budget`, $6,000, Annually, 2026-10-01 to 2027-12-01. So the $500 is a monthly budget alert, not a hard limit.
+
+## Commands (secrets: none needed)
+```
+az rest --method PUT --url ".../subscriptions/<sub>/providers/Microsoft.Consumption/budgets/ffm-guard?api-version=2023-05-01" --body @budget.json
+sh Finalists/app/stage_proof_assets.sh
+az acr build -r ffmacrteam15 -t ffm-app:v1 ./app --no-logs      # run from Finalists/
+az containerapp create -n ffm-app -g rg-primary-unc-sdis-solveathon-team15 --environment ffm-env \
+  --image ffmacrteam15.azurecr.io/ffm-app:v1 --ingress external --target-port 3838 --env-vars MODE=app \
+  --cpu 0.5 --memory 1.0Gi --min-replicas 0 --max-replicas 1 --system-assigned \
+  --registry-server ffmacrteam15.azurecr.io --registry-identity system
+```
+
+## Test results
+| Check | Result |
+|---|---|
+| `/` returns 200 | PASS |
+| `/tool.html` returns 200 (3,594,932 bytes, same size as the staged file) | PASS |
+| `/` shows `MODE = app` | PASS |
+| Counts in plain curl HTML: total 6,523; posted 884; forecasted 588; closed 4,947; notice 104 | PASS (static UI) |
+| Cold start (after replicas reached 0, about 9 minutes of no traffic) | 38.2 s for `/` |
+| Warm request | 0.09 to 0.15 s for `/` |
+| No key in app/ context or in changed/untracked files (value match against `api_keys.env`, nothing printed) | PASS |
+| Browser, websocket, table filtering | NOT tested (Marco does this) |
+| `MODE=job` in the cloud | NOT tested (needs a Container Apps job, not approved) |
+
+Notes: scale to zero took about 9 minutes after the last request. The cold start of 38 s is a finding: the sponsors said waiting minutes fails, so set min replicas to 1 before any demo. One earlier curl, run right after creation with no timeout, hung for over 3 minutes and was stopped; later requests worked at once. Cause not determined (possibly first-ingress propagation). Also `fread` warned that `bit64` is not installed (integer64 columns); harmless for display.
+
+## Failures and fixes
+None in the build or deploy. `.dockerignore` was written so the staged `data/` and `www/` are not excluded; they reached the image (row counts and tool file are live). ACR dropped only `.gitignore` from the context.
+
+## Spend ledger (estimates, list prices)
+| Item | Duration | Estimate |
+|---|---|---|
+| Build v1 | 462 s wall clock (includes queue time) | 462 x 2 vCPU x $0.0001 = about $0.09 |
+| App active (about 30 minutes incl. cold start and tests) | about 0.5 h | about $0.03 |
+| Total added | | about $0.12; Azure's own figure lags, not re-read |
+App at min replicas 0 costs near zero idle, about $0.054 per hour while active.
+
+### Browser check (Fri Nov 6, 10:40 pm, main session)
+Independent of the subagent's curl checks, in a real browser:
+- Shiny websocket connected (`readyState` 1), no disconnect overlay, no console errors.
+- Table search works server-side: "school bus" gave 690 of 6,523 rows, and clearing it restored all rows.
+- `/tool.html` loads and shows Tier 1 to 4 as 27 / 24 / 3 / 366 (runs in the browser, so this does not test V8 on the server).
+- Azure settings re-read: image `ffm-app:v1`, 0.5 vCPU, 1 Gi, min 0, max 1, system identity pull, registry admin off, no secrets on the app.
+
+Finding: the "school bus" results are noisy. The search matches each word separately across all columns, and the top rows are unrelated to buses. Do not use this search as evidence of matching quality. It may be a useful picture of what plain keyword search does, once measured.
+
+Still untested: `MODE=job` in the cloud, venue Wi-Fi and phone hotspot, V8 on the server. The cause of one early hung `curl` right after creation is unknown.
