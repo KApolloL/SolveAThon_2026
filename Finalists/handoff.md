@@ -54,6 +54,9 @@ _Update this at each checkpoint (about every 6 hours) and before ending any long
 ## Discovery session
 Findings and plan changes: [planning/07_discovery_findings.md](planning/07_discovery_findings.md). Organized notes: [notes/vault/Solveathon_DiscoverySession.md](notes/vault/Solveathon_DiscoverySession.md).
 
+## Product decisions (Nov 6 night)
+15 decisions confirmed by Kent after a grilling interview: [planning/08_product_decisions.md](planning/08_product_decisions.md). It overrides older "not started" assumptions in the status table. Next: pool rules and labels, criteria.csv, profile, pipeline, Sat 1:00 PM gate.
+
 ## Next three steps
 Friday night owners and teammate AI prompts: [planning/06_tonight_plan.md](planning/06_tonight_plan.md). Marco owns Azure; Noah and Matthew check plan text; Kent owns planning.
 

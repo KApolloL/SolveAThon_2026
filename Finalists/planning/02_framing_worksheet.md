@@ -93,3 +93,5 @@ Ticked Fri Nov 6, 2026 at Kent's request on a Claude draft. Lines marked [assume
 Only when every box is ticked: profile the data (`Rscript R/01_profile.R`) and check each criterion's field exists and is usable.
 
 Decision (Kent, Nov 6): goal classification uses each agency's own labels (its own goal heading or number), not a shared cross-agency taxonomy. `classification_category` in `agency_goal_summaries.csv` holds that label.
+
+Decisions update (Kent, Nov 6 night): the product was revised in a grilling interview. See `08_product_decisions.md` (15 decisions). Success test details: N = 20 per pool, pass bar 70% recall in the top N, three pool agencies (Public Schools, Environmental Quality, DHHS), two labelers per item, labels relevant / maybe / not relevant. Option C (onboarding ranking) became an optional after-results feedback button (decision 10).
