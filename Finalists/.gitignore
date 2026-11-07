@@ -4,6 +4,7 @@ outs/*
 !outs/figures/
 !outs/.gitkeep
 data/processed/ranking.csv
+data/processed/items.csv
 data/processed/profile/
 data/cache/llm/
 .quarto/
