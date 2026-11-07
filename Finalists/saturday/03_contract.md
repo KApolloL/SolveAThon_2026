@@ -47,6 +47,17 @@ Rules:
 - Unknown values are `null`, never 0 or Tier 1.
 - Ranking is per agency. `in_top10` is the flag; Top 10 holds open items only, forecasts go to "Coming up".
 
+### Proposed additions for the match board (Kent confirms at 9:30; stretch only)
+- `goals`: array of `{agency_id, goal_id, goal_text}` so the tool can list plan goals and group a grant's fits by agency.
+- `rows[].opp_text`: title plus snippet, so the browser can score a typed project with the same keyword function. Leave it out if `payload.json` gets too large; the board then works on plan goals only.
+These are not in the gate payload. Marco builds against the stub without them.
+
+### Proposed additions for decision 12 stretch features (not in the gate payload)
+- `capability_profiles`: per agency, only where the qualifier produced one (probably DHHS and DMVA [uncertain, not verified]); other agencies are absent and the tool shows "not available for this agency".
+- `goals[]` (above) also feeds the alignment percent (feature 18).
+- `rows[].counties`: per-grant county list or reach, for county reach, need map and scatter (features 20 to 22). Source is the qualifier county caches Noah copies; coverage for new items is unknown. Absent means `null`, not zero.
+- Marco reuses the qualifier tool in `QualifierChallenge/src/tool/` and does not rewrite it.
+
 ## `data/processed/rankings_backtest.csv` (read by Everett)
 One row per agency, window and ranked item, for closed items since 2024-11-06.
 `agency_id, window_start, window_end, window_weeks, opp_id, opp_number, cfda_list, close_date, fit_score, rank`

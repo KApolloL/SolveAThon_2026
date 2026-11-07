@@ -13,6 +13,12 @@
 | 9 | Who writes the AI-usage disclosure from `AI_USAGE_LOG.md`? | Kent | 1:00 |
 | 10 | School bus "about one month" application window, from discovery notes: true? | Matthew | 12:15 |
 
+## Stretch data risks (decision 12)
+- Capability profiles (feature 17) probably exist only for DHHS and DMVA from the qualifier [uncertain, not verified]. Other agencies show "not available for this agency", never blank or guessed.
+- Alignment percent (feature 18) needs `goals[]` per agency in `payload.json`.
+- County reach, need map and scatter (features 20 to 22) need per-grant county data. Noah copies the qualifier county caches; coverage for new items is unknown.
+- None of these may delay the 1:00 gate. Marco reuses the qualifier tool in `QualifierChallenge/src/tool/` and does not rewrite it.
+
 ## Risks
 - Kent is on the critical path and does every merge. If a merge window runs over 20 minutes, the next window moves, not the gate.
 - 38-second cold start during the 11:00 mentor demo: set min replicas 1 during the day if T3 confirms it is cheap.

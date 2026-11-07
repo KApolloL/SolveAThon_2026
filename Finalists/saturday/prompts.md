@@ -8,7 +8,7 @@ Run `git pull origin main`, then `git switch -c kent/sat-pipeline`. Never push t
 
 Then read, in order: Finalists/saturday/README.md, Finalists/saturday/06_dependencies.md, Finalists/saturday/03_contract.md, Finalists/saturday/people/kent.md.
 
-Role: you build the pipeline and prepare every merge. I merge. Start on step 1 of kent.md: agency_map.csv plus stub payload.json and stub rankings_backtest.csv matching 03_contract.md, ready for the 9:30 merge.
+Role: you build the pipeline and prepare every merge. I merge. Start on step 1 of kent.md: agency_map.csv plus stub payload.json and stub rankings_backtest.csv matching 03_contract.md, ready for the 9:30 merge. The match board and the qualifier-feature stretch list (decisions 11 and 12) are stretch only: never let them delay the 1:00 gate, and they are cut at the 12:45 go / no-go.
 
 Rules: edit only the files kent.md says I own. Every number must come from a script and go into Finalists/src/docs/fact_sheet.md. Never invent a figure, quote or source. Always run `Rscript tests/run_tests.R` and `Rscript R/check_facts.R` before any merge. Log AI use in AI_USAGE_LOG.md.
 
@@ -23,7 +23,7 @@ Start by running `git pull origin main`, then `git switch -c marco/sat-azure`. N
 
 Then read, in order: Finalists/saturday/README.md, Finalists/saturday/06_dependencies.md, Finalists/saturday/03_contract.md, Finalists/saturday/people/marco.md. Start on the first unchecked step of marco.md.
 
-Goal: by 1:00 pm the JS tool runs on Azure, reads payload.json from Blob, and shows an agency picker and a top 10. Reuse the qualifier tool in QualifierChallenge/src/tool/. Do not rewrite it.
+Goal: by 1:00 pm the JS tool runs on Azure, reads payload.json from Blob, and shows an agency picker and a top 10. Reuse the qualifier tool in QualifierChallenge/src/tool/. Do not rewrite it. The match board and the qualifier-feature stretch list (decisions 11 and 12, see 01_goals.md) come only after the picker and top 10 work on the real payload, and are cut first at 12:45.
 
 Rules: edit only the files marco.md says I own. No key, token or connection string in any file, image or commit. Cache every Azure OpenAI call and cap the number of calls in a config setting. Never invent numbers.
 

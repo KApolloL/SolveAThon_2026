@@ -25,7 +25,7 @@ Rules that apply all day:
 |---|---|
 | `00_timeline.md` | Hour by hour, Saturday and Sunday morning, merge windows, mentor slots |
 | `01_goals.md` | What "done" means at 1:00 and at 6:00, cut order, never-cut list |
-| `02_decisions.md` | The 10 decisions Kent locked Sat ~1 am, with reasons |
+| `02_decisions.md` | The 12 decisions Kent locked Sat (1 to 10 at ~1 am, 11 and 12 later), with reasons |
 | `03_contract.md` | File ownership, branch names, `payload.json` and backtest file schemas |
 | `04_mentor_questions.md` | Questions per mentor and slot, plus how to log answers |
 | `05_open_questions.md` | Things still undecided or unverified, and who answers them |
