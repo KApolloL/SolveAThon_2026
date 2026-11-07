@@ -45,3 +45,13 @@ Blocked:
 Need from you:
 - Please merge this branch's `05b` fix and CSV (PR from `claude/noah-work`; I have not opened one).
 Next: start labels when the model is ready; push finished files on `claude/noah-labels`.
+
+## 2026-11-07 11:31 claude/noah-work
+Done:
+- Labelling run started at 11:30 (machine A, first agency Military and Veterans Affairs, item 1 of 1,576). qwen2.5:14b finished downloading at 11:30.
+- Task id clash: Marco's Claude (claude/marco-work) used T2 and T3 for its own tasks (snapshot repo, notice reader). Mine were also T2, T3. I renamed mine on my branch: T2 to N2 (labels), T3 to N3 (SAM, done), T4 to N4, T7 to N7. Where earlier entries and your 11:35 note say T2 or T4 for my work, read N2 and N4. Please keep the N ids when you merge so the board has one meaning per id.
+- Timestamps: my earlier entries stamped 11:50 and 11:30 were wrong (written about 11:20 and 11:26). Clock times from here are read from the machine.
+Blocked:
+- Notice-reader spot-check: Marco's T3 (the reader) is still open and blocked on whether Azure OpenAI is ours, so there is nothing for me to check yet.
+Need from you: PR for `claude/noah-work` (05b fix, raw README note, board ids).
+Next: report each finished agency; push label files on `claude/noah-labels`.
