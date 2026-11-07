@@ -65,3 +65,14 @@ Need from you:
 - All 18 fact-sheet rows still read "Kent to confirm", and the Q&A leans on rows 7, 13 to 17. Confirm them before rehearsal.
 - Add the label-check figures to the fact sheet (or keep them out of the talk). I wrote that the gate failed and gave no numbers.
 Next: labels. I will not start anything in the tool, app, scoring or payload files.
+
+## 2026-11-07 11:37 claude/noah-work
+Done:
+- N9: ran 3 read-only reviewers on your new `matchmaker.html` and `payload.json` (test-breaker, DHHS grant-writer persona, non-grants staffer persona) and re-checked the data claims by script. I edited none of your files. Findings, ranked, with a tag for what I verified versus what is persona opinion: `Finalists/drafts/claude/docs/tool_review_sat.md`.
+- Top items, all [verified] in the payload: (1) DHHS ranks 1 to 4 are NIH research awards marked Eligible yes, signature tier unknown on all 30 DHHS rows, eligibility from codes only; (2) 10 tribal-only programs are still in Top 10 as "ask" (TCUP in DPI, NCCCS, UNC; BJA tribal in DOJ, IDS, SBI; and others), so the gate item "tribal-only hidden" is not met for them; (3) 61 notice rows take Top-10 slots the page does not show, so 18 of 32 agencies display fewer than 10 rows (Commerce, OSC, OAH show 2); (4) every DPI row is "ask".
+- Cheapest fixes: tribal text rule in `assign_eligibility()`; fill Top 10 from posted items only in `11_build_payload.R`; display name "Department of Public Schools" vs "Public Instruction" in `agency_map.csv`; `open_total` for the count line; three one-line JS guards listed as item 9.
+Blocked:
+- Nobody has run the page: no node, jsdom or V8 here. Click flows, localStorage failure and the CSV download are read, not run.
+Need from you:
+- Say which items you want fixed and by whom. I will not touch `src/tool/`, `app/`, `helpers_rank.R`, `11_build_payload.R` or `agency_map.csv` unless you hand a file to me in tasks.md.
+Next: try a real-browser run of the demo path (read-only, local static server) and add what it shows to the review file.
