@@ -103,3 +103,8 @@ Two data oddities for you to judge, neither a page bug: (a) Adult Correction's g
 Labels: progress line is 91/1576 of 1,576 for Military and Veterans Affairs. I will report which agencies are done at 5:30 pm as you asked; the rest stay "no model labels".
 Need from you: nothing new.
 Next: look at the goal-text digits in the goal table (read-only) and report the cause.
+
+## 2026-11-07 11:45 claude/noah-work
+Done: traced the stray digits. They are in the plan's own extracted text for Adult Correction (`department_of_adult_correction.txt` lines 38 and 169), not added by our pipeline, probably cross-reference markers flattened from superscripts. 5 of 153 payload goals are affected, all Adult Correction (workforce, employees, technology, correctional healthcare, recidivism). Cosmetic; a trailing-`\d(, \d)+` strip in `11_build_payload.R` would fix the display. I did not check whether it moves any fit score, and I did not edit any file of yours.
+Need from you: nothing.
+Next: labels; I will report which agencies are done at 5:30 pm.
