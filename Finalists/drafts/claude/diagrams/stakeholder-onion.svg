@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1160" width="1400" height="1160" role="img" aria-labelledby="onion-t onion-d" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title id="onion-t">Federal Funds Matchmaker stakeholder onion</title>
+<desc id="onion-d">Four rings: product, system, containing system, wider environment. Pills carry stakeholder IDs and attitude colour.</desc>
+<defs><marker id="onion-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect width="1400" height="1160" fill="#ffffff"/>
+<text x="30" y="40" font-size="24" font-weight="bold" fill="#222" text-anchor="start">Federal Funds Matchmaker: stakeholder onion</text>
+<text x="30" y="66" font-size="13" font-weight="normal" fill="#444" text-anchor="start">Team 15  |  Alexander onion model  |  2026-11-06  |  draft v0.1  |  roles only</text>
+<circle cx="500" cy="640" r="505" fill="#F3F4FB" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="365" fill="#E8EAF6" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="225" fill="#D9DEF2" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="75" fill="#C5CAE9" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="63" fill="#1168BD" stroke="#0B4884" stroke-width="2"/>
+<text x="500" y="636" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Federal Funds</text>
+<text x="500" y="653" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Matchmaker</text>
+<rect x="450.3" y="470.0" width="99.4" height="40" rx="14" fill="#fff" stroke="#7FBF7B" stroke-width="4"/>
+<text x="500.0" y="487.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S1 Grant</text>
+<text x="500.0" y="502.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">coordinator</text>
+<rect x="442.9" y="770.0" width="114.2" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="500.0" y="787.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S2 Non-grants</text>
+<text x="500.0" y="802.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">staff</text>
+<rect x="690.9774941164094" y="472.5" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="755.4774941164094" y="489.5" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S3 Supervisor</text>
+<text x="755.4774941164094" y="504.5" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">/ division lead</text>
+<rect x="435.5" y="325.0" width="129.0" height="40" rx="14" fill="#fff" stroke="#1B7837" stroke-width="4"/>
+<text x="500.0" y="342.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S4 OSBM sponsor</text>
+<text x="500.0" y="357.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">lead</text>
+<rect x="183.72250588359057" y="472.5" width="121.60000000000001" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="244.52250588359058" y="489.5" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S5 OSBM budget</text>
+<text x="244.52250588359058" y="504.5" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">decider</text>
+<rect x="446.5999999999999" y="915.0" width="106.80000000000001" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="499.99999999999994" y="932.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S6 State IT</text>
+<text x="499.99999999999994" y="947.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">Office of AI</text>
+<rect x="226.91048378156287" y="835.7493419776553" width="143.8" height="40" rx="14" fill="#fff" stroke="#F1A340" stroke-width="4"/>
+<text x="298.8104837815629" y="852.7493419776553" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S7 Privacy / sec.</text>
+<text x="298.8104837815629" y="867.7493419776553" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">reviewers</text>
+<rect x="572.7538931178863" y="671.3030214988503" width="136.4" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="640.9538931178863" y="688.3030214988503" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S8 Operator team</text>
+<text x="640.9538931178863" y="703.3030214988503" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">(future)</text>
+<rect x="548.0862846195965" y="199.8222655642553" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="612.5862846195965" y="216.8222655642553" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S9 Federal data</text>
+<text x="612.5862846195965" y="231.8222655642553" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">providers</text>
+<rect x="232.80000000000013" y="243.27894935376918" width="99.4" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="282.5000000000001" y="260.2789493537692" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S10 Federal</text>
+<text x="282.5000000000001" y="275.2789493537692" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">funders</text>
+<rect x="2.1553063300906956" y="582.0872519047687" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="66.6553063300907" y="599.0872519047687" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S11 Plan owners</text>
+<text x="66.6553063300907" y="614.0872519047687" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">(agencies)</text>
+<rect x="127.90855018385173" y="927.5914498161482" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="192.40855018385173" y="944.5914498161482" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S12 Legislature</text>
+<text x="192.40855018385173" y="959.5914498161482" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">/ oversight</text>
+<rect x="469.71274809523123" y="1053.3446936699092" width="136.4" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="537.9127480952312" y="1070.3446936699092" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S13 Communities,</text>
+<text x="537.9127480952312" y="1085.3446936699092" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">districts</text>
+<rect x="823.3210506462307" y="837.5000000000002" width="106.80000000000001" height="40" rx="14" fill="#fff" stroke="#7FBF7B" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="876.7210506462307" y="854.5000000000002" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S14 Platform</text>
+<text x="876.7210506462307" y="869.5000000000002" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">partners</text>
+<rect x="327.9933335321533" y="523.5818585470191" width="114.2" height="40" rx="14" fill="#fff" stroke="#F1A340" stroke-width="4"/>
+<text x="385.09333353215334" y="540.5818585470191" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S15 Dedicated</text>
+<text x="385.09333353215334" y="555.5818585470191" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">grant staff</text>
+<rect x="316.74610688211374" y="671.3030214988503" width="84.60000000000001" height="40" rx="14" fill="#fff" stroke="#1B7837" stroke-width="4"/>
+<text x="359.04610688211375" y="688.3030214988503" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S16 Build</text>
+<text x="359.04610688211375" y="703.3030214988503" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">team</text>
+<text x="597.1806134966794" y="457.2298482782021" font-size="12" font-weight="bold" fill="#3949AB" text-anchor="middle">2 System</text>
+<text x="662.9066322867042" y="333.6171852779524" font-size="12" font-weight="bold" fill="#3949AB" text-anchor="middle">3 Containing</text>
+<text x="728.6326510767288" y="210.00452227770262" font-size="12" font-weight="bold" fill="#3949AB" text-anchor="middle">4 Wider</text>
+<rect x="990" y="110" width="380" height="830" rx="8" fill="#FAFAFA" stroke="#999" stroke-width="1.2" />
+<text x="1004" y="136" font-size="15" font-weight="bold" fill="#222" text-anchor="start">Key (ID, role, ring, attitude)</text>
+<text x="1004" y="162" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S1 Agency grant coordinator</text>
+<text x="1004" y="180" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Supporter, internal</text>
+<text x="1004" y="203" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S2 Non-grants staff in small agencies</text>
+<text x="1004" y="221" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Neutral, internal</text>
+<text x="1004" y="244" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S3 Agency supervisor or division lead</text>
+<text x="1004" y="262" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Neutral, internal</text>
+<text x="1004" y="285" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S4 OSBM sponsor lead (federal funds stra...</text>
+<text x="1004" y="303" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Champion, internal</text>
+<text x="1004" y="326" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S5 OSBM budget decision maker (pilot fun...</text>
+<text x="1004" y="344" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Neutral, internal</text>
+<text x="1004" y="367" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S6 State IT, Office of AI (project manag...</text>
+<text x="1004" y="385" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Neutral, internal</text>
+<text x="1004" y="408" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S7 Privacy, security and legal reviewers</text>
+<text x="1004" y="426" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Sceptic, internal</text>
+<text x="1004" y="449" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S8 Future operator team (cross-agency pa...</text>
+<text x="1004" y="467" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Neutral, internal</text>
+<text x="1004" y="490" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S9 Federal data providers (Grants.gov, S...</text>
+<text x="1004" y="508" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="531" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S10 Federal agencies issuing funding notices</text>
+<text x="1004" y="549" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="572" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S11 Owners of agency strategic plans</text>
+<text x="1004" y="590" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, internal</text>
+<text x="1004" y="613" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S12 Legislature and state oversight (audi...</text>
+<text x="1004" y="631" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="654" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S13 Communities and school districts (ben...</text>
+<text x="1004" y="672" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="695" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S14 Platform partners (Azure host, UNC SD...</text>
+<text x="1004" y="713" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Supporter, external</text>
+<text x="1004" y="736" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S15 Dedicated grant staff in agencies tha...</text>
+<text x="1004" y="754" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Sceptic, internal</text>
+<text x="1004" y="777" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S16 Solve-A-Thon build team</text>
+<text x="1004" y="795" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Champion, internal</text>
+<text x="1004" y="828" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Rings: 1 Product; 2 System (users,</text>
+<text x="1004" y="846" font-size="12" font-weight="normal" fill="#222" text-anchor="start">operators, build team); 3 Containing</text>
+<text x="1004" y="864" font-size="12" font-weight="normal" fill="#222" text-anchor="start">system (sponsors, deciders, IT);</text>
+<text x="1004" y="882" font-size="12" font-weight="normal" fill="#222" text-anchor="start">4 Wider environment (data, public).</text>
+<text x="990" y="1000" font-size="12" font-weight="bold" fill="#222" text-anchor="start">Attitude colour (also written in the key):</text>
+<circle cx="998" cy="1020" r="8" fill="#1B7837" stroke="#222" stroke-width="1.5"/>
+<text x="1012" y="1024" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Champion</text>
+<circle cx="1118" cy="1020" r="8" fill="#7FBF7B" stroke="#222" stroke-width="1.5"/>
+<text x="1132" y="1024" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Supporter</text>
+<circle cx="1248" cy="1020" r="8" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="1262" y="1024" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Neutral</text>
+<circle cx="998" cy="1042" r="8" fill="#F1A340" stroke="#222" stroke-width="1.5"/>
+<text x="1012" y="1046" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Sceptic</text>
+<circle cx="1118" cy="1042" r="8" fill="#B2182B" stroke="#222" stroke-width="1.5"/>
+<text x="1132" y="1046" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Blocker</text>
+<circle cx="998" cy="1064" r="8" fill="#fff" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="1012" y="1068" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Dashed outline = external stakeholder</text>
+<text x="990" y="1090" font-size="12" font-weight="normal" fill="#222" text-anchor="start">A score of 3 is drawn just inside the high side.</text>
+</svg>

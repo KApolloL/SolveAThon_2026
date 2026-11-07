@@ -1,0 +1,741 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Federal Funds Matchmaker: architecture, security and stakeholders</title><style>body{font-family:Segoe UI,Arial,Helvetica,sans-serif;color:#222;margin:0;background:#fff;line-height:1.45}main{max-width:1100px;margin:0 auto;padding:16px}h1{font-size:26px}h2{font-size:21px;border-bottom:2px solid #1168BD;padding-bottom:4px;margin-top:36px}h3{font-size:17px}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}th,td{border:1px solid #ccc;padding:5px 7px;text-align:left;vertical-align:top}th{background:#eef2f8}tbody tr:nth-child(even){background:#f7f7f7}
+.chip{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:bold;border:1.5px solid #555;white-space:nowrap}.live{background:#1B5E20;color:#fff;border-color:#1B5E20}.plan{background:#fff;color:#B34700;border:1.5px dashed #B34700}.ex{background:#FFF3CD;color:#6B5200;border:1.5px dotted #8D6E00}.gap{background:#fff;color:#C62828;border-color:#C62828}.part{background:#FFE0B2;color:#7A3B00;border-color:#EF6C00}.role{background:#E0E0E0;color:#333;border-color:#757575}
+.sevH{background:#C62828;color:#fff;border-color:#C62828}.sevM{background:#EF6C00;color:#fff;border-color:#EF6C00}.sevL{background:#F9A825;color:#222;border-color:#F9A825}
+.raci{display:inline-block;min-width:22px;text-align:center;font-weight:bold;border-radius:4px;padding:1px 4px}.rR{background:#BBDEFB}.rA{background:#C62828;color:#fff}.rC{background:#FFF59D}.rI{background:#E0E0E0}
+figure{margin:16px 0;overflow-x:auto}figure svg{max-width:100%;height:auto}figcaption{font-size:13px;color:#444}.note{background:#FFF8E1;border-left:4px solid #EF6C00;padding:8px 12px;margin:12px 0}
+@media print{table,figure{page-break-inside:avoid}h2{page-break-after:avoid}}</style></head><body><main>
+<h1>Federal Funds Matchmaker: architecture, security and stakeholders</h1><p>Team 15, Solve-A-Thon finals (NC OSBM). Draft v0.1, state read 2026-11-06. Generated with AI assistance; reviewed by: ______</p>
+<div class="note"><b>Honesty rule.</b> Only what is tagged LIVE is running. Today that is ffm-app (a display-only Shiny table plus a static tool page that uses qualifier data, not Finals data), its registry, environment, logs, identity and budget alerts. The storage account exists but is not used. Azure OpenAI, the Blob data flow, the scheduled job, the scoring pipeline, the cache and the Finals JS tool are PLANNED and not built. All data is public. No keys or secrets appear in this report.</div>
+<h2>1. Executive summary</h2><p>The Federal Funds Matchmaker is meant to help NC agency grant coordinators find federal funding opportunities that fit their agency and act before the deadline, with a human making every final call. Today a small proof runs on Azure Container Apps at a public URL with no login, showing 6,523 public opportunities in a table, plus the qualifier tool as a static page. There is no matching, scoring or AI running yet. The plan (Kent&#39;s product decisions) is to host the qualifier-style JS tool, reading a payload file from Blob storage, with Azure OpenAI writing embeddings and reasons that a script checks against their sources. The biggest security gaps today are the missing login and a keys file committed to the private repo, which must be fixed before any public or State handoff. Whether Azure OpenAI keeps prompts out of training is [uncertain] and stays that way until the Azure documentation is read.</p>
+<h2>2. Architecture diagram</h2><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1510 1250" width="1510" height="1250" role="img" aria-labelledby="arch-t arch-d" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title id="arch-t">Federal Funds Matchmaker architecture (built vs planned)</title>
+<desc id="arch-d">C4-style container diagram. Each component is tagged LIVE, EXISTS-NOT-USED or PLANNED. Public data only.</desc>
+<defs><marker id="arch-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect width="1510" height="1250" fill="#ffffff"/>
+<text x="30" y="40" font-size="24" font-weight="bold" fill="#222" text-anchor="start">Federal Funds Matchmaker: architecture, built versus planned</text>
+<text x="30" y="66" font-size="13" font-weight="normal" fill="#444" text-anchor="start">Team 15 (Solve-A-Thon finals, NC OSBM)  |  C4 container view  |  state as read on 2026-11-06  |  draft v0.1  |  PUBLIC DATA ONLY</text>
+<rect x="30" y="100" width="240" height="70" rx="8" fill="#08427B" stroke="#222" stroke-width="1.8" />
+<text x="42" y="126" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">Team developer</text>
+<text x="42" y="144" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[Person] runs pipeline, deploys</text>
+<rect x="218" y="89" width="44" height="22" rx="11" fill="#E0E0E0" stroke="#757575" stroke-width="1" />
+<text x="240.0" y="104" font-size="12" font-weight="bold" fill="#333" text-anchor="middle">ROLE</text>
+<rect x="370" y="100" width="300" height="70" rx="8" fill="#08427B" stroke="#222" stroke-width="1.8" />
+<text x="382" y="126" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">Agency grant coordinator</text>
+<text x="382" y="144" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[Person] intended user</text>
+<rect x="618" y="89" width="44" height="22" rx="11" fill="#E0E0E0" stroke="#757575" stroke-width="1" />
+<text x="640.0" y="104" font-size="12" font-weight="bold" fill="#333" text-anchor="middle">ROLE</text>
+<rect x="770" y="100" width="300" height="70" rx="8" fill="#08427B" stroke="#222" stroke-width="1.8" />
+<text x="782" y="126" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">OSBM staff</text>
+<text x="782" y="144" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[Person] intended user, cross-agency</text>
+<rect x="1018" y="89" width="44" height="22" rx="11" fill="#E0E0E0" stroke="#757575" stroke-width="1" />
+<text x="1040.0" y="104" font-size="12" font-weight="bold" fill="#333" text-anchor="middle">ROLE</text>
+<rect x="330" y="190" width="1160" height="730" rx="16" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="10 6" />
+<text x="770" y="850" font-size="13" font-weight="bold" fill="#333" text-anchor="start">[System] Federal Funds Matchmaker (Azure, East US)</text>
+<text x="770" y="868" font-size="12" font-weight="normal" fill="#444" text-anchor="start">One resource group; public data only</text>
+<rect x="355" y="228" width="330" height="277" rx="10" fill="#F2F2F2" stroke="#555" stroke-width="1.8" />
+<rect x="633" y="217" width="44" height="22" rx="11" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="655.0" y="232" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LIVE</text>
+<text x="367" y="250" font-size="14" font-weight="bold" fill="#222" text-anchor="start">ffm-env</text>
+<text x="367" y="267" font-size="12" font-weight="normal" fill="#444" text-anchor="start">[Container Apps env]</text>
+<rect x="370" y="282" width="300" height="112" rx="8" fill="#1168BD" stroke="#222" stroke-width="1.8" />
+<text x="382" y="308" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">ffm-app</text>
+<text x="382" y="326" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[Container App: R Shiny 4.4.2]</text>
+<text x="382" y="344" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">Shiny table (6,523) + static /tool.html</text>
+<text x="382" y="360" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">0.5 vCPU, 1 Gi, min 0, max 1</text>
+<rect x="618" y="271" width="44" height="22" rx="11" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="640.0" y="286" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LIVE</text>
+<text x="382" y="383" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">No login. tool.html: qualifier data.</text>
+<rect x="370" y="402" width="300" height="92" rx="8" fill="#FFFFFF" stroke="#B34700" stroke-width="2.2" stroke-dasharray="7 4" />
+<text x="382" y="428" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Finals JS tool + payload.json</text>
+<text x="382" y="446" font-size="12" font-weight="normal" fill="#444" text-anchor="start">[Static JS tool, qualifier design]</text>
+<text x="382" y="464" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Planned product; reads Blob payload</text>
+<text x="382" y="480" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Not built. R Shiny is the fallback.</text>
+<rect x="597" y="391" width="65" height="22" rx="11" fill="#fff" stroke="#B34700" stroke-width="1.8" stroke-dasharray="4 3" />
+<text x="629.5" y="406" font-size="12" font-weight="bold" fill="#B34700" text-anchor="middle">PLANNED</text>
+<rect x="370" y="545" width="300" height="100" rx="8" fill="#1168BD" stroke="#222" stroke-width="1.8" />
+<text x="382" y="571" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">ffmacrteam15</text>
+<text x="382" y="589" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[Container Registry, Basic]</text>
+<text x="382" y="607" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">Holds image ffm-app:v1 (data inside)</text>
+<text x="382" y="623" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">Admin user off; pull by identity</text>
+<rect x="618" y="534" width="44" height="22" rx="11" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="640.0" y="549" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LIVE</text>
+<rect x="370" y="700" width="300" height="100" rx="8" fill="#FFFFFF" stroke="#B34700" stroke-width="2.2" stroke-dasharray="7 4" />
+<text x="382" y="726" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Scheduled job (optional)</text>
+<text x="382" y="744" font-size="12" font-weight="normal" fill="#444" text-anchor="start">[Container Apps job, MODE=job]</text>
+<text x="382" y="762" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Refresh + run pipeline; may run by hand</text>
+<text x="382" y="778" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Today: stub in image, no cloud job</text>
+<rect x="597" y="689" width="65" height="22" rx="11" fill="#fff" stroke="#B34700" stroke-width="1.8" stroke-dasharray="4 3" />
+<text x="629.5" y="704" font-size="12" font-weight="bold" fill="#B34700" text-anchor="middle">PLANNED</text>
+<rect x="770" y="250" width="300" height="100" rx="8" fill="#F2F2F2" stroke="#9E9E9E" stroke-width="1.8" />
+<text x="782" y="276" font-size="14" font-weight="bold" fill="#222" text-anchor="start">ffm-logs</text>
+<text x="782" y="294" font-size="12" font-weight="normal" fill="#222" text-anchor="start">[Log Analytics workspace]</text>
+<text x="782" y="312" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Receives ffm-env container logs</text>
+<text x="782" y="328" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Platform logging only</text>
+<rect x="1018" y="239" width="44" height="22" rx="11" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="1040.0" y="254" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LIVE</text>
+<rect x="770" y="450" width="300" height="110" rx="8" fill="#2E7D32" stroke="#8D6E00" stroke-width="2.6" stroke-dasharray="2 3" />
+<text x="782" y="476" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">ffmdatateam15</text>
+<text x="782" y="494" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[Storage account + Blob ffm-data]</text>
+<text x="782" y="512" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">Exists; planned home of payload + cache</text>
+<text x="782" y="528" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">App does NOT use it yet; TLS 1.2</text>
+<rect x="934" y="439" width="128" height="22" rx="11" fill="#FFF3CD" stroke="#8D6E00" stroke-width="1.5" />
+<text x="998.0" y="454" font-size="12" font-weight="bold" fill="#6B5200" text-anchor="middle">EXISTS, NOT USED</text>
+<rect x="770" y="700" width="300" height="100" rx="8" fill="#FFFFFF" stroke="#B34700" stroke-width="2.2" stroke-dasharray="7 4" />
+<text x="782" y="726" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Azure OpenAI ffm-aoai-team15</text>
+<text x="782" y="744" font-size="12" font-weight="normal" fill="#444" text-anchor="start">[AI service] not created, not approved</text>
+<text x="782" y="762" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Embeddings, reasons, tier labels</text>
+<text x="782" y="778" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Public text only; cached, temp 0</text>
+<rect x="997" y="689" width="65" height="22" rx="11" fill="#fff" stroke="#B34700" stroke-width="1.8" stroke-dasharray="4 3" />
+<text x="1029.5" y="704" font-size="12" font-weight="bold" fill="#B34700" text-anchor="middle">PLANNED</text>
+<rect x="1170" y="250" width="300" height="100" rx="8" fill="#F2F2F2" stroke="#9E9E9E" stroke-width="1.8" />
+<text x="1182" y="276" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Budget alerts ffm-guard</text>
+<text x="1182" y="294" font-size="12" font-weight="normal" fill="#222" text-anchor="start">[Subscription budget]</text>
+<text x="1182" y="312" font-size="12" font-weight="normal" fill="#222" text-anchor="start">$500 monthly; alerts at $50/100/250/400</text>
+<text x="1182" y="328" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Alerts only, not a hard limit</text>
+<rect x="1418" y="239" width="44" height="22" rx="11" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="1440.0" y="254" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LIVE</text>
+<rect x="1170" y="450" width="300" height="110" rx="8" fill="#FFFFFF" stroke="#B34700" stroke-width="2.2" stroke-dasharray="7 4" />
+<text x="1182" y="476" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Cache</text>
+<text x="1182" y="494" font-size="12" font-weight="normal" fill="#444" text-anchor="start">[Blob prefix cache/]</text>
+<text x="1182" y="512" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Embeddings, reasons, labels</text>
+<text x="1182" y="528" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Same storage account; not built</text>
+<rect x="1397" y="439" width="65" height="22" rx="11" fill="#fff" stroke="#B34700" stroke-width="1.8" stroke-dasharray="4 3" />
+<text x="1429.5" y="454" font-size="12" font-weight="bold" fill="#B34700" text-anchor="middle">PLANNED</text>
+<rect x="1170" y="700" width="300" height="100" rx="8" fill="#FFFFFF" stroke="#B34700" stroke-width="2.2" stroke-dasharray="7 4" />
+<text x="1182" y="726" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Scoring pipeline</text>
+<text x="1182" y="744" font-size="12" font-weight="normal" fill="#444" text-anchor="start">[R + V8: tiering.js, criteria.csv]</text>
+<text x="1182" y="762" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Scored table, tiers, quote check</text>
+<text x="1182" y="778" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Not built. LLM never decides.</text>
+<rect x="1397" y="689" width="65" height="22" rx="11" fill="#fff" stroke="#B34700" stroke-width="1.8" stroke-dasharray="4 3" />
+<text x="1429.5" y="704" font-size="12" font-weight="bold" fill="#B34700" text-anchor="middle">PLANNED</text>
+<text x="346" y="810" font-size="13" font-weight="bold" fill="#333" text-anchor="start">Platform</text>
+<rect x="370" y="825" width="300" height="70" rx="8" fill="#F2F2F2" stroke="#9E9E9E" stroke-width="1.8" />
+<text x="382" y="851" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Managed identity (system)</text>
+<text x="382" y="869" font-size="12" font-weight="normal" fill="#222" text-anchor="start">[Entra-managed, on ffm-app]</text>
+<text x="382" y="887" font-size="12" font-weight="normal" fill="#222" text-anchor="start">AcrPull on registry (verified)</text>
+<rect x="618" y="814" width="44" height="22" rx="11" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="640.0" y="829" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LIVE</text>
+<rect x="30" y="680" width="240" height="110" rx="8" fill="#8A8A8A" stroke="#222" stroke-width="1.8" />
+<text x="42" y="706" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">Public sources</text>
+<text x="42" y="724" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[External] Grants.gov, Simpler;</text>
+<text x="42" y="742" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">NC agency plans (OSBM).</text>
+<text x="42" y="758" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">Pulled by team; files cached.</text>
+<rect x="190" y="669" width="72" height="22" rx="11" fill="#E0E0E0" stroke="#757575" stroke-width="1" />
+<text x="226.0" y="684" font-size="12" font-weight="bold" fill="#333" text-anchor="middle">EXTERNAL</text>
+<rect x="30" y="830" width="240" height="80" rx="8" fill="#8A8A8A" stroke="#8D6E00" stroke-width="2.6" stroke-dasharray="2 3" />
+<text x="42" y="856" font-size="14" font-weight="bold" fill="#fff" text-anchor="start">Private GitHub repo</text>
+<text x="42" y="874" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">[Code + data; api_keys.env]</text>
+<text x="42" y="892" font-size="12" font-weight="normal" fill="#fff" text-anchor="start">Key file is committed (masked)</text>
+<rect x="204" y="819" width="58" height="22" rx="11" fill="#FFF3CD" stroke="#8D6E00" stroke-width="1.5" />
+<text x="233.0" y="834" font-size="12" font-weight="bold" fill="#6B5200" text-anchor="middle">EXISTS</text>
+<polyline points="560,170 560,282" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arch-arw)"/>
+<circle cx="560" cy="198" r="13" fill="#222" stroke="#fff" stroke-width="1.5"/>
+<text x="560" y="202" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<polyline points="870,170 870,215 600,215 600,282" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arch-arw)"/>
+<circle cx="740" cy="215" r="13" fill="#222" stroke="#fff" stroke-width="1.5"/>
+<text x="740" y="219" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<polyline points="150,170 150,680" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arch-arw)"/>
+<circle cx="150" cy="400" r="13" fill="#222" stroke="#fff" stroke-width="1.5"/>
+<text x="150" y="404" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+<polyline points="270,135 300,135 300,595 370,595" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arch-arw)"/>
+<circle cx="300" cy="330" r="13" fill="#222" stroke="#fff" stroke-width="1.5"/>
+<text x="300" y="334" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+<polyline points="520,545 520,505" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arch-arw)"/>
+<circle cx="520" cy="525" r="13" fill="#222" stroke="#fff" stroke-width="1.5"/>
+<text x="520" y="529" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<polyline points="685,300 770,300" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arch-arw)"/>
+<circle cx="727" cy="300" r="13" fill="#222" stroke="#fff" stroke-width="1.5"/>
+<text x="727" y="304" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<polyline points="670,460 770,495" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<circle cx="722" cy="478" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="722" y="482" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">6</text>
+<polyline points="670,730 800,560" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<circle cx="740" cy="640" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="740" y="644" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">7</text>
+<polyline points="270,750 370,750" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<circle cx="320" cy="750" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="320" y="754" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">8</text>
+<polyline points="670,750 770,750" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<circle cx="720" cy="750" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="720" y="754" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">9</text>
+<polyline points="1070,750 1170,750" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<circle cx="1120" cy="750" r="14" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="1120" y="754" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">10</text>
+<polyline points="1210,700 1060,560" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<circle cx="1135" cy="630" r="14" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="1135" y="634" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">11</text>
+<polyline points="1070,505 1170,505" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<circle cx="1120" cy="505" r="14" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="1120" y="509" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">12</text>
+<rect x="30" y="935" width="540" height="300" rx="8" fill="#FAFAFA" stroke="#999" stroke-width="1.2" />
+<text x="46" y="960" font-size="15" font-weight="bold" fill="#222" text-anchor="start">Legend</text>
+<rect x="46" y="971" width="70" height="20" rx="10" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="81" y="985" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LIVE</text>
+<text x="130" y="985" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Verified running now (read from Azure on 2026-11-06)</text>
+<rect x="46" y="999" width="70" height="20" rx="10" fill="#FFF3CD" stroke="#8D6E00" stroke-width="1.5" stroke-dasharray="2 3" />
+<text x="81" y="1013" font-size="12" font-weight="bold" fill="#6B5200" text-anchor="middle">EXISTS</text>
+<text x="130" y="1013" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Exists but the app does not use it yet</text>
+<rect x="46" y="1027" width="70" height="20" rx="10" fill="#fff" stroke="#B34700" stroke-width="1.8" stroke-dasharray="4 3" />
+<text x="81" y="1041" font-size="12" font-weight="bold" fill="#B34700" text-anchor="middle">PLANNED</text>
+<text x="130" y="1041" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Not built. Dashed box. Azure OpenAI not approved.</text>
+<polyline points="46,1067 116,1067" fill="none" stroke="#333" stroke-width="2" marker-end="url(#arch-arw)"/>
+<text x="130" y="1071" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Solid arrow: runs today (1 to 5)</text>
+<polyline points="46,1093 116,1093" fill="none" stroke="#B34700" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arch-arw)"/>
+<text x="130" y="1097" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Dashed arrow: planned flow, not built (6 to 12)</text>
+<text x="46" y="1125" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Grey tags ROLE and EXTERNAL are not Azure parts. People</text>
+<text x="46" y="1143" font-size="12" font-weight="normal" fill="#222" text-anchor="start">are roles, not named staff. All data shown is public.</text>
+<text x="46" y="1169" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Dashed outline = system boundary (Azure subscription).</text>
+<text x="46" y="1187" font-size="12" font-weight="normal" fill="#222" text-anchor="start">No arrow: team pushes code to the private GitHub repo.</text>
+<rect x="590" y="935" width="890" height="300" rx="8" fill="#FAFAFA" stroke="#999" stroke-width="1.2" />
+<text x="606" y="960" font-size="15" font-weight="bold" fill="#222" text-anchor="start">Flow key (number, from to, what, protocol, status)</text>
+<circle cx="620" cy="984" r="12" fill="#1B5E20" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="988" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">1</text>
+<text x="644" y="988" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Users to ffm-app: Shiny page and static tool.html over HTTPS, public URL, no login.  LIVE</text>
+<circle cx="620" cy="1006" r="12" fill="#1B5E20" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1010" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">2</text>
+<text x="644" y="1010" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Team developer to public sources: pull opportunities with API keys; cached copies.  LIVE</text>
+<circle cx="620" cy="1028" r="12" fill="#1B5E20" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1032" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">3</text>
+<text x="644" y="1032" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Team developer to registry: az acr build uploads source plus data CSVs.  LIVE</text>
+<circle cx="620" cy="1050" r="12" fill="#1B5E20" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1054" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">4</text>
+<text x="644" y="1054" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Registry to ffm-app: image pull, managed identity with AcrPull.  LIVE</text>
+<circle cx="620" cy="1072" r="12" fill="#1B5E20" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1076" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">5</text>
+<text x="644" y="1076" font-size="12" font-weight="normal" fill="#222" text-anchor="start">ffm-env to ffm-logs: container console logs.  LIVE</text>
+<circle cx="620" cy="1094" r="12" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1098" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">6</text>
+<text x="644" y="1098" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Finals JS tool reads payload.json from Blob; identity and role not yet set up.  PLANNED</text>
+<circle cx="620" cy="1116" r="12" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1120" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">7</text>
+<text x="644" y="1120" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Job or team laptop writes payload.json and cache to Blob (upload needs Kent yes).  PLANNED</text>
+<circle cx="620" cy="1138" r="12" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1142" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">8</text>
+<text x="644" y="1142" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Public sources to job: scheduled refresh and plan text.  PLANNED</text>
+<circle cx="620" cy="1160" r="12" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1164" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">9</text>
+<text x="644" y="1164" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Job to Azure OpenAI: public text only; embeddings, reasons, tier labels.  PLANNED</text>
+<circle cx="620" cy="1182" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1186" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">10</text>
+<text x="644" y="1186" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Azure OpenAI to pipeline: results; script checks each quote; LLM never decides.  PLANNED</text>
+<circle cx="620" cy="1204" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1208" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">11</text>
+<text x="644" y="1208" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Pipeline to Blob: payload.json (scored table per agency, signature tiers).  PLANNED</text>
+<circle cx="620" cy="1226" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="620" y="1230" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">12</text>
+<text x="644" y="1230" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Blob to cache: embeddings, reasons, labels so reruns are identical.  PLANNED</text>
+</svg>
+<figcaption>Figure 1. Built versus planned. Solid and green LIVE tags were read from Azure on 2026-11-06 (read-only az show and list). Dashed orange PLANNED items are not built. Yellow tag: exists, not used.</figcaption></figure>
+<h2>3. Component catalogue</h2><table class=""><thead><tr><th>Component</th><th>Type</th><th>Purpose</th><th>Status</th><th>Evidence or assumed</th></tr></thead><tbody><tr><td>Team developer</td><td>Person (role)</td><td>Runs the R pipeline, az CLI, deploys</td><td><span class="chip role">ROLE</span></td><td>[from runbook]</td></tr><tr><td>Agency grant coordinator</td><td>Person (role)</td><td>Intended user</td><td><span class="chip role">ROLE</span></td><td>[from notes]</td></tr><tr><td>OSBM staff</td><td>Person (role)</td><td>Intended user, cross-agency view</td><td><span class="chip role">ROLE</span></td><td>[assumed] framing worksheet</td></tr><tr><td>Public sources</td><td>External</td><td>Grants.gov and Simpler.Grants.gov opportunities; NC agency plans (OSBM)</td><td><span class="chip role">EXTERNAL</span></td><td>docs/QUEST_BRIEF.md</td></tr><tr><td>Private GitHub repo</td><td>Code store</td><td>Code, data, api_keys.env (committed on purpose, private repo)</td><td><span class="chip ex">EXISTS</span></td><td>CLAUDE.md constraints</td></tr><tr><td>ffm-env</td><td>Container Apps environment</td><td>Hosts ffm-app</td><td><span class="chip live">LIVE</span></td><td>azure_setup.md, az show 2026-11-06</td></tr><tr><td>ffm-app</td><td>Container App, R Shiny 4.4.2</td><td>Display-only Shiny table (6,523 rows) plus static /tool.html (qualifier data, not Finals data); 0.5 vCPU, 1 Gi, min 0, max 1; public ingress, no login</td><td><span class="chip live">LIVE</span></td><td>azure_setup.md; az show</td></tr><tr><td>ffmacrteam15</td><td>Container Registry (Basic)</td><td>Holds image ffm-app:v1; admin user off</td><td><span class="chip live">LIVE</span></td><td>azure_setup.md; az acr show</td></tr><tr><td>ffm-logs</td><td>Log Analytics workspace</td><td>Container Apps environment logs</td><td><span class="chip live">LIVE</span></td><td>azure_setup.md; az env show</td></tr><tr><td>Managed identity (system-assigned)</td><td>Identity</td><td>AcrPull on registry for the image pull</td><td><span class="chip live">LIVE</span></td><td>azure_setup.md role assignment list</td></tr><tr><td>ffm-guard</td><td>Subscription budget</td><td>$500 monthly, actual-cost alerts at $50/$100/$250/$400, no hard limit</td><td><span class="chip live">LIVE</span></td><td>azure_setup.md</td></tr><tr><td>ffmdatateam15 (Blob ffm-data)</td><td>Storage account</td><td>Exists; no public blob access, TLS 1.2; the app does not use it yet; no role assignment on it</td><td><span class="chip ex">EXISTS (NOT USED)</span></td><td>az storage show; az role list (0)</td></tr><tr><td>Finals JS tool + payload.json</td><td>Static JS tool (qualifier design)</td><td>Planned product: reads payload.json from Blob. R Shiny is the fallback</td><td><span class="chip plan">PLANNED</span></td><td>planning/08_product_decisions.md (dec. 6)</td></tr><tr><td>Scheduled job</td><td>Container Apps job</td><td>Optional refresh and pipeline run; MODE=job is only a stub in the image; no cloud job exists (az: 0)</td><td><span class="chip plan">PLANNED</span></td><td>azure_setup.md; az job list</td></tr><tr><td>Azure OpenAI ffm-aoai-team15</td><td>AI service</td><td>Embeddings, short reasons with quotes, tier labels; not created, not approved (az: 0 accounts)</td><td><span class="chip plan">PLANNED</span></td><td>decisions 6, 7, 13</td></tr><tr><td>Scoring pipeline</td><td>R + V8 (tiering.js, criteria.csv)</td><td>Scored table per agency, signature tiers, quote check; LLM never decides</td><td><span class="chip plan">PLANNED</span></td><td>decisions 5, 7, 13</td></tr><tr><td>Cache</td><td>Blob prefix cache/</td><td>Embeddings, reasons, labels so reruns are identical</td><td><span class="chip plan">PLANNED</span></td><td>decision 7</td></tr></tbody></table>
+<h2>4. Data flows</h2><table class=""><thead><tr><th>#</th><th>From to</th><th>Data</th><th>Protocol / auth</th><th>Classification</th><th>Status</th></tr></thead><tbody><tr><td>1</td><td>User to ffm-app</td><td>Page, tool.html</td><td>HTTPS, public, no login</td><td>Public</td><td><span class="chip live">LIVE</span></td></tr><tr><td>2</td><td>Team developer to public sources</td><td>Opportunity records, plan text; API keys in request</td><td>HTTPS, API key</td><td>Public (keys: Restricted)</td><td><span class="chip live">LIVE</span></td></tr><tr><td>3</td><td>Team developer to registry</td><td>Source plus data CSVs</td><td>az acr build (signed-in user)</td><td>Public</td><td><span class="chip live">LIVE</span></td></tr><tr><td>4</td><td>Registry to ffm-app</td><td>Container image</td><td>HTTPS, managed identity AcrPull</td><td>Public</td><td><span class="chip live">LIVE</span></td></tr><tr><td>5</td><td>ffm-env to ffm-logs</td><td>Console logs</td><td>Platform logging</td><td>Internal</td><td><span class="chip live">LIVE</span></td></tr><tr><td>6</td><td>JS tool and Blob</td><td>payload.json read</td><td>HTTPS, identity not set up</td><td>Public</td><td><span class="chip plan">PLANNED</span></td></tr><tr><td>7</td><td>Job or laptop to Blob</td><td>payload.json, cache write</td><td>HTTPS; role not assigned</td><td>Public</td><td><span class="chip plan">PLANNED</span></td></tr><tr><td>8</td><td>Public sources to job</td><td>Refresh and plan text</td><td>HTTPS</td><td>Public</td><td><span class="chip plan">PLANNED</span></td></tr><tr><td>9</td><td>Job to Azure OpenAI</td><td>Public text for embeddings, reasons, labels</td><td>HTTPS, key or identity [assumed]</td><td>Public</td><td><span class="chip plan">PLANNED</span></td></tr><tr><td>10</td><td>Azure OpenAI to pipeline</td><td>Embeddings, reasons, labels; script checks quotes</td><td>HTTPS</td><td>Public</td><td><span class="chip plan">PLANNED</span></td></tr><tr><td>11</td><td>Pipeline to Blob</td><td>payload.json: scored table, tiers</td><td>HTTPS</td><td>Public</td><td><span class="chip plan">PLANNED</span></td></tr><tr><td>12</td><td>Blob to cache</td><td>Embeddings, reasons, labels</td><td>Same account</td><td>Public</td><td><span class="chip plan">PLANNED</span></td></tr></tbody></table>
+<p>The only sensitive item is the API keys in flow 2 (Restricted). Everything else is public data.</p>
+<h2>5. Security diagram</h2><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1290" width="1500" height="1290" role="img" aria-labelledby="sec-t sec-d" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title id="sec-t">Federal Funds Matchmaker security and threat model (current state)</title>
+<desc id="sec-d">Data-flow diagram with trust boundaries, threat badges T1 to T12, control badges, and planned items shown dashed. Recommendations are not built.</desc>
+<defs><marker id="sec-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect width="1500" height="1290" fill="#ffffff"/>
+<text x="20" y="36" font-size="24" font-weight="bold" fill="#222" text-anchor="start">Federal Funds Matchmaker: security and threat model, current state</text>
+<text x="20" y="62" font-size="13" font-weight="normal" fill="#444" text-anchor="start">Team 15  |  DFD with trust boundaries (STRIDE + LLM risks)  |  state read 2026-11-06  |  draft v0.1  |  public data only</text>
+<rect x="20" y="110" width="250" height="130" rx="10" fill="none" stroke="#C62828" stroke-width="2.2" stroke-dasharray="9 5" />
+<text x="30" y="230" font-size="12" font-weight="bold" fill="#C62828" text-anchor="start">TB2: Public sources</text>
+<rect x="20" y="280" width="250" height="130" rx="10" fill="none" stroke="#C62828" stroke-width="2.2" stroke-dasharray="9 5" />
+<text x="30" y="400" font-size="12" font-weight="bold" fill="#C62828" text-anchor="start">TB1: Internet / user device</text>
+<rect x="20" y="450" width="250" height="330" rx="10" fill="none" stroke="#C62828" stroke-width="2.2" stroke-dasharray="9 5" />
+<text x="30" y="770" font-size="12" font-weight="bold" fill="#C62828" text-anchor="start">TB3: Laptop + private GitHub</text>
+<rect x="340" y="110" width="800" height="740" rx="10" fill="none" stroke="#C62828" stroke-width="2.2" stroke-dasharray="9 5" />
+<text x="350" y="840" font-size="12" font-weight="bold" fill="#C62828" text-anchor="start">TB4: Azure subscription (rg-primary-unc-sdis-solveathon-team15)</text>
+<rect x="1190" y="110" width="290" height="420" rx="10" fill="none" stroke="#E57373" stroke-width="2.2" stroke-dasharray="9 5" />
+<text x="1200" y="520" font-size="12" font-weight="bold" fill="#C62828" text-anchor="start">TB5: Planned batch + AI model</text>
+<rect x="40" y="130" width="210" height="60" rx="2" fill="#fff" stroke="#222" stroke-width="2.2" />
+<text x="52" y="152" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Grants.gov / plans</text>
+<text x="52" y="169" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Public APIs, PDFs; no PII</text>
+<rect x="40" y="320" width="210" height="60" rx="2" fill="#fff" stroke="#222" stroke-width="2.2" />
+<text x="52" y="342" font-size="14" font-weight="bold" fill="#222" text-anchor="start">User browser</text>
+<text x="52" y="359" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Coordinator or OSBM staff</text>
+<rect x="40" y="490" width="210" height="70" rx="2" fill="#fff" stroke="#222" stroke-width="2.2" />
+<text x="52" y="512" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Team laptop</text>
+<text x="52" y="529" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Pipeline and az CLI</text>
+<rect x="40" y="600" width="210" height="110" rx="0" fill="#fff" stroke="none" stroke-width="0" />
+<polyline points="40,600 250,600" fill="none" stroke="#222" stroke-width="2.5"/>
+<polyline points="40,710 250,710" fill="none" stroke="#222" stroke-width="2.5"/>
+<text x="52" y="622" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Private GitHub repo</text>
+<text x="52" y="639" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Code, data, api_keys.env</text>
+<rect x="52" y="682" width="112" height="20" rx="5" fill="#fff" stroke="#C62828" stroke-width="2" />
+<text x="108.0" y="696" font-size="12" font-weight="bold" fill="#C62828" text-anchor="middle">KEYS COMMITTED</text>
+<rect x="380" y="140" width="320" height="80" rx="0" fill="#fff" stroke="none" stroke-width="0" />
+<polyline points="380,140 700,140" fill="none" stroke="#222" stroke-width="2.5"/>
+<polyline points="380,220 700,220" fill="none" stroke="#222" stroke-width="2.5"/>
+<text x="392" y="162" font-size="14" font-weight="bold" fill="#222" text-anchor="start">ffm-logs</text>
+<text x="392" y="179" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Log Analytics workspace</text>
+<rect x="392" y="192" width="35" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="409.5" y="206" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">LOG</text>
+<rect x="380" y="290" width="320" height="150" rx="24" fill="#fff" stroke="#222" stroke-width="2.2" />
+<text x="392" y="312" font-size="14" font-weight="bold" fill="#222" text-anchor="start">ffm-app</text>
+<text x="392" y="329" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Shiny page + static tool.html</text>
+<rect x="392" y="412" width="35" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="409.5" y="426" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">TLS</text>
+<rect x="433" y="412" width="28" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="447.0" y="426" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">MI</text>
+<rect x="467" y="412" width="84" height="20" rx="5" fill="#fff" stroke="#C62828" stroke-width="2" />
+<text x="509.0" y="426" font-size="12" font-weight="bold" fill="#C62828" text-anchor="middle">AUTH: none</text>
+<rect x="557" y="412" width="126" height="20" rx="5" fill="#fff" stroke="#C62828" stroke-width="2" />
+<text x="620.0" y="426" font-size="12" font-weight="bold" fill="#C62828" text-anchor="middle">RATE LIMIT: none</text>
+<rect x="380" y="520" width="320" height="100" rx="0" fill="#fff" stroke="none" stroke-width="0" />
+<polyline points="380,520 700,520" fill="none" stroke="#222" stroke-width="2.5"/>
+<polyline points="380,620 700,620" fill="none" stroke="#222" stroke-width="2.5"/>
+<text x="392" y="542" font-size="14" font-weight="bold" fill="#222" text-anchor="start">ffmacrteam15</text>
+<text x="392" y="559" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Container Registry; image has data</text>
+<rect x="392" y="592" width="98" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="441.0" y="606" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">RBAC AcrPull</text>
+<rect x="496" y="592" width="77" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="534.5" y="606" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">Admin off</text>
+<rect x="780" y="290" width="320" height="130" rx="0" fill="#fff" stroke="none" stroke-width="0" />
+<polyline points="780,290 1100,290" fill="none" stroke="#222" stroke-width="2.5"/>
+<polyline points="780,420 1100,420" fill="none" stroke="#222" stroke-width="2.5"/>
+<text x="792" y="312" font-size="14" font-weight="bold" fill="#222" text-anchor="start">ffmdatateam15 (Blob)</text>
+<text x="792" y="329" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Planned: payload + cache; unused now</text>
+<rect x="792" y="392" width="112" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="848.0" y="406" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">No public blob</text>
+<rect x="910" y="392" width="63" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="941.5" y="406" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">TLS 1.2</text>
+<rect x="780" y="520" width="320" height="90" rx="0" fill="#fff" stroke="none" stroke-width="0" />
+<polyline points="780,520 1100,520" fill="none" stroke="#222" stroke-width="2.5"/>
+<polyline points="780,610 1100,610" fill="none" stroke="#222" stroke-width="2.5"/>
+<text x="792" y="542" font-size="14" font-weight="bold" fill="#222" text-anchor="start">ffm-guard budget</text>
+<text x="792" y="559" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Alerts only, not a hard limit</text>
+<rect x="792" y="582" width="49" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="816.5" y="596" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">ALERT</text>
+<rect x="1210" y="150" width="250" height="100" rx="24" fill="#FFFFFF" stroke="#B34700" stroke-width="2.2" stroke-dasharray="7 4" />
+<text x="1222" y="172" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Job / pipeline</text>
+<text x="1222" y="189" font-size="12" font-weight="normal" fill="#444" text-anchor="start">PLANNED, not built</text>
+<rect x="1222" y="222" width="91" height="20" rx="5" fill="#fff" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2" />
+<text x="1267.5" y="236" font-size="12" font-weight="bold" fill="#555" text-anchor="middle">QUOTE CHECK</text>
+<rect x="1210" y="330" width="250" height="120" rx="24" fill="#FFFFFF" stroke="#B34700" stroke-width="2.2" stroke-dasharray="7 4" />
+<text x="1222" y="352" font-size="14" font-weight="bold" fill="#222" text-anchor="start">Azure OpenAI</text>
+<text x="1222" y="369" font-size="12" font-weight="normal" fill="#444" text-anchor="start">PLANNED, not created or approved</text>
+<rect x="1222" y="422" width="182" height="20" rx="5" fill="#fff" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2" />
+<text x="1313.0" y="436" font-size="12" font-weight="bold" fill="#555" text-anchor="middle">TRAINING USE [uncertain]</text>
+<polyline points="250,350 380,350" fill="none" stroke="#222" stroke-width="4" marker-end="url(#sec-arw)"/>
+<circle cx="295" cy="326" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="295" y="330" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T1</text>
+<circle cx="325" cy="326" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="325" y="330" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T3</text>
+<circle cx="310" cy="374" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="310" y="378" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T6</text>
+<polyline points="40,525 16,525 16,160 40,160" fill="none" stroke="#222" stroke-width="4" marker-end="url(#sec-arw)"/>
+<circle cx="16" cy="340" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="16" y="344" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T7</text>
+<polyline points="250,525 380,570" fill="none" stroke="#222" stroke-width="4" marker-end="url(#sec-arw)"/>
+<circle cx="315" cy="545" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="315" y="549" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T5</text>
+<polyline points="145,560 145,600" fill="none" stroke="#222" stroke-width="1.5" marker-end="url(#sec-arw)"/>
+<polyline points="540,520 540,440" fill="none" stroke="#222" stroke-width="1.8" marker-end="url(#sec-arw)"/>
+<polyline points="500,290 500,220" fill="none" stroke="#222" stroke-width="1.8" marker-end="url(#sec-arw)"/>
+<polyline points="700,360 780,360" fill="none" stroke="#B34700" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#sec-arw)"/>
+<circle cx="740" cy="336" r="17" fill="#fff" stroke="#F9A825" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="740" cy="336" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="740" y="340" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T8</text>
+<circle cx="1445" cy="345" r="17" fill="#fff" stroke="#F9A825" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="1445" cy="345" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="1445" y="349" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T12</text>
+<polyline points="145,130 145,92 1335,92 1335,150" fill="none" stroke="#B34700" stroke-width="4" stroke-dasharray="8 5" marker-end="url(#sec-arw)"/>
+<circle cx="700" cy="92" r="17" fill="#fff" stroke="#EF6C00" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="700" cy="92" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="700" y="96" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T9</text>
+<polyline points="1335,250 1335,330" fill="none" stroke="#B34700" stroke-width="4" stroke-dasharray="8 5" marker-end="url(#sec-arw)"/>
+<circle cx="1300" cy="290" r="17" fill="#fff" stroke="#EF6C00" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="1300" cy="290" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="1300" y="294" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T10</text>
+<circle cx="1370" cy="290" r="17" fill="#fff" stroke="#C62828" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="1370" cy="290" r="13" fill="#C62828" stroke="#fff" stroke-width="1.5"/>
+<text x="1370" y="294" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T11</text>
+<polyline points="1210,200 1165,200 1165,380 1100,380" fill="none" stroke="#B34700" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#sec-arw)"/>
+<circle cx="1165" cy="290" r="17" fill="#fff" stroke="#F9A825" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="1165" cy="290" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="1165" y="294" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T8</text>
+<circle cx="250" cy="610" r="13" fill="#C62828" stroke="#fff" stroke-width="1.5"/>
+<text x="250" y="614" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T2</text>
+<circle cx="1100" cy="520" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="1100" y="524" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T4</text>
+<rect x="1190" y="560" width="290" height="290" rx="8" fill="#F5F5F5" stroke="#9E9E9E" stroke-width="1.8" stroke-dasharray="8 5" />
+<text x="1202" y="584" font-size="13" font-weight="bold" fill="#444" text-anchor="start">Recommended for pilot, NOT built</text>
+<text x="1204" y="610" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Entra ID sign-in on ffm-app</text>
+<text x="1204" y="631" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Rotate keys; remove api_keys.env</text>
+<text x="1204" y="652" font-size="12" font-weight="normal" fill="#444" text-anchor="start">from repo history; use Key Vault</text>
+<text x="1204" y="673" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Rate limit / WAF in front of app</text>
+<text x="1204" y="694" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Private endpoint for Blob</text>
+<text x="1204" y="715" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Blob role: least privilege MI</text>
+<text x="1204" y="736" font-size="12" font-weight="normal" fill="#444" text-anchor="start">AI: content filter, quote check</text>
+<text x="1204" y="757" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Show data as-of date on screen</text>
+<text x="1204" y="778" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Audit log of who decided what</text>
+<text x="1204" y="799" font-size="12" font-weight="normal" fill="#444" text-anchor="start">Keep min 1 replica for demo only</text>
+<text x="1202" y="838" font-size="12" font-weight="normal" fill="#555" text-anchor="start">Dashed grey = recommendation only</text>
+<rect x="20" y="880" width="470" height="390" rx="8" fill="#FAFAFA" stroke="#999" stroke-width="1.2" />
+<text x="34" y="906" font-size="15" font-weight="bold" fill="#222" text-anchor="start">Legend</text>
+<rect x="34" y="918" width="60" height="16" rx="4" fill="none" stroke="#C62828" stroke-width="2.2" stroke-dasharray="9 5" />
+<text x="104" y="930" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Red dashed: trust boundary (TB)</text>
+<polyline points="34,952 94,952" fill="none" stroke="#222" stroke-width="4" marker-end="url(#sec-arw)"/>
+<text x="104" y="956" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Thick solid: runs today, crosses a boundary</text>
+<polyline points="34,976 94,976" fill="none" stroke="#B34700" stroke-width="3" stroke-dasharray="8 5" marker-end="url(#sec-arw)"/>
+<text x="104" y="980" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Orange dashed: PLANNED flow or element</text>
+<rect x="34" y="992" width="35" height="20" rx="5" fill="#1B5E20" stroke="#1B5E20" stroke-width="1" />
+<text x="51.5" y="1006" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">TLS</text>
+<text x="180" y="1006" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Green: control that exists today</text>
+<rect x="34" y="1018" width="84" height="20" rx="5" fill="#fff" stroke="#C62828" stroke-width="2" />
+<text x="76.0" y="1032" font-size="12" font-weight="bold" fill="#C62828" text-anchor="middle">AUTH: none</text>
+<text x="180" y="1032" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Red outline: control missing today</text>
+<rect x="34" y="1044" width="77" height="20" rx="5" fill="#fff" stroke="#757575" stroke-width="1.5" stroke-dasharray="3 2" />
+<text x="72.5" y="1058" font-size="12" font-weight="bold" fill="#555" text-anchor="middle">RBAC none</text>
+<text x="180" y="1058" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Grey dashed: not built, only suggested</text>
+<circle cx="47" cy="1080" r="13" fill="#C62828" stroke="#fff" stroke-width="1.5"/>
+<text x="47" y="1084" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T</text>
+<text x="70" y="1084" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Threat badge, severity High</text>
+<circle cx="47" cy="1108" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="47" y="1112" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T</text>
+<text x="70" y="1112" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Threat badge, severity Medium</text>
+<circle cx="47" cy="1136" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="47" y="1140" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T</text>
+<text x="70" y="1140" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Threat badge, severity Low</text>
+<circle cx="47" cy="1164" r="17" fill="#fff" stroke="#B34700" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="47" cy="1164" r="13" fill="#B34700" stroke="#fff" stroke-width="1.5"/>
+<text x="47" y="1168" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T</text>
+<text x="70" y="1168" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Dashed ring: threat on a PLANNED item</text>
+<text x="34" y="1192" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Shapes: rectangle = outside entity; rounded = process;</text>
+<text x="34" y="1209" font-size="12" font-weight="normal" fill="#222" text-anchor="start">open top and bottom lines = data store.</text>
+<text x="34" y="1231" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Controls verified by read-only az checks on 2026-11-06.</text>
+<text x="34" y="1248" font-size="12" font-weight="normal" fill="#222" text-anchor="start">TLS: HTTPS ingress seen working; no custom cert.</text>
+<rect x="510" y="880" width="970" height="390" rx="8" fill="#FAFAFA" stroke="#999" stroke-width="1.2" />
+<text x="524" y="906" font-size="15" font-weight="bold" fill="#222" text-anchor="start">Threat key (full register in report.html)</text>
+<circle cx="538" cy="928" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="932" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T1</text>
+<text x="566" y="932" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Public URL, no login (Spoofing, Info): anyone can open it; data is public only.  TODAY</text>
+<circle cx="538" cy="955" r="13" fill="#C62828" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="959" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T2</text>
+<text x="566" y="959" font-size="12" font-weight="normal" fill="#222" text-anchor="start">api_keys.env committed in private repo: fix before any public or State handoff.  TODAY</text>
+<circle cx="538" cy="982" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="986" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T3</text>
+<text x="566" y="986" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Single replica, 38 s cold start (Denial of service).  TODAY</text>
+<circle cx="538" cy="1009" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1013" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T4</text>
+<text x="566" y="1013" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Budget is an alert, not a hard cap (cost runaway).  TODAY</text>
+<circle cx="538" cy="1036" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1040" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T5</text>
+<text x="566" y="1040" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Image built from a laptop with az acr build; no signing or CI (Tampering).  TODAY</text>
+<circle cx="538" cy="1063" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1067" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T6</text>
+<text x="566" y="1067" font-size="12" font-weight="normal" fill="#222" text-anchor="start">No user identity, so no record of who did what (Repudiation).  TODAY</text>
+<circle cx="538" cy="1090" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1094" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T7</text>
+<text x="566" y="1094" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Data is a snapshot in the image; tool.html uses qualifier data; deadlines go stale.  TODAY</text>
+<circle cx="538" cy="1117" r="17" fill="#fff" stroke="#F9A825" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="538" cy="1117" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1121" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T8</text>
+<text x="566" y="1121" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Blob: JS tool will read payload.json; no role or identity set up yet; least privilege.  PLANNED</text>
+<circle cx="538" cy="1144" r="17" fill="#fff" stroke="#EF6C00" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="538" cy="1144" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1148" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T9</text>
+<text x="566" y="1148" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Prompt injection from ingested notice or plan text (OWASP LLM01).  PLANNED</text>
+<circle cx="538" cy="1171" r="17" fill="#fff" stroke="#EF6C00" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="538" cy="1171" r="13" fill="#EF6C00" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1175" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T10</text>
+<text x="566" y="1175" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Data handling in prompts. Public data only; sponsor privacy question open; no-training claim [uncertain].  PLANNED</text>
+<circle cx="538" cy="1198" r="17" fill="#fff" stroke="#C62828" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="538" cy="1198" r="13" fill="#C62828" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1202" font-size="12" font-weight="bold" fill="#fff" text-anchor="middle">T11</text>
+<text x="566" y="1202" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Invented quotes or wrong fit; over-reliance. Script checks quotes; human decides.  PLANNED</text>
+<circle cx="538" cy="1225" r="17" fill="#fff" stroke="#F9A825" stroke-width="2" stroke-dasharray="3 2"/>
+<circle cx="538" cy="1225" r="13" fill="#F9A825" stroke="#fff" stroke-width="1.5"/>
+<text x="538" y="1229" font-size="12" font-weight="bold" fill="#222" text-anchor="middle">T12</text>
+<text x="566" y="1229" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Unbounded token use; estimate about $0.50 for a full pass [estimate].  PLANNED</text>
+</svg>
+<figcaption>Figure 2. Threat model with trust boundaries. Green chips are controls that exist today; red-outlined chips are controls missing today; grey dashed items and the grey panel are recommendations, not built. Dashed-ring badges are threats on PLANNED items.</figcaption></figure>
+<h2>6. Threat register</h2><table class=""><thead><tr><th>ID</th><th>STRIDE / LLM category</th><th>Element or flow</th><th>Threat</th><th>Severity</th><th>Mitigation</th><th>Framework tags</th><th>Status</th></tr></thead><tbody><tr><td>T1</td><td>S, I</td><td>User to ffm-app (F1)</td><td>Public URL with no login: anyone can load it or send traffic. Impact is low only because the data is public. Would be High if any non-public data were added.</td><td><span class="chip sevM">Medium</span></td><td>None today. Pilot: Entra ID sign-in, rate limit (recommendations).</td><td>Zero Trust: verify explicitly; MCSB IM</td><td>Gap</td></tr><tr><td>T2</td><td>I, S</td><td>Private GitHub repo</td><td>api_keys.env (Simpler.Grants.gov and SAM.gov keys, values not shown here) is committed on purpose in a private repo. Anyone with repo access or a copy has the keys; history keeps them. Must change before any public or State handoff.</td><td><span class="chip sevH">High</span></td><td>Private repo only. Before handoff: rotate keys, purge from history, hold in Key Vault (recommendation).</td><td>NIST Protect; MCSB DP, IM</td><td>Gap</td></tr><tr><td>T3</td><td>D</td><td>F1, ffm-app</td><td>One replica max, scale to zero: 38 s cold start measured after idle; a burst could exhaust one replica.</td><td><span class="chip sevM">Medium</span></td><td>Max 1 caps cost. Set min replicas to 1 before the demo (planned, about $0.05 an hour at most).</td><td>WAF Reliability</td><td>Planned</td></tr><tr><td>T4</td><td>D, E</td><td>Subscription</td><td>Budget is an alert, not a cap; the $500 is monthly alert to organizers, a $6,000 annual alert exists too. A loop or large log ingest could overspend.</td><td><span class="chip sevM">Medium</span></td><td>ffm-guard alerts at four levels; max 1 replica; planned: small AOAI capacity, LLM only for shown pairs.</td><td>WAF Cost</td><td>Implemented (alerts only)</td></tr><tr><td>T5</td><td>T</td><td>F3, registry</td><td>Image built from a laptop with az acr build; no CI, signing or scanning.</td><td><span class="chip sevL">Low</span></td><td>Registry admin user off; pull by managed identity with AcrPull (verified).</td><td>Zero Trust: least privilege; MCSB PV</td><td>Implemented (partial)</td></tr><tr><td>T6</td><td>R</td><td>ffm-app, F1</td><td>No user identity, so nobody can show who did what. Matters once users record decisions.</td><td><span class="chip sevL">Low</span></td><td>Platform logs exist in ffm-logs. Pilot: sign-in plus audit log of decisions (recommendation).</td><td>NIST Detect; MCSB LT</td><td>Gap</td></tr><tr><td>T7</td><td>T (data integrity)</td><td>Image data, tool.html</td><td>Data is a snapshot baked into the image; the Shiny table and tool.html show different datasets; close dates pass. People could act on stale data.</td><td><span class="chip sevM">Medium</span></td><td>Planned: payload refresh via Blob; show an as-of date (recommendation).</td><td>WAF Operational Excellence</td><td>Planned</td></tr><tr><td>T8</td><td>I, E</td><td>F6, F7, Blob</td><td>Blob is unused now. When used: no role or identity yet, and the JS tool in the browser must read payload.json.</td><td><span class="chip sevL">Low</span></td><td>No public blob access, TLS 1.2 (verified). Planned: least-privilege role on a managed identity; ask first.</td><td>Zero Trust: least privilege; MCSB DP</td><td>Planned</td></tr><tr><td>T9</td><td>Tampering via input (OWASP LLM01)</td><td>Sources to job to Azure OpenAI</td><td>Hostile text inside a notice or plan could steer the model. PLANNED only, since Azure OpenAI does not exist.</td><td><span class="chip sevM">Medium</span></td><td>LLM only labels and writes a reason; script checks each quote against the source; human decides (design, not built).</td><td>OWASP LLM Top 10; NIST Protect</td><td>Planned</td></tr><tr><td>T10</td><td>I (LLM data handling)</td><td>F9, Azure OpenAI</td><td>Only public text is sent. The sponsor question: sensitive data must not go to a random LLM, and one note says &quot;local model&quot; (conflicts with the Azure rule). Whether Azure OpenAI keeps prompts out of training is [uncertain] until the Azure documentation is read.</td><td><span class="chip sevM">Medium</span></td><td>Public data only; never send non-public data; read Azure data-handling docs before making any claim.</td><td>OWASP LLM06; NIST Govern</td><td>Planned</td></tr><tr><td>T11</td><td>Hallucination, over-reliance (LLM09)</td><td>F10, scoring pipeline</td><td>Invented quote, wrong fit, or leaning on the tool: a missed opportunity looks like &quot;nothing there&quot; (false negative).</td><td><span class="chip sevH">High</span></td><td>Quote check script, temperature 0 with cache, tiers badged by source, human decision, keep manual monitoring in a pilot (design, not built).</td><td>OWASP LLM09; WAF Reliability</td><td>Planned</td></tr><tr><td>T12</td><td>D (unbounded consumption, LLM10)</td><td>F9, Azure OpenAI</td><td>Token spend: one full pass estimated about $0.50 at list price [estimate].</td><td><span class="chip sevL">Low</span></td><td>Small capacity, LLM only for flagged or shown pairs, cache, budget alerts.</td><td>WAF Cost</td><td>Planned</td></tr></tbody></table>
+<p>Prompt injection, data handling and invented quotes (T9 to T12) are listed because they follow from the plan to use Azure OpenAI. They are risks of a design, not of anything running. Key Vault, Entra sign-in, private endpoints and rate limits do not exist today; they are recommendations for a pilot.</p>
+<h2>7. Well-Architected quick check</h2><table class=""><thead><tr><th>Pillar</th><th>Status</th><th>Note</th></tr></thead><tbody><tr><td>Reliability</td><td><span class="chip part">PARTIAL</span></td><td>One replica, scale to zero, 38 s cold start; no job or fallback tested.</td></tr><tr><td>Security</td><td><span class="chip gap">GAP</span></td><td>No login, committed keys file, no Key Vault, no private endpoints. Controls that exist: HTTPS, identity-based registry pull, admin user off, no public blob.</td></tr><tr><td>Cost Optimization</td><td><span class="chip part">PARTIAL</span></td><td>Cheapest tiers, scale to zero, alerts at four levels; no hard cap.</td></tr><tr><td>Operational Excellence</td><td><span class="chip part">PARTIAL</span></td><td>Logs flow to Log Analytics; deploys are by hand from a laptop, no CI.</td></tr><tr><td>Performance Efficiency</td><td><span class="chip part">PARTIAL</span></td><td>Warm page loads 0.09 to 0.16 s; cold 38 s; one replica; a 3.6 MB static tool file.</td></tr></tbody></table>
+<h2>8. Recommended next steps</h2><ol><li>Before any public or State handoff: rotate the two API keys, remove api_keys.env from the repo and its history, and hold secrets outside the repo.</li><li>Decide whether Azure OpenAI is ours to create; read the Azure data-handling documentation before anyone claims prompts are not used for training; settle the sponsor privacy question (the "local model" answer).</li><li>Before the demo, set min replicas to 1 so the first page load is not 38 seconds; set it back afterward.</li><li>When the Blob flow is built: managed identity with a least-privilege role (ask first), upload payload only after the team lead agrees.</li><li>For a pilot: sign-in (Entra ID), rate limit, an as-of date on screen, an audit trail of decisions, and manual monitoring kept as the baseline.</li></ol>
+<h1 style="margin-top:48px">Stakeholder map</h1><p>Roles only; no staff names. Tags: [from notes] means our organized discovery notes, not verbatim sponsor quotes; [assumed] is our inference.</p>
+<h2>9. Stakeholder summary</h2><p>Most important: the OSBM sponsor lead (champion), the OSBM budget decider who can fund a pilot, and State IT and privacy reviewers who can stop it. Daily users are agency grant coordinators and non-grants staff, whose main need from the discovery session is speed and no extra questions [from notes]. Dedicated grant staff in agencies that already screen Grants.gov may see duplication [assumed]. All scores are [assumed] except where the register cites notes.</p>
+<h2>10. Power / interest grid</h2><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1060" width="1400" height="1060" role="img" aria-labelledby="grid-t grid-d" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title id="grid-t">Federal Funds Matchmaker power/interest grid</title>
+<desc id="grid-d">Mendelow grid of 16 stakeholder roles, interest on x, power on y. Colour is attitude; dashed outline is external.</desc>
+<defs><marker id="grid-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect width="1400" height="1060" fill="#ffffff"/>
+<text x="30" y="40" font-size="24" font-weight="bold" fill="#222" text-anchor="start">Federal Funds Matchmaker: stakeholder power / interest grid</text>
+<text x="30" y="66" font-size="13" font-weight="normal" fill="#444" text-anchor="start">Team 15  |  Mendelow grid  |  2026-11-06  |  draft v0.1  |  roles only; scores [assumed] unless marked in the register</text>
+<rect x="100" y="100" width="400.0" height="400.0" rx="0" fill="#FFF8E1" stroke="#999" stroke-width="1" />
+<rect x="500.0" y="100" width="400.0" height="400.0" rx="0" fill="#E8F5E9" stroke="#999" stroke-width="1" />
+<rect x="100" y="500.0" width="400.0" height="400.0" rx="0" fill="#F5F5F5" stroke="#999" stroke-width="1" />
+<rect x="500.0" y="500.0" width="400.0" height="400.0" rx="0" fill="#E3F2FD" stroke="#999" stroke-width="1" />
+<text x="110" y="122" font-size="14" font-weight="bold" fill="#6B5200" text-anchor="start">KEEP SATISFIED</text>
+<text x="510.0" y="122" font-size="14" font-weight="bold" fill="#1B5E20" text-anchor="start">MANAGE CLOSELY</text>
+<text x="110" y="890" font-size="14" font-weight="bold" fill="#444" text-anchor="start">MONITOR</text>
+<text x="890" y="890" font-size="14" font-weight="bold" fill="#0B4884" text-anchor="end">KEEP INFORMED</text>
+<text x="500" y="945" font-size="14" font-weight="bold" fill="#222" text-anchor="middle">Interest (1 low to 5 high)</text>
+<text transform="translate(40,500) rotate(-90)" font-size="14" font-weight="bold" text-anchor="middle">Power (1 low to 5 high)</text>
+<text x="180.0" y="920" font-size="12" font-weight="normal" fill="#555" text-anchor="middle">1</text>
+<text x="340.0" y="920" font-size="12" font-weight="normal" fill="#555" text-anchor="middle">2</text>
+<text x="500.0" y="920" font-size="12" font-weight="normal" fill="#555" text-anchor="middle">3</text>
+<text x="660.0" y="920" font-size="12" font-weight="normal" fill="#555" text-anchor="middle">4</text>
+<text x="820.0" y="920" font-size="12" font-weight="normal" fill="#555" text-anchor="middle">5</text>
+<text x="92" y="824.0" font-size="12" font-weight="normal" fill="#555" text-anchor="end">1</text>
+<text x="92" y="664.0" font-size="12" font-weight="normal" fill="#555" text-anchor="end">2</text>
+<text x="92" y="504.0" font-size="12" font-weight="normal" fill="#555" text-anchor="end">3</text>
+<text x="92" y="344.0" font-size="12" font-weight="normal" fill="#555" text-anchor="end">4</text>
+<text x="92" y="184.0" font-size="12" font-weight="normal" fill="#555" text-anchor="end">5</text>
+<circle cx="820.0" cy="660.0" r="22" fill="#7FBF7B" stroke="#222" stroke-width="2.5"/>
+<text x="820.0" y="665.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S1</text>
+<text x="820.0" y="700.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Grant</text>
+<text x="820.0" y="715.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">coordinator</text>
+<circle cx="660.0" cy="820.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5"/>
+<text x="660.0" y="825.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S2</text>
+<text x="660.0" y="860.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Non-grants</text>
+<text x="660.0" y="875.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">staff</text>
+<circle cx="520.0" cy="340.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5"/>
+<text x="520.0" y="345.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S3</text>
+<text x="520.0" y="380.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Supervisor</text>
+<text x="520.0" y="395.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">/ division lead</text>
+<circle cx="820.0" cy="180.0" r="22" fill="#1B7837" stroke="#222" stroke-width="2.5"/>
+<text x="820.0" y="185.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S4</text>
+<text x="820.0" y="220.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">OSBM sponsor</text>
+<text x="820.0" y="235.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">lead</text>
+<circle cx="520.0" cy="180.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5"/>
+<text x="520.0" y="185.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S5</text>
+<text x="520.0" y="220.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">OSBM budget</text>
+<text x="520.0" y="235.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">decider</text>
+<circle cx="660.0" cy="340.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5"/>
+<text x="660.0" y="345.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S6</text>
+<text x="660.0" y="380.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">State IT</text>
+<text x="660.0" y="395.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Office of AI</text>
+<circle cx="340.0" cy="340.0" r="22" fill="#F1A340" stroke="#222" stroke-width="2.5"/>
+<text x="340.0" y="345.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S7</text>
+<text x="340.0" y="380.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Privacy / sec.</text>
+<text x="340.0" y="395.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">reviewers</text>
+<circle cx="660.0" cy="480.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5"/>
+<text x="660.0" y="485.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S8</text>
+<text x="660.0" y="520.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Operator team</text>
+<text x="660.0" y="535.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">(future)</text>
+<circle cx="180.0" cy="660.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5" stroke-dasharray="4 3"/>
+<text x="180.0" y="665.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S9</text>
+<text x="180.0" y="700.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Federal data</text>
+<text x="180.0" y="715.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">providers</text>
+<circle cx="180.0" cy="480.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5" stroke-dasharray="4 3"/>
+<text x="180.0" y="485.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S10</text>
+<text x="180.0" y="520.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Federal</text>
+<text x="180.0" y="535.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">funders</text>
+<circle cx="340.0" cy="660.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5"/>
+<text x="340.0" y="665.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S11</text>
+<text x="340.0" y="700.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Plan owners</text>
+<text x="340.0" y="715.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">(agencies)</text>
+<circle cx="340.0" cy="180.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5" stroke-dasharray="4 3"/>
+<text x="340.0" y="185.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S12</text>
+<text x="340.0" y="220.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Legislature</text>
+<text x="340.0" y="235.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">/ oversight</text>
+<circle cx="520.0" cy="820.0" r="22" fill="#BDBDBD" stroke="#222" stroke-width="2.5" stroke-dasharray="4 3"/>
+<text x="520.0" y="825.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S13</text>
+<text x="520.0" y="860.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Communities,</text>
+<text x="520.0" y="875.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">districts</text>
+<circle cx="340.0" cy="480.0" r="22" fill="#7FBF7B" stroke="#222" stroke-width="2.5" stroke-dasharray="4 3"/>
+<text x="340.0" y="485.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S14</text>
+<text x="340.0" y="520.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Platform</text>
+<text x="340.0" y="535.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">partners</text>
+<circle cx="660.0" cy="660.0" r="22" fill="#F1A340" stroke="#222" stroke-width="2.5"/>
+<text x="660.0" y="665.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S15</text>
+<text x="660.0" y="700.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Dedicated</text>
+<text x="660.0" y="715.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">grant staff</text>
+<circle cx="820.0" cy="480.0" r="22" fill="#1B7837" stroke="#222" stroke-width="2.5"/>
+<text x="820.0" y="485.0" font-size="13" font-weight="bold" fill="#111" text-anchor="middle">S16</text>
+<text x="820.0" y="520.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">Build</text>
+<text x="820.0" y="535.0" font-size="12" font-weight="normal" fill="#222" text-anchor="middle">team</text>
+<rect x="930" y="100" width="440" height="800" rx="8" fill="#FAFAFA" stroke="#999" stroke-width="1.2" />
+<text x="946" y="126" font-size="15" font-weight="bold" fill="#222" text-anchor="start">Key (ID, role, attitude)</text>
+<circle cx="956" cy="148" r="9" fill="#7FBF7B" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="152" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S1 Agency grant coordinator</text>
+<text x="974" y="171" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Supporter, internal, P2 I5</text>
+<circle cx="956" cy="191" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="195" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S2 Non-grants staff in small agencies</text>
+<text x="974" y="214" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, internal, P1 I4</text>
+<circle cx="956" cy="234" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="238" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S3 Agency supervisor or division lead</text>
+<text x="974" y="257" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, internal, P4 I3</text>
+<circle cx="956" cy="277" r="9" fill="#1B7837" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="281" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S4 OSBM sponsor lead (federal funds stra...</text>
+<text x="974" y="300" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Champion, internal, P5 I5</text>
+<circle cx="956" cy="320" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="324" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S5 OSBM budget decision maker (pilot fun...</text>
+<text x="974" y="343" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, internal, P5 I3</text>
+<circle cx="956" cy="363" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="367" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S6 State IT, Office of AI (project manag...</text>
+<text x="974" y="386" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, internal, P4 I4</text>
+<circle cx="956" cy="406" r="9" fill="#F1A340" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="410" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S7 Privacy, security and legal reviewers</text>
+<text x="974" y="429" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Sceptic, internal, P4 I2</text>
+<circle cx="956" cy="449" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="453" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S8 Future operator team (cross-agency pa...</text>
+<text x="974" y="472" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, internal, P3 I4</text>
+<circle cx="956" cy="492" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="974" y="496" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S9 Federal data providers (Grants.gov, S...</text>
+<text x="974" y="515" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, external, P2 I1</text>
+<circle cx="956" cy="535" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="974" y="539" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S10 Federal agencies issuing funding notices</text>
+<text x="974" y="558" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, external, P3 I1</text>
+<circle cx="956" cy="578" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="582" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S11 Owners of agency strategic plans</text>
+<text x="974" y="601" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, internal, P2 I2</text>
+<circle cx="956" cy="621" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="974" y="625" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S12 Legislature and state oversight (audi...</text>
+<text x="974" y="644" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, external, P5 I2</text>
+<circle cx="956" cy="664" r="9" fill="#BDBDBD" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="974" y="668" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S13 Communities and school districts (ben...</text>
+<text x="974" y="687" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Neutral, external, P1 I3</text>
+<circle cx="956" cy="707" r="9" fill="#7FBF7B" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="974" y="711" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S14 Platform partners (Azure host, UNC SD...</text>
+<text x="974" y="730" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Supporter, external, P3 I2</text>
+<circle cx="956" cy="750" r="9" fill="#F1A340" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="754" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S15 Dedicated grant staff in agencies tha...</text>
+<text x="974" y="773" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Sceptic, internal, P2 I4</text>
+<circle cx="956" cy="793" r="9" fill="#1B7837" stroke="#222" stroke-width="1.5"/>
+<text x="974" y="797" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S16 Solve-A-Thon build team</text>
+<text x="974" y="816" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   Champion, internal, P3 I5</text>
+<text x="930" y="930" font-size="12" font-weight="bold" fill="#222" text-anchor="start">Attitude colour (also written in the key):</text>
+<circle cx="938" cy="950" r="8" fill="#1B7837" stroke="#222" stroke-width="1.5"/>
+<text x="952" y="954" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Champion</text>
+<circle cx="1058" cy="950" r="8" fill="#7FBF7B" stroke="#222" stroke-width="1.5"/>
+<text x="1072" y="954" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Supporter</text>
+<circle cx="1188" cy="950" r="8" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="1202" y="954" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Neutral</text>
+<circle cx="938" cy="972" r="8" fill="#F1A340" stroke="#222" stroke-width="1.5"/>
+<text x="952" y="976" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Sceptic</text>
+<circle cx="1058" cy="972" r="8" fill="#B2182B" stroke="#222" stroke-width="1.5"/>
+<text x="1072" y="976" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Blocker</text>
+<circle cx="938" cy="994" r="8" fill="#fff" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="952" y="998" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Dashed outline = external stakeholder</text>
+<text x="930" y="1020" font-size="12" font-weight="normal" fill="#222" text-anchor="start">A score of 3 is drawn just inside the high side.</text>
+</svg>
+<figcaption>Figure 3. Mendelow grid; interest across, power up; colour is attitude; dashed outline is external.</figcaption></figure>
+<h2>11. Stakeholder register</h2><table class=""><thead><tr><th>ID</th><th>Stakeholder</th><th>Org</th><th>Category</th><th>Int/Ext</th><th>Power</th><th>Interest</th><th>Attitude</th><th>Needs</th><th>Concerns</th><th>Evidence</th></tr></thead><tbody><tr><td>S1</td><td>Agency grant coordinator</td><td>NC state agency</td><td>User</td><td>Internal</td><td>2</td><td>5</td><td>Supporter</td><td>Fast, short list with a plain reason, eligibility checked for them</td><td>No time; more questions; a match that ignores eligibility</td><td>[from notes] role and pain; attitude [assumed]</td></tr><tr><td>S2</td><td>Non-grants staff in small agencies</td><td>NC state agency</td><td>User</td><td>Internal</td><td>1</td><td>4</td><td>Neutral</td><td>Usable by &quot;the average person who does not normally do grants&quot;</td><td>Training burden; unclear which agency should apply</td><td>[from notes] need stated; attitude [assumed]</td></tr><tr><td>S3</td><td>Agency supervisor or division lead</td><td>NC state agency</td><td>Decision maker</td><td>Internal</td><td>4</td><td>3</td><td>Neutral</td><td>A clear pursue or pass call before the close date</td><td>Payoff versus work; staff capacity</td><td>[assumed] from framing worksheet action step</td></tr><tr><td>S4</td><td>OSBM sponsor lead (federal funds strategy)</td><td>NC OSBM</td><td>Sponsor</td><td>Internal</td><td>5</td><td>5</td><td>Champion</td><td>Fewer missed opportunities; high-quality applications; simple to use</td><td>Time, cost, privacy of data fed to AI</td><td>[from notes] goal stated at kickoff</td></tr><tr><td>S5</td><td>OSBM budget decision maker (pilot funding)</td><td>NC OSBM</td><td>Decision maker</td><td>Internal</td><td>5</td><td>3</td><td>Neutral</td><td>Evidence, cost and a pilot with a next step</td><td>Ongoing cost; no dedicated team</td><td>[assumed] from the Drive Impact criterion</td></tr><tr><td>S6</td><td>State IT, Office of AI (project manager, architect)</td><td>NC DIT</td><td>Operator / IT</td><td>Internal</td><td>4</td><td>4</td><td>Neutral</td><td>Sustainable, supportable, secure; who runs it</td><td>Fit with state AI rules; maintenance</td><td>[from notes] in the room; position [assumed]</td></tr><tr><td>S7</td><td>Privacy, security and legal reviewers</td><td>NC DIT / agencies</td><td>Oversight</td><td>Internal</td><td>4</td><td>2</td><td>Sceptic</td><td>Clear data classification, no sensitive data to an LLM</td><td>Prompts leaving the state; keys in repo</td><td>[from notes] privacy risk raised; reviewer role [assumed]</td></tr><tr><td>S8</td><td>Future operator team (cross-agency partnership)</td><td>NC OSBM + agencies</td><td>Operator / IT</td><td>Internal</td><td>3</td><td>4</td><td>Neutral</td><td>Simple upkeep, training, low token spend</td><td>No dedicated team; staff turnover</td><td>[from notes] &quot;no dedicated team; likely cross-agency&quot;</td></tr><tr><td>S9</td><td>Federal data providers (Grants.gov, Simpler, SAM.gov)</td><td>US federal</td><td>Data provider</td><td>External</td><td>2</td><td>1</td><td>Neutral</td><td>Respect API terms and rate limits</td><td>Heavy or abusive API use</td><td>[assumed]</td></tr><tr><td>S10</td><td>Federal agencies issuing funding notices</td><td>US federal</td><td>Data provider</td><td>External</td><td>3</td><td>1</td><td>Neutral</td><td>Notices read and applied to correctly</td><td>Mismatched or late applications</td><td>[assumed]</td></tr><tr><td>S11</td><td>Owners of agency strategic plans</td><td>NC state agencies</td><td>Data provider</td><td>Internal</td><td>2</td><td>2</td><td>Neutral</td><td>Plans read fairly; thin plans not penalised</td><td>Old or short plans score low</td><td>[from notes] plans are general; owner view [assumed]</td></tr><tr><td>S12</td><td>Legislature and state oversight (audit, appropriations)</td><td>NC state</td><td>Regulator / oversight</td><td>External</td><td>5</td><td>2</td><td>Neutral</td><td>Federal funds drawn down; sound use of AI</td><td>Unproven AI in budget decisions</td><td>[assumed]</td></tr><tr><td>S13</td><td>Communities and school districts (beneficiaries)</td><td>NC public</td><td>Beneficiary</td><td>External</td><td>1</td><td>3</td><td>Neutral</td><td>Funds that reach them on time</td><td>Missed deadlines (bus example)</td><td>[from notes] bus example; view [assumed]</td></tr><tr><td>S14</td><td>Platform partners (Azure host, UNC SDIS program)</td><td>Microsoft / UNC</td><td>Partner / vendor</td><td>External</td><td>3</td><td>2</td><td>Supporter</td><td>Credits used within limits</td><td>Spend beyond alerts</td><td>[from notes] credits and alerts; view [assumed]</td></tr><tr><td>S15</td><td>Dedicated grant staff in agencies that already screen</td><td>NC state agency</td><td>Negatively affected</td><td>Internal</td><td>2</td><td>4</td><td>Sceptic</td><td>Tool adds to, not replaces, their expertise</td><td>Duplicate effort; trust in ranking; job role</td><td>[assumed] some agencies have dedicated grant workers [from notes]</td></tr><tr><td>S16</td><td>Solve-A-Thon build team</td><td>UNC SDIS</td><td>Builder</td><td>Internal</td><td>3</td><td>5</td><td>Champion</td><td>Honest account of built vs planned</td><td>Over-claiming; time</td><td>[from notes] team</td></tr></tbody></table>
+<h2>12. Onion diagram</h2><figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1160" width="1400" height="1160" role="img" aria-labelledby="onion-t onion-d" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<title id="onion-t">Federal Funds Matchmaker stakeholder onion</title>
+<desc id="onion-d">Four rings: product, system, containing system, wider environment. Pills carry stakeholder IDs and attitude colour.</desc>
+<defs><marker id="onion-arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<rect width="1400" height="1160" fill="#ffffff"/>
+<text x="30" y="40" font-size="24" font-weight="bold" fill="#222" text-anchor="start">Federal Funds Matchmaker: stakeholder onion</text>
+<text x="30" y="66" font-size="13" font-weight="normal" fill="#444" text-anchor="start">Team 15  |  Alexander onion model  |  2026-11-06  |  draft v0.1  |  roles only</text>
+<circle cx="500" cy="640" r="505" fill="#F3F4FB" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="365" fill="#E8EAF6" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="225" fill="#D9DEF2" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="75" fill="#C5CAE9" stroke="#7986CB" stroke-width="1.5"/>
+<circle cx="500" cy="640" r="63" fill="#1168BD" stroke="#0B4884" stroke-width="2"/>
+<text x="500" y="636" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Federal Funds</text>
+<text x="500" y="653" font-size="13" font-weight="bold" fill="#fff" text-anchor="middle">Matchmaker</text>
+<rect x="450.3" y="470.0" width="99.4" height="40" rx="14" fill="#fff" stroke="#7FBF7B" stroke-width="4"/>
+<text x="500.0" y="487.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S1 Grant</text>
+<text x="500.0" y="502.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">coordinator</text>
+<rect x="442.9" y="770.0" width="114.2" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="500.0" y="787.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S2 Non-grants</text>
+<text x="500.0" y="802.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">staff</text>
+<rect x="690.9774941164094" y="472.5" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="755.4774941164094" y="489.5" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S3 Supervisor</text>
+<text x="755.4774941164094" y="504.5" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">/ division lead</text>
+<rect x="435.5" y="325.0" width="129.0" height="40" rx="14" fill="#fff" stroke="#1B7837" stroke-width="4"/>
+<text x="500.0" y="342.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S4 OSBM sponsor</text>
+<text x="500.0" y="357.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">lead</text>
+<rect x="183.72250588359057" y="472.5" width="121.60000000000001" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="244.52250588359058" y="489.5" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S5 OSBM budget</text>
+<text x="244.52250588359058" y="504.5" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">decider</text>
+<rect x="446.5999999999999" y="915.0" width="106.80000000000001" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="499.99999999999994" y="932.0" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S6 State IT</text>
+<text x="499.99999999999994" y="947.0" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">Office of AI</text>
+<rect x="226.91048378156287" y="835.7493419776553" width="143.8" height="40" rx="14" fill="#fff" stroke="#F1A340" stroke-width="4"/>
+<text x="298.8104837815629" y="852.7493419776553" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S7 Privacy / sec.</text>
+<text x="298.8104837815629" y="867.7493419776553" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">reviewers</text>
+<rect x="572.7538931178863" y="671.3030214988503" width="136.4" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="640.9538931178863" y="688.3030214988503" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S8 Operator team</text>
+<text x="640.9538931178863" y="703.3030214988503" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">(future)</text>
+<rect x="548.0862846195965" y="199.8222655642553" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="612.5862846195965" y="216.8222655642553" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S9 Federal data</text>
+<text x="612.5862846195965" y="231.8222655642553" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">providers</text>
+<rect x="232.80000000000013" y="243.27894935376918" width="99.4" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="282.5000000000001" y="260.2789493537692" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S10 Federal</text>
+<text x="282.5000000000001" y="275.2789493537692" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">funders</text>
+<rect x="2.1553063300906956" y="582.0872519047687" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4"/>
+<text x="66.6553063300907" y="599.0872519047687" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S11 Plan owners</text>
+<text x="66.6553063300907" y="614.0872519047687" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">(agencies)</text>
+<rect x="127.90855018385173" y="927.5914498161482" width="129.0" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="192.40855018385173" y="944.5914498161482" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S12 Legislature</text>
+<text x="192.40855018385173" y="959.5914498161482" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">/ oversight</text>
+<rect x="469.71274809523123" y="1053.3446936699092" width="136.4" height="40" rx="14" fill="#fff" stroke="#BDBDBD" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="537.9127480952312" y="1070.3446936699092" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S13 Communities,</text>
+<text x="537.9127480952312" y="1085.3446936699092" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">districts</text>
+<rect x="823.3210506462307" y="837.5000000000002" width="106.80000000000001" height="40" rx="14" fill="#fff" stroke="#7FBF7B" stroke-width="4" stroke-dasharray="4 3"/>
+<text x="876.7210506462307" y="854.5000000000002" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S14 Platform</text>
+<text x="876.7210506462307" y="869.5000000000002" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">partners</text>
+<rect x="327.9933335321533" y="523.5818585470191" width="114.2" height="40" rx="14" fill="#fff" stroke="#F1A340" stroke-width="4"/>
+<text x="385.09333353215334" y="540.5818585470191" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S15 Dedicated</text>
+<text x="385.09333353215334" y="555.5818585470191" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">grant staff</text>
+<rect x="316.74610688211374" y="671.3030214988503" width="84.60000000000001" height="40" rx="14" fill="#fff" stroke="#1B7837" stroke-width="4"/>
+<text x="359.04610688211375" y="688.3030214988503" font-size="12" font-weight="bold" fill="#111" text-anchor="middle">S16 Build</text>
+<text x="359.04610688211375" y="703.3030214988503" font-size="12" font-weight="normal" fill="#111" text-anchor="middle">team</text>
+<text x="597.1806134966794" y="457.2298482782021" font-size="12" font-weight="bold" fill="#3949AB" text-anchor="middle">2 System</text>
+<text x="662.9066322867042" y="333.6171852779524" font-size="12" font-weight="bold" fill="#3949AB" text-anchor="middle">3 Containing</text>
+<text x="728.6326510767288" y="210.00452227770262" font-size="12" font-weight="bold" fill="#3949AB" text-anchor="middle">4 Wider</text>
+<rect x="990" y="110" width="380" height="830" rx="8" fill="#FAFAFA" stroke="#999" stroke-width="1.2" />
+<text x="1004" y="136" font-size="15" font-weight="bold" fill="#222" text-anchor="start">Key (ID, role, ring, attitude)</text>
+<text x="1004" y="162" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S1 Agency grant coordinator</text>
+<text x="1004" y="180" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Supporter, internal</text>
+<text x="1004" y="203" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S2 Non-grants staff in small agencies</text>
+<text x="1004" y="221" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Neutral, internal</text>
+<text x="1004" y="244" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S3 Agency supervisor or division lead</text>
+<text x="1004" y="262" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Neutral, internal</text>
+<text x="1004" y="285" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S4 OSBM sponsor lead (federal funds stra...</text>
+<text x="1004" y="303" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Champion, internal</text>
+<text x="1004" y="326" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S5 OSBM budget decision maker (pilot fun...</text>
+<text x="1004" y="344" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Neutral, internal</text>
+<text x="1004" y="367" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S6 State IT, Office of AI (project manag...</text>
+<text x="1004" y="385" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Neutral, internal</text>
+<text x="1004" y="408" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S7 Privacy, security and legal reviewers</text>
+<text x="1004" y="426" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 3, Sceptic, internal</text>
+<text x="1004" y="449" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S8 Future operator team (cross-agency pa...</text>
+<text x="1004" y="467" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Neutral, internal</text>
+<text x="1004" y="490" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S9 Federal data providers (Grants.gov, S...</text>
+<text x="1004" y="508" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="531" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S10 Federal agencies issuing funding notices</text>
+<text x="1004" y="549" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="572" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S11 Owners of agency strategic plans</text>
+<text x="1004" y="590" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, internal</text>
+<text x="1004" y="613" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S12 Legislature and state oversight (audi...</text>
+<text x="1004" y="631" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="654" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S13 Communities and school districts (ben...</text>
+<text x="1004" y="672" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Neutral, external</text>
+<text x="1004" y="695" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S14 Platform partners (Azure host, UNC SD...</text>
+<text x="1004" y="713" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 4, Supporter, external</text>
+<text x="1004" y="736" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S15 Dedicated grant staff in agencies tha...</text>
+<text x="1004" y="754" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Sceptic, internal</text>
+<text x="1004" y="777" font-size="12" font-weight="normal" fill="#222" text-anchor="start">S16 Solve-A-Thon build team</text>
+<text x="1004" y="795" font-size="12" font-weight="normal" fill="#555" text-anchor="start">   ring 2, Champion, internal</text>
+<text x="1004" y="828" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Rings: 1 Product; 2 System (users,</text>
+<text x="1004" y="846" font-size="12" font-weight="normal" fill="#222" text-anchor="start">operators, build team); 3 Containing</text>
+<text x="1004" y="864" font-size="12" font-weight="normal" fill="#222" text-anchor="start">system (sponsors, deciders, IT);</text>
+<text x="1004" y="882" font-size="12" font-weight="normal" fill="#222" text-anchor="start">4 Wider environment (data, public).</text>
+<text x="990" y="1000" font-size="12" font-weight="bold" fill="#222" text-anchor="start">Attitude colour (also written in the key):</text>
+<circle cx="998" cy="1020" r="8" fill="#1B7837" stroke="#222" stroke-width="1.5"/>
+<text x="1012" y="1024" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Champion</text>
+<circle cx="1118" cy="1020" r="8" fill="#7FBF7B" stroke="#222" stroke-width="1.5"/>
+<text x="1132" y="1024" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Supporter</text>
+<circle cx="1248" cy="1020" r="8" fill="#BDBDBD" stroke="#222" stroke-width="1.5"/>
+<text x="1262" y="1024" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Neutral</text>
+<circle cx="998" cy="1042" r="8" fill="#F1A340" stroke="#222" stroke-width="1.5"/>
+<text x="1012" y="1046" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Sceptic</text>
+<circle cx="1118" cy="1042" r="8" fill="#B2182B" stroke="#222" stroke-width="1.5"/>
+<text x="1132" y="1046" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Blocker</text>
+<circle cx="998" cy="1064" r="8" fill="#fff" stroke="#222" stroke-width="1.5" stroke-dasharray="3 2"/>
+<text x="1012" y="1068" font-size="12" font-weight="normal" fill="#222" text-anchor="start">Dashed outline = external stakeholder</text>
+<text x="990" y="1090" font-size="12" font-weight="normal" fill="#222" text-anchor="start">A score of 3 is drawn just inside the high side.</text>
+</svg>
+<figcaption>Figure 4. Alexander onion: product, system, containing system, wider environment.</figcaption></figure>
+<h2>13. RACI</h2><p>[assumed] for all rows. Exactly one A per activity.</p><table class=""><thead><tr><th>Activity</th><th>S1 Grant</th><th>S3 Supervisor</th><th>S4 OSBM sponsor</th><th>S5 OSBM budget</th><th>S6 State IT</th><th>S7 Privacy / sec.</th><th>S8 Operator team</th><th>S16 Build</th></tr></thead><tbody><tr><td>Define criteria and weights</td><td><span class="raci rC">C</span></td><td><span class="raci rI">I</span></td><td><span class="raci rA">A</span></td><td><span class="raci rI">I</span></td><td><span class="raci rI">I</span></td><td><span class="raci rn"></span></td><td><span class="raci rC">C</span></td><td><span class="raci rR">R</span></td></tr><tr><td>Check plan profiles for the agencies in the pool</td><td><span class="raci rC">C</span></td><td><span class="raci rC">C</span></td><td><span class="raci rA">A</span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rI">I</span></td><td><span class="raci rR">R</span></td></tr><tr><td>Decide to pursue or pass on an opportunity</td><td><span class="raci rR">R</span></td><td><span class="raci rA">A</span></td><td><span class="raci rI">I</span></td><td><span class="raci rI">I</span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td></tr><tr><td>Run the pipeline and the Azure app</td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rI">I</span></td><td><span class="raci rn"></span></td><td><span class="raci rC">C</span></td><td><span class="raci rC">C</span></td><td><span class="raci rA">A</span></td><td><span class="raci rR">R</span></td></tr><tr><td>Security and privacy review before a pilot</td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rI">I</span></td><td><span class="raci rn"></span></td><td><span class="raci rA">A</span></td><td><span class="raci rR">R</span></td><td><span class="raci rC">C</span></td><td><span class="raci rC">C</span></td></tr><tr><td>Approve pilot funding</td><td><span class="raci rI">I</span></td><td><span class="raci rI">I</span></td><td><span class="raci rR">R</span></td><td><span class="raci rA">A</span></td><td><span class="raci rC">C</span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rC">C</span></td></tr><tr><td>Keep manual monitoring as the baseline during a pilot</td><td><span class="raci rR">R</span></td><td><span class="raci rA">A</span></td><td><span class="raci rC">C</span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rn"></span></td><td><span class="raci rI">I</span></td></tr></tbody></table>
+<h2>14. Engagement plan</h2><table class=""><thead><tr><th>Stakeholder</th><th>Objective</th><th>Key message</th><th>Channel</th><th>Frequency</th><th>Owner (role)</th></tr></thead><tbody><tr><td>S4 OSBM sponsor lead</td><td>Keep the champion; agree what a pilot proves</td><td>Built vs planned is stated plainly; humans decide</td><td>Demo, one-page note</td><td>Each milestone</td><td>Technical lead</td></tr><tr><td>S5 OSBM budget decider</td><td>Get a clear ask</td><td>Cost, what is live, the next step</td><td>One-page brief</td><td>Once, then on request</td><td>Q&amp;A and proof lead</td></tr><tr><td>S3 Agency supervisor</td><td>Test the pursue or pass step</td><td>Short list with plain reasons</td><td>Persona test, demo</td><td>Per test round</td><td>Client lead</td></tr><tr><td>S1 Agency grant coordinator</td><td>Learn what makes them trust a match</td><td>No extra questions; reasons they can check</td><td>Persona test (not user evidence)</td><td>Per test round</td><td>Client lead</td></tr><tr><td>S6 State IT, Office of AI</td><td>Agree who runs it and under what rules</td><td>Public data only; what is built vs planned</td><td>Architecture and security report</td><td>Before pilot</td><td>Technical lead</td></tr><tr><td>S7 Privacy, security, legal reviewers</td><td>Surface blockers early</td><td>Keys must be rotated before handoff; training-use claim is open</td><td>This report</td><td>Before pilot</td><td>Q&amp;A and proof lead</td></tr><tr><td>S8 Future operator team</td><td>Make handoff realistic</td><td>Plain README, low running cost</td><td>README, runbook</td><td>Before pilot</td><td>Technical lead</td></tr><tr><td>S15 Dedicated grant staff</td><td>Position as an addition to their work</td><td>Tool never replaces their judgment</td><td>Demo, listening session</td><td>Per pilot round</td><td>Client lead</td></tr><tr><td>S16 Build team</td><td>Keep claims honest</td><td>One source of truth for status</td><td>Shared repo, this report</td><td>Daily until the freeze</td><td>Technical lead</td></tr></tbody></table>
+<h2>15. Stakeholder risks and mitigations</h2><table class=""><thead><tr><th>Risk</th><th>Mitigation</th></tr></thead><tbody><tr><td>Sponsors read &quot;live&quot; as &quot;working matcher&quot;</td><td>Display-only today; label LIVE vs PLANNED on every slide</td></tr><tr><td>Privacy reviewers block use of Azure OpenAI</td><td>Public data only; read Azure docs; fallback is embeddings-free keyword baseline</td></tr><tr><td>Small agencies with thin plans get low scores</td><td>Flag thin or stale profiles instead of ranking them down (decision 3)</td></tr><tr><td>Dedicated grant staff see duplication</td><td>Pilot alongside manual monitoring; measure what the tool adds</td></tr><tr><td>Nobody owns it after the pilot (no dedicated team)</td><td>Name an operator role in the pilot ask; keep the stack small</td></tr><tr><td>Federal data access changes or rate limits</td><td>Cached copies; documented pull; SAM.gov and DOT page not loaded (limits slide)</td></tr></tbody></table>
+<h2>16. Assumptions and open questions</h2><p>The full list is in assumptions.md (same folder). Main items: all stakeholder scores and attitudes except those sourced to notes; the planned design depends on Kent&#39;s product decisions and on Azure OpenAI being approved; TLS and logging wiring were confirmed by read-only checks only; severity ratings are our judgment.</p>
+<h2>17. Glossary</h2><ul><li><b>C4 container view</b>: a picture of the main deployable parts of a system.</li><li><b>STRIDE</b>: six threat types: spoofing, tampering, repudiation, information disclosure, denial of service, elevation of privilege.</li><li><b>Trust boundary</b>: a line where data passes between zones of different trust.</li><li><b>Managed identity</b>: an Azure-managed account for a service, so no password is stored.</li><li><b>Zero Trust</b>: verify every request, give least privilege, assume breach.</li><li><b>Prompt injection</b>: text in the input that tries to steer the model.</li><li><b>Power/interest grid, onion model, RACI</b>: ways to place stakeholders by influence and concern, by closeness to the product, and by who is Responsible, Accountable, Consulted or Informed.</li></ul>
+</main></body></html>

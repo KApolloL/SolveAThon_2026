@@ -17,7 +17,9 @@
 
 suppressMessages(library(data.table))
 
-OPEN_STATUSES <- c("posted", "forecasted")
+# Pool statuses: open items plus Federal Register notices (decision 9). Closed items are NOT in the pool.
+# Decision 1 says closed items are scored in the product; whether the pool should include them is open (Kent decides).
+POOL_STATUSES <- c("posted", "forecasted", "notice")
 
 STOPWORDS <- c("a","about","above","after","again","all","also","an","and","any","are","as","at",
   "be","because","been","before","being","between","both","but","by","can","each","for","from",

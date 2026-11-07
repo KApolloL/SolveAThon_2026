@@ -1,61 +1,61 @@
-agency,item_no,opp_id,opp_number,source_stratum,kw_rank,kw_score,kw_hits,ranker_rank
-Department of Natural and Cultural Resources,1,364181,G27AS00084,baseline_top,4,8,access|climate|cultural|land|natural|resilience|resource|site,
-Department of Natural and Cultural Resources,2,359003,PAR-26-040,baseline_mid,462,1,innovation,
-Department of Natural and Cultural Resources,3,357667,PAR-25-296,baseline_mid,434,1,resource,
-Department of Natural and Cultural Resources,4,363837,PAR-27-136,baseline_mid,265,2,innovation|resource,
-Department of Natural and Cultural Resources,5,357493,PAR-25-271,random_rest,157,2,natural|site,
-Department of Natural and Cultural Resources,6,360625,RFA-DK-28-213,random_rest,1124,0,"",
-Department of Natural and Cultural Resources,7,362842,2026-NTIA-NEGP,random_rest,1222,0,"",
-Department of Natural and Cultural Resources,8,335069,S-NL800-20-GR-3013,baseline_mid,321,1,site,
-Department of Natural and Cultural Resources,9,325599,AFPRA-20-04,baseline_top,8,6,access|innovation|natural|resilience|resource|site,
-Department of Natural and Cultural Resources,10,355825,MP-CPI-25-002,random_rest,888,0,"",
-Department of Natural and Cultural Resources,11,359120,PAS-TUNIS-FY2025,baseline_top,6,7,cultural|disaster|educational|innovation|natural|preservation|resource,
-Department of Natural and Cultural Resources,12,364084,G27AS00074,baseline_top,7,7,access|cultural|land|natural|recovery|resilience|resource,
-Department of Natural and Cultural Resources,13,363037,RFA-DK-28-114,random_rest,606,1,resource,
-Department of Natural and Cultural Resources,14,344137,SPAINNOFOSUSI2023,baseline_top,5,7,climate|cultural|disaster|educational|natural|resource|site,
-Department of Natural and Cultural Resources,15,364174,DE-FOA-0003641,random_rest,1452,0,"",
-Department of Natural and Cultural Resources,16,364135,DE-FOA-0003631,baseline_top,10,6,access|economie|innovation|natural|recovery|resource,
-Department of Natural and Cultural Resources,17,363222,HHS-2027-ACF-ECD-TH-0003,random_rest,618,1,resource,
-Department of Natural and Cultural Resources,18,322814,AFCP20,baseline_top,2,8,cultural|disaster|educational|natural|preservation|preserve|recovery|site,
-Department of Natural and Cultural Resources,19,356043,FOR-FD-25-003,baseline_mid,377,1,resource,
-Department of Natural and Cultural Resources,20,322815,AFCPLG20,baseline_top,3,8,cultural|disaster|educational|natural|preservation|preserve|recovery|site,
-Department of Natural and Cultural Resources,21,363476,RFA-RM-28-008,random_rest,643,1,resource,
-Department of Natural and Cultural Resources,22,360400,RFA-NS-26-001,baseline_mid,518,1,access,
-Department of Natural and Cultural Resources,23,348830,HQ003423NFOEASD07,baseline_top,9,6,cultural|innovation|land|natural|resilience|resource,
-Department of Natural and Cultural Resources,24,359726,FOR-CA-25-086,baseline_mid,490,1,innovation,
-Department of Natural and Cultural Resources,25,349343,23-606,baseline_mid,349,1,resource,
-Department of Natural and Cultural Resources,26,45810,PD-98-1331,baseline_mid,293,2,access|innovation,
-Department of Natural and Cultural Resources,27,363860,RFA-RM-28-017,random_rest,700,1,resource,
-Department of Natural and Cultural Resources,28,357136,PAR-25-256,baseline_mid,406,1,natural,
-Department of Natural and Cultural Resources,29,358824,PAR-27-074,random_rest,1030,0,"",
-Department of Natural and Cultural Resources,30,364180,G27AS00083,baseline_top,1,9,access|climate|cultural|economie|land|natural|preservation|resilience|resource,
-Department of Public Schools,1,350653,RFA-CC-18-000,random_rest,683,0,"",
-Department of Public Schools,2,358230,PAR-25-353,random_rest,880,0,"",
-Department of Public Schools,3,334013,AFKIN-21-01,baseline_top,5,5,education|environment|learning|safe|school,
-Department of Public Schools,4,363686,HRSA-27-040,random_rest,1270,0,"",
-Department of Public Schools,5,364164,USDA-FNA-CN-HTH-NSLP-EAG-2027,baseline_top,8,5,education|healthy|prepare|school|student,
-Department of Public Schools,6,334259,MAPUTO-PCO-FY22-01,baseline_mid,209,1,education,
-Department of Public Schools,7,348746,W9126G-23-2-SOI-3250,baseline_mid,231,1,student,
-Department of Public Schools,8,364028,RFA-AA-28-002,random_rest,1366,0,"",
-Department of Public Schools,9,334326,21-595,baseline_top,3,6,education|educator|learning|prepare|student|transformative,
-Department of Public Schools,10,361380,RFA-EB-28-004,baseline_mid,408,1,prepare,
-Department of Public Schools,11,364174,DE-FOA-0003641,random_rest,1425,0,"",
-Department of Public Schools,12,308873,PD-18-7222,baseline_top,9,4,education|learning|school|student,
-Department of Public Schools,13,357378,PAR-25-279,baseline_mid,297,1,healthy,
-Department of Public Schools,14,358118,PAR-25-358,baseline_mid,320,1,environment,
-Department of Public Schools,15,359120,PAS-TUNIS-FY2025,baseline_top,6,5,celebrate|education|learning|school|student,
-Department of Public Schools,16,360638,RFA-TW-25-002,baseline_mid,386,1,environment,
-Department of Public Schools,17,334905,RANDENDEPSTEMFY22RFI,baseline_top,4,6,education|invest|learning|prepare|school|student,
-Department of Public Schools,18,363611,EPA-OW-OWOW-26-01,random_rest,1261,0,"",
-Department of Public Schools,19,359170,RFA-HG-27-010,baseline_mid,342,1,optimize,
-Department of Public Schools,20,360183,N00178-26-0001,baseline_mid,364,1,education,
-Department of Public Schools,21,357019,PAR-24-325,random_rest,785,0,"",
-Department of Public Schools,22,361604,26-507,baseline_top,2,7,education|educator|learning|phase|prepare|school|student,
-Department of Public Schools,23,359653,RFA-AG-26-010,random_rest,346,1,education,
-Department of Public Schools,24,332125,EDA-CHI-TA-CRO-2021-2006849,random_rest,204,1,education,
-Department of Public Schools,25,359207,FOR-HG-26-004,random_rest,936,0,"",
-Department of Public Schools,26,327658,SRB10020FO006,baseline_top,10,4,education|learning|prepare|student,
-Department of Public Schools,27,353749,PA-24-175,baseline_mid,253,1,parent,
-Department of Public Schools,28,344124,23-510,baseline_top,1,7,education|environment|invest|learning|prepare|student|transformative,
-Department of Public Schools,29,364148,O-COPS-2027-172808,baseline_top,7,5,education|parent|safe|school|secure,
-Department of Public Schools,30,356053,FOR-FD-25-013,baseline_mid,275,1,education,
+agency,item_no,opp_id,opp_number,source_stratum,kw_rank,kw_score,kw_hits
+Department of Public Schools,1,334905,RANDENDEPSTEMFY22RFI,baseline_top,4,6,education|invest|learning|prepare|school|student
+Department of Public Schools,2,363210,RFA-HD-28-003,random_rest,464,1,phase
+Department of Public Schools,3,362827,OFH-2600-DC-021C,random_rest,444,1,education
+Department of Public Schools,4,357133,THEHAGUE-FY25-01,baseline_mid,290,1,prepare
+Department of Public Schools,5,361426,PAR-26-113,baseline_mid,411,1,environment
+Department of Public Schools,6,352810,PAR-24-128,baseline_mid,249,1,prepare
+Department of Public Schools,7,361604,26-507,baseline_top,2,7,education|educator|learning|phase|prepare|school|student
+Department of Public Schools,8,334326,21-595,baseline_top,3,6,education|educator|learning|prepare|student|transformative
+Department of Public Schools,9,357490,PAR-25-269,random_rest,103,2,optimize|phase
+Department of Public Schools,10,360368,PA-26-001,baseline_mid,371,1,parent
+Department of Public Schools,11,359120,PAS-TUNIS-FY2025,baseline_top,6,5,celebrate|education|learning|school|student
+Department of Public Schools,12,360613,PAR-27-055,random_rest,384,1,phase
+Department of Public Schools,13,355824,MP-CPI-25-001,random_rest,97,2,environment|healthy
+Department of Public Schools,14,334013,AFKIN-21-01,baseline_top,5,5,education|environment|learning|safe|school
+Department of Public Schools,15,363857,RFA-RM-28-014,random_rest,548,1,healthy
+Department of Public Schools,16,358833,PA-25-424,baseline_mid,330,1,parent
+Department of Public Schools,17,363474,RFA-RM-28-006,random_rest,158,2,phase|transformative
+Department of Public Schools,18,332138,EDA-PHI-TA-PRO-2021-2006851,baseline_mid,209,1,education
+Department of Public Schools,19,358816,PAR-25-439,random_rest,326,1,school
+Department of Public Schools,20,344124,23-510,baseline_top,1,7,education|environment|invest|learning|prepare|student|transformative
+Department of Environmental Quality,1,331311,95332421K0004,baseline_top,5,20,assistance|decision|engage|engagement|exceed|general|government|implementing|investment|leader|long|making|meet|partnership|policy|process|providing|requirement|stakeholder|term
+Department of Environmental Quality,2,363572,PA-28-049,random_rest,1523,0,""
+Department of Environmental Quality,3,347679,23-580,baseline_mid,486,5,implementation|infrastructure|meet|resource|science
+Department of Environmental Quality,4,364013,PAS-28-073,random_rest,789,4,implementation|innovation|setting|treatment
+Department of Environmental Quality,5,364165,FA955027S0002,random_rest,801,4,collaborative|effort|resource|science
+Department of Environmental Quality,6,363670,HT942526BCRPBTA122,random_rest,1388,1,science
+Department of Environmental Quality,7,364135,DE-FOA-0003631,baseline_top,3,22,assistance|better|chemical|create|effort|environment|environmental|innovation|investment|long|natural|prevent|processe|protection|recovery|resource|restoration|science|solution|technical|term|treatment
+Department of Environmental Quality,8,357632,PAR-25-196,baseline_mid,870,3,engagement|government|science
+Department of Environmental Quality,9,357003,PAR-25-175,random_rest,1484,0,""
+Department of Environmental Quality,10,362857,HT942526JWMRPMMRDA,baseline_mid,582,5,accelerate|effort|health|meet|requirement
+Department of Environmental Quality,11,327185,DOS-USEU-PD-2020-002,baseline_top,1,23,active|agencie|assistance|decision|developing|environment|government|implementation|implementing|increase|involvement|meet|partnership|policie|policy|process|requirement|resource|standard|strategic|technical|term|transparency
+Department of Environmental Quality,12,334326,21-595,baseline_top,6,20,active|assistance|collaborative|create|developing|engage|engagement|health|implementation|increase|infrastructure|innovation|meet|natural|participation|partnership|science|stakeholder|strategic|term
+Department of Environmental Quality,13,350650,RFA-CE-18-000,random_rest,1464,0,""
+Department of Environmental Quality,14,358176,PAR-25-369,random_rest,1082,2,involvement|stakeholder
+Department of Environmental Quality,15,364136,DE-FOA-0003630,baseline_top,4,22,assistance|better|chemical|create|effort|environment|environmental|innovation|investment|long|natural|prevent|processe|protection|recovery|resource|restoration|science|solution|technical|term|treatment
+Department of Environmental Quality,16,363745,FA955026S0002,baseline_mid,966,3,general|investment|science
+Department of Environmental Quality,17,325599,AFPRA-20-04,baseline_top,2,22,agencie|assistance|businesse|effort|environment|environmental|government|increase|innovation|investment|involvement|leader|long|natural|process|protection|requirement|resident|resilience|resource|standard|term
+Department of Environmental Quality,18,363532,HRSA-27-027,baseline_mid,774,4,assistance|health|innovation|technical
+Department of Environmental Quality,19,359325,23-589,random_rest,161,9,developing|effort|engage|engagement|infrastructure|involvement|resource|science|technical
+Department of Environmental Quality,20,357204,PAR-25-095,baseline_mid,678,4,environmental|health|resource|treatment
+Department of Health and Human Services,1,361534,RFA-CA-26-011,baseline_mid,770,4,data|health|outcome|resource
+Department of Health and Human Services,2,362014,HSG-2600-DC-0033,random_rest,333,7,affordable|comprehensive|familie|individual|resource|sustainable|training
+Department of Health and Human Services,3,363148,PDR-2600-DC-0079,random_rest,1367,1,cost
+Department of Health and Human Services,4,364127,RFA-HD-28-002,baseline_top,3,21,access|care|complex|comprehensive|continuou|cost|critical|data|delivery|develop|drive|effective|efficient|health|high|individual|outcome|person|resource|strategie|workforce
+Department of Health and Human Services,5,363398,CDC-RFA-CE-27-0039,baseline_top,6,18,access|address|continuou|coordination|data|factor|health|high|improvement|outcome|partner|partnership|priority|quality|resource|strategic|strategie|strengthening
+Department of Health and Human Services,6,361205,RFA-DA-27-011,random_rest,764,4,complex|high|innovative|partner
+Department of Health and Human Services,7,334905,RANDENDEPSTEMFY22RFI,baseline_top,2,22,access|accessible|address|career|cost|critical|develop|ecosystem|effective|improvement|individual|leveraging|outcome|partner|partnership|priority|promote|rural|strategic|talent|training|workforce
+Department of Health and Human Services,8,334326,21-595,baseline_top,1,27,address|attract|behavioral|career|comprehensive|cost|critical|data|delivering|health|high|improvement|individual|innovative|manage|modernizing|partner|partnership|promote|quality|retain|stakeholder|strategic|strengthening|training|well|workforce
+Department of Health and Human Services,9,360926,RFA-ES-26-004,baseline_mid,961,3,address|health|training
+Department of Health and Human Services,10,360543,PAR-27-072,random_rest,1497,0,""
+Department of Health and Human Services,11,348599,23-598,baseline_mid,866,3,improvement|justice|sustainable
+Department of Health and Human Services,12,351231,PDSITALYFY24,random_rest,29,14,ability|cost|develop|individual|organizational|outcome|partnership|priority|promote|quality|strategic|sustainable|well|whole
+Department of Health and Human Services,13,361249,26-504,baseline_mid,579,5,complex|data|develop|promote|training
+Department of Health and Human Services,14,327185,DOS-USEU-PD-2020-002,baseline_top,4,20,ability|access|address|comprehensive|cost|data|develop|individual|innovative|organizational|outcome|partner|partnership|promote|resource|strategic|sustainable|training|transparency|well
+Department of Health and Human Services,15,363225,DFOP0017180,random_rest,1371,1,innovative
+Department of Health and Human Services,16,331311,95332421K0004,baseline_top,5,19,access|address|attract|coordination|cost|deliver|delivery|develop|high|individual|organizational|outcome|partner|partnership|promote|reform|stakeholder|sustainable|training
+Department of Health and Human Services,17,363839,RFA-NS-28-002,baseline_mid,484,6,data|develop|effective|health|high|quality
+Department of Health and Human Services,18,344715,23-525,baseline_mid,675,4,data|individual|quality|well
+Department of Health and Human Services,19,fr:2026-19578,,random_rest,847,4,access|care|comprehensive|health
+Department of Health and Human Services,20,356925,PAR-25-211,random_rest,117,10,ability|address|data|develop|health|improvement|innovative|outcome|person|strategie
