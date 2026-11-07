@@ -9,3 +9,14 @@ Never modify files here. Contains no participant or patient data.
 | `organizer/Solve-a-thon-Presentation-Template.pptx` | Slide template | Organizers | 2026-11-06 | 13 slides, 6 minute talk |
 | `organizer/additional-tools-1.zip` and `organizer/additional-tools/` | Two plain-text diagram skills and sample outputs | Organizers | 2026-11-06 | Read only, nothing installed or run. Examples dated 2026-10-21 |
 | `agency_plans/` | 34 NC agency strategic plan PDFs, `MANIFEST.csv`, `README.md` | https://www.osbm.nc.gov/operational-excellence/strategic-planning/agency-strategic-plans | 2026-11-06 | 63 MB. Text extractability and plan years not yet checked |
+
+## Opportunity data pulls (Nov 6, 2026; cached under `data/cache/api/`, not in `raw/`)
+| Cache folder | Source | Key needed | Date | Notes |
+|---|---|---|---|---|
+| `grantsgov_extract/` | https://prod-grants-gov-chatbot.s3.amazonaws.com/extracts/GrantsDBExtract20261106v2.zip (linked from https://www.grants.gov/xml-extract) | no | 2026-11-06 | 75 MB zip, 307 MB XML, 83,693 records. Gitignored |
+| `grantsgov/`, `grantsgov_status/` | https://api.grants.gov/v1/api (search2, fetchOpportunity) | no | qualifier cache copied; status snapshot 2026-11-06 | `grantsgov/` is about 58 MB: decide before committing |
+| `simpler/` | https://api.simpler.grants.gov/v1/opportunities/search | yes (`SIMPLER_GRANTS_KEY`) | 2026-11-06 | 1,471 records. Key is never written to cache |
+| `federalregister/` | https://www.federalregister.gov/api/v1/documents.json | no | 2026-11-06 | Notices, last 12 months, 3 search phrases |
+| `usaspending/` | https://api.usaspending.gov/api/v2/search/spending_by_award/ | no | 2026-11-06 | NC government recipients, award types 02-05, FY2022-2026, 10,000 awards |
+| not pulled | SAM.gov Assistance Listings API; transportation.gov grants page | SAM key | | SAM pages 10 listings per call (2,873 listings); transportation.gov blocks scripted access (403) |
+

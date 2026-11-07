@@ -49,15 +49,21 @@ profile_data <- function(df) {
 # Every response is written to data/cache/api/<key>.<ext> (plus a .accessed stamp) and
 # read from there on every later call, so a rerun never re-queries and never changes.
 cached_fetch <- function(url, query = NULL, parse = c("json", "text", "raw"),
-                         dir = DIR_CACHE_API, key = NULL, force = FALSE) {
+                         dir = DIR_CACHE_API, key = NULL, force = FALSE,
+                         body = NULL, headers = NULL) {
   parse <- match.arg(parse)
   dir.create(dir, showWarnings = FALSE, recursive = TRUE)
-  key <- key %||% digest::digest(list(url, query), algo = "sha256")
+  # body (a list) makes this a JSON POST and is part of the cache key. headers (for API
+  # keys) are NOT part of the key and are never written to disk.
+  key <- key %||% digest::digest(list(url, query, body), algo = "sha256")
   path <- file.path(dir, paste0(key, ".", if (parse == "json") "json" else "bin"))
   if (force || !file.exists(path)) {
     req <- httr2::request(url) |> httr2::req_user_agent("SolveAThon2026-student-team") |>
       httr2::req_retry(max_tries = 3)
     if (length(query)) req <- httr2::req_url_query(req, !!!query)
+    if (length(headers)) req <- httr2::req_headers(req, !!!headers)
+    if (!is.null(body)) req <- httr2::req_body_json(req, body, auto_unbox = TRUE)
+    if (exists("API_SLEEP_SEC")) Sys.sleep(API_SLEEP_SEC)
     resp <- httr2::req_perform(req)
     writeBin(httr2::resp_body_raw(resp), path)
     writeLines(format(Sys.time(), "%Y-%m-%dT%H:%M:%S%z"), paste0(path, ".accessed"))

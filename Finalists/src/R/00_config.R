@@ -55,6 +55,22 @@ TOOL_HTML_OUT <- file.path(DIR_OUTS, "criteria_tool.html")
 TOOL_MAX_BYTES <- 25 * 1024^2
 
 # =============================================================================
+# Opportunity sources (data setup). Keys are read from .Renviron only, never written here.
+# =============================================================================
+DIR_CACHE_GRANTS   <- here("data", "cache", "api", "grantsgov")
+DIR_CACHE_EXTRACT  <- here("data", "cache", "api", "grantsgov_extract")
+CLOSED_SINCE       <- as.Date("2024-11-06")   # keep closed/archived items closing on or after this
+USA_FY             <- 2022:2026               # USAspending fiscal years for the "won before" signal
+API_SLEEP_SEC      <- 0.4                     # politeness delay before each uncached call
+GRANTSGOV_API_BASE <- "https://api.grants.gov/v1/api"
+GRANTSGOV_EXTRACT_PAGE <- "https://www.grants.gov/xml-extract"   # confirm the live file URL here
+USASPENDING_BASE   <- "https://api.usaspending.gov/api/v2"
+FR_API_BASE        <- "https://www.federalregister.gov/api/v1"
+SIMPLER_BASE       <- "https://api.simpler.grants.gov"      # key: SIMPLER_GRANTS_KEY
+SAM_AL_BASE        <- "https://api.sam.gov/assistance-listings/v1"  # key: SAM_API_KEY
+USDOT_GRANTS_URL   <- "https://www.transportation.gov/grants"        # [uncertain] verify page before scraping
+
+# =============================================================================
 # Tool controls
 # =============================================================================
 WEIGHT_RANGE <- c(0, 3)
