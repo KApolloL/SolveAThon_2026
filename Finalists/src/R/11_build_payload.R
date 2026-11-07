@@ -66,13 +66,13 @@ rows <- sel |>
   left_join(o, by = "opp_id") |>
   arrange(agency_id, is.na(rank), !in_top10, rank, opp_id) |>
   transmute(
-    agency_id, opp_id, opp_number, title, status,
+    agency_id, opp_id, opp_number, title = clean_text(title), status,
     close_date = na_if(close_date, ""), days_left = as.integer(days_left), date_note = na_if(date_note, ""),
     fit_score = round(as.numeric(fit), 4), rank, in_top10,
-    eligibility, elig_source = na_if(elig_source, ""), elig_quote = na_if(elig_quote, ""),
+    eligibility, elig_source = na_if(elig_source, ""), elig_quote = na_if(clean_text(elig_quote), ""),
     reader_label = NA_character_, reader_quote = NA_character_,
-    map_note = na_if(map_note, ""), goal_id = na_if(goal_id, ""), goal_snippet = na_if(goal_snippet, ""),
-    opp_snippet = str_sub(str_squish(summary), 1, SNIPPET_CHARS),
+    map_note = na_if(map_note, ""), goal_id = na_if(goal_id, ""), goal_snippet = na_if(clean_text(goal_snippet), ""),
+    opp_snippet = str_sub(clean_text(summary), 1, SNIPPET_CHARS),
     cfda_list, award_ceiling = as.numeric(award_ceiling),
     signature_tier = "unknown", tier_source = NA_character_,
     nc_won_before = as.logical(nc_won_before), url)
