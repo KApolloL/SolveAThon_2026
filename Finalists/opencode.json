@@ -9,7 +9,7 @@
       "git status*": "allow",
       "git diff*": "allow",
       "git log*": "allow",
-      "git push*": "deny",
+      "git push*": "allow",
       "git merge*": "deny",
       "git rebase*": "deny",
       "git reset --hard*": "deny",
