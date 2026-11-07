@@ -31,3 +31,9 @@ To Kent: PRs for each script, the label check result as a three-line summary, an
 - Statutory authority column: yes, `Authorization (040)`. Kent's question is answered.
 - Open: handoff.md says 2,873 listings; the file has 2,875 rows. Not reconciled.
 - Not done: no entry in `data/raw/README.md` (not a file Noah owns). Kent to add the source note there if wanted.
+
+### Label check result (Noah and Matthew, 2026-11-07), model labels `evalpool-v3`
+Held-out set: 30 blind items (Justice, Agriculture and Consumer Services, Labor; 5 top plan-word matches + 5 random each; the 60 validate items excluded), labelled alone by Noah and Matthew. Full report and method: `drafts/claude/docs/holdout/label_check_result.md`.
+1. Catch share of hand "relevant" (model relevant or maybe): strict 0 of 1, lenient 3 of 6 (0.5). Far too few relevant items to trust either share.
+2. Kappa, relevant+maybe vs not relevant: strict 0.614 (22 items where the labelers agreed), lenient 0.444 (30 items).
+3. Gate (catch 0.80, kappa 0.60): FAIL in both readings. Labelers agree on 70% of items (kappa between them 0.32), so the hand labels are noisy too. These labels stay out of the 1:00 payload. Strict vs lenient is Kent's call. Model labels came from the `main` snapshot of 2026-11-07, not from this branch.
