@@ -7,6 +7,8 @@
 #   Hidden   the HIDDEN_N best-fitting items the eligibility filter hides (eligibility "no", rank null),
 #            so the tool can show its count and toggle. agencies[].n_hidden_ineligible is the full count
 #            (an addition to the contract).
+# signature_tier comes from cost share and award size (signature_tier() in helpers_rank.R); tier_reason says why.
+# rank_note (additive) is one plain sentence on how the fit score was reached. Neither enters fit or rank.
 # map_note (additive field) says why a hand-mapped program was lifted; null otherwise.
 # Unknown values are null, never 0. nc_won_before is shown only; it never enters fit or rank.
 # Run: Rscript R/11_build_payload.R
@@ -59,11 +61,14 @@ pick_rows <- function(a) {
 }
 sel <- bind_rows(lapply(active$agency_id, pick_rows))
 sel$rank <- as.integer(sel$rank)
+n_open <- table(items$agency_id[items$status != "forecasted" & items$eligibility != "no"])
 
 o <- opps[, c("opp_id", "summary", "cfda_list", "url", "nc_won_before")]
 rows <- sel |>
   left_join(items, by = c("agency_id", "opp_id")) |>
   left_join(o, by = "opp_id") |>
+  (\(d) bind_cols(d, signature_tier(d$cost_sharing, d$award_ceiling)))() |>
+  mutate(rank_note = rank_note(fit, rank, in_top10, map_note, as.logical(geo_other), n_open = as.integer(n_open[agency_id]))) |>
   arrange(agency_id, is.na(rank), !in_top10, rank, opp_id) |>
   transmute(
     agency_id, opp_id, opp_number, title = clean_text(title), status,
@@ -74,8 +79,18 @@ rows <- sel |>
     map_note = na_if(map_note, ""), goal_id = na_if(goal_id, ""), goal_snippet = na_if(clean_text(goal_snippet), ""),
     opp_snippet = str_sub(clean_text(summary), 1, SNIPPET_CHARS),
     cfda_list, award_ceiling = as.numeric(award_ceiling),
-    signature_tier = "unknown", tier_source = NA_character_,
+    signature_tier, tier_source, tier_reason, rank_note,
     nc_won_before = as.logical(nc_won_before), url)
+
+# Notice reader (30_notice_reader.R, advisory): fill reader_label and reader_quote when its output exists.
+# Labels without a verified quote are already "unclear" there; skipped items stay null. Never changes rank or tier.
+if (file.exists(NOTICE_READER_CSV)) {
+  rd <- read_csv(NOTICE_READER_CSV, show_col_types = FALSE, col_types = chr) |> distinct(opp_id, .keep_all = TRUE)
+  i <- match(rows$opp_id, rd$opp_id)
+  rows$reader_label <- na_if(rd$reader_label[i], "")
+  rows$reader_quote <- na_if(clean_text(rd$reader_quote[i]), "")
+  message("Notice reader: ", sum(!is.na(rows$reader_label)), " rows labeled from ", basename(NOTICE_READER_CSV))
+}
 
 # Closing soon: open Top 10 rows with CLOSING_SOON_DAYS or fewer days left (the tool's panel reads days_left itself;
 # this count lets it show a badge without scanning).

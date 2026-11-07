@@ -34,3 +34,19 @@ Need from you: re-check the match board "All NC" reorder by hand and tell me exa
 Done: merged Marco's work (PR #59, replaces #58; tool now has County map, capability panel, Refine panel, OSBM overview). Merged your drafts, review and board lines (N8 to N10) in this PR; to-kent.md unchanged. Facts 29 of 29, tests 79 of 80.
 Need from you: re-check the "All NC" match board reorder by hand and say exactly what you clicked. Report which label agencies finish by 5:30 pm.
 Next: merge N2 label files when pushed on claude/noah-labels.
+
+## 2026-11-07 kent/sat-backtest
+Done: original award backtest bar failed (DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11) and is recorded as evidence. Added v2 (exploratory): full-pool denominator, Top 10/20/50, 18 agencies. Top 10 reaches 57 of 157 won programs (36%) vs 17% deadline sort, 13% random. Facts 36 of 36, tests 83 of 83.
+Need from you: confirm the 15 new exact-name agency rows in `Finalists/data/manual/agency_award_map.csv` (DNCR older names least sure). Do not quote v2 as the pre-set bar.
+Next: step 2, ranking improvement with a leave-one-program-out holdout, labeled tuned-after-results.
+
+## 2026-11-07 kent/sat-tune
+Done: step 2 tuning with held-out agencies is a null result. No text setting beat the current one on both held-out folds; nothing changed in the pipeline. Centering across agencies is worth 17 programs of 157 (57 vs 40). Facts f37 to f39.
+Need from you: nothing. Do not quote tuning numbers as a pass of the pre-set bar.
+Next: embeddings are the untested lever, blocked on Azure (Marco's machine).
+
+## 2026-11-07 kent/sat-merge3
+Done: merged your N11 and N12 work (PR 68). Read your award map check and backtest-answer updates. A later diff of `claude/noah-work` against main is empty, so everything you pushed through 13:02 is on main.
+Answers: UNC campuses and the Commission on Volunteerism stay unmapped for now; the limits slide says award history covers 18 agencies and campuses apply for themselves. DNCR old names stay mapped as the same department, marked as an open check. Your DHHS ranks 1 to 4 NIH note: a research flag is not added; it goes in Q&A as a known limit.
+Need from you: nothing. Label report at 5:30 as planned.
+Next: Kent's Claude finishes the slide brief review.

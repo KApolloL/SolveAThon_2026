@@ -4,147 +4,398 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Federal Funds Matchmaker</title>
+<meta name="description" content="Ranks federal funding opportunities against each NC agency's strategic plan. A person makes every decision.">
+<meta name="theme-color" content="#14443a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* Tokens copied from the qualifier tool (QualifierChallenge/src/tool/styles.css). */
+/* Federal Funds Matchmaker: visual system (Sat Nov 7 UI pass).
+   Paper and ink, longleaf-pine primary, brick only for urgency. Public Sans (USWDS) throughout.
+   Signature element: the "deadline stub" on the left of every match. */
 :root {
   color-scheme: light;
-  --surface-0:#f2f3f0; --surface-2:#ffffff; --border:#d9dcd6;
-  --text-primary:#1e2226; --text-secondary:#4b5158; --text-muted:#737980;
-  --accent:#23408e; --accent-soft:#e3e8f4;
-  --good:#0c7a0c; --warn:#9a6700; --bad:#a63d2f; --bad-soft:#f6d9d3; --good-soft:#d8efd8; --warn-soft:#fbeccb; --on-warn-soft:#6b4700;
-  --radius:8px;
-  --font:"Franklin Gothic Book","Helvetica Neue",Arial,sans-serif;
+  --paper:#f6f7f5; --surface-0:#f6f7f5; --surface-2:#ffffff; --surface-3:#eef1ee;
+  --border:#d8ddd8; --rule:#e6e9e6;
+  --text-primary:#16232e; --text-secondary:#46525c; --text-muted:#66717a;
+  --accent:#1d5a4c; --accent-strong:#14443a; --accent-soft:#e2eee9; --on-accent:#ffffff;
+  --good:#1f6b2a; --good-soft:#dcefdf;
+  --warn:#8a5a00; --warn-soft:#fbefd2; --on-warn-soft:#6b4500;
+  --bad:#a93a22; --bad-soft:#f8e1da;
+  --stub:#f1f4f1; --stub-urgent:#fbe9e3;
+  --radius:10px; --radius-sm:6px;
+  --shadow:0 1px 2px rgba(22,35,46,.06), 0 2px 8px rgba(22,35,46,.04);
+  --font:"Public Sans","Helvetica Neue",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark) {
-  :root { color-scheme: dark;
-    --surface-0:#181b1f; --surface-2:#252a30; --border:#30353b;
-    --text-primary:#e7e8e4; --text-secondary:#b3b7b1; --text-muted:#a4a9a2; --bad-soft:#4a2620; --good-soft:#1f3a1f; --warn-soft:#4a3a14; --on-warn-soft:#f0c97a;
-    --accent:#93aef0; --accent-soft:#26304a; --good:#5fc15f; --warn:#d9a04a; --bad:#ee8d7d; }
+  :root:not([data-theme="light"]) { color-scheme: dark;
+    --paper:#111a1f; --surface-0:#111a1f; --surface-2:#18242a; --surface-3:#1f2d33;
+    --border:#2c3b42; --rule:#24333a;
+    --text-primary:#e8eeec; --text-secondary:#b7c2c0; --text-muted:#93a09e;
+    --accent:#7cc4ad; --accent-strong:#a3dac8; --accent-soft:#1d3a33; --on-accent:#0d1a16;
+    --good:#7fd08b; --good-soft:#1c3a22; --warn:#e5b45a; --warn-soft:#3d3015; --on-warn-soft:#f1cf8a;
+    --bad:#f0907a; --bad-soft:#40231c; --stub:#1d2a30; --stub-urgent:#3a2420;
+    --shadow:none; }
 }
-* { box-sizing: border-box; }
-body { margin:0; background:var(--surface-0); color:var(--text-primary); font:16px/1.45 var(--font); }
-header, main { max-width: 860px; margin: 0 auto; padding: 14px 16px; }
-h1 { font-size: 1.3rem; margin: 0; }
-.sub { color: var(--text-secondary); font-size: .9rem; }
-select { font: inherit; padding: 8px; min-width: 260px; max-width: 100%; }
-label { font-weight: 600; display:block; margin: 12px 0 4px; }
-.counts { margin: 14px 0; color: var(--text-secondary); }
-ol { list-style: none; padding: 0; margin: 0; }
-li.row { background: var(--surface-2); border:1px solid var(--border); border-radius: var(--radius);
-  padding: 12px 14px; margin-bottom: 10px; display: grid; grid-template-columns: 96px 1fr; gap: 12px; }
-.days { text-align: center; }
-.days b { display:block; font-size: 1.8rem; line-height: 1.1; color: var(--accent); }
-.days span { font-size: .8rem; color: var(--text-muted); }
-.days.none b { font-size: 1rem; }
-.title a { color: var(--accent); font-weight: 600; text-decoration: none; }
-.elig { display:inline-block; font-size:.8rem; font-weight:700; padding:1px 8px; border-radius: 10px; border:1px solid currentColor; margin-right:6px; }
-.elig.yes { color: var(--good); } .elig.ask { color: var(--warn); } .elig.no { color: var(--bad); }
-.act { margin-top: 8px; display:flex; gap:6px; flex-wrap:wrap; }
-.act button { font: inherit; font-size:.85rem; padding: 3px 10px; border:1px solid var(--border); border-radius: 14px; background: var(--surface-2); color: var(--text-primary); cursor: pointer; }
-.act button[aria-pressed="true"] { background: var(--accent); color: var(--surface-2); border-color: var(--accent); }
-.reason { color: var(--text-secondary); font-size: .92rem; margin-top: 4px; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-.panel { background: var(--surface-2); border:1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-top: 16px; }
-.panel summary { cursor: pointer; font-weight: 600; }
-.banner { background: var(--accent-soft); border-radius: var(--radius); padding: 8px 12px; margin: 10px 0; font-size:.9rem; }
-.reason.muted { color: var(--text-muted); font-style: italic; }
-.stub { background:#fde8c8; color:#5a3700; padding:6px 12px; text-align:center; font-weight:700; }
-@media (max-width: 520px) { li.row { grid-template-columns: 1fr; } .days { text-align:left; } }
-
-header { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:center; }
-header .spacer { flex:1; }
-header button, .tabs button, .toolbar button, .toolbar select { font: inherit; font-size:.9rem; padding:5px 12px; border:1px solid var(--border); border-radius:14px; background:var(--surface-2); color:var(--text-primary); cursor:pointer; }
-.tabs { display:flex; gap:6px; flex-wrap:wrap; margin:6px 0 4px; }
-.tabs button[aria-selected="true"] { background:var(--accent); color:var(--surface-2); border-color:var(--accent); }
+* { box-sizing:border-box; }
+html { scroll-padding-top:12px; -webkit-text-size-adjust:100%; }
+body { margin:0; background:var(--paper); color:var(--text-primary); font:16px/1.5 var(--font); font-feature-settings:"tnum" 0; }
 body.large { font-size:19px; }
-.tiles { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0 4px; }
-.tile { flex:1 1 130px; text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; cursor:pointer; font:inherit; color:var(--text-primary); }
-.tile b { display:block; font-size:1.5rem; line-height:1.1; color:var(--accent); }
-.tile span { font-size:.82rem; color:var(--text-secondary); }
-.tile[aria-pressed="true"] { outline:2px solid var(--accent); }
+a { color:var(--accent); text-underline-offset:2px; }
+h1, h2, h3, h4 { line-height:1.2; letter-spacing:-.01em; }
+[hidden] { display:none !important; }
+
+/* ---- top bar ---- */
+.appbar { background:var(--accent-strong); color:#fff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .appbar { background:#0b2a23; } }
+.appbar-in { max-width:1240px; margin:0 auto; padding:10px 20px; display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; }
+.brand { display:flex; align-items:center; gap:10px; min-width:0; }
+.brand svg { flex:none; }
+.brand h1 { font-size:1.08rem; font-weight:700; margin:0; letter-spacing:0; color:#fff; }
+.brand .for { font-size:.82rem; color:#cfe3dc; }
+.appbar .spacer { flex:1; }
+.fresh { display:inline-flex; align-items:center; gap:8px; font-size:.84rem; color:#e3f0eb; }
+.fresh .dot { width:8px; height:8px; border-radius:50%; background:#6fe0a8; box-shadow:0 0 0 3px rgba(111,224,168,.25); flex:none; }
+.appbar button { font:inherit; font-size:.86rem; color:#fff; background:transparent; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:6px 14px; cursor:pointer; min-height:36px; }
+.appbar button:hover { background:rgba(255,255,255,.1); }
+.appbar button[aria-pressed="true"] { background:#fff; color:var(--accent-strong); border-color:#fff; }
+.stub { background:var(--warn-soft); color:var(--on-warn-soft); padding:6px 12px; text-align:center; font-weight:700; }
+
+/* ---- page frame ---- */
+main { max-width:1240px; margin:0 auto; padding:0 20px 64px; }
+.tabs { display:flex; gap:2px; flex-wrap:wrap; margin:0 -4px; padding:10px 0 0; border-bottom:1px solid var(--border); }
+.tabs button { font:inherit; font-size:.95rem; font-weight:600; color:var(--text-secondary); background:none; border:none; border-bottom:3px solid transparent; padding:10px 12px 9px; cursor:pointer; border-radius:6px 6px 0 0; }
+.tabs button:hover { color:var(--text-primary); background:var(--surface-3); }
+.tabs button[aria-selected="true"] { color:var(--accent); border-bottom-color:var(--accent); }
+#more-tabs { display:contents; } #more-tabs[hidden] { display:none !important; }
+
+.steps { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:10px 16px; margin:16px 0 0; display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+.steps ol { display:flex; gap:8px 28px; flex-wrap:wrap; margin:0; padding:0; list-style:none; flex:1; counter-reset:s; }
+.steps li { font-size:.95rem; color:var(--text-secondary); display:flex; align-items:center; gap:8px; }
+.steps li b { display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; background:var(--accent-soft); color:var(--accent); font-size:.85rem; }
+.steps button { font:inherit; font-size:.9rem; background:none; border:1px solid var(--border); border-radius:999px; padding:6px 14px; cursor:pointer; color:var(--text-primary); }
+
+/* ---- picker hero ---- */
+.picker { padding:28px 0 6px; }
+.picker label { display:block; font-size:clamp(1.4rem, 1rem + 1.6vw, 2.1rem); font-weight:300; color:var(--text-secondary); margin:0 0 8px; letter-spacing:-.015em; }
+.picker .selwrap { position:relative; display:inline-block; max-width:100%; }
+.picker select { appearance:none; -webkit-appearance:none; font:inherit; font-size:clamp(1.4rem, 1rem + 1.6vw, 2.1rem); font-weight:700; letter-spacing:-.015em; color:var(--accent); background:transparent; border:none; border-bottom:3px solid var(--accent); border-radius:0; padding:2px 44px 4px 0; max-width:100%; min-width:min(520px, 100%); cursor:pointer; }
+.picker select:hover { border-bottom-color:var(--accent-strong); }
+.picker .selwrap::after { content:""; position:absolute; right:8px; top:50%; width:12px; height:12px; border-right:3px solid var(--accent); border-bottom:3px solid var(--accent); transform:translateY(-75%) rotate(45deg); pointer-events:none; }
+.picker select option { font-size:1rem; font-weight:400; color:var(--text-primary); }
+
+/* ---- welcome / evidence ---- */
+.welcome { margin:18px 0 8px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:20px; align-items:start; }
+.welcome .lede { font-size:1.12rem; color:var(--text-secondary); max-width:52ch; margin:0 0 14px; }
+.welcome .lede b { color:var(--text-primary); }
+.quick { display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 0; }
+.quick button { font:inherit; font-size:.92rem; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:8px 14px; cursor:pointer; color:var(--text-primary); }
+.quick button:hover { border-color:var(--accent); color:var(--accent); }
+.quick-h { font-size:.9rem; font-weight:600; color:var(--text-muted); margin:18px 0 4px; }
+.evidence { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); }
+.evidence h2 { font-size:1.05rem; margin:0 0 4px; }
+.evidence .q { color:var(--text-secondary); font-size:.93rem; margin:0 0 14px; max-width:60ch; }
+.bars { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+.bars li { display:grid; grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 5.6em; gap:10px; align-items:center; font-size:.92rem; }
+.bars .lab { color:var(--text-secondary); }
+.bars li.ours .lab { color:var(--text-primary); font-weight:700; }
+.bars .track { height:14px; background:var(--surface-3); border-radius:4px; overflow:hidden; }
+.bars .fill { height:100%; background:#9aa6a2; border-radius:0 4px 4px 0; }
+.bars li.ours .fill { background:var(--accent); }
+.bars .val { text-align:right; font-variant-numeric:tabular-nums; color:var(--text-primary); }
+.bars li.ours .val { font-weight:700; }
+.fails { margin:16px 0 0; padding:12px 14px; background:var(--warn-soft); color:var(--on-warn-soft); border-radius:var(--radius-sm); font-size:.9rem; }
+.fails b { display:block; margin-bottom:2px; }
+.src { color:var(--text-muted); font-size:.8rem; margin:10px 0 0; }
+
+/* ---- agency summary ---- */
+label { font-weight:600; display:block; margin:12px 0 4px; }
+select { font:inherit; padding:8px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface-2); color:var(--text-primary); max-width:100%; }
+.banner { background:var(--accent-soft); color:var(--text-primary); border-radius:var(--radius-sm); padding:8px 12px; margin:10px 0 0; font-size:.9rem; }
+.tiles { display:flex; gap:6px; flex-wrap:wrap; margin:18px 0 4px; }
+.tile { flex:0 1 auto; display:inline-flex; align-items:baseline; gap:8px; text-align:left; background:var(--surface-2); border:1px solid var(--border); border-radius:999px; padding:8px 16px; cursor:pointer; font:inherit; color:var(--text-secondary); }
+.tile b { font-size:1.05rem; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+.tile span { font-size:.9rem; }
+.tile:hover { border-color:var(--accent); }
+.tile[aria-pressed="true"] { background:var(--accent); border-color:var(--accent); color:var(--on-accent); }
+.tile[aria-pressed="true"] b { color:var(--on-accent); }
 .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0; }
-.toolbar label { margin:0; font-weight:600; display:inline; }
-.badge { display:inline-block; font-size:.78rem; font-weight:700; padding:1px 8px; border-radius:10px; margin-right:6px; background:var(--accent-soft); color:var(--accent); }
-.badge.urgent { background:var(--bad-soft); color:var(--bad); } .badge.new { background:var(--good-soft); color:var(--good); }
+.toolbar label { margin:0; font-weight:600; display:inline; font-size:.92rem; color:var(--text-secondary); }
+.toolbar button, .toolbar select { font:inherit; font-size:.9rem; padding:6px 14px; border:1px solid var(--border); border-radius:999px; background:var(--surface-2); color:var(--text-primary); cursor:pointer; }
+.toolbar button:hover { border-color:var(--accent); }
+.toolbar button[aria-pressed="true"] { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.list-h { font-size:1.15rem; margin:28px 0 0; }
+.counts { margin:10px 0 14px; color:var(--text-muted); font-size:.9rem; max-width:90ch; }
+
+/* ---- start here ---- */
+.start { margin:20px 0 10px; }
+.start h2 { margin:0 0 2px; font-size:1.35rem; }
+.start p.note { margin:0 0 12px; }
+
+/* ---- match row with deadline stub ---- */
+ol { list-style:none; padding:0; margin:0; }
+li.row { position:relative; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:10px; display:grid; grid-template-columns:112px minmax(0,1fr); box-shadow:var(--shadow); overflow:hidden; }
+li.row > div:last-child { padding:14px 18px 14px 18px; min-width:0; }
+.days { background:var(--stub); text-align:center; padding:16px 6px 12px; border-right:2px dashed var(--border); display:flex; flex-direction:column; align-items:center; justify-content:flex-start; position:relative; }
+.days::before, .days::after { content:""; position:absolute; right:-9px; width:16px; height:16px; border-radius:50%; background:var(--paper); border:1px solid var(--border); }
+.days::before { top:-9px; } .days::after { bottom:-9px; }
+.days b { display:block; font-size:2.5rem; line-height:1; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; letter-spacing:-.03em; }
+.days span { font-size:.78rem; color:var(--text-muted); margin-top:4px; }
+.days.urgent { background:var(--stub-urgent); }
 .days.urgent b { color:var(--bad); }
-details.drawer { margin-top:6px; font-size:.9rem; color:var(--text-secondary); }
-details.drawer summary { cursor:pointer; color:var(--accent); }
-details.drawer dl { margin:6px 0 0; display:grid; grid-template-columns:max-content 1fr; gap:2px 12px; }
-details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wrap:anywhere; }
-.board { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-.board ul { list-style:none; margin:0; padding:0; }
-.board li.item { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:8px 10px; margin-bottom:8px; cursor:pointer; font-size:.92rem; }
-.board li.item[aria-selected="true"] { outline:2px solid var(--accent); }
-.board li.item small { display:block; color:var(--text-muted); }
-.board h3 { margin:10px 0 6px; font-size:1rem; }
-.board textarea, .board input[type=text] { font:inherit; width:100%; padding:6px; margin:4px 0; }
-.fit { height:6px; background:var(--accent-soft); border-radius:3px; margin-top:4px; } .fit i { display:block; height:100%; background:var(--accent); border-radius:3px; }
-.prose p, .prose li { max-width:70ch; } .prose h2 { font-size:1.1rem; margin:18px 0 4px; }
-.note { color:var(--text-muted); font-size:.85rem; }
+.days.none b { font-size:.92rem; font-weight:600; line-height:1.25; color:var(--text-secondary); letter-spacing:0; }
+.title { font-size:1.06rem; line-height:1.35; font-weight:650; }
+.title a { color:var(--text-primary); text-decoration:none; font-weight:650; }
+.title a:hover { color:var(--accent); text-decoration:underline; }
+li.row .title + div { margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; }
+.elig, .badge { display:inline-flex; align-items:center; gap:6px; font-size:.8rem; font-weight:650; padding:3px 10px; border-radius:999px; white-space:nowrap; }
+.elig::before { content:""; width:7px; height:7px; border-radius:50%; background:currentColor; }
+.elig.yes { background:var(--good-soft); color:var(--good); }
+.elig.ask { background:var(--warn-soft); color:var(--on-warn-soft); }
+.elig.no { background:var(--bad-soft); color:var(--bad); }
+.badge { background:var(--accent-soft); color:var(--accent); }
+.badge.urgent { background:var(--bad); color:var(--surface-2); }
+.badge.new { background:var(--good-soft); color:var(--good); }
 .badge.warn { background:var(--warn-soft); color:var(--on-warn-soft); }
-.refine-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px 14px; margin:8px 0; }
-.refine-grid label { font-weight:400; font-size:.9rem; display:flex; flex-direction:column; gap:2px; }
-.refine-grid input[type=number], .refine-grid input[type=date], #scenario, .dsearch { font:inherit; padding:4px 6px; }
-.chips { margin:6px 0; } .chip { display:inline-block; font-size:.82rem; padding:2px 9px; border-radius:10px; margin:0 6px 4px 0; background:var(--accent-soft); color:var(--accent); }
+.whyfit { color:var(--text-secondary); font-size:.95rem; margin-top:10px; padding-left:12px; border-left:3px solid var(--accent-soft); max-width:75ch; }
+.whyfit b { color:var(--text-primary); font-weight:650; }
+.reason { color:var(--text-secondary); font-size:.93rem; margin-top:8px; }
+.reason.muted { color:var(--text-muted); font-style:italic; }
+.matched { color:var(--text-muted); font-size:.85rem; margin-top:6px; }
+.who { color:var(--text-secondary); font-size:.88rem; margin-top:4px; }
+details.drawer { margin-top:8px; font-size:.9rem; color:var(--text-secondary); }
+details.drawer summary { cursor:pointer; color:var(--accent); font-weight:600; list-style:none; display:inline-flex; align-items:center; gap:6px; min-height:36px; }
+details.drawer summary::-webkit-details-marker { display:none; }
+details.drawer summary::before { content:""; width:7px; height:7px; border-right:2px solid currentColor; border-bottom:2px solid currentColor; transform:rotate(-45deg); transition:transform .15s; }
+details.drawer[open] summary::before { transform:rotate(45deg); }
+details.drawer dl { margin:6px 0 0; display:grid; grid-template-columns:max-content minmax(0,1fr); gap:6px 16px; padding:12px 14px; background:var(--surface-3); border-radius:var(--radius-sm); }
+details.drawer dt { font-weight:650; color:var(--text-primary); } details.drawer dd { margin:0; overflow-wrap:anywhere; }
+.act { margin-top:10px; display:flex; gap:6px; flex-wrap:wrap; align-items:center; }
+.act button { font:inherit; font-size:.9rem; font-weight:600; padding:6px 16px; border:1px solid var(--border); border-radius:999px; background:var(--surface-2); color:var(--text-primary); cursor:pointer; transition:background .12s, border-color .12s; }
+.act button:hover { border-color:var(--text-secondary); }
+.act button.primary { border-color:var(--accent); color:var(--accent); }
+.act button[aria-pressed="true"] { background:var(--text-primary); color:var(--surface-2); border-color:var(--text-primary); }
+.act button.primary[aria-pressed="true"] { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.act button.printbtn { margin-left:auto; border-style:dashed; color:var(--text-secondary); font-weight:500; }
+
+/* ---- panels ---- */
+.panel { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 16px; margin-top:12px; }
+.panel summary { cursor:pointer; font-weight:650; min-height:36px; display:flex; align-items:center; }
+.panel h4 { margin:16px 0 6px; font-size:.95rem; }
+.note { color:var(--text-muted); font-size:.88rem; }
+.help { font-size:.9rem; }
+dl.gloss { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:8px 16px; font-size:.92rem; } dl.gloss dt { font-weight:700; } dl.gloss dd { margin:0; color:var(--text-secondary); }
+.refine-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px 16px; margin:8px 0; }
+.refine-grid label { font-weight:400; font-size:.9rem; display:flex; flex-direction:column; gap:4px; }
+.refine-grid input, #scenario, .dsearch { font:inherit; padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); background:var(--surface-2); color:var(--text-primary); }
+.chips { margin:8px 0; } .chip { display:inline-block; font-size:.82rem; padding:3px 10px; border-radius:999px; margin:0 6px 4px 0; background:var(--accent-soft); color:var(--accent); }
 .chip.ignored { background:var(--surface-2); color:var(--text-muted); border:1px dashed var(--border); }
-.wrow { display:grid; grid-template-columns:1fr 150px 2.2em; gap:8px; align-items:center; font-size:.88rem; margin:3px 0; }
-.dsearch { width:100%; box-sizing:border-box; margin:6px 0; }
-.matched { color:var(--text-muted); font-size:.85rem; margin-top:2px; }
-@media (max-width: 700px) { .board { grid-template-columns:1fr; } }
-/* accessibility pass: targets, focus, motion, skip link */
-html { scroll-padding-top: 12px; }
-a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
-button, select, summary, input[type=checkbox] { min-height:44px; }
-input[type=text], input[type=search], input[type=number], input[type=date] { min-height:44px; }
-input[type=checkbox] { min-width:24px; }
-summary { display:flex; align-items:center; }
-.act button { min-height:44px; padding:6px 14px; }
-.badge, .elig, .chip { white-space:nowrap; }
-.skip { position:absolute; left:-999px; top:0; background:var(--accent); color:var(--surface-2); padding:10px 14px; z-index:10; }
+.wrow { display:grid; grid-template-columns:minmax(0,1fr) 150px 2.2em; gap:8px; align-items:center; font-size:.88rem; margin:4px 0; }
+.wrow input[type=range] { accent-color:var(--accent); }
+.dsearch { width:100%; margin:8px 0; }
+.brief { width:100%; min-height:7em; font:inherit; font-size:.9rem; margin-top:8px; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; background:var(--surface-3); color:var(--text-primary); }
+input[type=checkbox] { accent-color:var(--accent); width:20px; height:20px; vertical-align:middle; margin-right:6px; }
+
+/* ---- board, map, OSBM, how ---- */
+.board { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.board ul { list-style:none; margin:0; padding:0; }
+.board li.item { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px; margin-bottom:8px; cursor:pointer; font-size:.92rem; }
+.board li.item:hover { border-color:var(--accent); }
+.board li.item[aria-selected="true"] { outline:2px solid var(--accent); }
+.board li.item small { display:block; color:var(--text-muted); margin-top:2px; }
+.board h3 { margin:16px 0 8px; font-size:1rem; }
+.board textarea, .board input[type=text] { font:inherit; width:100%; padding:8px 10px; margin:4px 0; border:1px solid var(--border); border-radius:var(--radius-sm); }
+.board button { font:inherit; padding:6px 14px; border-radius:999px; border:1px solid var(--accent); color:var(--accent); background:var(--surface-2); cursor:pointer; }
+.fit { height:6px; background:var(--surface-3); border-radius:3px; margin-top:6px; } .fit i { display:block; height:100%; background:var(--accent); border-radius:3px; }
+.osbm-head { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin:14px 0; }
+.stat { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; }
+.stat b { display:block; font-size:1.7rem; color:var(--text-primary); line-height:1.1; font-variant-numeric:tabular-nums; } .stat span { font-size:.85rem; color:var(--text-secondary); }
+table.ag { width:100%; border-collapse:collapse; font-size:.92rem; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+table.ag caption { text-align:left; padding:6px 0; }
+table.ag th, table.ag td { padding:10px 12px; text-align:left; border-bottom:1px solid var(--rule); }
+table.ag th { font-size:.82rem; color:var(--text-secondary); background:var(--surface-3); } table.ag td.n, table.ag th.n { text-align:right; font-variant-numeric:tabular-nums; }
+table.ag tbody tr:hover { background:var(--surface-3); }
+table.ag button { font:inherit; background:none; border:none; color:var(--accent); text-decoration:underline; cursor:pointer; text-align:left; padding:0; min-height:0; }
+.tablewrap { overflow-x:auto; }
+#caps table { border-collapse:collapse; font-size:.88rem; width:100%; } #caps th, #caps td { border-bottom:1px solid var(--rule); padding:6px 8px; text-align:left; vertical-align:top; }
+.prose { max-width:72ch; } .prose p, .prose li { color:var(--text-secondary); } .prose h2 { font-size:1.15rem; margin:26px 0 6px; color:var(--text-primary); }
+.prose .evidence { margin-top:12px; max-width:none; }
+#v-board, #v-map, #v-osbm, #v-marks, #v-how { padding-top:18px; }
+#map-svg path { transition:fill-opacity .15s; } #map-svg path:hover, #map-svg path:focus { stroke:var(--text-primary); stroke-width:2; outline:none; }
+
+/* ---- desk panel (wide screens) ---- */
+#desk-panel { display:none; }
+@media (min-width: 1100px) {
+  #v-opps:not([hidden]) { display:grid; grid-template-columns:minmax(0,1fr) 390px; column-gap:28px; align-items:start; }
+  #v-opps > * { grid-column:1; }
+  #v-opps > #desk-panel { display:block; grid-column:2; grid-row:1 / span 40; position:sticky; top:16px; max-height:calc(100vh - 32px); overflow:auto; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin-top:28px; box-shadow:var(--shadow); }
+  #v-opps.nopick:not([hidden]) { display:block; } #v-opps.nopick > #desk-panel { display:none; }
+  #v-opps li.row[tabindex] { cursor:pointer; }
+  #v-opps li.row[tabindex]:hover { border-color:var(--text-muted); }
+  #v-opps li.row.desk-sel { outline:3px solid var(--accent); outline-offset:-1px; }
+  #desk-panel h2 { font-size:1.15rem; margin:0 0 8px; line-height:1.3; }
+  #desk-panel .days { border:none; background:none; align-items:flex-start; padding:10px 0; text-align:left; }
+  #desk-panel .days::before, #desk-panel .days::after { display:none; }
+  #desk-panel details.drawer { margin-top:12px; } #desk-panel details.drawer > summary { display:none; }
+  #desk-panel details.drawer dl { grid-template-columns:1fr; gap:2px; } #desk-panel details.drawer dt { margin-top:8px; font-size:.82rem; color:var(--text-muted); } #desk-panel details.drawer dt:first-child { margin-top:0; } #desk-panel details.drawer dd { color:var(--text-primary); }
+  #desk-panel .open { display:inline-flex; align-items:center; min-height:40px; padding:6px 16px; border-radius:999px; background:var(--accent); color:var(--on-accent); text-decoration:none; font-weight:600; font-size:.92rem; margin:4px 0 6px; }
+  #desk-panel .plan { font-size:.95rem; color:var(--text-secondary); border-left:3px solid var(--accent-soft); padding-left:12px; margin:8px 0 0; }
+  #desk-panel .act button.printbtn { margin-left:0; }
+  #desk-panel .empty { text-align:center; color:var(--text-muted); padding:40px 10px; }
+  #desk-panel .empty b { display:block; color:var(--text-primary); font-size:1rem; margin-bottom:4px; }
+}
+
+/* ---- accessibility ---- */
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible, textarea:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+.appbar button:focus-visible { outline-color:#fff; }
+.tabs button, .tile, .act button, .toolbar button, .toolbar select, .quick button, .steps button, input[type=text], input[type=search], input[type=number], input[type=date] { min-height:44px; }
+.skip { position:absolute; left:-999px; top:0; background:var(--accent); color:var(--on-accent); padding:10px 14px; z-index:10; }
 .skip:focus { left:8px; top:8px; }
 @media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
-.osbm-head { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin:10px 0; }
-.stat { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; }
-.stat b { display:block; font-size:1.5rem; color:var(--accent); line-height:1.1; } .stat span { font-size:.85rem; color:var(--text-secondary); }
-table.ag { width:100%; border-collapse:collapse; font-size:.92rem; background:var(--surface-2); border:1px solid var(--border); }
-table.ag th, table.ag td { padding:8px 10px; text-align:left; border-bottom:1px solid var(--border); }
-table.ag th { font-size:.82rem; color:var(--text-secondary); } table.ag td.n, table.ag th.n { text-align:right; font-variant-numeric:tabular-nums; }
-table.ag button { font:inherit; background:none; border:none; color:var(--accent); text-decoration:underline; cursor:pointer; text-align:left; padding:0; }
-.tablewrap { overflow-x:auto; }
+
+/* ---- small screens ---- */
+@media (max-width: 860px) { .welcome { grid-template-columns:1fr; } }
+@media (max-width: 700px) { .board { grid-template-columns:1fr; } }
+@media (max-width: 560px) {
+  .appbar-in, main { padding-left:16px; padding-right:16px; }
+  .brand .for, .fresh .txt-long { display:none; }
+  li.row { grid-template-columns:78px minmax(0,1fr); }
+  li.row > div:last-child { padding:12px 14px; }
+  .days b { font-size:1.8rem; }
+  .bars li { grid-template-columns:1fr 4.6em; } .bars .track { grid-column:1 / -1; grid-row:2; }
+  .act button.printbtn { margin-left:0; }
+  .appbar #large, .appbar #proj { display:none; }
+  .appbar-in { padding-top:8px; padding-bottom:8px; }
+  .tabs { flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; } .tabs::-webkit-scrollbar { display:none; } .tabs button { white-space:nowrap; flex:none; }
+  .picker { padding-top:20px; }
+  .picker label { font-size:1.15rem; }
+  .picker .selwrap { display:block; }
+  .picker select { font-size:1.2rem; min-width:0; width:100%; text-overflow:ellipsis; }
+  .elig, .badge { white-space:normal; }
+  .steps { padding:8px 12px; } .steps ol { gap:4px 16px; } .steps li { font-size:.88rem; }
+  details.drawer dl, dl.gloss { grid-template-columns:1fr; } details.drawer dt { margin-top:4px; }
+}
+
+/* ---- projector view: light, very large, best matches only ---- */
+#proj-exit { position:fixed; top:10px; right:10px; z-index:20; font:inherit; font-size:1rem; padding:10px 18px; border:2px solid var(--accent); border-radius:999px; background:var(--surface-2); color:var(--accent); cursor:pointer; }
+body.proj .appbar .for, body.proj .fresh, body.proj .tabs, body.proj #banner, body.proj #tiles, body.proj #toolbar, body.proj #counts, body.proj #top,
+body.proj #refine, body.proj #gloss, body.proj #caps, body.proj #coming, body.proj #hidden, body.proj #large, body.proj #proj,
+body.proj #stub, body.proj #steps, body.proj #welcome, body.proj .start .note, body.proj .start details.drawer, body.proj .start .act, body.proj .start .matched,
+body.proj .start .who, body.proj .start .badge { display:none !important; }
+body.proj #proj-exit { display:block !important; }
+body.proj #desk-panel { display:none !important; }
+@media (min-width: 1100px) { body.proj #v-opps:not([hidden]) { display:block; } }
+body.proj { font-size:24px; --paper:#ffffff; --surface-2:#ffffff; --text-primary:#0d1820; --text-secondary:#22303a; --text-muted:#3b4852; --border:#9aa6a2; color-scheme:light; background:#fff; color:#0d1820; }
+body.proj main, body.proj .appbar-in { max-width:1500px; }
+body.proj .picker label { font-size:1.3rem; }
+body.proj .start h2 { font-size:2rem; margin-bottom:14px; }
+body.proj .start li.row { grid-template-columns:220px minmax(0,1fr); border:2px solid var(--border); box-shadow:none; }
+body.proj .start .days b { font-size:5rem; } body.proj .start .days span { font-size:1.1rem; color:#22303a; }
+body.proj .start .days.none b { font-size:1.4rem; }
+body.proj .start .title { font-size:1.9rem; line-height:1.2; } body.proj .start .title a { color:#0d1820; font-weight:750; }
+body.proj .start .elig { font-size:1.1rem; padding:4px 16px; }
+body.proj .start .whyfit { font-size:1.3rem; color:#22303a; }
+@media (max-width: 700px) { body.proj .start li.row { grid-template-columns:1fr; } }
+
+/* ---- printable brief for a supervisor ---- */
+#print-sheet { display:none; }
+@media print {
+  body.printing > *:not(#print-sheet) { display:none !important; }
+  body.printing #print-sheet { display:block; color:#000; font:12pt/1.5 var(--font); max-width:none; }
+  #print-sheet h1 { font-size:18pt; margin:0 0 4pt; }
+  #print-sheet .ps-meta { color:#333; margin:0 0 14pt; font-size:10pt; }
+  #print-sheet .ps-days { font-size:28pt; font-weight:800; margin:0; }
+  #print-sheet dl { display:grid; grid-template-columns:max-content 1fr; gap:6pt 14pt; margin:12pt 0; }
+  #print-sheet dt { font-weight:700; } #print-sheet dd { margin:0; }
+  #print-sheet .ps-sign { margin-top:28pt; display:grid; grid-template-columns:1fr 1fr 1fr; gap:18pt; }
+  #print-sheet .ps-sign div { border-top:1px solid #000; padding-top:4pt; font-size:10pt; }
+  #print-sheet .ps-foot { margin-top:22pt; font-size:9pt; color:#444; }
+}
+</style>
+<style id="tour-css">
+/* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
+.tour-card { position:fixed; left:50%; bottom:16px; transform:translateX(-50%); width:min(460px, calc(100vw - 24px)); z-index:1000; background:var(--surface-2); color:var(--text-primary); border:2px solid var(--accent, #2d5a8a); border-radius:12px; padding:14px 16px; box-shadow:0 8px 28px rgba(0,0,0,.35); }
+.tour-card h2 { margin:0 0 4px; font-size:1.05rem; } .tour-card p { margin:0 0 10px; font-size:.95rem; line-height:1.4; }
+.tour-card .tour-nav { display:flex; gap:8px; align-items:center; } .tour-card .tour-nav .tour-count { flex:1; font-size:.85rem; color:var(--text-muted); }
+.tour-card button { font:inherit; padding:6px 12px; border-radius:8px; cursor:pointer; }
+.tour-hl { outline:3px solid #f2a900 !important; outline-offset:3px; border-radius:6px; position:relative; z-index:999; }
+#tour-open { margin-left:6px; }
+body.proj .tour-card { font-size:1.2rem; }
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to the list</a>
+<button type="button" id="proj-exit" hidden>Exit projector view</button>
 <div id="stub" class="stub" hidden>STUB DATA: not real opportunities</div>
-<header>
-  <div><h1>Federal Funds Matchmaker</h1><div class="sub" id="asof">Loading data...</div></div>
-  <div class="spacer"></div>
-  <button type="button" id="large" aria-pressed="false" title="Enlarge text for a projector">Larger text</button>
+<header class="appbar">
+  <div class="appbar-in">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="1" y="1" width="28" height="28" rx="7" fill="none" stroke="#cfe3dc" stroke-width="2"/><path d="M15 6 L22 15 H18 L23 22 H7 L12 15 H8 Z" fill="#fff"/><rect x="14" y="22" width="2" height="3" fill="#fff"/></svg>
+      <div><h1>Federal Funds Matchmaker</h1><div class="for">Federal grants ranked against each NC agency's own plan</div></div>
+    </div>
+    <div class="spacer"></div>
+    <span class="fresh" title="When the opportunity data was last refreshed"><span class="dot" aria-hidden="true"></span><span id="asof">Loading data...</span></span>
+    <button type="button" id="large" aria-pressed="false" title="Enlarge text">Larger text</button>
+    <button type="button" id="proj" aria-pressed="false" title="Show only the best matches in very large type (shortcut: p)">Projector view</button>
+  </div>
 </header>
 <main id="main" tabindex="-1">
   <div class="tabs" role="tablist" aria-label="Views">
     <button type="button" role="tab" id="tab-opps" aria-selected="true" data-tab="opps">Opportunities</button>
-    <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
-    <button type="button" role="tab" id="tab-map" aria-selected="false" data-tab="map">County map</button>
     <button type="button" role="tab" id="tab-osbm" aria-selected="false" data-tab="osbm">OSBM overview</button>
     <button type="button" role="tab" id="tab-marks" aria-selected="false" data-tab="marks">My decisions</button>
+    <button type="button" id="tab-more" aria-expanded="false" aria-controls="more-tabs">More ▾</button>
+    <span id="more-tabs" hidden>
+    <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
+    <button type="button" role="tab" id="tab-map" aria-selected="false" data-tab="map">County map</button>
     <button type="button" role="tab" id="tab-how" aria-selected="false" data-tab="how">How this works</button>
+    </span>
   </div>
 
+  <div id="steps" class="steps" hidden><ol><li><b>1.</b> Pick your agency</li><li><b>2.</b> Read "Start here"</li><li><b>3.</b> Mark Pursue, Maybe or Pass</li></ol><button type="button" id="steps-x">Got it</button></div>
+
   <section id="v-opps" role="tabpanel" aria-labelledby="tab-opps">
-    <label for="agency">Pick your agency</label>
-    <select id="agency" aria-label="Agency"><option value="">Choose an agency</option></select>
+    <aside id="desk-panel" role="region" aria-label="Opportunity details" aria-live="polite"></aside>
+    <div class="picker">
+      <label for="agency">Show federal funding for</label>
+      <span class="selwrap"><select id="agency"><option value="">choose your agency</option></select></span>
+    </div>
+    <div id="welcome" class="welcome">
+      <div>
+        <p class="lede" id="welcome-lede">Pick your agency. You get its best open federal grants, ranked against your own strategic plan, with days left to apply, whether a state agency can apply, and who has to sign.</p>
+        <p class="quick-h" id="quick-h" hidden>Or start with an agency that has grants closing soon</p>
+        <div class="quick" id="quick"></div>
+      </div>
+      <div id="evidence-home"></div>
+    </div>
     <div id="banner"></div>
+    <div id="start" class="start" hidden></div>
+    <h2 class="list-h" id="list-h" hidden>All matches for this agency</h2>
     <div class="tiles" id="tiles" hidden role="group" aria-label="Views of this agency's list"></div>
     <div class="toolbar" id="toolbar" hidden>
       <label for="order">Order by</label>
       <select id="order" aria-label="Order by"><option value="rank">Best match</option><option value="deadline">Soonest deadline</option><option value="priority">My plan priorities</option></select>
       <button type="button" id="csv">Export CSV</button>
+      <button type="button" id="gloss-open" class="help">What do these words mean?</button>
     </div>
     <p class="counts" id="counts" role="status"></p>
+    <p class="banner" id="learn-note" hidden></p>
     <ol id="top"></ol>
+    <details class="panel" id="gloss"><summary>Words used here</summary>
+      <dl class="gloss">
+        <dt>Best match</dt><dd>How many words a grant's title and summary share with your agency's plan goals. It is a keyword score, not a judgment of quality. Compare scores only inside one agency's list.</dd>
+        <dt>Your agency can apply</dt><dd>Federal applicant-type codes or a quoted line in the notice say state agencies are allowed.</dd>
+        <dt>Eligibility unclear</dt><dd>The applicant list is unclear. The notice's own words are shown under the title; read the notice (the link on the title) before spending time.</dd>
+        <dt>Who signs</dt><dd>Who has to approve an application: you can start now, your boss must sign, or leadership must sign. Shown only when the notice makes it clear.</dd>
+        <dt>Closing soon</dt><dd>14 days or fewer left to apply.</dd>
+        <dt>Coming up</dt><dd>Forecasts: the funder says it plans to post this. You cannot apply yet, but you can plan.</dd>
+        <dt>Rolling</dt><dd>No close date is listed. Check the notice for how long it stays open.</dd>
+        <dt>Pursue, Maybe, Pass</dt><dd>Your own marks, saved only in this browser. They do not send anything.</dd>
+      </dl>
+    </details>
     <details class="panel" id="refine" hidden><summary>Refine (optional)</summary>
       <label style="font-weight:400"><input type="checkbox" id="opt-forecast"> Also list forecasts (not open yet) in the main list</label>
       <label style="font-weight:400"><input type="checkbox" id="opt-hidden"> Also list items hidden as not eligible in the main list</label>
+      <label style="font-weight:400"><input type="checkbox" id="opt-learn"> Re-sort using my Pursue and Pass marks (this agency only, this browser only)</label>
       <p class="note">The list works with this closed. Everything here changes what is shown or how your own view is ordered; the stored keyword fit scores are never changed.</p>
       <h4>Describe your situation (optional)</h4>
       <input type="text" id="scenario" aria-label="Describe your situation" placeholder="e.g. need 6 weeks to apply, awards over $250k, include planning" style="width:100%;box-sizing:border-box">
@@ -158,6 +409,7 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
         <label>Usable runway, days (flag items closing sooner)<input type="number" id="k-run" min="0" step="1" placeholder="0 = off"></label>
         <label>Minimum award ceiling, $ (flag lower)<input type="number" id="k-min" min="0" step="1000" placeholder="0 = off"></label>
       </div>
+      <label style="font-weight:400"><input type="checkbox" id="k-res"> Hide awards that look research-led (guessed from title words like clinical trial, R01, NIH, EPSCoR; the ranking itself is unchanged)</label>
       <label style="font-weight:400"><input type="checkbox" id="k-hide"> Hide items that fail my runway or minimum award (unknown values are never hidden)</label>
       <h4>Plan goal priorities</h4>
       <p class="note">Weight 1 = as ranked. Moving a slider re-orders the loaded matches for this agency by keyword fit times your weight. Saved in this browser only.</p>
@@ -199,16 +451,52 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
 
   <section id="v-marks" role="tabpanel" aria-labelledby="tab-marks" hidden>
     <p class="note">Saved in this browser only. Nothing is sent anywhere.</p>
-    <div class="toolbar"><button type="button" id="marks-csv">Export decisions CSV</button><button type="button" id="marks-clear">Clear all</button></div>
-    <p class="counts" id="marks-count"></p><ol id="marks-list"></ol>
+    <div class="toolbar"><button type="button" id="marks-csv">Export decisions CSV</button><button type="button" id="marks-clear">Clear all</button><button type="button" id="marks-brief">Copy briefs for all Pursue items</button><button type="button" id="marks-ics">Download deadlines (.ics)</button></div>
+    <p class="note" id="marks-ics-msg" role="status"></p>
+    <textarea id="marks-brief-box" class="brief" readonly hidden aria-label="Briefs for all Pursue items"></textarea>
+    <p class="counts" id="marks-count"></p>
+    <p class="note" id="marks-loop" hidden></p>
+    <ol id="marks-list"></ol>
   </section>
 
   <section id="v-how" role="tabpanel" aria-labelledby="tab-how" hidden class="prose"></section>
 </main>
+<div id="print-sheet" aria-hidden="true"></div>
+<!-- Evidence shown on the home screen and in How this works. Every value is copied from
+     src/docs/fact_sheet.md (row numbers in "fact"); change them there first, then here.
+     TODO (Kent): move this block into payload.json at the next payload build. -->
+<script type="application/json" id="evidence-data">
+{
+  "agencies": { "value": 32, "fact": 2 },
+  "open_ranked": { "value": 1576, "fact": 3 },
+  "closing_soon_top10": { "value": 73, "fact": 17 },
+  "backtest": {
+    "fact": "26, 29, 31",
+    "won_programs": 159,
+    "question": "NC agencies later won 159 federal programs. Four weeks before each closed, how many were already in that agency's top 10?",
+    "rows": [
+      { "label": "This tool", "count": 58, "pct": 36.48, "ours": true },
+      { "label": "Newest-posted alert", "count": 34, "pct": 21.38, "note": "Stands in for the usual new-postings email; not measured with coordinators." },
+      { "label": "Soonest deadline first", "count": null, "pct": 17 },
+      { "label": "Ten picked at random", "count": null, "pct": 13.5, "note": "Exact expected value." }
+    ],
+    "fails": "Where it fails: 101 of the 159 won programs were not in the top 10. Reading the top 50 reaches 97 of 159 (61%). Keyword matching misses grants worded differently from the plan, and only 4 of 12 agencies clear our 50% bar.",
+    "source": "Award-history backtest, 12 agencies with 3 or more won programs, 4-week windows, Nov 2024 to Nov 2026. Exploratory."
+  }
+}
+</script>
 <script>
 (function () {
   var src = new URLSearchParams(location.search).get("payload") || "payload.json";
   var P = null, CSD = 14;
+  // "Re-sort using my marks" (opt-in, own view only). fit_score runs 0 to 1; neighbouring top-10 rows usually differ by 0.01 to 0.08.
+  var LEARN_BONUS = 0.02;      // added per word an unmarked row shares with this agency's Pursue rows
+  var LEARN_PENALTY = 0.02;    // subtracted per word it shares with this agency's Pass rows
+  var LEARN_MAX_WORDS = 3;     // at most this many words count each way, so the shift stays within +/- 0.06
+  var LEARN_MIN_LEN = 4;       // ignore words shorter than this
+  var LEARN_MAX_DOC_SHARE = 0.2; // ignore words found in more than this share of loaded titles and summaries (too common to say anything)
+  var LEARN_MIN_EACH = 3;      // the median-rank line in My decisions needs at least this many Pursue and this many Pass marks
+  var LEARN_STOP = {}; ("about above after again also applicant applicants application applications apply award awards before below cannot close could does each eligible entities entity federal fiscal from funding funds further grant grants have here include including information instructions more most must notice number only opportunity other please program programs project projects provide provided shall should some states their there these they this through under united upon what when where which while will within would year years date deadline january february march april june july august september october november december").split(" ").forEach(function (w) { LEARN_STOP[w] = 1; }); // notice boilerplate, not topic words
   function $(id) { return document.getElementById(id); }
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function safeUrl(u) { return /^https?:\/\//i.test(u || "") ? u : null; }
@@ -225,23 +513,82 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
   function saveMarks() { lsSet("ffm_marks_v1", marks); }
   function actions(r) {
     var box = el("div", "act"), key = r.agency_id + "|" + r.opp_id;
-    box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision");
+    box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision"); box.dataset.key = key;
     ["Pursue", "Maybe", "Pass"].forEach(function (name) {
-      var b = el("button", null, name); b.type = "button";
+      var b = el("button", name === "Pursue" ? "primary" : null, name); b.type = "button";
       b.setAttribute("aria-pressed", marks[key] === name ? "true" : "false");
       b.addEventListener("click", function () {
         if (marks[key] === name) delete marks[key]; else marks[key] = name;
         saveMarks();
-        Array.prototype.forEach.call(box.children, function (c) { c.setAttribute("aria-pressed", marks[key] === c.textContent ? "true" : "false"); });
+        Array.prototype.forEach.call(document.querySelectorAll(".act"), function (bx) { if (bx.dataset.key !== key) return; Array.prototype.forEach.call(bx.children, function (c) { c.setAttribute("aria-pressed", marks[key] === c.textContent ? "true" : "false"); }); });
         renderMarks();
       });
       box.appendChild(b);
     });
+    var pb = el("button", "printbtn", "Print brief for my supervisor"); pb.type = "button";
+    pb.title = "A one-page summary with deadline, eligibility, fit and a signature line";
+    pb.addEventListener("click", function () { printBrief(r); });
+    box.appendChild(pb);
     return box;
   }
 
+  // ---- one-page printable brief (for the supervisor or leader who has to sign) ----
+  function printBrief(r) {
+    var s = $("print-sheet"); s.innerHTML = "";
+    s.appendChild(el("p", "ps-meta", "Federal Funds Matchmaker · prepared " + new Date().toLocaleDateString() + " for " + agName(r.agency_id)));
+    s.appendChild(el("h1", null, r.title || r.opp_number || r.opp_id));
+    s.appendChild(el("p", "ps-days", r.days_left != null ? r.days_left + (r.days_left === 1 ? " day left" : " days left") + " (closes " + r.close_date + ")" : (r.date_note || "No close date listed")));
+    var dl = el("dl");
+    function add(k, v) { if (v == null || v === "") return; dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, String(v))); }
+    add("Can we apply?", ({ yes: "Yes, state agencies are allowed", no: "No", ask: "Not sure: read the notice before spending time" }[r.eligibility] || "Not sure: read the notice") + (r.elig_quote ? ' (notice: "' + r.elig_quote + '")' : ""));
+    add("Why it fits our plan", r.goal_snippet || "No plan goal matched");
+    add("Who has to sign", r.signature_tier && TIER[r.signature_tier] && r.signature_tier !== "unknown" ? TIER[r.signature_tier] + (r.tier_reason ? ". " + r.tier_reason : "") : "Not stated in the notice");
+    add("Award ceiling", r.award_ceiling != null ? "$" + Number(r.award_ceiling).toLocaleString() : "Not listed by the funder");
+    add("Opportunity number", r.opp_number);
+    add("Assistance listing", r.cfda_list);
+    add("Summary", r.opp_snippet);
+    add("Notice", safeUrl(r.url));
+    s.appendChild(dl);
+    var sign = el("div", "ps-sign"); ["Pursue / Pass", "Name", "Date"].forEach(function (t) { sign.appendChild(el("div", null, t)); }); s.appendChild(sign);
+    s.appendChild(el("p", "ps-foot", "Ranked by keyword fit between the notice and the agency's strategic plan. No AI model decides rank or eligibility. A person makes the decision."));
+    document.body.classList.add("printing");
+    var done = function () { document.body.classList.remove("printing"); window.removeEventListener("afterprint", done); };
+    window.addEventListener("afterprint", done);
+    window.print();
+    setTimeout(done, 1500);
+  }
+
+  // ---- evidence card (values from the #evidence-data block, copied from fact_sheet.md) ----
+  var EV = null; try { EV = JSON.parse($("evidence-data").textContent); } catch (e) { EV = null; }
+  function renderEvidence(box) {
+    box.innerHTML = ""; if (!EV || !EV.backtest) return;
+    var b = EV.backtest, card = el("section", "evidence"); card.setAttribute("aria-labelledby", box.id + "-h");
+    var h = el("h2", null, "Does the ranking work?"); h.id = box.id + "-h"; card.appendChild(h);
+    card.appendChild(el("p", "q", b.question));
+    var ul = el("ul", "bars"), mx = Math.max.apply(null, b.rows.map(function (x) { return x.pct; }));
+    b.rows.forEach(function (x) {
+      var li = el("li", x.ours ? "ours" : null), tr = el("div", "track"), f = el("div", "fill");
+      var pct = x.pct % 1 ? x.pct.toFixed(1) : String(Math.round(x.pct));
+      if (x.ours || x.label === "Newest-posted alert") pct = String(Math.round(x.pct));
+      f.style.width = (x.pct / mx * 100).toFixed(1) + "%"; tr.appendChild(f);
+      var tip = x.label + ": " + (x.count != null ? x.count + " of " + b.won_programs + " (" + pct + "%)" : pct + "% of " + b.won_programs) + (x.note ? ". " + x.note : "");
+      li.title = tip; tr.setAttribute("role", "img"); tr.setAttribute("aria-label", tip);
+      li.appendChild(el("span", "lab", x.label)); li.appendChild(tr); li.appendChild(el("span", "val", (x.count != null ? x.count + " · " : "") + pct + "%"));
+      ul.appendChild(li);
+    });
+    card.appendChild(ul);
+    var fl = el("p", "fails"); fl.appendChild(el("b", null, "Where it falls short")); fl.appendChild(document.createTextNode(b.fails.replace(/^Where it fails:\s*/, ""))); card.appendChild(fl);
+    card.appendChild(el("p", "src", b.source + " Alert baseline: " + b.rows[1].note + " Fact sheet rows " + b.fact + "."));
+    box.appendChild(card);
+  }
+  function fmtAsOf(s) {
+    var d = s ? new Date(s) : null; if (!d || isNaN(d)) return "Data as of " + (s || "unknown");
+    var when = d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    return "Data updated " + when + (/azurecontainerapps\.io$/.test(location.hostname) ? " · live on Azure" : "");
+  }
+
   // ---- row ----
-  var newIds = {};
+  var newIds = {}, newByAg = {}, newFirst = {};
   function daysBlock(r) {
     var d = el("div", "days");
     if (r.days_left == null) { d.className += " none"; d.appendChild(el("b", null, r.date_note || "No date listed")); }
@@ -260,17 +607,17 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     add("Eligibility rule", r.eligibility ? ELIG_WORDS[r.eligibility] + (r.elig_source ? " (from " + (SRC[r.elig_source] || r.elig_source) + ")" : "") : null);
     add("Quote behind it", r.elig_quote);
     add("Notice reader", r.reader_label ? r.reader_label + (r.reader_quote ? ": " + r.reader_quote : "") : null);
-    add("Signature needed", TIER[r.signature_tier] || "Unknown");
+    add("Signature needed", (TIER[r.signature_tier] || "Unknown") + (r.tier_reason ? ". " + r.tier_reason : " (the notice does not say whether cost share is required)"));
     add("Award ceiling", r.award_ceiling != null ? "$" + Number(r.award_ceiling).toLocaleString() : "not listed");
     add("Assistance listing", r.cfda_list);
     add("NC has won this program before", r.nc_won_before == null ? null : (r.nc_won_before ? "Yes (shown only; not part of the ranking)" : "No record"));
     add("Keyword fit", r.fit_score != null ? Math.round(Number(r.fit_score) * 100) + " of 100 (title and summary against the plan goals; compare only inside one agency's list)" : null);
-    add("Why it is ranked here", r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
+    add("Why it is ranked here", r.rank_note || r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
     add("Summary", r.opp_snippet);
     det.appendChild(dl); return det;
   }
   function rowEl(r) {
-    var li = el("li", "row"), body = el("div");
+    var li = el("li", "row"), body = el("div"); li.dataset.opp = r.opp_id; li.dataset.ag = r.agency_id;
     li.appendChild(daysBlock(r));
     var t = el("div", "title"), u = safeUrl(r.url);
     if (u) { var a = el("a", null, r.title || r.opp_number || r.opp_id); a.href = u; a.target = "_blank"; a.rel = "noopener"; t.appendChild(a); }
@@ -282,12 +629,14 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     if (r.status === "forecasted") meta.appendChild(el("span", "badge", "Not open yet"));
     failsK(r).forEach(function (m) { meta.appendChild(el("span", "badge warn", m)); });
     var e = r.eligibility || "ask";
-    meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), "Eligible: " + (ELIG[e] || "Ask")));
-    meta.appendChild(document.createTextNode(e === "ask" ? " check the notice" : " " + ELIG_WORDS[e]));
+    var PLAIN = { yes: "Your agency can apply", no: "Your agency cannot apply", ask: "Eligibility unclear: check the notice before you spend time" };
+    meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), PLAIN[e] || PLAIN.ask));
     body.appendChild(meta);
-    if (r.goal_snippet) { var rs = el("div", "reason", "Matches plan goal: " + r.goal_snippet); rs.title = r.goal_snippet; body.appendChild(rs); }
+    if (e === "ask" && r.elig_quote) { var eq = String(r.elig_quote).replace(/\s+/g, " "); body.appendChild(el("div", "reason muted", "The notice says: “" + (eq.length > 160 ? eq.slice(0, 157).replace(/\s+\S*$/, "") + "…" : eq) + "”")); }
+    if (r.goal_snippet) { var rs = el("div", "whyfit"); rs.appendChild(el("b", null, "Why it fits: ")); var gt = r.goal_snippet.replace(/^Goal\s*\d+\s*[–-]?\s*/i, ""); rs.appendChild(document.createTextNode(gt.length > 170 ? gt.slice(0, 167).replace(/\s+\S*$/, "") + "…" : gt)); rs.title = r.goal_snippet; body.appendChild(rs); }
     else body.appendChild(el("div", "reason muted", "No plan goal matched"));
-    var sw = sharedWords(r); if (sw.length) body.appendChild(el("div", "matched", "Words in common with the goal: " + sw.join(", ")));
+    var sw = sharedWords(r); if (sw.length) body.appendChild(el("div", "matched", "Words in common: " + sw.join(", ")));
+    if (r.signature_tier && r.signature_tier !== "unknown" && TIER[r.signature_tier]) body.appendChild(el("div", "who", "Who signs: " + TIER[r.signature_tier]));
     body.appendChild(drawer(r));
     body.appendChild(actions(r));
     li.appendChild(body); return li;
@@ -297,7 +646,9 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
   // ---- opportunities tab ----
 
   // ---- Refine: constraints, goal priorities, scenario text (display and own-view order only) ----
-  var K = lsGet("ffm_k_v1", { ref: "", run: 0, min: 0, hide: false });
+  var K = lsGet("ffm_k_v1", { ref: "", run: 0, min: 0, hide: false, res: false });
+  var RES_RE = /clinical trial|\bR\d\d\b|\bU\d\d\b|\bP\d\d\b|research (project|grant|award|infrastructure|enhancement|program)|\bPAR-|\bNIH\b|\bNSF\b|EPSCoR|scholarship|fellowship|\bSBIR\b|\bSTTR\b|career development|training grant/i;
+  function isResearch(r) { return RES_RE.test(r.title || ""); }
   var W = lsGet("ffm_w_v1", {});
   function saveK() { lsSet("ffm_k_v1", K); } function saveW() { lsSet("ffm_w_v1", W); }
   function applyRef() {
@@ -337,8 +688,8 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
       row.appendChild(lab); row.appendChild(rng); row.appendChild(val); box.appendChild(row);
     });
   }
-  function syncK() { $("k-ref").value = K.ref || ""; $("k-run").value = K.run || ""; $("k-min").value = K.min || ""; $("k-hide").checked = !!K.hide; }
-  function resetAll() { K = { ref: "", run: 0, min: 0, hide: false }; W = {}; saveK(); saveW(); syncK(); applyRef(); $("chips").innerHTML = ""; $("scenario").value = ""; cur.order = "rank"; $("order").value = "rank"; $("opt-forecast").checked = false; $("opt-hidden").checked = false; show(); }
+  function syncK() { $("k-ref").value = K.ref || ""; $("k-run").value = K.run || ""; $("k-min").value = K.min || ""; $("k-hide").checked = !!K.hide; $("k-res").checked = !!K.res; }
+  function resetAll() { K = { ref: "", run: 0, min: 0, hide: false, res: false }; W = {}; saveK(); saveW(); syncK(); applyRef(); $("chips").innerHTML = ""; $("scenario").value = ""; cur.order = "rank"; $("order").value = "rank"; $("opt-forecast").checked = false; $("opt-hidden").checked = false; learnOn = false; lsSet("ffm_learn_v1", false); $("opt-learn").checked = false; show(); }
   var PRESETS = [
     ["Deadline crunch", function () { K.run = 21; K.hide = false; cur.order = "deadline"; $("order").value = "deadline"; }],
     ["Big awards only", function () { K.min = 500000; K.hide = false; }],
@@ -366,38 +717,112 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     g.coming = mine.filter(function (r) { return r.status === "forecasted" && r.eligibility !== "no"; });
     g.hidden = mine.filter(function (r) { return r.eligibility === "no"; });
     g.top = open.filter(function (r) { return r.in_top10 && r.eligibility !== "no"; }).sort(function (a, b) { return a.rank - b.rank; });
-    g.soon = g.top.filter(function (r) { return r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; });
+    g.soon = open.filter(function (r) { return r.eligibility !== "no" && r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; }).sort(function (x, y) { return x.days_left - y.days_left; });
     g.ask = mine.filter(function (r) { return r.eligibility === "ask" && r.status !== "forecasted"; });
     g.fresh = mine.filter(function (r) { return newIds[r.opp_id] && r.eligibility !== "no"; });
     g.notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     return g;
   }
-  var TILES = [["top", "Top 10", "open, best match"], ["soon", "Closing soon", "14 days or fewer"], ["fresh", "New since last visit", "this browser"], ["ask", "Check eligibility", "applicant list unclear"], ["coming", "Coming up", "not open yet"]];
+  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "soonest first"], ["fresh", "New", "since your last visit"], ["ask", "Read the notice", "not sure we can apply"], ["coming", "Coming up", "not open yet"]];
   function listFor(g) {
     var rows = { top: g.top, soon: g.soon, fresh: g.fresh, ask: g.ask, coming: g.coming }[cur.tile] || g.top;
     if ($("opt-forecast").checked && cur.tile === "top") rows = rows.concat(g.coming);
     if ($("opt-hidden").checked && cur.tile === "top") rows = rows.concat(g.hidden);
     rows = rows.slice();
     if (K.hide) rows = rows.filter(function (r) { return !failsK(r).length; });
+    if (K.res) rows = rows.filter(function (r) { return !isResearch(r); });
     if (cur.order === "priority") rows.sort(function (a, b) { return (b.fit_score || 0) * wOf(b) - (a.fit_score || 0) * wOf(a); });
     if (cur.order === "deadline") rows.sort(function (a, b) { return (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left); });
-    return rows;
+    return learnSort(rows);
+  }
+
+  // ---- Learn from my marks: own-view re-sort only. Never hides rows, never changes payload numbers, tier or eligibility. ----
+  var learnOn = lsGet("ffm_learn_v1", false) === true;
+  var LEARN = { hints: {}, note: "" };
+  function learnWords(r) {
+    var s = {};
+    tokens((r.title || "") + " " + (r.opp_snippet || "")).forEach(function (w) {
+      if (w.length >= LEARN_MIN_LEN && !LEARN_STOP[w] && !/\d/.test(w) && (DF[w] || 0) <= LEARN_MAX_DOC_SHARE * NDOC) s[w] = 1; });
+    return s;
+  }
+  function learnModel(id) {
+    var pur = {}, pas = {}, np = 0, ns = 0;
+    P.rows.forEach(function (r) {
+      if (r.agency_id !== id) return;
+      var m = marks[id + "|" + r.opp_id], w;
+      if (m === "Pursue") { np++; w = learnWords(r); Object.keys(w).forEach(function (k) { pur[k] = 1; }); }
+      else if (m === "Pass") { ns++; w = learnWords(r); Object.keys(w).forEach(function (k) { pas[k] = 1; }); }
+    });
+    Object.keys(pur).forEach(function (k) { if (pas[k]) { delete pur[k]; delete pas[k]; } }); // a word in both says nothing
+    return { pur: pur, pas: pas, np: np, ns: ns };
+  }
+  function rarest(ws) { return ws.sort(function (x, y) { return (DF[x] || 1) - (DF[y] || 1); }).slice(0, LEARN_MAX_WORDS); }
+  function learnSort(rows) {
+    LEARN.hints = {}; LEARN.note = "";
+    if (!learnOn || !cur.id) return rows;
+    if (cur.order === "deadline") { LEARN.note = "Re-sort using your marks is on but paused while Order by is Soonest deadline. Choose Best match or My plan priorities to use it."; return rows; }
+    var L = learnModel(cur.id);
+    if (!L.np && !L.ns) { LEARN.note = "Re-sort using your marks is on, but you have no Pursue or Pass marks for this agency yet, so the order is unchanged."; return rows; }
+    var base = function (r) { return (r.fit_score || 0) * (cur.order === "priority" ? wOf(r) : 1); };
+    var info = rows.map(function (r, i) {
+      var k = r.agency_id + "|" + r.opp_id, up = [], down = [];
+      if (!marks[k]) Object.keys(learnWords(r)).forEach(function (w) { if (L.pur[w]) up.push(w); else if (L.pas[w]) down.push(w); });
+      up = rarest(up); down = rarest(down);
+      return { r: r, k: k, i: i, b: base(r), s: base(r) + LEARN_BONUS * up.length - LEARN_PENALTY * down.length, up: up, down: down };
+    });
+    var byBase = info.slice().sort(function (a, b) { return (b.b - a.b) || (a.i - b.i); });
+    var byLearn = info.slice().sort(function (a, b) { return (b.s - a.s) || (a.i - b.i); });
+    var was = {}; byBase.forEach(function (x, i) { was[x.k] = i; });
+    var moved = 0;
+    byLearn.forEach(function (x, i) {
+      var d = was[x.k] - i; if (!d) return;
+      moved++;
+      var net = x.s - x.b, why = [], step = (d > 0 ? "up " : "down ") + Math.abs(d) + (Math.abs(d) === 1 ? " place" : " places");
+      if (x.up.length) why.push("shares " + x.up.join(", ") + " with your Pursue marks");
+      if (x.down.length) why.push("shares " + x.down.join(", ") + " with your Pass marks");
+      LEARN.hints[x.k] = "Why moved: " + step + ((d > 0) === (net > 0) && net !== 0 ? " because it " + why.join(" and ") + "." :
+        " because " + (d > 0 ? "rows above it lost more from your Pass marks" : "rows below it gained more from your Pursue marks") + (why.length ? " (it " + why.join(" and ") + ")" : "") + ".");
+    });
+    LEARN.note = "Re-sorted using your " + L.np + " Pursue and " + L.ns + " Pass marks for this agency: unmarked rows move up a little for words shared with your Pursue rows and down for words shared with your Pass rows. " +
+      moved + (moved === 1 ? " row moved" : " rows moved") + ". Nothing is hidden, and fit scores, eligibility and who signs are unchanged. New marks count the next time the list redraws. This browser only; nothing is sent anywhere.";
+    return byLearn.map(function (x) { return x.r; });
+  }
+  function renderLearn() {
+    var n = $("learn-note"); n.hidden = !LEARN.note; n.textContent = LEARN.note;
+    Array.prototype.forEach.call($("top").children, function (li) {
+      var h = LEARN.hints[li.dataset.ag + "|" + li.dataset.opp], body = li.lastChild; if (!h || !body) return;
+      body.insertBefore(el("div", "matched", h), body.querySelector("details.drawer"));
+    });
   }
   function filt(rows, q) { q = String(q || "").toLowerCase().trim(); if (!q) return rows; return rows.filter(function (r) { return ((r.title || "") + " " + (r.opp_number || "") + " " + (r.goal_snippet || "")).toLowerCase().indexOf(q) >= 0; }); }
+
+  // ---- Start here: the three best open matches, one next step each ----
+  function renderStart(g, id) {
+    var box = $("start"); box.innerHTML = "";
+    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 1; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).slice(0, document.body.classList.contains("proj") ? 5 : 3);
+    box.hidden = (cur.tile !== "top" && !document.body.classList.contains("proj")) || !pick.length; if (box.hidden) return;
+    box.appendChild(el("h2", null, "Start here: your " + pick.length + " best open matches"));
+    var soon = g.soon.length;
+    box.appendChild(el("p", "note", "Ranked by how well each fits your agency's plan goals." + (soon ? " " + soon + " close within " + CSD + " days (see Closing soon)." : "") + " Mark Pursue to save one to My decisions."));
+    var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
+  }
   function show(keepW) {
     var id = cur.id, banner = $("banner"); banner.innerHTML = "";
     ["coming", "hidden", "refine", "caps"].forEach(function (k) { $(k).hidden = true; });
-    $("tiles").hidden = $("toolbar").hidden = !id;
-    if (!id) { $("top").innerHTML = ""; $("counts").textContent = "Pick an agency to see its top 10 open opportunities."; return; }
+    $("tiles").hidden = $("toolbar").hidden = $("list-h").hidden = !id; $("gloss").hidden = !id; if (!id) $("start").hidden = true;
+    $("welcome").hidden = !!id; $("v-opps").classList.toggle("nopick", !id);
+    try { var qs = new URLSearchParams(location.search); if (id) qs.set("agency", id); else qs.delete("agency"); var s = qs.toString(); history.replaceState(null, "", location.pathname + (s ? "?" + s : "") + location.hash); } catch (e) {}
+    if (!id) { $("top").innerHTML = ""; $("learn-note").hidden = true; $("counts").textContent = ""; return; }
     var ag = P.agencies.filter(function (a) { return a.agency_id === id; })[0];
     var seen = lsGet("ffm_seen_v1", {}), first = !seen[id];
-    newIds = {};
     var g0 = P.rows.filter(function (r) { return r.agency_id === id; });
-    if (!first) { var prev = {}; seen[id].forEach(function (x) { prev[x] = 1; }); g0.forEach(function (r) { if (!prev[r.opp_id]) newIds[r.opp_id] = 1; }); }
+    // decide New once per agency per page load, so redraws (tile clicks) keep the same answer
+    if (!newByAg[id]) { newByAg[id] = {}; if (!first) { var prev = {}; seen[id].forEach(function (x) { prev[x] = 1; }); g0.forEach(function (r) { if (!prev[r.opp_id]) newByAg[id][r.opp_id] = 1; }); } newFirst[id] = first; }
+    newIds = newByAg[id]; first = newFirst[id];
     var g = groups(id);
     if (ag && ag.plan_stale) banner.appendChild(el("div", "banner", "This agency's plan may be out of date. Treat matches with care."));
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
-    if (first) banner.appendChild(el("div", "banner", "First visit for this agency in this browser. Next time, anything added since will be marked New."));
+    if (first) banner.appendChild(el("div", "banner", "First visit here. Next time, anything added since will be marked New."));
     var tiles = $("tiles"); tiles.innerHTML = "";
     TILES.forEach(function (t) {
       var b = el("button", "tile"); b.type = "button"; b.setAttribute("aria-pressed", cur.tile === t[0] ? "true" : "false");
@@ -407,10 +832,12 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     var below = g.open.length - g.hidden.filter(function (r) { return r.status === "posted"; }).length - g.top.length;
     var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open opportunities among the best matches loaded";
     var shown = listFor(g);
-    $("counts").textContent = "Showing " + shown.length + " of " + ofText + " (" + TILES.filter(function (t) { return t[0] === cur.tile; })[0][1] + "). " +
-      ((ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length) + " hidden as not eligible, " + Math.max(0, below) + " ranked below the top 10, " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " not open yet" +
-      (g.notices ? ", " + g.notices + " notice" + (g.notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
-    fill($("top"), shown);
+    var nh = (ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length;
+    $("counts").textContent = "Showing " + shown.length + " " + TILES.filter(function (t) { return t[0] === cur.tile; })[0][1].toLowerCase() + " of " + ofText + ". " +
+      nh + " more are hidden because your agency cannot apply" + (g.coming.length ? "; " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " are not open yet" : "") +
+      (g.notices ? "; " + g.notices + " notice" + (g.notices === 1 ? " is" : "s are") + " not ranked" : "") + ".";
+    renderStart(g, id);
+    fill($("top"), shown); renderLearn();
     $("refine").hidden = false; renderCaps(cur.id); if (!keepW) renderWeights();
     if (cur.tile !== "coming" && g.coming.length && !$("opt-forecast").checked) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + g.coming.length; fill($("coming-l"), filt(g.coming, $("coming-q").value)); }
     if (g.hidden.length && !$("opt-hidden").checked) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + g.hidden.length; fill($("hidden-l"), filt(g.hidden, $("hidden-q").value)); }
@@ -420,10 +847,39 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
 
   // ---- CSV (cells starting with = + - @ get a leading apostrophe so spreadsheets do not run them) ----
   function csvCell(v) { var s = v == null ? "" : String(v); if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; return '"' + s.replace(/"/g, '""') + '"'; }
-  function download(name, rows) {
-    var blob = new Blob(["\ufeff" + rows.map(function (r) { return r.map(csvCell).join(","); }).join("\r\n")], { type: "text/csv" });
+  function saveFile(name, text, type) {
+    var blob = new Blob([text], { type: type });
     var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
     setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function download(name, rows) { saveFile(name, "\ufeff" + rows.map(function (r) { return r.map(csvCell).join(","); }).join("\r\n"), "text/csv"); }
+
+  // ---- calendar (.ics, RFC 5545): one all-day event per Pursue deadline, reminder closing_soon_days before ----
+  function icsEsc(s) { return String(s == null ? "" : s).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n"); }
+  var ENC = window.TextEncoder ? new TextEncoder() : null;
+  function icsFold(line) { // lines longer than 75 octets continue on the next line after a space
+    var out = [], cur = "", n = 0;
+    Array.from(line).forEach(function (ch) {
+      var b = ENC ? ENC.encode(ch).length : 1;
+      if (n + b > 75) { out.push(cur); cur = " "; n = 1; }
+      cur += ch; n += b;
+    });
+    out.push(cur); return out.join("\r\n");
+  }
+  function icsText(rows) {
+    var stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+    var L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//NC Solve-a-thon//Federal Funds Matchmaker//EN", "CALSCALE:GREGORIAN", "METHOD:PUBLISH"];
+    rows.forEach(function (r) {
+      var d = r.close_date, start = d.replace(/-/g, ""), nx = new Date(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10) + 1));
+      var end = nx.toISOString().slice(0, 10).replace(/-/g, ""), title = r.title || r.opp_number || String(r.opp_id), u = safeUrl(r.url);
+      var desc = title + "\nAgency: " + agName(r.agency_id) + "\nCloses: " + d + (r.opp_number ? "\nOpportunity number: " + r.opp_number : "") + (u ? "\nGrants.gov: " + u : "") + "\nFrom the Federal Funds Matchmaker. Check the notice for the exact closing time.";
+      L.push("BEGIN:VEVENT", "UID:" + icsEsc("ffm-" + r.agency_id + "-" + r.opp_id + "@federal-funds-matchmaker"), "DTSTAMP:" + stamp,
+        "DTSTART;VALUE=DATE:" + start, "DTEND;VALUE=DATE:" + end, "SUMMARY:" + icsEsc("Grant closes: " + title), "DESCRIPTION:" + icsEsc(desc));
+      if (u) L.push("URL:" + u);
+      L.push("TRANSP:TRANSPARENT", "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + icsEsc(CSD + " days until this grant closes: " + title), "TRIGGER:-P" + CSD + "D", "END:VALARM", "END:VEVENT");
+    });
+    L.push("END:VCALENDAR");
+    return L.map(icsFold).join("\r\n") + "\r\n";
   }
   var CSVH = ["agency", "rank", "title", "opportunity number", "status", "days left", "close date", "eligible", "eligibility rule", "plan goal matched", "award ceiling", "link", "your decision"];
   function csvRow(r) {
@@ -439,8 +895,37 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     var rows = keys.map(function (k) { return by[k]; }).filter(Boolean);
     var c = { Pursue: 0, Maybe: 0, Pass: 0 }; keys.forEach(function (k) { if (c[marks[k]] != null) c[marks[k]]++; });
     $("marks-count").textContent = rows.length ? "Pursue " + c.Pursue + " · Maybe " + c.Maybe + " · Pass " + c.Pass : "No decisions yet. Use Pursue, Maybe or Pass on a row.";
+    // measurable loop: where the user's own Pursue and Pass marks sit in our ranking (payload rank, 1 = best match for that agency)
+    function med(a) { a = a.slice().sort(function (x, y) { return x - y; }); var m = a.length >> 1; return a.length % 2 ? a[m] : (a[m - 1] + a[m]) / 2; }
+    var rk = { Pursue: [], Pass: [] };
+    rows.forEach(function (r) { var m = marks[r.agency_id + "|" + r.opp_id]; if (rk[m] && r.rank != null) rk[m].push(Number(r.rank)); });
+    var loop = $("marks-loop"), okLoop = rk.Pursue.length >= LEARN_MIN_EACH && rk.Pass.length >= LEARN_MIN_EACH;
+    loop.hidden = !okLoop;
+    loop.textContent = okLoop ? "Your Pursue marks sit at a median rank of " + med(rk.Pursue) + " in our list; your Pass marks at " + med(rk.Pass) +
+      ". Rank 1 is our best match for that agency, so a lower Pursue number than Pass number means our order agrees with you. Counted from your " +
+      rk.Pursue.length + " Pursue and " + rk.Pass.length + " Pass marks in this browser only; nothing is sent anywhere." : "";
     rows.sort(function (a, b) { var o = { Pursue: 0, Maybe: 1, Pass: 2 }; return o[marks[a.agency_id + "|" + a.opp_id]] - o[marks[b.agency_id + "|" + b.opp_id]]; });
-    rows.forEach(function (r) { list.appendChild(rowEl(r)); });
+    rows.forEach(function (r) {
+      var li = rowEl(r);
+      if (marks[r.agency_id + "|" + r.opp_id] === "Pursue") { var cb = el("button", null, "Copy one-page brief"); cb.type = "button"; cb.style.marginTop = "6px"; cb.addEventListener("click", function () { showBrief(li, briefText(r)); }); li.lastChild.appendChild(cb); }
+      list.appendChild(li);
+    });
+  }
+  function briefText(r) {
+    var ag = agName(r.agency_id), L = [r.title || r.opp_number || r.opp_id, "Agency: " + ag];
+    L.push("Closes: " + (r.close_date || r.date_note || "no date listed") + (r.days_left != null ? " (" + r.days_left + " days left)" : ""));
+    L.push("Can we apply: " + ({ yes: "Yes, state agencies are allowed", no: "No", ask: "Not sure, read the notice" }[r.eligibility] || "Not sure, read the notice") + (r.elig_quote ? " (notice says: " + r.elig_quote + ")" : ""));
+    if (r.goal_snippet) L.push("Why it fits: " + r.goal_snippet);
+    if (r.signature_tier && r.signature_tier !== "unknown" && TIER[r.signature_tier]) L.push("Who signs: " + TIER[r.signature_tier]);
+    if (r.award_ceiling != null) L.push("Award ceiling: $" + Number(r.award_ceiling).toLocaleString());
+    if (r.url) L.push("Notice: " + r.url);
+    L.push("Prepared from this tool's data; a person makes the decision.");
+    return L.join("\n");
+  }
+  function showBrief(li, text) {
+    var ta = li.querySelector("textarea.brief"); if (!ta) { ta = el("textarea", "brief"); ta.readOnly = true; ta.setAttribute("aria-label", "One-page brief"); li.lastChild.appendChild(ta); }
+    ta.value = text; ta.focus(); ta.select();
+    try { if (navigator.clipboard) navigator.clipboard.writeText(text); } catch (e) {}
   }
 
   // ---- match board: TF-IDF keyword fit (same function both directions) ----
@@ -527,9 +1012,13 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     h("What this is"); p("A list builder for an agency grant coordinator. It reads federal funding opportunities and ranks them against the agency's own strategic plan. A person makes every decision.");
     h("How the list is ranked"); p("Each opportunity is scored by keyword overlap between its title and summary and the agency's plan goals. No AI model decides rank. Award history is shown in the details but never changes the order.");
     h("Eligibility"); p("Yes, No or Ask comes from the applicant-type codes first, then fixed text rules. An item is hidden only when a code or quote says state agencies cannot apply. Anything unclear stays visible as Ask. Hidden items stay one click away.");
-    h("What is loaded right now"); p(n + " rows are loaded across " + P.agencies.length + " agencies: the best matches per agency, not every open opportunity. " + hid + " of these rows are marked not eligible. Data as of " + (P.data_as_of || "unknown") + ".");
+    h("What is loaded right now"); p(n + " rows are loaded across " + P.agencies.length + " agencies: the best matches per agency, not every open opportunity. " + hid + " of these rows are marked not eligible. " + fmtAsOf(P.data_as_of) + ".");
     h("Closing soon, New, and your decisions"); p("Closing soon means " + CSD + " days or fewer left. New since last visit and your Pursue, Maybe and Pass marks live only in this browser. Nothing is sent to a server or by email.");
-    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature tier is not set yet, so it reads Unknown. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
+    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature needed comes from two notice fields only, cost share and award size; it does not check whether the agency has the staff or capabilities, and it reads Unknown when the notice does not state cost share. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
+    h("How well it works"); var evb = el("div"); evb.id = "evidence-how"; v.appendChild(evb); renderEvidence(evb);
+    h("What it deliberately does not do"); var nd = el("ul");
+    ["Decide for you. It ranks and explains; a person marks Pursue, Maybe or Pass.", "Let an AI model set rank or eligibility. Model labels are advisory and must quote the notice.", "Use past awards to rank. Award history is shown for context only, so new programs are not buried.", "Send anything anywhere. Your marks stay in this browser.", "Check staff capacity or matching funds. The notices do not carry that, so it reads Unknown rather than guessing."].forEach(function (t) { nd.appendChild(el("li", null, t)); });
+    v.appendChild(nd);
     h("County map and capabilities"); p("The County map tab shows 18 public county measures from the qualifier round. The capability table appears for DHHS and DMVA only, the two agencies where we built it. Per-grant county reach, impact sliders and a scatter are not shown: the payload carries no county list per grant, and we do not guess one.");
   }
 
@@ -618,14 +1107,64 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     v.appendChild(bar);
   }
 
+  // ---- DESK: side details panel at >= 1100px (list left, panel right); below that nothing changes ----
+  var deskMQ = window.matchMedia ? window.matchMedia("(min-width: 1100px)") : { matches: false };
+  var deskSel = null;
+  function deskRowFor(li) {
+    var hit = P && P.rows.filter(function (r) { return r.agency_id === li.dataset.ag && String(r.opp_id) === li.dataset.opp; });
+    return hit && hit[0];
+  }
+  function deskClear() {
+    deskSel = null; var pn = $("desk-panel"); pn.innerHTML = "";
+    var em = el("div", "empty"); em.appendChild(el("b", null, "Select a grant to see the full record")); em.appendChild(document.createTextNode("Eligibility evidence, who signs, award size and why it ranks where it does.")); pn.appendChild(em);
+    Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row.desk-sel"), function (x) { x.classList.remove("desk-sel"); });
+  }
+  function deskSelect(li) {
+    var r = deskRowFor(li); if (!r) return;
+    deskClear(); deskSel = li; li.classList.add("desk-sel");
+    var pn = $("desk-panel"); pn.innerHTML = "";
+    pn.appendChild(el("h2", null, r.title || r.opp_number || r.opp_id));
+    var u = safeUrl(r.url); if (u) { var a = el("a", "open", "Open the notice on Grants.gov"); a.href = u; a.target = "_blank"; a.rel = "noopener"; pn.appendChild(a); }
+    pn.appendChild(daysBlock(r));
+    if (r.goal_snippet) { var pg = el("p", "plan"); pg.appendChild(el("b", null, "Plan goal it matches: ")); pg.appendChild(document.createTextNode(r.goal_snippet)); pn.appendChild(pg); }
+    var d = drawer(r); d.open = true; pn.appendChild(d);
+    var act = actions(r); pn.appendChild(act);
+  }
+  function deskMark() {
+    if (!deskMQ.matches) return;
+    Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row:not([tabindex])"), function (li) { li.tabIndex = 0; });
+  }
+  (function () {
+    var root = $("v-opps");
+    new MutationObserver(deskMark).observe(root, { childList: true, subtree: true });
+    root.addEventListener("click", function (e) {
+      if (!deskMQ.matches) return; var li = e.target.closest && e.target.closest("li.row"); if (!li || e.target.closest("a, button, summary, input, select, details")) return; deskSelect(li);
+    });
+    root.addEventListener("keydown", function (e) {
+      if (!deskMQ.matches) return;
+      if (e.key === "Escape" && deskSel) { var prev = deskSel; deskClear(); prev.focus(); return; }
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("li.row")) { e.preventDefault(); deskSelect(e.target); }
+    });
+    $("agency").addEventListener("change", deskClear);
+    if (deskMQ.addEventListener) deskMQ.addEventListener("change", function () { deskClear(); if (!deskMQ.matches) Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row[tabindex]"), function (li) { li.removeAttribute("tabindex"); }); else deskMark(); });
+  })();
+
   // ---- wiring ----
+  function setMore(on) { $("more-tabs").hidden = !on; $("tab-more").setAttribute("aria-expanded", on ? "true" : "false"); $("tab-more").textContent = on ? "More ▴" : "More ▾"; }
   function tab(name) {
     ["opps", "board", "map", "osbm", "marks", "how"].forEach(function (k) {
       $("v-" + k).hidden = k !== name; $("tab-" + k).setAttribute("aria-selected", k === name ? "true" : "false"); });
+    if (["board", "map", "how"].indexOf(name) >= 0) setMore(true);
     if (name === "map") renderMap(); if (name === "osbm") renderOsbm(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
   }
-  Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
-  $("large").addEventListener("click", function (e) { var on = document.body.classList.toggle("large"); e.target.setAttribute("aria-pressed", on); });
+  Array.prototype.forEach.call(document.querySelectorAll(".tabs button[data-tab]"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
+  if (!lsGet("ffm_steps_v1", false)) $("steps").hidden = false;
+  $("steps-x").addEventListener("click", function () { $("steps").hidden = true; lsSet("ffm_steps_v1", true); });
+  $("tab-more").addEventListener("click", function () { setMore($("more-tabs").hidden); });
+  function setLarge(on) { document.body.classList.toggle("large", on); $("large").setAttribute("aria-pressed", on); lsSet("ffm_large_v1", on); }
+  $("large").addEventListener("click", function () { setLarge(!document.body.classList.contains("large")); });
+  if (lsGet("ffm_large_v1", false) || /[?&]present=1/.test(location.search)) setLarge(true);
+  $("gloss-open").addEventListener("click", function () { var d = $("gloss"); d.open = true; d.scrollIntoView({ behavior: "smooth", block: "start" }); d.querySelector("summary").focus(); });
   $("order").addEventListener("change", function () { cur.order = this.value; show(); });
   $("coming-q").addEventListener("input", function () { var g = groups(cur.id); fill($("coming-l"), filt(g.coming, this.value)); });
   $("hidden-q").addEventListener("input", function () { var g = groups(cur.id); fill($("hidden-l"), filt(g.hidden, this.value)); });
@@ -633,27 +1172,141 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
   $("k-run").addEventListener("change", function () { K.run = Math.max(0, Number(this.value) || 0); saveK(); show(true); });
   $("k-min").addEventListener("change", function () { K.min = Math.max(0, Number(this.value) || 0); saveK(); show(true); });
   $("k-hide").addEventListener("change", function () { K.hide = this.checked; saveK(); show(true); });
+  $("k-res").addEventListener("change", function () { K.res = this.checked; saveK(); show(true); });
   $("k-reset").addEventListener("click", resetAll);
   $("scn-go").addEventListener("click", function () { var ch = parseScenario($("scenario").value); saveK(); syncK(); var box = $("chips"); box.innerHTML = ""; ch.forEach(function (c) { box.appendChild(el("span", "chip" + (c[1] ? " ignored" : ""), c[0])); }); show(true); });
   PRESETS.forEach(function (pr) { var b = el("button", null, pr[0]); b.type = "button"; b.addEventListener("click", function () { pr[1](); saveK(); syncK(); show(true); }); $("presets").appendChild(b); });
   [["Days left are counted from the data date unless you set a reference date", 0], ["Keyword fit comes from the stored scores; priorities only re-order your own view", 0], ["Items with no listed award or date are never hidden by a constraint", 0], ["Matching funds, staff, impact and county reach are not in this payload", 0]].forEach(function (a) { $("assumptions").appendChild(el("li", null, a[0])); });
   $("opt-forecast").addEventListener("change", show); $("opt-hidden").addEventListener("change", show);
+  $("opt-learn").checked = learnOn;
+  $("opt-learn").addEventListener("change", function () { learnOn = this.checked; lsSet("ffm_learn_v1", learnOn); show(true); });
+  $("marks-ics").addEventListener("click", function () {
+    var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
+    var pur = Object.keys(marks).filter(function (k) { return marks[k] === "Pursue" && by[k]; }).map(function (k) { return by[k]; });
+    var dated = pur.filter(function (r) { return /^\d{4}-\d{2}-\d{2}$/.test(r.close_date || ""); }), skipped = pur.length - dated.length;
+    var msg = $("marks-ics-msg");
+    if (!dated.length) { msg.textContent = pur.length ? "None of your " + pur.length + " Pursue items has a close date, so there is nothing to put on a calendar." : "No Pursue items yet."; return; }
+    saveFile("grant_deadlines.ics", icsText(dated), "text/calendar;charset=utf-8");
+    msg.textContent = "Saved " + dated.length + (dated.length === 1 ? " deadline" : " deadlines") + " with a reminder " + CSD + " days before each. " +
+      (skipped ? "Skipped " + skipped + " Pursue " + (skipped === 1 ? "item" : "items") + " with no close date." : "No Pursue items were skipped.") + " Open the file to add it to Outlook or Google Calendar.";
+  });
   $("csv").addEventListener("click", function () { if (!cur.id) return; download("opportunities_" + cur.id + ".csv", [CSVH].concat(listFor(groups(cur.id)).map(csvRow))); });
   $("marks-csv").addEventListener("click", function () {
     var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
     download("my_decisions.csv", [CSVH].concat(Object.keys(marks).map(function (k) { return by[k]; }).filter(Boolean).map(csvRow))); });
+  $("marks-brief").addEventListener("click", function () {
+    var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
+    var t = Object.keys(marks).filter(function (k) { return marks[k] === "Pursue" && by[k]; }).map(function (k) { return briefText(by[k]); }).join("\n\n----\n\n");
+    var box = $("marks-brief-box"); box.hidden = false; box.value = t || "No Pursue items yet."; box.focus(); box.select();
+    try { if (navigator.clipboard && t) navigator.clipboard.writeText(t); } catch (e) {}
+  });
   $("marks-clear").addEventListener("click", function () { if (!Object.keys(marks).length || !confirm("Clear all your Pursue, Maybe and Pass marks in this browser?")) return; marks = {}; saveMarks(); renderMarks(); show(); });
 
+  // ---- PROJECTOR ----
+  function setProj(on) {
+    document.body.classList.toggle("proj", on); $("proj").setAttribute("aria-pressed", on ? "true" : "false"); $("proj-exit").hidden = !on; lsSet("ffm_proj_v1", on);
+    if (on && $("v-opps").hidden) tab("opps");
+    if (P) show(true);
+    if (on) window.scrollTo(0, 0);
+  }
+  function stepAgency(d) {
+    var sel = $("agency"), i = sel.selectedIndex + d;
+    if (i < 1 || i >= sel.options.length) return;
+    sel.selectedIndex = i; sel.dispatchEvent(new Event("change"));
+  }
+  $("proj").addEventListener("click", function () { setProj(!document.body.classList.contains("proj")); });
+  $("proj-exit").addEventListener("click", function () { setProj(false); });
+  document.addEventListener("keydown", function (e) {
+    var t = e.target, tag = t && t.tagName; if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var typing = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable);
+    var on = document.body.classList.contains("proj");
+    if (e.key === "Escape" && on) { e.preventDefault(); setProj(false); return; }
+    if (typing) return;
+    if ((e.key === "p" || e.key === "P")) { e.preventDefault(); setProj(!on); return; }
+    if (on && e.key === "ArrowRight") { e.preventDefault(); stepAgency(1); }
+    if (on && e.key === "ArrowLeft") { e.preventDefault(); stepAgency(-1); }
+  });
+  if (lsGet("ffm_proj_v1", false) || /[?&]present=1/.test(location.search)) { document.body.classList.add("proj"); $("proj").setAttribute("aria-pressed", "true"); $("proj-exit").hidden = false; }
+  // ---- end PROJECTOR ----
+
+  // the Azure container sleeps when idle: say so instead of looking broken
+  var warm = setTimeout(function () { if (!P) $("asof").textContent = "Loading data... the server is waking up, this can take up to 40 seconds."; }, 4000);
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
     P = p; CSD = p.closing_soon_days || 14;
-    $("asof").textContent = "Data as of " + (p.data_as_of || "unknown");
+    $("asof").textContent = fmtAsOf(p.data_as_of); $("asof").parentNode.title = "Data as of " + (p.data_as_of || "unknown");
     if (p.stub === true || /stub/i.test(String(p.data_as_of))) $("stub").hidden = false;
     var sel = $("agency");
     p.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) {
       var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o); });
     sel.addEventListener("change", function () { cur.id = sel.value; cur.tile = "top"; show(); });
-    applyRef(); syncK(); buildIdf(); initBoard(); renderHow(); show();
+    // home screen: evidence card, plain counts, quick picks (agencies with the most top-10 items closing soon)
+    renderEvidence($("evidence-home"));
+    if (EV && EV.open_ranked) { var lede = $("welcome-lede"); lede.innerHTML = ""; lede.appendChild(document.createTextNode("This scores ")); lede.appendChild(el("b", null, EV.open_ranked.value.toLocaleString() + " open federal opportunities")); lede.appendChild(document.createTextNode(" against the strategic plans of ")); lede.appendChild(el("b", null, p.agencies.length + " NC agencies")); lede.appendChild(document.createTextNode(". Pick yours to see its best matches, days left to apply, whether a state agency can apply, and who has to sign.")); }
+    var qk = p.agencies.filter(function (a) { return a.n_closing_soon > 0; }).sort(function (a, b) { return b.n_closing_soon - a.n_closing_soon || (a.agency_name < b.agency_name ? -1 : 1); }).slice(0, 5);
+    $("quick-h").hidden = !qk.length;
+    qk.forEach(function (a) { var b = el("button", null, a.agency_name + " (" + a.n_closing_soon + " closing soon)"); b.type = "button"; b.addEventListener("click", function () { sel.value = a.agency_id; cur.id = a.agency_id; cur.tile = "top"; deskClear(); show(); }); $("quick").appendChild(b); });
+    applyRef(); syncK(); buildIdf(); initBoard(); renderHow();
+    var want = new URLSearchParams(location.search).get("agency");
+    if (want && p.agencies.some(function (a) { return a.agency_id === want; })) { sel.value = want; cur.id = want; }
+    deskClear(); show();
   }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
+})();
+</script>
+<script id="tour-js">
+(function () {
+  var KEY = "ffm_tour_v1", idx = 0, card = null, hl = null, steps = null;
+  function $(id) { return document.getElementById(id); }
+  function seen() { try { return !!localStorage.getItem(KEY); } catch (e) { return false; } }
+  function mark() { try { localStorage.setItem(KEY, "1"); } catch (e) {} }
+  function visible(e) { return e && e.offsetParent !== null; }
+  function build() {
+    steps = [
+      { t: "Welcome", b: "This tool reads open federal grants and ranks them against your agency's own strategic plan. It saves a grant writer the search. A person makes every decision. This tour takes under a minute.", sel: null },
+      { t: "1. Pick your agency", b: "The list below is built for the agency you choose here. We started you on Environmental Quality so you can see a real result.", sel: "#agency" },
+      { t: "2. Start here", b: "These are the three best open matches, ranked by how closely each one fits the goals in that agency's plan. Open grants only.", sel: "#start" },
+      { t: "3. Read each row", b: "Each row shows days left, whether your agency can apply (green yes, amber unclear: read the notice), and which plan goal it matched. Click the title to open the real notice.", sel: "#start li" },
+      { t: "4. Mark your call", b: "Pursue, Maybe or Pass. Your marks stay in this browser only. Nothing is sent anywhere.", sel: "#start .act" },
+      { t: "5. Keep your shortlist", b: "My decisions collects what you marked. Export it as a CSV, copy briefs for Pursue items, or download deadlines for your calendar.", sel: "#tab-marks" },
+      { t: "That is it", b: "Below the top 3 you will find tiles for Closing soon, New since your last visit, Read the notice and Coming up. Replay this tour any time with the Tour button at the top.", sel: null }
+    ].filter(function (s) { return !s.sel || visible(document.querySelector(s.sel)); });
+  }
+  function clear() { if (hl) { hl.classList.remove("tour-hl"); hl = null; } }
+  function close(done) { clear(); if (card) { card.remove(); card = null; } if (done) mark(); document.removeEventListener("keydown", onKey, true); }
+  function onKey(e) { if (!card) return; if (e.key === "Escape") { close(true); } else if (e.key === "ArrowRight") { go(1); } else if (e.key === "ArrowLeft") { go(-1); } }
+  function go(d) { idx += d; if (idx < 0) idx = 0; if (idx >= steps.length) { close(true); return; } render(); }
+  function render() {
+    clear(); var s = steps[idx];
+    if (!card) { card = document.createElement("div"); card.className = "tour-card"; card.setAttribute("role", "dialog"); card.setAttribute("aria-label", "Quick tour"); document.body.appendChild(card); document.addEventListener("keydown", onKey, true); }
+    card.innerHTML = "";
+    var h = document.createElement("h2"); h.textContent = s.t; var p = document.createElement("p"); p.textContent = s.b;
+    var nav = document.createElement("div"); nav.className = "tour-nav";
+    var skip = document.createElement("button"); skip.type = "button"; skip.textContent = "Skip"; skip.addEventListener("click", function () { close(true); });
+    var cnt = document.createElement("span"); cnt.className = "tour-count"; cnt.textContent = (idx + 1) + " of " + steps.length;
+    var back = document.createElement("button"); back.type = "button"; back.textContent = "Back"; back.disabled = idx === 0; back.addEventListener("click", function () { go(-1); });
+    var next = document.createElement("button"); next.type = "button"; next.className = "primary"; next.textContent = idx === steps.length - 1 ? "Done" : "Next"; next.addEventListener("click", function () { go(1); });
+    [skip, cnt, back, next].forEach(function (x) { nav.appendChild(x); });
+    [h, p, nav].forEach(function (x) { card.appendChild(x); });
+    if (s.sel) { hl = document.querySelector(s.sel); if (hl) { hl.classList.add("tour-hl"); hl.scrollIntoView({ block: "center", behavior: "smooth" }); } }
+    next.focus({ preventScroll: true });
+  }
+  function demoAgency() { // the home screen has no list yet: pick Environmental Quality so the tour has real rows to point at
+    var sel = $("agency"); if (!sel || sel.value) return;
+    var o = [].slice.call(sel.options).filter(function (x) { return /Environmental Quality/i.test(x.text); })[0];
+    if (o) { sel.value = o.value; sel.dispatchEvent(new Event("change", { bubbles: true })); }
+  }
+  function start() { close(false); if (document.body.classList.contains("proj")) return; demoAgency(); build(); idx = 0; if (steps.length) render(); }
+  // "Tour" button in the header, added here so the page markup stays Marco's
+  var hdr = document.querySelector("header"), btn = document.createElement("button");
+  btn.type = "button"; btn.id = "tour-open"; btn.textContent = "Tour"; btn.title = "Replay the quick tour"; btn.addEventListener("click", start);
+  if (hdr) hdr.appendChild(btn);
+  // Auto-start once for a new visitor, after data has loaded (the Azure container can take about 40 seconds to wake).
+  var q = location.search, forced = /[?&]tour=1/.test(q), tries = 0;
+  if (!forced && (seen() || /[?&]present=1/.test(q))) return;
+  var iv = setInterval(function () {
+    tries++; var ready = $("agency") && $("agency").options.length > 5;
+    if (ready) { clearInterval(iv); var sx = $("steps"); if (sx) sx.hidden = true; start(); }
+    else if (tries > 300) clearInterval(iv);
+  }, 300);
 })();
 </script>
 </body>

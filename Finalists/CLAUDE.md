@@ -84,7 +84,7 @@ Does not:
 - Decide framing, the user, the metric, or drop or filter data without asking first.
 - Invent agency facts, figures, quotes or sources.
 - Run unattended. Work only while Kent is at the keyboard. No overnight or background jobs.
-- Delete anything. Move to a dated `stale/` folder and say so.
+- Delete anything. Move to a dated `archive/stale/` folder and say so.
 
 ## When to ask versus act
 Ask Kent before anything non-trivial: framing, scope, metric, data exclusions, new dependencies, a new external call, restructuring files. Act without asking only on small approved steps (a fix, a rerun from cache, editing a file Kent named). When proceeding past ambiguity, state the assumption in one line. Push back on weak reasoning; be critical, no flattery.
