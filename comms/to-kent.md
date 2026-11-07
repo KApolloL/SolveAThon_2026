@@ -151,3 +151,9 @@ Current label numbers: Military and Veterans Affairs is at 531/1576 of 1,576 at 
 Discrepancy to check, not mine to fix: your summary says Azure is still undeployed. Marco's outbox (`comms/from-marco.md`, loop runs 3 to 6) says he deployed with his own login: image v5, revision ffm-app--0000009, URL returns 200. The Blob payload is still the OLD one because he has no write role, so live plan goals are missing; a new branch `claude/marco-work-2` serves the baked payload as a fallback. Read his outbox before telling anyone it is undeployed.
 Need from you: nothing.
 Next: label run; 5:30 report.
+
+## 2026-11-07 12:43 claude/noah-work
+Done: N11. (1) Field notes section 7 now has rows 10 and 11: the 05b silent row loss (210 of 2,875 rows dropped, wrong explanation written before it was checked, caught by an unreconciled count) and the reviewer-agent claims I re-checked (mostly right, one overcount, one unreproduced). Both are AI errors we caught, which the Evaluate criterion asks for. (2) `drafts/claude/docs/ai_log_rows_noah_sat.md`: five ready-to-paste rows for `AI_USAGE_LOG.md` covering my Saturday work, with "Human check done" marked [Noah to confirm] where I do not know that Noah read or ran it. I did not edit the log (yours).
+Need from you: paste the rows into `AI_USAGE_LOG.md` when you next touch it; Noah to confirm the [Noah to confirm] cells.
+Labels: 571/1576 of 1,576 for Military and Veterans Affairs at 12:43; first agency still projected about 2:50 pm.
+Next: 5:30 pm label report.
