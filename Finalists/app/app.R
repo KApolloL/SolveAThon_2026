@@ -14,11 +14,44 @@ fmt <- function(x) format(x, big.mark = ",")
 show_cols <- setdiff(names(opp), c("summary", "eligibility_text"))
 tbl <- as.data.frame(opp[, ..show_cols])
 
-ui <- fluidPage(
+# /payload.json: fetched server-side from Blob so no secret reaches the browser.
+# Auth, in order: BLOB_SAS (read-only SAS, set as a Container App secret) else managed identity.
+blob_base <- "https://ffmdatateam15.blob.core.windows.net/ffm-data/payload.json"
+payload_cache <- new.env(); payload_cache$t <- 0; payload_cache$body <- NULL
+get_payload <- function() {
+  if (!is.null(payload_cache$body) && as.numeric(Sys.time()) - payload_cache$t < 60) return(payload_cache$body)
+  sas <- Sys.getenv("BLOB_SAS", "")
+  body <- tryCatch({
+    if (nzchar(sas)) {
+      paste(readLines(url(paste0(blob_base, "?", sub("^\\?", "", sas))), warn = FALSE, encoding = "UTF-8"), collapse = "\n")
+    } else {
+      ep <- Sys.getenv("IDENTITY_ENDPOINT", ""); hd <- Sys.getenv("IDENTITY_HEADER", "")
+      stopifnot(nzchar(ep))
+      tk <- system2("curl", c("-s", "-H", shQuote(paste0("X-IDENTITY-HEADER: ", hd)),
+                    shQuote(paste0(ep, "?api-version=2019-08-01&resource=https://storage.azure.com/"))), stdout = TRUE)
+      tok <- sub('.*"access_token":"([^"]+)".*', "\\1", paste(tk, collapse = ""))
+      paste(system2("curl", c("-s", "-H", shQuote(paste0("Authorization: Bearer ", tok)),
+                    "-H", shQuote("x-ms-version: 2021-08-06"), shQuote(blob_base)), stdout = TRUE), collapse = "\n")
+    }
+  }, error = function(e) NULL)
+  if (!is.null(body) && grepl('"agencies"', body, fixed = TRUE)) { payload_cache$body <- body; payload_cache$t <- as.numeric(Sys.time()) }
+  payload_cache$body
+}
+
+ui <- function(req) {
+  if (identical(req$PATH_INFO, "/payload.json")) {
+    b <- get_payload()
+    if (is.null(b)) return(httpResponse(502, "text/plain", "payload unavailable"))
+    return(httpResponse(200, "application/json; charset=utf-8", b, headers = list("Cache-Control" = "no-store")))
+  }
+  proof_ui
+}
+
+proof_ui <- fluidPage(
   titlePanel("Federal Funds Matchmaker: Azure proof"),
   p(paste0("MODE = ", mode)),
   p("Display only: no scoring or ranking. Snapshot of opportunities.csv."),
-  p(a(href = "/tool.html", "Open the qualifier tool (grant triage)")),
+  p(a(href = "/", "Open the matchmaker"), " | ", a(href = "/tool.html", "Open the qualifier tool (grant triage)")),
   h4(paste0("Total rows: ", fmt(n_total))),
   tags$ul(lapply(seq_len(nrow(by_status)), function(i)
     tags$li(paste0(by_status$status[i], ": ", fmt(by_status$N[i]))))),
@@ -32,4 +65,4 @@ server <- function(input, output, session) {
   )
 }
 
-shinyApp(ui, server)
+shinyApp(ui, server, uiPattern = "^/(shiny|payload\\.json)$")
