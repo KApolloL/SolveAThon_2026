@@ -7,7 +7,7 @@ Status: draft, unverified by a human. Kent adds numbers to `fact_sheet.md`; Ever
 - Kent decision, same header: do not bulk-download. Keep USAspending (`nc_awards_by_cfda.csv`) as the only awards source. The script writes `outs/audit_clearinghouse_check.csv` with result "not available".
 
 ## 2. Award map: rows that are not `confirmed`
-Source: `data/manual/agency_award_map.csv` (36 data rows; 29 confirmed, 7 not). Award counts from `data/processed/nc_awards_recipients.csv` where the file shows them.
+Source: `data/manual/agency_award_map.csv` (35 data rows; 28 confirmed, 7 not; corrected by Everett's Claude after a recount). Award counts from `data/processed/nc_awards_recipients.csv` where the file shows them.
 
 | Agency | Recipient | Certainty | Note |
 |---|---|---|---|
