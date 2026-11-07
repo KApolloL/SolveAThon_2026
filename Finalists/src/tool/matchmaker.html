@@ -39,6 +39,9 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
 .title a { color: var(--accent); font-weight: 600; text-decoration: none; }
 .elig { display:inline-block; font-size:.8rem; font-weight:700; padding:1px 8px; border-radius: 10px; border:1px solid currentColor; margin-right:6px; }
 .elig.yes { color: var(--good); } .elig.ask { color: var(--warn); } .elig.no { color: var(--bad); }
+.act { margin-top: 8px; display:flex; gap:6px; flex-wrap:wrap; }
+.act button { font: inherit; font-size:.85rem; padding: 3px 10px; border:1px solid var(--border); border-radius: 14px; background: var(--surface-2); color: var(--text-primary); cursor: pointer; }
+.act button[aria-pressed="true"] { background: var(--accent); color: var(--surface-2); border-color: var(--accent); }
 .reason { color: var(--text-secondary); font-size: .92rem; margin-top: 4px; }
 .panel { background: var(--surface-2); border:1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-top: 16px; }
 .panel summary { cursor: pointer; font-weight: 600; }
@@ -79,6 +82,26 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
     return d;
   }
   var ELIG = { yes: "Yes", no: "No", ask: "Ask" };
+  // Pursue / Maybe / Pass: saved in this browser only (localStorage), never sent anywhere.
+  var LS = "ffm_marks_v1";
+  function loadMarks() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
+  function saveMarks(m) { try { localStorage.setItem(LS, JSON.stringify(m)); } catch (e) {} }
+  var marks = loadMarks();
+  function actions(r) {
+    var box = el("div", "act"), key = r.agency_id + "|" + r.opp_id;
+    box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision");
+    ["Pursue", "Maybe", "Pass"].forEach(function (name) {
+      var b = el("button", null, name); b.type = "button";
+      b.setAttribute("aria-pressed", marks[key] === name ? "true" : "false");
+      b.addEventListener("click", function () {
+        if (marks[key] === name) delete marks[key]; else marks[key] = name;
+        saveMarks(marks);
+        Array.prototype.forEach.call(box.children, function (c) { c.setAttribute("aria-pressed", marks[key] === c.textContent ? "true" : "false"); });
+      });
+      box.appendChild(b);
+    });
+    return box;
+  }
   function rowEl(r) {
     var li = el("li", "row"), body = el("div");
     li.appendChild(daysBlock(r));
@@ -92,6 +115,7 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
     if (e === "ask") meta.appendChild(document.createTextNode("check the notice"));
     body.appendChild(meta);
     if (r.goal_snippet) body.appendChild(el("div", "reason", "Matches plan goal: " + r.goal_snippet));
+    body.appendChild(actions(r));
     li.appendChild(body);
     return li;
   }
@@ -111,9 +135,10 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
       .sort(function (a, b) { return a.rank - b.rank; });
     if (ag && ag.plan_stale) banner.appendChild(el("div", "banner", "This agency's plan may be out of date. Treat matches with care."));
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
+    var notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     var below = open.length - hidden.length - shown.length;
     $("counts").textContent = "Showing " + shown.length + " of " + open.length + " open opportunities. " +
-      hidden.length + " hidden as not eligible, " + below + " ranked below the top 10, " + coming.length + " not open yet.";
+      hidden.length + " hidden as not eligible, " + below + " ranked below the top 10, " + coming.length + " not open yet" + (notices ? ", " + notices + " notice" + (notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
     fill(top, shown);
     if (coming.length) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + coming.length; fill($("coming-l"), coming); }
     if (hidden.length) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + hidden.length; fill($("hidden-l"), hidden); }
@@ -122,7 +147,7 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
     P = p;
     $("asof").textContent = "Data as of " + (p.data_as_of || "unknown");
-    if (/stub/i.test(String(p.data_as_of))) $("stub").hidden = false;
+    if (p.stub === true || /stub/i.test(String(p.data_as_of))) $("stub").hidden = false;
     var sel = $("agency");
     p.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) {
       var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o);
