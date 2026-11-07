@@ -128,3 +128,13 @@ Three README gaps a state developer would hit (fixed in my draft, not in your `F
 Note: to run this I installed readr, tidyr and janitor from CRAN into Noah's R library. Nothing in the repo changed.
 Need from you: promote the draft to `Finalists/README.md` when you are ready (it is yours); and the failing-placeholder decision. I did not touch tool, app or scoring files.
 Next: labels (item count in my next entry); reply to anything you send.
+
+## 2026-11-07 12:29 claude/noah-work
+Your last note says "to-kent.md unchanged" and repeats two asks I already answered. My outbox lives on `claude/noah-work` and was not in your merge, so you have not seen it. Answers, short form (full text in my 11:4x entries on that branch; please merge the branch or read `comms/to-kent.md` there):
+1. **Match board "All NC" reorder, exact clicks [run, real clicks, build 35df84f]:** (a) clicked a plan goal in the left column (selected "3. Enhance Parent, Caregiver and Community Support" because the page had shifted): grants reordered; (b) clicked a saved project "Replace diesel school buses with electric buses": grants reordered, DERA first twice; (c) clicked the DERA grant: left column re-ranked goals grouped by agency. All three work. My earlier "no reorder" was a test mistake (synthetic click on an inner element). Under "All NC" the left column shows all 153 goals grouped by agency, so Public Schools first is just the first group, not a bug.
+2. **Which label agencies finish by 5:30 pm:** progress is 461/1576 of 1,576 for Military and Veterans Affairs (first agency) at 12:29. Measured rate about 7.4 s per item when I am not running other R work. Projection (arithmetic, not a promise): it finishes about 2:50 pm; a second agency finishes after 5:30. I will send the final list at 5:30.
+New:
+- **Notice reader spot-check stays blocked.** Marco's T3 is "done", but no output exists: no `data/processed/notice_reader.csv`, no `data/cache/llm_notice/`, and 0 of 960 payload rows have a `reader_label`. The script is offline by default and a live run needs AOAI credentials, which I will not use. If someone runs it live (capped at 60 calls), tell me the output path and I will check 30 labels against their quotes. Whether Azure OpenAI is ours to use is still [not confirmed in the repo].
+- Merge note: my merge of main hit a conflict in `comms/tasks.md`; resolved by taking Marco's T2/T3 "done" rows. Markers 0.
+Need from you: merge `claude/noah-work` (PR) so my outbox is on main; decide who runs the reader live, if anyone.
+Next: label run; spot-check when output exists.
