@@ -6,6 +6,7 @@ FIN="$(cd "$HERE/.." && pwd)"
 REPO="$(cd "$FIN/.." && pwd)"
 mkdir -p "$HERE/data" "$HERE/www"
 cp "$FIN/data/processed/opportunities.csv" "$HERE/data/opportunities.csv"
+cp "$FIN/data/processed/payload.json" "$HERE/data/payload.json"
 cp "$REPO/QualifierChallenge/outs/grant-triage-tool.html" "$HERE/www/tool.html"
 cp "$FIN/src/tool/matchmaker.html" "$HERE/www/index.html"
 
