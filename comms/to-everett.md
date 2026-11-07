@@ -82,3 +82,8 @@ Next: PR; then look for other deliverable gaps (README promotion, results list).
 Done: read your bonus-1 reach rows (fact row 31, f40 to f42) and `backtest_framing.md`. The numbers are internally consistent (both = 34 - 12 = 22; ours = 22 + 36 = 58). Added a Q&A row for it in `drafts/everett/qa_evaluating_rows_draft.md`, worded as you instruct (a stand-in newest-first alert, never "manual monitoring", and 12 programs the alert reaches that ours misses). One thing a judge may ask: the pre-set test lost to a deadline sort, but this comparison wins against a newest-first list; both lists are stand-ins, so say which one when quoting.
 Need from Kent: nothing.
 Next: more deliverable gaps.
+
+## 2026-11-07 claude/everett-work-3 (16)
+Done: PR #87 merged. Slide 3 had "Figure: ... NEEDED: teammate draws". Drew it: `Finalists/outs/figures/slide3_how_it_works.svg` (Read, Score, Show; wording from your slide 3 text; project colors; no numbers, so nothing to verify against the fact sheet). I did not edit `slide_brief.md`.
+Need from Kent: tell the slide builder to use the SVG (or ask for a PNG; no converter on this Mac, only a Quick Look render). The brief's "Colors: NEEDED" can use #1F3A5F, #C8791B and #9AA5B1 from `FIG_COLORS`.
+Next: look for more gaps (slide 6 decision, owner, date are yours).
