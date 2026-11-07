@@ -34,7 +34,13 @@ get_payload <- function() {
                     "-H", shQuote("x-ms-version: 2021-08-06"), shQuote(blob_base)), stdout = TRUE), collapse = "\n")
     }
   }, error = function(e) NULL)
-  if (!is.null(body) && grepl('"agencies"', body, fixed = TRUE)) { payload_cache$body <- body; payload_cache$t <- as.numeric(Sys.time()) }
+  # Fallback while Blob has no newer file: a copy baked into the image (data/payload.json). The newer data_as_of wins.
+  baked <- tryCatch(paste(readLines("/srv/app/data/payload.json", warn = FALSE, encoding = "UTF-8"), collapse = "\n"), error = function(e) NULL)
+  stamp <- function(x) if (is.null(x)) "" else { m <- regmatches(x, regexpr('"data_as_of"\\s*:\\s*"[^"]*"', x)); if (length(m)) sub('.*:\\s*"([^"]*)"', "\\1", m) else "" }
+  ok <- function(x) !is.null(x) && grepl('"agencies"', x, fixed = TRUE)
+  if (ok(body) && ok(baked) && stamp(baked) >= stamp(body)) body <- baked
+  if (!ok(body) && ok(baked)) body <- baked
+  if (ok(body)) { payload_cache$body <- body; payload_cache$t <- as.numeric(Sys.time()) }
   payload_cache$body
 }
 

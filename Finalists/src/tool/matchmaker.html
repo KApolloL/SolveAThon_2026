@@ -110,6 +110,17 @@ table.ag th, table.ag td { padding:8px 10px; text-align:left; border-bottom:1px 
 table.ag th { font-size:.82rem; color:var(--text-secondary); } table.ag td.n, table.ag th.n { text-align:right; font-variant-numeric:tabular-nums; }
 table.ag button { font:inherit; background:none; border:none; color:var(--accent); text-decoration:underline; cursor:pointer; text-align:left; padding:0; }
 .tablewrap { overflow-x:auto; }
+/* UX pass: start-here block, plainer rows */
+[hidden] { display:none !important; }
+.start { background:var(--surface-2); border:2px solid var(--accent); border-radius:var(--radius); padding:12px 14px; margin:12px 0; }
+.start h2 { margin:0 0 4px; font-size:1.1rem; } .start p.note { margin:0 0 8px; }
+.start ol li.row { border-color:var(--border); margin-bottom:8px; }
+.whyfit { color:var(--text-secondary); font-size:.92rem; margin-top:4px; } .whyfit b { font-weight:700; }
+.who { color:var(--text-secondary); font-size:.88rem; margin-top:2px; }
+.act button.primary { border-color:var(--accent); color:var(--accent); font-weight:700; }
+.act button.primary[aria-pressed="true"] { color:var(--surface-2); }
+.help { font-size:.9rem; }
+dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; font-size:.92rem; } dl.gloss dt { font-weight:700; } dl.gloss dd { margin:0; }
 </style>
 </head>
 <body>
@@ -134,14 +145,28 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     <label for="agency">Pick your agency</label>
     <select id="agency" aria-label="Agency"><option value="">Choose an agency</option></select>
     <div id="banner"></div>
+    <div id="start" class="start" hidden></div>
     <div class="tiles" id="tiles" hidden role="group" aria-label="Views of this agency's list"></div>
     <div class="toolbar" id="toolbar" hidden>
       <label for="order">Order by</label>
       <select id="order" aria-label="Order by"><option value="rank">Best match</option><option value="deadline">Soonest deadline</option><option value="priority">My plan priorities</option></select>
       <button type="button" id="csv">Export CSV</button>
+      <button type="button" id="gloss-open" class="help">What do these words mean?</button>
     </div>
     <p class="counts" id="counts" role="status"></p>
     <ol id="top"></ol>
+    <details class="panel" id="gloss"><summary>Words used here</summary>
+      <dl class="gloss">
+        <dt>Best match</dt><dd>How many words a grant's title and summary share with your agency's plan goals. It is a keyword score, not a judgment of quality. Compare scores only inside one agency's list.</dd>
+        <dt>Your agency can apply</dt><dd>Federal applicant-type codes or a quoted line in the notice say state agencies are allowed.</dd>
+        <dt>Not sure we can apply</dt><dd>The applicant list is unclear. Read the notice (the link on the title) before spending time.</dd>
+        <dt>Who signs</dt><dd>Who has to approve an application: you can start now, your boss must sign, or leadership must sign. Shown only when the notice makes it clear.</dd>
+        <dt>Closing soon</dt><dd>14 days or fewer left to apply.</dd>
+        <dt>Coming up</dt><dd>Forecasts: the funder says it plans to post this. You cannot apply yet, but you can plan.</dd>
+        <dt>Rolling</dt><dd>No close date is listed. Check the notice for how long it stays open.</dd>
+        <dt>Pursue, Maybe, Pass</dt><dd>Your own marks, saved only in this browser. They do not send anything.</dd>
+      </dl>
+    </details>
     <details class="panel" id="refine" hidden><summary>Refine (optional)</summary>
       <label style="font-weight:400"><input type="checkbox" id="opt-forecast"> Also list forecasts (not open yet) in the main list</label>
       <label style="font-weight:400"><input type="checkbox" id="opt-hidden"> Also list items hidden as not eligible in the main list</label>
@@ -225,14 +250,14 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
   function saveMarks() { lsSet("ffm_marks_v1", marks); }
   function actions(r) {
     var box = el("div", "act"), key = r.agency_id + "|" + r.opp_id;
-    box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision");
+    box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision"); box.dataset.key = key;
     ["Pursue", "Maybe", "Pass"].forEach(function (name) {
-      var b = el("button", null, name); b.type = "button";
+      var b = el("button", name === "Pursue" ? "primary" : null, name); b.type = "button";
       b.setAttribute("aria-pressed", marks[key] === name ? "true" : "false");
       b.addEventListener("click", function () {
         if (marks[key] === name) delete marks[key]; else marks[key] = name;
         saveMarks();
-        Array.prototype.forEach.call(box.children, function (c) { c.setAttribute("aria-pressed", marks[key] === c.textContent ? "true" : "false"); });
+        Array.prototype.forEach.call(document.querySelectorAll(".act"), function (bx) { if (bx.dataset.key !== key) return; Array.prototype.forEach.call(bx.children, function (c) { c.setAttribute("aria-pressed", marks[key] === c.textContent ? "true" : "false"); }); });
         renderMarks();
       });
       box.appendChild(b);
@@ -282,12 +307,13 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     if (r.status === "forecasted") meta.appendChild(el("span", "badge", "Not open yet"));
     failsK(r).forEach(function (m) { meta.appendChild(el("span", "badge warn", m)); });
     var e = r.eligibility || "ask";
-    meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), "Eligible: " + (ELIG[e] || "Ask")));
-    meta.appendChild(document.createTextNode(e === "ask" ? " check the notice" : " " + ELIG_WORDS[e]));
+    var PLAIN = { yes: "Your agency can apply", no: "Your agency cannot apply", ask: "Not sure we can apply: read the notice" };
+    meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), PLAIN[e] || PLAIN.ask));
     body.appendChild(meta);
-    if (r.goal_snippet) { var rs = el("div", "reason", "Matches plan goal: " + r.goal_snippet); rs.title = r.goal_snippet; body.appendChild(rs); }
+    if (r.goal_snippet) { var rs = el("div", "whyfit"); rs.appendChild(el("b", null, "Why it fits: ")); var gt = r.goal_snippet.replace(/^Goal\s*\d+\s*[–-]?\s*/i, ""); rs.appendChild(document.createTextNode(gt.length > 170 ? gt.slice(0, 167).replace(/\s+\S*$/, "") + "…" : gt)); rs.title = r.goal_snippet; body.appendChild(rs); }
     else body.appendChild(el("div", "reason muted", "No plan goal matched"));
-    var sw = sharedWords(r); if (sw.length) body.appendChild(el("div", "matched", "Words in common with the goal: " + sw.join(", ")));
+    var sw = sharedWords(r); if (sw.length) body.appendChild(el("div", "matched", "Words in common: " + sw.join(", ")));
+    if (r.signature_tier && r.signature_tier !== "unknown" && TIER[r.signature_tier]) body.appendChild(el("div", "who", "Who signs: " + TIER[r.signature_tier]));
     body.appendChild(drawer(r));
     body.appendChild(actions(r));
     li.appendChild(body); return li;
@@ -372,7 +398,7 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     g.notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     return g;
   }
-  var TILES = [["top", "Top 10", "open, best match"], ["soon", "Closing soon", "14 days or fewer"], ["fresh", "New since last visit", "this browser"], ["ask", "Check eligibility", "applicant list unclear"], ["coming", "Coming up", "not open yet"]];
+  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "14 days or fewer"], ["fresh", "New", "since your last visit"], ["ask", "Read the notice", "not sure we can apply"], ["coming", "Coming up", "not open yet"]];
   function listFor(g) {
     var rows = { top: g.top, soon: g.soon, fresh: g.fresh, ask: g.ask, coming: g.coming }[cur.tile] || g.top;
     if ($("opt-forecast").checked && cur.tile === "top") rows = rows.concat(g.coming);
@@ -384,10 +410,21 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     return rows;
   }
   function filt(rows, q) { q = String(q || "").toLowerCase().trim(); if (!q) return rows; return rows.filter(function (r) { return ((r.title || "") + " " + (r.opp_number || "") + " " + (r.goal_snippet || "")).toLowerCase().indexOf(q) >= 0; }); }
+
+  // ---- Start here: the three best open matches, one next step each ----
+  function renderStart(g, id) {
+    var box = $("start"); box.innerHTML = "";
+    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 0; }).filter(function (r) { return !K.hide || !failsK(r).length; }).slice(0, 3);
+    box.hidden = cur.tile !== "top" || !pick.length; if (box.hidden) return;
+    box.appendChild(el("h2", null, "Start here: your 3 best open matches"));
+    var soon = g.soon.length;
+    box.appendChild(el("p", "note", "Ranked by how well each fits your agency's plan goals." + (soon ? " " + soon + " close within " + CSD + " days (see Closing soon)." : "") + " Mark Pursue to save one to My decisions."));
+    var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
+  }
   function show(keepW) {
     var id = cur.id, banner = $("banner"); banner.innerHTML = "";
     ["coming", "hidden", "refine", "caps"].forEach(function (k) { $(k).hidden = true; });
-    $("tiles").hidden = $("toolbar").hidden = !id;
+    $("tiles").hidden = $("toolbar").hidden = !id; $("gloss").hidden = !id; if (!id) $("start").hidden = true;
     if (!id) { $("top").innerHTML = ""; $("counts").textContent = "Pick an agency to see its top 10 open opportunities."; return; }
     var ag = P.agencies.filter(function (a) { return a.agency_id === id; })[0];
     var seen = lsGet("ffm_seen_v1", {}), first = !seen[id];
@@ -397,7 +434,7 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     var g = groups(id);
     if (ag && ag.plan_stale) banner.appendChild(el("div", "banner", "This agency's plan may be out of date. Treat matches with care."));
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
-    if (first) banner.appendChild(el("div", "banner", "First visit for this agency in this browser. Next time, anything added since will be marked New."));
+    if (first) banner.appendChild(el("div", "banner", "First visit here. Next time, anything added since will be marked New."));
     var tiles = $("tiles"); tiles.innerHTML = "";
     TILES.forEach(function (t) {
       var b = el("button", "tile"); b.type = "button"; b.setAttribute("aria-pressed", cur.tile === t[0] ? "true" : "false");
@@ -407,9 +444,11 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     var below = g.open.length - g.hidden.filter(function (r) { return r.status === "posted"; }).length - g.top.length;
     var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open opportunities among the best matches loaded";
     var shown = listFor(g);
-    $("counts").textContent = "Showing " + shown.length + " of " + ofText + " (" + TILES.filter(function (t) { return t[0] === cur.tile; })[0][1] + "). " +
-      ((ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length) + " hidden as not eligible, " + Math.max(0, below) + " ranked below the top 10, " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " not open yet" +
-      (g.notices ? ", " + g.notices + " notice" + (g.notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
+    var nh = (ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length;
+    $("counts").textContent = "Showing " + shown.length + " " + TILES.filter(function (t) { return t[0] === cur.tile; })[0][1].toLowerCase() + " of " + ofText + ". " +
+      nh + " more are hidden because your agency cannot apply" + (g.coming.length ? "; " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " are not open yet" : "") +
+      (g.notices ? "; " + g.notices + " notice" + (g.notices === 1 ? " is" : "s are") + " not ranked" : "") + ".";
+    renderStart(g, id);
     fill($("top"), shown);
     $("refine").hidden = false; renderCaps(cur.id); if (!keepW) renderWeights();
     if (cur.tile !== "coming" && g.coming.length && !$("opt-forecast").checked) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + g.coming.length; fill($("coming-l"), filt(g.coming, $("coming-q").value)); }
@@ -625,7 +664,10 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
     if (name === "map") renderMap(); if (name === "osbm") renderOsbm(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
   }
   Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
-  $("large").addEventListener("click", function (e) { var on = document.body.classList.toggle("large"); e.target.setAttribute("aria-pressed", on); });
+  function setLarge(on) { document.body.classList.toggle("large", on); $("large").setAttribute("aria-pressed", on); lsSet("ffm_large_v1", on); }
+  $("large").addEventListener("click", function () { setLarge(!document.body.classList.contains("large")); });
+  if (lsGet("ffm_large_v1", false) || /[?&]present=1/.test(location.search)) setLarge(true);
+  $("gloss-open").addEventListener("click", function () { var d = $("gloss"); d.open = true; d.scrollIntoView({ behavior: "smooth", block: "start" }); d.querySelector("summary").focus(); });
   $("order").addEventListener("change", function () { cur.order = this.value; show(); });
   $("coming-q").addEventListener("input", function () { var g = groups(cur.id); fill($("coming-l"), filt(g.coming, this.value)); });
   $("hidden-q").addEventListener("input", function () { var g = groups(cur.id); fill($("hidden-l"), filt(g.hidden, this.value)); });
