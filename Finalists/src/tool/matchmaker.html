@@ -121,6 +121,19 @@ table.ag button { font:inherit; background:none; border:none; color:var(--accent
 .act button.primary[aria-pressed="true"] { color:var(--surface-2); }
 .help { font-size:.9rem; }
 dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; font-size:.92rem; } dl.gloss dt { font-weight:700; } dl.gloss dd { margin:0; }
+/* DESK */
+#desk-panel { display:none; }
+@media (min-width: 1100px) {
+  header, main { max-width: 1240px; }
+  #v-opps:not([hidden]) { display:grid; grid-template-columns:minmax(0,1fr) 380px; column-gap:20px; align-items:start; }
+  #v-opps > * { grid-column:1; }
+  #v-opps > #desk-panel { display:block; grid-column:2; grid-row:1 / span 40; position:sticky; top:12px; max-height:calc(100vh - 24px); overflow:auto; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:12px 14px; }
+  #v-opps li.row[tabindex] { cursor:pointer; }
+  #v-opps li.row.desk-sel { outline:3px solid var(--accent); outline-offset:1px; }
+  #desk-panel h2 { font-size:1.1rem; margin:0 0 6px; }
+  #desk-panel details.drawer { margin-top:8px; } #desk-panel details.drawer > summary { display:none; }
+  #desk-panel .act button { font-size:1rem; padding:8px 18px; }
+}
 </style>
 </head>
 <body>
@@ -142,6 +155,7 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
   </div>
 
   <section id="v-opps" role="tabpanel" aria-labelledby="tab-opps">
+    <aside id="desk-panel" role="region" aria-label="Opportunity details" aria-live="polite"><p class="note">Click a row to see its details here.</p></aside>
     <label for="agency">Pick your agency</label>
     <select id="agency" aria-label="Agency"><option value="">Choose an agency</option></select>
     <div id="banner"></div>
@@ -656,6 +670,48 @@ dl.gloss { display:grid; grid-template-columns:max-content 1fr; gap:4px 14px; fo
       var b = el("button", null, o[1]); b.type = "button"; b.setAttribute("aria-pressed", osbmSort === o[0] ? "true" : "false"); b.addEventListener("click", function () { osbmSort = o[0]; renderOsbm(); }); bar.appendChild(b); });
     v.appendChild(bar);
   }
+
+  // ---- DESK: side details panel at >= 1100px (list left, panel right); below that nothing changes ----
+  var deskMQ = window.matchMedia ? window.matchMedia("(min-width: 1100px)") : { matches: false };
+  var deskSel = null;
+  function deskRowFor(li) {
+    var tt = li.querySelector(".title"), title = tt ? tt.textContent : "";
+    var hit = P && P.rows.filter(function (r) { return r.agency_id === cur.id && (r.title || r.opp_number || r.opp_id) === title; });
+    return hit && hit[0];
+  }
+  function deskClear() {
+    deskSel = null; var pn = $("desk-panel"); pn.innerHTML = ""; pn.appendChild(el("p", "note", "Click a row to see its details here."));
+    Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row.desk-sel"), function (x) { x.classList.remove("desk-sel"); });
+  }
+  function deskSelect(li) {
+    var r = deskRowFor(li); if (!r) return;
+    deskClear(); deskSel = li; li.classList.add("desk-sel");
+    var pn = $("desk-panel"); pn.innerHTML = "";
+    pn.appendChild(el("h2", null, r.title || r.opp_number || r.opp_id));
+    var u = safeUrl(r.url); if (u) { var a = el("a", null, "Open the notice"); a.href = u; a.target = "_blank"; a.rel = "noopener"; pn.appendChild(a); }
+    pn.appendChild(daysBlock(r));
+    if (r.goal_snippet) pn.appendChild(el("p", null, "Plan goal: " + r.goal_snippet));
+    var d = drawer(r); d.open = true; pn.appendChild(d);
+    var act = actions(r); pn.appendChild(act);
+  }
+  function deskMark() {
+    if (!deskMQ.matches) return;
+    Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row:not([tabindex])"), function (li) { li.tabIndex = 0; });
+  }
+  (function () {
+    var root = $("v-opps");
+    new MutationObserver(deskMark).observe(root, { childList: true, subtree: true });
+    root.addEventListener("click", function (e) {
+      if (!deskMQ.matches) return; var li = e.target.closest && e.target.closest("li.row"); if (!li || e.target.closest("a, button, summary, input, select, details")) return; deskSelect(li);
+    });
+    root.addEventListener("keydown", function (e) {
+      if (!deskMQ.matches) return;
+      if (e.key === "Escape" && deskSel) { var prev = deskSel; deskClear(); prev.focus(); return; }
+      if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("li.row")) { e.preventDefault(); deskSelect(e.target); }
+    });
+    $("agency").addEventListener("change", deskClear);
+    if (deskMQ.addEventListener) deskMQ.addEventListener("change", function () { deskClear(); if (!deskMQ.matches) Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row[tabindex]"), function (li) { li.removeAttribute("tabindex"); }); else deskMark(); });
+  })();
 
   // ---- wiring ----
   function tab(name) {
