@@ -1,66 +1,135 @@
-# job.R: MODE=job. Daily refresh step: take a scored payload.json, check its shape against
-# saturday/03_contract.md, stamp "data as of", and upload it to Blob. No model calls here.
-# The scoring itself is Kent's pipeline (src/R/10_run_ranking.R); this wrapper only runs it
-# if it is in the image (PIPELINE_SCRIPT) and ships the result.
+# job.R: MODE=job. The daily refresh. Runs the scoring from cached data, checks the result against
+# saturday/03_contract.md, stamps "data as of", and writes payload.json (local file and/or Blob).
+# No model calls and no network calls except the Blob upload: the scoring reads only data/cache and
+# data/processed. Fetching new opportunities from Grants.gov (02a to 03) is NOT part of this job.
 #
 # Settings (env vars; TODO move to 00_config.R, listed in Marco's handoff):
-#   JOB_DRY_RUN=1     check and stamp only; write nothing to Blob (default 1 until write access exists)
-#   PAYLOAD_IN        path of the payload to ship          (default data/processed/payload.json)
-#   PIPELINE_SCRIPT   optional Rscript to run first        (default none)
+#   FINALISTS_DIR     root of the Finalists tree (holds Finalists.Rproj, src/, data/)
+#                     default: the folder above app/ if it has src/, else /srv/finalists
+#   RUN_PIPELINE      1 (default) runs src/R/13_daily_refresh.R (10_run_ranking + 11_build_payload) in FINALISTS_DIR/src;
+#                     0 ships FINALISTS_DIR/data/processed/payload.json as it is (then data_as_of is NOT restamped)
+#   JOB_OUT           also write the stamped payload to this local file (use a scratch path when testing)
+#   JOB_DRY_RUN       1 (default): write nothing to Blob. 0: upload.
+#   JOB_TODAY         YYYY-MM-DD override of "today" (tests only)
 #   BLOB_WRITE_SAS    write SAS for the one blob; else managed identity (needs Storage Blob Data Contributor)
 suppressPackageStartupMessages(library(jsonlite))
 
 env <- function(k, d = "") { v <- Sys.getenv(k, ""); if (nzchar(v)) v else d }
-dry <- env("JOB_DRY_RUN", "1") != "0"
-inp <- env("PAYLOAD_IN", "data/processed/payload.json")
-blob <- "https://ffmdatateam15.blob.core.windows.net/ffm-data/payload.json"
-now <- format(Sys.time(), "%Y-%m-%dT%H:%M:%S%z")
 msg <- function(...) cat(format(Sys.time(), "%H:%M:%S"), "job:", ..., "\n")
+die <- function(...) { msg(...); quit(status = 1) }
 
-ps <- env("PIPELINE_SCRIPT")
-if (nzchar(ps)) {
-  msg("running", ps)
-  st <- system2("Rscript", ps)
-  if (st != 0) { msg("pipeline failed, status", st, "; leaving the Blob file as it is"); quit(status = 1) }
+dry <- env("JOB_DRY_RUN", "1") != "0"
+run_pipeline <- env("RUN_PIPELINE", "1") != "0"
+blob <- "https://ffmdatateam15.blob.core.windows.net/ffm-data/payload.json"
+Sys.setenv(TZ = env("TZ", "America/New_York"))
+stamp_now <- Sys.time()
+today <- if (nzchar(env("JOB_TODAY"))) as.Date(env("JOB_TODAY")) else as.Date(format(stamp_now, "%Y-%m-%d"))
+iso <- function(t) sub("([+-]\\d\\d)(\\d\\d)$", "\\1:\\2", format(t, "%Y-%m-%dT%H:%M:%S%z"))
+
+# ---- where the project is ---------------------------------------------------------------
+script_dir <- tryCatch(dirname(normalizePath(sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[1]))),
+                       error = function(e) getwd())
+root <- env("FINALISTS_DIR", if (dir.exists(file.path(script_dir, "..", "src"))) normalizePath(file.path(script_dir, "..")) else "/srv/finalists")
+if (!dir.exists(file.path(root, "src", "R"))) die("no src/R under", root, "; set FINALISTS_DIR")
+payload_path <- file.path(root, "data", "processed", "payload.json")
+
+# ---- 1. score from cache ------------------------------------------------------------------
+pipeline_ran <- FALSE
+if (run_pipeline) {
+  old <- setwd(file.path(root, "src")); on.exit(setwd(old), add = TRUE)
+  msg("scoring from cache: Rscript R/13_daily_refresh.R in", getwd())
+  st <- system2("Rscript", "R/13_daily_refresh.R")
+  if (st != 0) die("scoring failed, status", st, "; Blob file left as it is")
+  pipeline_ran <- TRUE
+}
+if (!file.exists(payload_path)) die("no payload at", payload_path, "; nothing to ship")
+p <- fromJSON(payload_path, simplifyVector = FALSE)
+
+# ---- 2. refresh day-dependent fields -------------------------------------------------------
+# The scoring uses a fixed REF_DATE (00_config.R), so days_left is frozen at that date. Recompute it
+# from close_date against today, drop rows whose close date has passed, and close the rank gaps.
+# Fit scores and the order of the rest are untouched. (Proper fix: REF_DATE from the clock; Kent's file.)
+if (length(p$rows)) {
+  dropped <- 0L
+  for (i in seq_along(p$rows)) {
+    cd <- p$rows[[i]]$close_date
+    if (!is.null(cd) && !is.na(suppressWarnings(as.Date(cd)))) p$rows[[i]]$days_left <- as.integer(as.Date(cd) - today)
+  }
+  expired <- vapply(p$rows, function(r) !is.null(r$close_date) && !is.null(r$days_left) && r$days_left < 0L, TRUE)
+  dropped <- sum(expired); p$rows <- p$rows[!expired]
+  key <- vapply(p$rows, function(r) paste(r$agency_id, isTRUE(r$in_top10), is.null(r$rank)), "")
+  for (k in unique(key)) {
+    idx <- which(key == k & !vapply(p$rows, function(r) is.null(r$rank), TRUE))
+    if (length(idx)) {
+      ord <- idx[order(vapply(idx, function(j) as.numeric(p$rows[[j]]$rank), 0))]
+      for (n in seq_along(ord)) p$rows[[ord[n]]]$rank <- n
+    }
+  }
+  p$rows_dropped_expired <- as.integer(dropped)
+  if (dropped) msg("dropped", dropped, "rows whose close date is before", format(today))
 }
 
-if (!file.exists(inp)) { msg("no payload at", inp, "; nothing to ship"); quit(status = 1) }
-p <- fromJSON(inp, simplifyVector = FALSE)
-
-# Shape check from the contract. A bad file must never replace a good one in Blob.
-need_top <- c("data_as_of", "window_days", "agencies", "rows")
-need_row <- c("agency_id", "opp_id", "title", "status", "days_left", "rank", "in_top10",
-              "eligibility", "url")
+# ---- 3. contract check ----------------------------------------------------------------------
+# A bad file must never replace a good one in Blob.
 problems <- character()
-miss <- setdiff(need_top, names(p)); if (length(miss)) problems <- c(problems, paste("missing top-level:", paste(miss, collapse = ", ")))
-if (!length(p$agencies)) problems <- c(problems, "no agencies")
-if (length(p$rows)) {
-  bad <- Filter(function(r) length(setdiff(need_row, names(r))) > 0, p$rows)
-  if (length(bad)) problems <- c(problems, paste(length(bad), "rows miss required keys"))
+add <- function(...) problems <<- c(problems, paste0(...))
+miss <- setdiff(c("data_as_of", "window_days", "agencies", "rows"), names(p))
+if (length(miss)) add("missing top-level: ", paste(miss, collapse = ", "))
+if (!length(p$agencies)) add("no agencies")
+if (!length(p$rows)) add("no rows")
+if (!length(problems)) {
   ids <- vapply(p$agencies, function(a) a$agency_id, "")
-  stray <- Filter(function(r) !(r$agency_id %in% ids), p$rows)
-  if (length(stray)) problems <- c(problems, paste(length(stray), "rows have an unknown agency_id"))
-  okst <- vapply(p$rows, function(r) r$status %in% c("posted", "forecasted", "notice"), TRUE)
-  if (!all(okst)) problems <- c(problems, "a row has an unknown status")
-} else problems <- c(problems, "no rows")
-if (length(problems)) { msg("payload rejected:", paste(problems, collapse = "; ")); quit(status = 1) }
+  if (anyDuplicated(ids)) add("duplicate agency_id")
+  need_a <- c("agency_id", "agency_name", "plan_files", "plan_stale", "plan_thin", "folded_from")
+  nb <- sum(vapply(p$agencies, function(a) length(setdiff(need_a, names(a))) > 0, TRUE))
+  if (nb) add(nb, " agencies miss required keys")
+  need_r <- c("agency_id", "opp_id", "opp_number", "title", "status", "close_date", "days_left", "date_note",
+              "fit_score", "rank", "in_top10", "eligibility", "elig_source", "elig_quote", "reader_label",
+              "reader_quote", "goal_id", "goal_snippet", "opp_snippet", "cfda_list", "award_ceiling",
+              "signature_tier", "tier_source", "nc_won_before", "url")
+  bad <- sum(vapply(p$rows, function(r) length(setdiff(need_r, names(r))) > 0, TRUE))
+  if (bad) add(bad, " rows miss contract keys")
+  chk <- function(field, ok) {
+    n <- sum(!vapply(p$rows, function(r) { v <- r[[field]]; !is.null(v) && v %in% ok }, TRUE))
+    if (n) add(n, " rows have a bad ", field)
+  }
+  chk("status", c("posted", "forecasted", "notice"))
+  chk("eligibility", c("yes", "no", "ask"))
+  chk("signature_tier", c("writer", "supervisor", "leadership", "unknown"))
+  stray <- sum(!vapply(p$rows, function(r) r$agency_id %in% ids, TRUE))
+  if (stray) add(stray, " rows have an unknown agency_id")
+  badfit <- sum(vapply(p$rows, function(r) !is.null(r$fit_score) && (!is.numeric(r$fit_score) || r$fit_score < 0 || r$fit_score > 1), TRUE))
+  if (badfit) add(badfit, " rows have fit_score outside 0 to 1")
+  zero_dl <- sum(vapply(p$rows, function(r) !is.null(r$close_date) && is.null(r$days_left), TRUE))
+  if (zero_dl) add(zero_dl, " rows have a close_date but no days_left")
+  top <- Filter(function(r) isTRUE(r$in_top10), p$rows)
+  if (any(vapply(top, function(r) r$status == "forecasted", TRUE))) add("a forecast is flagged in_top10")
+}
+if (length(problems)) die("payload rejected:", paste(problems, collapse = "; "))
 
-# Stamp. Never claim a pipeline ran when it did not: keep the file's own stamp too.
-p$shipped_at <- now
+# ---- 4. stamp --------------------------------------------------------------------------------
+# data_as_of moves only if scoring ran in this job. If the file was shipped as it was, keep its own stamp.
 if (is.null(p$pipeline_as_of)) p$pipeline_as_of <- p$data_as_of
-out <- tempfile(fileext = ".json")
-write_json(p, out, auto_unbox = TRUE, null = "null", na = "null", pretty = FALSE)
-msg("payload ok:", length(p$agencies), "agencies,", length(p$rows), "rows, shipped_at", now)
+if (pipeline_ran) p$data_as_of <- iso(stamp_now)
+p$shipped_at <- iso(stamp_now)
+msg("payload ok:", length(p$agencies), "agencies,", length(p$rows), "rows, data_as_of", p$data_as_of)
 
+out <- tempfile(fileext = ".json")
+write_json(p, out, auto_unbox = TRUE, null = "null", na = "null", pretty = FALSE, digits = NA)
+if (nzchar(env("JOB_OUT"))) {
+  dir.create(dirname(env("JOB_OUT")), showWarnings = FALSE, recursive = TRUE)
+  file.copy(out, env("JOB_OUT"), overwrite = TRUE); msg("wrote", env("JOB_OUT"))
+}
 if (dry) { msg("JOB_DRY_RUN is on: nothing written to Blob"); quit(status = 0) }
 
+# ---- 5. upload -----------------------------------------------------------------------------
 sas <- env("BLOB_WRITE_SAS")
 hdr <- c("-H", shQuote("x-ms-blob-type: BlockBlob"), "-H", shQuote("Content-Type: application/json"),
          "-H", shQuote("x-ms-version: 2021-08-06"))
 if (nzchar(sas)) {
   target <- paste0(blob, "?", sub("^\\?", "", sas))
 } else {
-  ep <- env("IDENTITY_ENDPOINT"); stopifnot(nzchar(ep))
+  ep <- env("IDENTITY_ENDPOINT"); if (!nzchar(ep)) die("no BLOB_WRITE_SAS and no managed identity endpoint")
   tk <- paste(system2("curl", c("-s", "-H", shQuote(paste0("X-IDENTITY-HEADER: ", env("IDENTITY_HEADER"))),
               shQuote(paste0(ep, "?api-version=2019-08-01&resource=https://storage.azure.com/"))), stdout = TRUE), collapse = "")
   tok <- sub('.*"access_token":"([^"]+)".*', "\\1", tk)
