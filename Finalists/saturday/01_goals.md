@@ -10,6 +10,25 @@ A working prototype means all of these:
 
 Fallback at 12:45 if short: the URL by 1:00, the backtest number by 2:00.
 
+## Stretch by about 1:00: match board (decision 11)
+Not part of the gate. Build it on top of the picker and top 10; never at their expense.
+- [ ] Two columns: plan goals and typed projects (saved in the browser) on the left, grants on the right.
+- [ ] Click a project and the grants rank. Click a grant and the projects rank, with fits grouped by agency.
+- [ ] Left column labels plan goals as "Plan goals" and typed items as "Your projects". Scores are never compared across the two directions.
+- [ ] Agency is one dropdown with "All NC" as an option; role is an optional line that changes display only.
+- [ ] Checklist and backward timeline for Pursue rows: one hand-built example row only, from notice fields with quotes; anything else marked `[assumed]`, no hours claimed.
+If not working at 12:45 go / no-go, cut it and ship the gate.
+
+## Stretch by about 1:00: qualifier features (decision 12)
+Gate features (agency dropdown, order-by toggle, rule per row, drawers, deadline badges, CSV export, signature tier label) are part of the gate list in decision 12. Everything below is stretch and is cut with the match board at 12:45.
+- [ ] Impact score, "What matters most?" and impact sliders, program priority weights per agency, reset to defaults.
+- [ ] Capability-gap table, alignment percent to the agency plan, drawer search, "How this works" tab, larger-text mode.
+- [ ] County reach, need map, reach vs intensity scatter.
+- [ ] One collapsed "Refine (optional)" panel: constraints, include forecasts, scenario box, presets, assumptions. Ranking works with it closed.
+- Data limits: see `05_open_questions.md` risks. A feature without data for an agency shows "not available for this agency", never blank or guessed.
+
+**Cut order at 12:45:** match board first, then the rest of the stretch list above, then the gate fallback (URL by 1:00, number by 2:00).
+
 ## Backtest pass bar (decision 7, set before the run)
 - Per agency (DPI, DEQ, DHHS): at least **50%** of the agency's won programs that had an open notice in the backtest period appear in its top 10 at least once, using 4-week windows.
 - Pass if **2 of 3** agencies hit it.

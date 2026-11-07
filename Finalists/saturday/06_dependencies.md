@@ -24,6 +24,12 @@ Read this when you are blocked or when your work is late. If your task is late, 
 | 17 | Marco | Clean snapshot repo (no `.git`, no `api_keys.env`) | Kent (submission form) | 7:30 pm | Submission blocked; Kent builds it |
 | 18 | Kent | Submission through the form | (deadline) | Sun 8:30, hard stop 9:00 | None. Late submissions are not accepted |
 
+## Stretch dependencies (decisions 11 and 12; cut at 12:45)
+| # | Producer | Gives | Consumer | Needed by | If late |
+|---|---|---|---|---|---|
+| S1 | Kent | `goals[]`, `rows[].opp_text`, capability profiles where they exist (Merge 2) | Marco (match board, alignment, capability table) | 11:00 | Marco builds the board on plan goals only, or cuts it |
+| S2 | Noah | Qualifier county caches placed so `rows[].counties` can be built (A) | Kent (payload), Marco (county reach, need map, scatter) | 11:00 | County features are cut; they show "not available" |
+
 ## Chain, in words
 - Kent's contract (9:30) unblocks Marco's tool, Everett's backtest script and Noah's data placement. All three can start on stubs before that.
 - Kent's real ranking (11:00) is the one thing everyone downstream waits on: tool on real data, backtest on real data.
