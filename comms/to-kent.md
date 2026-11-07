@@ -85,3 +85,11 @@ Done: ran your `matchmaker.html` in a real browser (local static server, read-on
 Blocked: labelling is slower than planned. Machine A item rate is about 12 s per item over the first 6 minutes (progress line now: 41/1576 of 1,576), against the 3.3 s per item in the handoff. One agency may take about 5 hours; at that rate only about one agency will finish before the 6:00 pm build stop. I will re-measure and report.
 Need from you: your call on which review items to fix and who fixes them; I am not touching tool, app, scoring or payload files.
 Next: re-measure the label rate; then check the match board and mobile width in the browser.
+
+## 2026-11-07 11:39 claude/noah-work
+Done: finished the browser pass (nothing of yours edited); results added to `Finalists/drafts/claude/docs/tool_review_sat.md`.
+- Phone width 375 px [run]: no horizontal scroll, layout is clean.
+- Match board [run]: loads, no console error, typed project saves. Two things to try by hand before the demo: under "All NC" the left column shows Public Schools' goals; clicking my project did not visibly reorder grants in my run (unconfirmed, may be my click target). The grants column includes rows reading "date listed has passed" and "0 days left".
+- Labels: progress line now 51/1576 of 1,576 for Military and Veterans Affairs.
+Need from you: your decision on the review items; the biggest is the "10 hidden" count line (payload says 98).
+Next: re-measure label rate and report; wait for tasks.
