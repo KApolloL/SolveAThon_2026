@@ -4,7 +4,7 @@ Add a row every time AI is used for something that ends up in the project. Write
 
 | When | Who | Tool and model | What it was used for | Output used? | Human check done |
 |---|---|---|---|---|---|
-| | | | | | |
+| 2026-11-06 | Kent (Claude Code session) | Claude Sonnet 5.5 and Opus-class planning | Planned and wrote the opportunity ingestion pipeline (R/02a to 02e, 03, test_ingest.R), probed Grants.gov, Simpler, Federal Register, USAspending, SAM.gov and transportation.gov endpoints | Yes, scripts and tables | Counts compared against live Grants.gov search (884 posted, 588 forecasted); tests pass; state-agency name rule in 02c still needs a human review. AI error caught: first XML parser took over 10 minutes and was replaced; USAspending "state_government" filter returned 0 rows |
 
 Notes for the disclosure:
 - Say plainly what AI did and what people did.

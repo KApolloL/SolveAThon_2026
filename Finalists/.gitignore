@@ -9,3 +9,6 @@ data/processed/profile/
 data/cache/llm/
 .quarto/
 *_files/
+
+# Large raw downloads (record source in data/raw/README.md)
+data/cache/api/grantsgov_extract/
