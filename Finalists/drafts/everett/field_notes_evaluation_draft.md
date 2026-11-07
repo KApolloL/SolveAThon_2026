@@ -1,5 +1,7 @@
 # Field notes: Evaluation and AI-error rows (draft by Everett's Claude, for Kent and Noah)
 
+> Numbers updated Sat Nov 7 (~5:30 pm) after the overseas-embassy filter (`us_based` in `criteria.csv`); new values from `src/docs/fact_sheet.md`. Edited by Kent's docs-sync Claude session.
+
 Paste-ready text for `drafts/claude/docs/field_notes_draft.md` section 9 ("Evidence") and section 7. Numbers only from `src/docs/fact_sheet.md` (row given) unless marked "not a fact row". Unverified by a human; nothing here is user evidence.
 
 ## A. Evaluation results (fills the `[TO FILL]` for "recall versus shortlist length")
@@ -7,11 +9,11 @@ Test: the award-history backtest. For programs a state agency has already won mo
 
 | Shortlist length | Won programs reached | Fact row |
 |---|---|---|
-| Top 10 | 58 of 159 (36%) | 26 |
-| Top 20 | 74 of 159 (47%) | not a fact row (`backtest_v2_result.csv`) |
-| Top 50 | 97 of 159 (61%) | 27 |
+| Top 10 | 59 of 159 (37%) | 26 |
+| Top 20 | 74 of 159 (47%) before the embassy filter; not a fact row, not rechecked (`backtest_v2_result.csv`) |
+| Top 50 | 100 of 159 (63%) | 27 |
 
-Baselines at Top 10: soonest deadline first 17%, a random 10 about 13.5% (row 29). So the measured named weakness is: recall rises with shortlist length, and a Top 10 still leaves most won programs out.
+Baselines at Top 10: soonest deadline first 19.5%, a random 10 about 14% (row 29). So the measured named weakness is: recall rises with shortlist length, and a Top 10 still leaves most won programs out.
 
 Recorded failures (say these plainly):
 1. The test we set in advance failed: the bar was 50% of won programs in 2 of 3 agencies; DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11, so 1 of 3 passed (row 15).
@@ -24,7 +26,7 @@ What we did after the failure (exploratory, built after seeing the result, so no
 
 Why some won programs are not in the Top 10 (`backtest_misses.csv`, `backtest_keyword_gap.csv`; not fact rows): of 159, 39 rank 11 to 50 and 62 rank below 50; none was hidden by an eligibility rule. The 62 all score under their agency's Top-10 median keyword fit. That is consistent with a keyword gap, not proof; a 10-row hand check (provisional tags) split 4 on-mission, 4 off-mission, 2 other.
 
-In time (not a fact row, 21 days is our assumption): 42 of the 58 Top 10 catches had 21 or more days left.
+In time (not a fact row, 21 days is our assumption): 42 of the 59 Top 10 catches had 21 or more days left (row 32, 4-week windows).
 
 ## B. Section 7 rows (AI wrong, how caught). From this Saturday's work, all in the log or outbox
 Columns match section 7: # | What happened | Kind | Who caught it, and how | Check in repo. Numbering continues after row 11.

@@ -1,5 +1,7 @@
 # AI-usage disclosure (first draft)
 
+> Numbers updated Sat Nov 7 (~5:30 pm) after the overseas-embassy filter (`us_based` in `criteria.csv`); new values from `src/docs/fact_sheet.md`. Edited by Kent's docs-sync Claude session.
+
 **Draft by Everett's Claude for Kent and Marco; they own the real one.** Not for submission as written. `docs/RUNBOOK.md` line 20 gives the log and the disclosure to role D (Marco and Kent).
 
 Every claim below cites a source. "Log line N" means line N of `Finalists/AI_USAGE_LOG.md`. "Notes line N" means `Finalists/drafts/claude/docs/field_notes_draft.md`. Tool and model names are copied as the log wrote them; none were checked against a vendor [unverified]. The only numbers used are from `src/docs/fact_sheet.md`.
@@ -22,7 +24,7 @@ Every claim below cites a source. "Log line N" means line N of `Finalists/AI_USA
 
 - Project rule: "If an LLM is used on data, it only labels with quoted evidence. It does not make the final decision." (`Finalists/CLAUDE.md` line 28). The brief also says humans make the final decision (`docs/QUEST_BRIEF.md` line 54).
 - Design decision 7: Azure chat writes a short reason with plan and notice quotes, a script checks each quote appears in its source, and "The LLM never decides" (Notes line 100).
-- Ranking and eligibility are rules in R, not model calls. Text rules can rule an item out but never confirm it; a text "yes" becomes "check eligibility" with the quote shown (log line 50). The fact sheet counts these pairs: 16,924 marked check eligibility, 3,030 hidden as clearly not eligible (fact sheet rows 7 and 8).
+- Ranking and eligibility are rules in R, not model calls. Text rules can rule an item out but never confirm it; a text "yes" becomes "check eligibility" with the quote shown (log line 50). The fact sheet counts these pairs: 16,924 marked check eligibility, 4,758 hidden by the filters (clearly not eligible, or run by a U.S. embassy abroad) (fact sheet rows 7 and 8).
 - The model labels from the local qwen run failed the validation gate and stay out of the tool's payload; they are "model labels, unvalidated", not ground truth (log lines 38, 47).
 - The tool never applies for anything (Notes line 41).
 

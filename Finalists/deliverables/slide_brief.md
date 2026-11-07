@@ -44,7 +44,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - **On the slide (heard → changed table; figure `outs/figures/heard_changed.png`, NEEDED):**
   | Sponsors told us | So we built |
   |---|---|
-  | Users don't know eligibility rules | The tool sorts eligibility: 3,030 agency-opportunity pairs hidden as clearly not eligible, 16,924 shown with "check eligibility" (rows 7, 8) |
+  | Users don't know eligibility rules | The tool sorts eligibility: 4,758 agency-opportunity pairs hidden (clearly not eligible, or run by a U.S. embassy abroad), 16,924 shown with "check eligibility" (rows 7, 8) |
   | No time; more questions is bad | One required question (pick your agency). Everything else optional |
   | A deadline was missed because nobody noticed | Days-to-deadline on every row and a closing-soon list |
   | Nobody knows which agency should apply | All 32 agencies ranked (row 2), plus a view across agencies |
@@ -82,6 +82,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
   - "A plain sort by soonest deadline did at least as well in all 3" (row 16).
   - "Our AI labels failed a blind check, so none are used in the ranking." (`drafts/claude/docs/holdout/label_check_result.md`; no number on the slide.)
 - **Figure:** `outs/figures/backtest_recall.png` (exists).
+- **Optional line (exploratory, rows 7 and 26) [Kent to confirm]:** "A Claude review of our own output caught overseas U.S. Embassy grants in state agencies' lists. That was our keyword ranking, not the AI labels. One filter rule removed them, and reach rose from 58 to 59 of 159 won programs." Also fits backup slide 13 and the field notes' "AI was wrong" table.
 - **Speaker note:** Use `src/docs/backtest_framing.md`. Why it still helps: the test rewards repeat funding, not new fits, and the samples are small (3 to 11 programs). The tool does what a deadline sort cannot: removes ineligible items, shows the plan goal, flags other-state items. The 50% bar is a team judgment. We did not move it after seeing the result.
 
 ### Slide 8: Weakness and tradeoff (Evaluate, 4:30 to 4:45)
@@ -109,7 +110,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 ### Slides 11 to 15: Q&A backup (not presented)
 11. Data sources and coverage (what is pulled, what is not: SAM catalog via bulk file, DOT page blocked).
 12. Eligibility rules with one hidden example and its quote.
-13. AI use: where the AI was wrong and how we caught it (label check; goal-heading fit that failed on real data; 2019-date stub).
+13. AI use: where the AI was wrong and how we caught it (label check; goal-heading fit that failed on real data; 2019-date stub; embassy notices, below).
 14. Stakeholders in more detail (optional stakeholder map).
 15. Cost and security: public data only, keys not in the judge repo, Azure spend.
 
@@ -132,7 +133,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 
 ### Slide 2: Why it helps
 - **Message:** The best matches are not the ones a keyword search finds, and ineligible ones waste time.
-- **On the slide:** one example: the national DERA program (Diesel Emissions Reduction Act) is the top result for DEQ and also reaches DPI (fact row 14). "3,030 agency-opportunity pairs hidden as clearly not eligible" (row 7). "16,924 marked: check eligibility, shown not hidden" (row 8).
+- **On the slide:** one example: the national DERA program (Diesel Emissions Reduction Act) is the top result for DEQ and also reaches DPI (fact row 14). "4,758 agency-opportunity pairs hidden as not usable: clearly not eligible, or run by a U.S. embassy abroad" (row 7). "16,924 marked: check eligibility, shown not hidden" (row 8).
 - **Speaker note:** Say that DERA reaches DPI because of a hand-built program link that we still need to confirm (row 14 is marked uncertain).
 
 ### Slide 3: How
@@ -144,7 +145,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 ### Slide 4: Does it work
 - **Message:** We tested it against grants agencies actually won, and the result was mixed; we say so.
 - **On the slide:** "Bar set before the test: at least 50% of an agency's won programs in its Top 10, in 2 of 3 agencies." Result at 4 weeks: DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11. "1 of 3 agencies met the bar" (row 15). "A plain sort by soonest deadline scored higher in all 3" (row 16).
-- **Figure:** `outs/figures/backtest_recall.png` (the pre-set test). Optional second figure, exploratory: `outs/figures/backtest_recall_v2.png`. Label it "exploratory, built after the first result". Numbers (fact sheet rows 26 to 29): Top 10 reaches 58 of 159 won programs (36%), a soonest-deadline sort 17%, a random 10 about 13.5%; Top 50 reaches 61% (97 of 159). Do not say the bar passed. Tuning the text fit with held-out agencies changed nothing (row 30).
+- **Figure:** `outs/figures/backtest_recall.png` (the pre-set test). Optional second figure, exploratory: `outs/figures/backtest_recall_v2.png`. Label it "exploratory, built after the first result". Numbers (fact sheet rows 26 to 29): Top 10 reaches 59 of 159 won programs (37%), a soonest-deadline sort 19.5%, a random 10 about 14%; Top 50 reaches 63% (100 of 159). Do not say the bar passed. Tuning the text fit with held-out agencies changed nothing (row 30).
 - **Speaker note:** Use `src/docs/backtest_framing.md`. Say "would not have flagged", never "missed". The 50% bar is a team judgment.
 
 ### Slide 5: Limits
