@@ -13,6 +13,9 @@ Deloitte warned about anchoring on a method (or past data) before understanding 
 | Judge whether something worked | Evaluate | Compare to a defensible baseline; state confounders | Loaders, tests, report; use `statistical-analysis` for tests | Placebo or pre-trend check | Selection bias; causal claims from correlation |
 | Understand or communicate a situation | Describe | A few clear charts and one number that matters; maybe the tool | `helpers_report.R`, tool (adapt) | Reader test: can a non-technical person state the takeaway? | Many charts, no point |
 
+## Our likely type (Final Quest, [assumed] until the gate is ticked)
+Rank (opportunities per agency profile) plus Classify (LLM labels agency goals and opportunity themes with quoted evidence, never the final decision). Reuse: `rank_items()`, `score.R`, `helpers_llm.R`, cache, tests, report, figures. Likely new: agency-profile builder from strategic plans, Azure deployment, a feedback loop if time allows. The model-side LLM must run in the Azure environment; local Ollama alone will not satisfy "runs on Azure". Record the final choice in `handoff.md`.
+
 ## Questions to ask for each type
 - **Rank:** What is a good item? What disqualifies an item? How many can the user act on?
 - **Place / gap:** What is a unit? What counts as need? Who decides where resources go?

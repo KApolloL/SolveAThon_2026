@@ -1,0 +1,71 @@
+> Copy of the vault note `Finals/Solveathon_FinalsChecklist.md` made Nov 6, 2026. The vault is the source; edit there.
+
+- Master checklist for the finals (Fri Nov 6 to Sun Nov 8, 2026)
+- Between now and the competition (by Nov 5)
+	- Teammates
+	- Testing the setup
+		- [ ] #tasks Run one reviewer (for example `persona_user`) in each teammate's AI tool 📅 2026-11-03
+	- Their AI: first record what each person has
+		- Write in a table: person, Claude Code (yes or no, plan), ChatGPT (plan), PromptLab, usage limits they expect to hit
+		- Decide who runs which reviewer (hostile judge, data critic, test breaker, three personas) based on that table
+	- If the teammate has Claude Code
+		- Install and log in; check it runs (`claude --version`)
+		- Start it from the `Finalists/` folder, accept the project trust prompt
+		- Check it loaded the project: ask "what are the teammate rules in CLAUDE.md"; check `/agents` lists hostile-judge, data-critic, test-breaker and that `/persona_user` exists (untested; fix by re-pulling if missing)
+		- Shared settings are in `Finalists/.claude/settings.json` (untested): allows Rscript, quarto render and basic git; denies pushing to `main`, force-push, `reset --hard`, merge, rebase, `rm -rf`, and reading `.Renviron`. Check one denied command is blocked
+		- Show them: start a task with "Work on tasks/NN_name.md", and that it should explain git in plain words
+		- Teammates do not need your skills; the repo gives them `CLAUDE.md`, three agents and three slash commands
+	- If the teammate uses ChatGPT or PromptLab
+		- Give them `Finalists/tasks/teammate_ai_rules.md` (paste it first in every new chat)
+		- Give them the paste prompts in `Finalists/testing/prompts/paste/` and a copy of `testing/context.md` as plain text in Drive (updated after release)
+		- If their ChatGPT plan has Projects, put the rules and context in a project so they do not paste each time (check that their plan has it)
+	- The teammate whose AI builds the slides
+		- Write the slide AI prompt with `prompt-master` (on request): audience, 5 minute limit, structure (ask, why, how, limits, next step), plain words, only numbers from the brief, "NEEDED" for anything missing
+		- Agree the style: fonts, colors, one chart per slide
+		- Trial run: qualifier numbers and figures in `deliverables/slide_brief_TEMPLATE.md`; check every number on the slides against the fact sheet; fix the prompt
+	- What you keep in sync
+		- After editing a reviewer spec in `testing/reviewers/`, run `python3 testing/build_reviewers.py`, commit, push; teammates `git pull` before each task
+		- Fill `testing/context.md` at release and copy it to Drive for ChatGPT users
+		- Tell teammates your usage rules: log every AI use in `AI_USAGE_LOG.md`; check AI output yourself
+- When the problem arrives (Fri Nov 6, about 5:30 to 6:30 PM)
+	- Do not open the data yet
+	- [ ] #tasks Paste the prompt into the Problem section of `Finalists/CLAUDE.md` and note the Devpost requirements 📅 2026-11-06
+	- [ ] #tasks Decide the problem type with `planning/03_problem_types.md`; does the ranking skeleton fit 📅 2026-11-06
+	- [ ] #tasks Hand out workshop roles; use `planning/01_discovery_questions.md` in the Client Discovery Workshop 📅 2026-11-06
+	- [ ] #tasks Fill `planning/02_framing_worksheet.md` in the Solution Design Sprint until the gate is ticked 📅 2026-11-06
+	- [ ] #tasks Show the one-page framing to mentors at 8:45 PM 📅 2026-11-06
+	- [ ] #tasks Copy the framing into `testing/context.md` and the vault hub log 📅 2026-11-06
+	- Then and only then
+		- Profile the data (`Rscript R/01_profile.R`) and fill `planning/04_data_prep.md` for each dataset
+		- Write `data/manual/criteria.csv`, `test_cases.csv`, `facts.csv`
+		- If the skeleton does not fit: keep the plumbing, write a new core, log why in `handoff.md`
+- During the competition
+	- Fri Nov 6
+		- Workshop: ask, do not pitch; record answers word for word
+		- Sprint: user, decision, 3 to 5 measurable criteria, options with tradeoffs, success test
+		- Sleep after the framing is written
+	- Sat Nov 7
+		- Morning: build filter → score → rank → explain; teammates write test cases before results exist
+		- Gate at 1:00 PM: a working ranking exists, or cut scope
+		- Afternoon: run unit, integration and user tests; run the reviewers; find one real failure and report it
+		- 2:00 to 4:00 PM: mentor drop-in with Aries Rosales; bring the failure and the draft ask
+		- By about 5:00 PM: slide brief and figures to the teammate with the AI agent
+		- 7:00 to 8:00 PM wrap up: code freeze, fact sheet complete, first slide draft
+		- Decide the late block: finish slides and rehearse out loud
+	- Sun Nov 8
+		- Before 9:00 AM: submit on Devpost (confirm what it needs); check slides against the fact sheet; rehearse once at 5 minutes
+		- Publish prep (Sat night, before the Devpost submission)
+			- Decide what stays public: code, `outs/` deliverables, README, AI usage log; remove from the repo tip the internal files (`CLAUDE.md` files, `planning/`, `testing/` transcripts, `tasks/`, `TEAM_SETUP.md`, `SKILLS_GUIDE.md`, `handoff.md`); they stay in git history, which holds only generic templates
+			- Rewrite the root README for judges: what it is, how to run it, where the deliverables are
+			- Check no key, `.Renviron`, personal data or toy data is committed
+			- Make the repo public, re-run the Pages workflow, open the site and click every link
+			- Paste the repo and site links into Devpost
+		- 9:30 AM team and judge check-in
+		- 10:00 AM to 12:30 PM: present (5 minutes plus 2 minute Q&A); engage the judges; lead with the answer
+		- Write the AI-usage disclosure from `AI_USAGE_LOG.md`
+	- All weekend
+		- Log every AI use in `Finalists/AI_USAGE_LOG.md`
+		- Only numbers from `src/docs/fact_sheet.md` go on slides
+		- Run `tests/run_tests.R` and `R/check_facts.R` before saying anything passes
+		- You commit; teammates work on branches and open pull requests
+		- No personal or participant data anywhere

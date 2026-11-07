@@ -4,9 +4,9 @@ This replaces the earlier Gemini handoff. It states only what is confirmed and l
 
 ## What this is
 - UNC Solve-a-thon Final Quest, Fri Nov 6 to Sun Nov 8, 2026, in person at Manning Hall. A 5-person team builds a data-driven solution a North Carolina government user can act on.
-- **The problem is not known yet.** It is released Friday evening after registration. Do not assume the topic, the agency, the data, or that it is a grants problem. Earlier training examples used grants, but that is not confirmed for the finals.
-- **Schedule:** Fri 5:30 PM registration; 6:30 PM client discovery workshop; 7:30 PM solution design sprint. Sat build sessions 9:30 AM to 1 PM and 2 to 6 PM; wrap up 7 to 8 PM. **Sun 9:00 AM submission deadline** (likely Devpost, unconfirmed). Presentations Sun 10:00 AM to 12:30 PM: **5 minutes plus 2 minute Q&A**, in person, live demo allowed.
-- **Judging criteria (assumed to match the qualifier; confirm at release):** Understanding (criteria specific to this agency and user), Framing (problem and requirements), Solving (sensible, reproducible, wanted by an agency), Evaluating (names a real weakness and its tradeoff), Driving Impact (a non-technical decision maker knows the next step).
+- **The problem (released Nov 6):** "Federal Funds Matchmaker" for NC OSBM (Office of State Budget and Management). Federal funding opportunities (Grants.gov or SAM.gov) slip through NC agencies because discovery and matching are manual and uneven. Build a prototype on Azure that loads opportunity data, builds agency profiles from real NC strategic plans, scores and ranks opportunities per agency, summarizes them, and shows results in a simple interface. Humans make the final decision. Public or provided data only. The exact user and decision are not confirmed until the Friday workshop; treat "agency grant coordinator" as [assumed].
+- **Schedule:** Fri 5:30 PM registration; 6:30 PM client discovery workshop; 7:30 PM solution design sprint. Sat build sessions 9:30 AM to 1 PM and 2 to 6 PM; wrap up 7 to 8 PM. **Sun 9:00 AM submission deadline** via the organizers' Final Submission form (slides, field notes, repo, product link). Presentations Sun 10:00 AM to 12:30 PM: **6 minutes with a brief demo plus 2 minute Q&A** per the released brief (an earlier email said 5 plus 2; unconfirmed).
+- **Judging criteria (released):** Understand (real users shaped the build), Frame (problem and requirements), Solve (works, effective use of cloud services), Evaluate (measured own output, honest about failures, defends tradeoffs), Drive Impact (could win a pilot budget from OSBM). Full brief: `docs/QUEST_BRIEF.md`.
 
 ## Method (from the Deloitte finalist training)
 Discover, Build, Test, Present.
@@ -25,7 +25,7 @@ Discover, Build, Test, Present.
 - **Kent Lee:** technical lead; the only person who merges code; makes the final call on framing, criteria and scope.
 - **Claude (main planner and drafter):** plans, designs the architecture, drafts prompts, tests and the slide brief, and does the final polish and check of everything other tools return.
 - **OpenCode, Codex, Gemini, ChatGPT, UNC PromptLab:** smaller bounded tasks Claude or Kent assigns (a function, a summary, a draft, a second opinion, a practice Q&A). They return the result to Claude to polish and check. They do not make decisions.
-- **Teammates (Everett, Marco, Matthew, Noah):** mostly use ChatGPT and PromptLab; they do research, labeling, testing, slides and Q&A prep. See `RUNBOOK.md`.
+- **Teammates (Everett, Marco, Matthew, Noah):** mostly use ChatGPT and PromptLab; they do research, labeling, testing, slides and Q&A prep. See `docs/RUNBOOK.md`.
 
 ## Rules for any AI reading this
 1. Do only the task you are given. Use only the inputs provided.
@@ -39,4 +39,4 @@ Discover, Build, Test, Present.
 9. The team will log AI use and must name at least one place an AI was wrong. If you notice your own mistake or one by another AI, say so.
 
 ## Not confirmed (do not assume)
-The topic and data; whether a starter kit, a data dictionary or agency strategic plans are provided; the exact Devpost requirements; the final rubric; whether finals data is grants data.
+The topic and data; whether a starter kit, a data dictionary or agency strategic plans are provided; the exact submission requirements (Final Submission form); whether the Azure environment includes an LLM endpoint; which agencies to cover.

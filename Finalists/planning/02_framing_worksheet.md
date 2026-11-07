@@ -2,8 +2,15 @@
 
 Fill this in on paper or here before any data is opened. One page. Plain words. Anything the client did not say is [assumed].
 
+## 0. Given by the organizers (not ours to change; full text in `../QUEST_BRIEF.md`)
+- Build on Azure; public or provided data only; humans make the final decision.
+- Must: load federal opportunity data, build agency profiles from real NC strategic plans, score and rank, summarize, simple interface.
+- Must address: false positives, false negatives, uneven agency documentation, inconsistent data quality.
+- Judged on Understand, Frame, Solve (cloud use), Evaluate, Drive Impact (pilot budget from OSBM).
+- Still ours to decide after the workshop: which user, which decision, which agencies, the 3 to 5 criteria, the success test.
+
 ## 1. One-sentence problem
-(The user, the decision, and why it is hard today.)
+[assumed, replace after workshop] Agency grant coordinators miss or find late federal opportunities that fit their agency, because monitoring Grants.gov or SAM.gov and judging fit against strategic plans is manual and uneven.
 
 ## 2. User card
 - **Who (role, not a name):**

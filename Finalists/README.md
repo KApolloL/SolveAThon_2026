@@ -1,23 +1,26 @@
 # Finalists: Solve-A-Thon 2026 Final Quest
 
-**When:** Friday Nov 6, 5:30 pm, to Sunday Nov 8, 2 pm (awards). Presentation submission due **Sunday 9:00 am**. Presentations 10:00 am to 12:30 pm: **5 minutes plus 2 minute Q&A**, in person. Manning Hall. Full schedule: vault `Projects/Competitions/Solveathon/Solveathon.md`.
-**Prompt (as announced):** Turn real public data into a solution North Carolina can use. Move from understanding the user and framing the problem to building, evaluating, presenting and driving impact.
+**When:** Friday Nov 6, 5:30 pm, to Sunday Nov 8, 2 pm (awards). Presentation submission due **Sunday 9:00 am**. Presentations 10:00 am to 12:30 pm: **6 minutes (with brief demo) plus 2 minute Q&A**, in person (earlier organizer email said 5 plus 2; confirm). Manning Hall. Full schedule: vault `Projects/Competitions/Solveathon/Solveathon.md`.
+**Prompt:** Build the **Federal Funds Matchmaker** for NC OSBM: scan federal funding opportunities (Grants.gov or SAM.gov), build agency profiles from real NC strategic plans, score and rank opportunities per agency, summarize them, and show results in a simple interface. Must run on Azure. Humans make the final call. Full text: [docs/QUEST_BRIEF.md](docs/QUEST_BRIEF.md).
+**Submit before Sun Nov 8, 9:00 am:** slides, Solution Design and GenAI Field Notes, and this repository (README a state developer can pick up), plus a link to the working product, via the Final Submission form (link in `docs/QUEST_BRIEF.md`).
 **Team:** Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt.
 
-> Problem statement, data sources, agency and user: **TBD at release.** Fill in `CLAUDE.md` first (section "Problem"), then this file.
+> Agency and user: sponsor is OSBM; the primary user is [assumed] an agency grant coordinator, to be confirmed at the discovery workshop. Data sources and Azure setup are in progress; see `handoff.md`. Before submission this README must become a state-developer onboarding guide (what it does, how to run it, how to deploy on Azure, known limits, how to extend).
 
 ## Layout
 
 | Folder | What goes there |
 |---|---|
+| `docs/` | Team and process docs: [QUEST_BRIEF.md](docs/QUEST_BRIEF.md) (organizer text), [RUNBOOK.md](docs/RUNBOOK.md) (day plan), [SKILLS_GUIDE.md](docs/SKILLS_GUIDE.md), [AI_HANDOFF.md](docs/AI_HANDOFF.md) (paste-ready context for chat-only AIs). |
 | `src/R/` | Numbered R pipeline scripts (`00_config.R`, `01_...`). Written by hand or with AI. |
 | `src/docs/` | Briefs, the fact sheet (`fact_sheet.md`), notes. |
-| `data/raw/` | Downloaded inputs. Never modified. |
+| `notes/vault/` | Copies of the Solveathon vault notes (the vault is the source), including the organized discovery session notes. Index: [notes/vault/README.md](notes/vault/README.md). Findings: [planning/07_discovery_findings.md](planning/07_discovery_findings.md). |
+| `data/raw/` | Untouched inputs, never modified: organizer files and 34 agency strategic plan PDFs. Intake log: [data/raw/README.md](data/raw/README.md). Notes on the organizer files: [src/docs/organizer_materials_notes.md](src/docs/organizer_materials_notes.md). |
 | `data/manual/` | Hand-authored tables (labels, mappings). |
 | `data/cache/` | Saved API and model responses so nothing is re-queried. |
 | `data/processed/` | Pipeline outputs. |
 | `outs/` | Generated files. Safe to delete and rebuild. |
-| `planning/` | Friday worksheets: discovery questions, framing worksheet, problem types, data prep. |
+| `planning/` | Friday worksheets: discovery questions, framing worksheet, problem types, data prep, and [tonight's plan with teammate AI prompts](planning/06_tonight_plan.md). |
 | `testing/` | Persona role-play testing: personas, scenarios, paste-ready prompts, transcripts, results log. |
 | `tasks/` | One brief per teammate task. Finished briefs move to `tasks/done/`. |
 | `deliverables/` | Final files teammates produce (slides, disclosure, handouts). |
@@ -49,7 +52,7 @@ quarto render report.qmd       # outs/report.html
 
 Not built until needed: ingestion for the real data (`02_*` scripts) and the text-labeling run. Add them after the design sprint.
 
-Top-level files: `SKILLS_GUIDE.md` (which Claude skill to load when), `CLAUDE.md` (rules and context for the AI agent), `handoff.md` (current status), `AI_USAGE_LOG.md` (running log for the disclosure).
+Top-level files: `docs/SKILLS_GUIDE.md` (which Claude skill to load when), `CLAUDE.md` (rules and context for the AI agent), `handoff.md` (current status), `AI_USAGE_LOG.md` (running log for the disclosure).
 
 ## Working rules
 

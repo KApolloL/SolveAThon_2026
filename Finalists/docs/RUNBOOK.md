@@ -16,7 +16,7 @@ For all five of us. Kent fills the names in "Roles" by Thursday. Times are the o
 | Kent | Kent | Technical lead. Frames with the team, builds the pipeline, makes final calls on criteria and scope, merges code. |
 | A: Client lead | | Leads the questions in the workshop. Then researches the agency's goals and drafts the user persona. Runs the persona role-plays. |
 | B: Data and testing | | Takes workshop notes. Then writes test cases before results exist, hand-labels a blind sample, spot-checks results against the raw data. Runs the test-breaker. |
-| C: Story and slides | | Follows up in the workshop. Then builds the slides with their AI from Kent's slide brief and owns the demo script and the Devpost text. |
+| C: Story and slides | | Follows up in the workshop. Then builds the slides with their AI from Kent's slide brief and owns the demo script and the final submission form entry. |
 | D: Q&A and proof | | Keeps time in the workshop. Then builds the Q&A cheat sheet, runs the hostile judge, checks every slide number against the fact sheet, and keeps the AI-use log and the disclosure. |
 
 ## Friday Nov 6 (Manning 209)
@@ -47,11 +47,17 @@ For all five of us. Kent fills the names in "Roles" by Thursday. Times are the o
 - **Late block (optional):** C finishes slides, D checks every number, everyone rehearses out loud with a timer. Set a stop time and sleep.
 
 ## Sunday Nov 8 (Manning 209)
-- **Before 9:00 Submission:** C and Kent submit (likely Devpost; Kent confirms what it needs). D checks slide numbers against the fact sheet. One full rehearsal.
+- **Before 9:00 Submission:** C and Kent submit through the Final Submission form (link in `docs/QUEST_BRIEF.md`; late submissions are not accepted, so aim for Sat night). Submit slides, Solution Design and GenAI Field Notes, repository link, and the working product link. D checks slide numbers against the fact sheet. One full rehearsal.
 - **9:30 to 10:00 Team and judge check-in.**
-- **10:00 to 12:30 Presentations: 5 minutes plus 2 minute Q&A.** Plan: the ask 0:30, why 1:15, how 0:45, limits 1:00, next step 0:45, buffer 0:45. That is about 650 to 750 spoken words. Lead with the answer; show the demo if it is good; ask the judges a question.
+- **10:00 to 12:30 Presentations: 6 minutes with brief demo plus 2 minute Q&A** (released brief; the older email said 5 plus 2, confirm). Plan: user, problem and requirements 1:00, solution and demo 1:30, evidence it works and where it does not 1:15, pilot 1:00, scale roadmap 0:45, buffer 0:30. That is about 780 to 900 spoken words. The organizers also expect these five parts: user and problem, solution, evidence incl. failures, pilot, roadmap. Lead with the answer; show the demo if it is good; ask the judges a question.
 - **Q&A:** answer from the fact sheet. If you do not know, say so and say what you would check.
-- Afterwards: Kent and D finish the AI-use disclosure from the log.
+- The GenAI field notes (tools, key prompts, at least one AI error and how we caught it) are due at 9:00 am with the slides, not afterwards. D drafts them from `AI_USAGE_LOG.md` on Saturday.
+
+## Final Quest specifics (from the released brief)
+- The task is the Federal Funds Matchmaker for NC OSBM. The prototype must run on Azure. Humans make the final decision on which opportunities to pursue.
+- Friday night, before anything else: Kent confirms Azure login and what services the credits cover.
+- In the workshop, also ask (for the Understand score and the field notes): who today monitors Grants.gov or SAM.gov and how; how many opportunities they miss or find late; what they would need to trust a match; how agency strategic goals are written down now; what a pilot would need to look like.
+- Write down every change to our plan that sponsors cause. The field notes require it.
 
 ## Rules for everyone
 - Tell Kent the moment anything looks wrong or a number does not match.

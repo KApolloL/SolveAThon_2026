@@ -1,0 +1,64 @@
+> Copy of the vault note `Finals/Solveathon_Runbook.md` made Nov 6, 2026. The vault is the source; edit there.
+
+- Kent's runbook for the finals. Teammates read `Finalists/RUNBOOK.md` in the repo; this is your view. Schedule: `Solveathon`. Checklist: `Solveathon_FinalsChecklist`. Method: `Solveathon_DeloitteTraining`
+- Setup in one line each
+	- Stack: R and Quarto in `Finalists/` (kept over the Python layout in the Gemini plan)
+	- Claude Code is the main planner and drafter; OpenCode, Codex, Gemini and ChatGPT do small tasks and return them to Claude to polish and check
+	- Teammates use ChatGPT and PromptLab and work in the shared Drive; you copy their files into the repo
+	- Files: `Finalists/CLAUDE.md` (Claude rules), `AGENTS.md` (OpenCode, Codex), `AI_HANDOFF.md` (paste into Gemini, ChatGPT, PromptLab), `RUNBOOK.md` (team plan)
+- Tool routing (capabilities not verified; test before Friday)
+	- Claude Code: framing, architecture, tests, prompts, slide brief, final polish and checks
+	- OpenCode: small R or JS edits and test boilerplate, one file at a time; installed, no logins, free `opencode/*-free` models and local Ollama `qwen2.5-coder:32b` listed
+	- Codex or ChatGPT free: second code opinion, prose from the fact sheet
+	- Gemini desktop: long agency documents and summaries
+	- PromptLab: teammates' research, persona drafts, Q&A practice
+- The hand-off loop for every small task
+	- Claude writes the brief (inputs, one output path, done criteria)
+	- The tool writes to `drafts/<tool>/` or the named path
+	- Claude checks: tests pass, numbers match `fact_sheet.md`, plain language, code read
+	- Promote the file; log the tool in `AI_USAGE_LOG.md`; note any AI error (the team must name at least one)
+- Roles to assign by Thursday (names blank in `RUNBOOK.md`)
+	- A client lead: asks in the workshop, then agency research and personas
+	- B data and testing: workshop notes, then test cases and blind hand-labels
+	- C story and slides: follow-ups, then slides, demo script, Devpost text
+	- D Q&A and proof: timekeeper, then Q&A bank, hostile judge, slide number checks, AI log
+- Your checkpoints
+	- Fri 5:30 PM: laptops, repo, Claude and OpenCode start in `Finalists/`
+	- Fri 6:30 PM: workshop; Fri 7:30 PM: run `/kickoff`; gate before any data
+	- Sat 1:00 PM: working ranking or cut scope; run `/checkpoint`
+	- Sat 5:00 PM: slide brief and figures to C
+	- Sat 8:00 PM: code freeze; run `/checkpoint`
+	- Sun before 9:00 AM: Devpost submission; one rehearsal at 5 minutes
+- Talk plan: 5 minutes plus 2 minute Q&A, about 650 to 750 spoken words
+	- Ask 0:30, why 1:15, how 0:45, limits 1:00, next step 0:45, buffer 0:45
+- Before Friday (this week)
+	- Fill the role names; send `Finalists/RUNBOOK.md` to the team
+	- Test OpenCode on one small task with a free model and with `qwen2.5-coder:32b`; check it reads `AGENTS.md`
+	- Test one Gemini and one ChatGPT paste of `AI_HANDOFF.md`
+	- Run the fire drill with the roles
+- Tool setup for the day (set up 11.03.26; test each before Friday 5:30 PM)
+	- Rule canary for every tool: ask "what exact words must you write when a task needs a framing or criteria decision?"; the reply must be `NEEDS KENT`; a web search or any other answer is a fail
+	- ChatGPT app (it is the Codex app)
+		- Project "Solveathon Finals" with only `Finalists/` as its source folder (trusted); passed the canary
+		- Never attach the repo root: `QualifierChallenge/.Renviron` holds the Census key
+		- Canary read back 11.04.26: reply was `NEEDS KENT`
+		- Codex skills written to `~/.agents/skills/solveathon-<name>/SKILL.md` for all 8 (hostile-judge, data-critic, test-breaker, persona-user, persona-supervisor, persona-director, kickoff, checkpoint); built from `testing/reviewers/*.md` and `.claude/commands/`. Restart the app to load them; type `$solveathon-` to check
+		- Google Drive plugin is blocked: the Plugins page shows "Upgrade to Plus". Not purchased; use the Drive link or paste files instead
+	- Gemini app
+		- Skill `solveathon-finals` holds the name-free handoff; type `@solveathon` and pick the skill chip before sending
+		- Use the Flash model, not Thinking: Thinking sat on "Analyzing" for minutes with no reply; Kent reports Flash works (reply text not read back by Claude)
+		- Check the chip appears; without it Gemini searched the web instead of using the skill
+		- Flash canary read back 11.04.26: with the chip, Flash did not decide the user or weights and asked for the problem statement; it did not write the words `NEEDS KENT`. Treat as partial pass
+		- Skills (Customize, Skills, Create manually; typed by hand 11.04.26): `solveathon-hostile-judge`, `-data-critic`, `-test-breaker`, `-persona-user`, `-persona-supervisor`, `-persona-director`. Invoke with `@name`, then paste the context and the material. Gemini cannot read repo files, so paste `testing/context.md` first
+		- `kickoff` and `checkpoint` are not in Gemini: they edit files and run `Rscript`; use Claude Code or Codex
+		- A stray skill `match-my-writing-style` was added by a mis-click; remove it in Customize, Skills
+		- Google Workspace connector is installed; shared-folder check not done
+	- OpenCode
+		- Start it in `Finalists/` so it reads `AGENTS.md` and `opencode.json`
+		- Agents `hostile-judge`, `data-critic`, `test-breaker` and commands `kickoff`, `checkpoint`, `persona_user`, `persona_supervisor`, `persona_director` are generated by `python3 testing/build_reviewers.py` into `.opencode/`; confirmed loaded with `opencode debug agents`; not yet invoked
+		- `test-breaker` has bash denied, so it cannot run `Rscript`; run the tests yourself
+		- Use a free `opencode/*-free` model: `opencode/deepseek-v4.1-flash-free` passed the canary and a real test task (18 of 18 tests); local `ollama/qwen2.5-coder:32b` failed through OpenCode
+		- No provider logins; the free models send the files they read to the OpenCode service
+	- Codex and Gemini command-line tools are installed (Codex 0.166.0, Gemini 0.66.0) but not logged in; Kent runs `codex login` and `gemini` himself
+	- Order on Friday before 5:30 PM: open the ChatGPT project, a new Gemini chat with `@solveathon-finals` on Flash, OpenCode in `Finalists/`; run the canary once in each
+	- Handoff text for chat-only tools: `Finalists/AI_HANDOFF.md`; rules for coding agents: `Finalists/AGENTS.md`
