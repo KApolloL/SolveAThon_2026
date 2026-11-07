@@ -606,6 +606,13 @@ fieldset.fb-q { border:none; padding:0; margin:12px 0; display:flex; gap:8px; fl
 .fb-x { font:inherit; font-size:1.2rem; background:none; border:none; color:inherit; cursor:pointer; padding:0 4px; }
 body.proj .fb-match, body.proj .fbbtn { display:none !important; }
 @media (max-width:560px) { .fbbtn { font-size:0 !important; gap:0 !important; padding:6px 10px !important; } .fbbtn svg { width:18px; height:18px; } .appbar .fbbtn { display:inline-flex !important; } }
+
+/* Quick declutter (Sat evening, before user feedback): show only what the operator needs */
+#quick-h, #quick, #evidence-home, #glance, #chartbox { display:none !important; }
+.welcome { grid-template-columns:1fr !important; }
+.chips2 .est, .chips2 .c-fed, .chips2 .c-track.s0, .chips2 .c-track.s1, .chips2 .c-track.s2 { display:none !important; }
+.fb-match { display:none !important; }
+:root { --paper:#ffffff; --surface-0:#ffffff; --shadow:none; }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -1795,6 +1802,7 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   // one question after Pursue or a save (asked at most once a day)
   function quickAsk(where) {
+    return; // turned off: keep feedback to the top-bar button
     var last = lsGet("ffm_fb_quick_v1", 0); if (Date.now() - last < 864e5) return;
     var bar = $("fb-toast"); bar.innerHTML = ""; bar.hidden = false;
     bar.appendChild(el("span", null, "Did this save you time?"));

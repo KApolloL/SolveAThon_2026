@@ -216,3 +216,4 @@ Read-only from a laptop without the `az` CLI, so no Azure query was possible and
 - Blob upload skipped (no write role); the baked payload in the image is served. Live `/payload.json` is byte-for-byte equal to the repo's `data/processed/payload.json` (960 rows, data_as_of 2026-11-07 11:00).
 - Check: live `/` contains "Start swiping" (new tool). The 7 "U.S. Embassy The Hague" rows are eligibility "no" (hidden examples only), not matches.
 - Not done: daily job (still dry run), spend not read.
+- Sat ~6:20 pm: quick declutter deployed as `ffm-app:v21` (home quick-picks, evidence card, at-a-glance and money-vs-time charts, estimate chips and per-card feedback row hidden; pop-up off; white page). Live page checked.
