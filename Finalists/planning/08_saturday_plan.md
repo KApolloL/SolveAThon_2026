@@ -2,6 +2,8 @@
 
 Rewritten Fri Nov 6, about 11:10 pm, by Claude for Marco, after Kent's [15 product decisions](https://github.com/KApolloL/SolveAThon_2026/blob/main/Finalists/planning/08_product_decisions.md) landed on main. **Those decisions are the source of truth.** This is a draft, and nothing here runs until Marco confirms it.
 
+**Update Sat 12:30 am:** the tool proposals in [09_tool_plan_update.md](09_tool_plan_update.md) and amendments A to L supersede this file where they differ. Main is already merged.
+
 Related: [azure_setup.md](../src/docs/azure_setup.md) | [framing worksheet](02_framing_worksheet.md) | [discovery findings](07_discovery_findings.md)
 
 ## Where we start
