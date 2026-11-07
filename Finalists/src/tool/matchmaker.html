@@ -137,7 +137,9 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
     var notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     var below = open.length - hidden.length - shown.length;
-    $("counts").textContent = "Showing " + shown.length + " of " + open.length + " open opportunities. " +
+    // open_total (per agency, proposed to Kent) is the true count; without it, say only what was loaded.
+    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : open.length + " open opportunities among the best matches loaded";
+    $("counts").textContent = "Showing " + shown.length + " of " + ofText + ". " +
       hidden.length + " hidden as not eligible, " + below + " ranked below the top 10, " + coming.length + " not open yet" + (notices ? ", " + notices + " notice" + (notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
     fill(top, shown);
     if (coming.length) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + coming.length; fill($("coming-l"), coming); }
