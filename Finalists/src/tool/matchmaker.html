@@ -332,7 +332,7 @@ body.proj .start .reason { font-size:1.35rem; }
   }
 
   // ---- row ----
-  var newIds = {};
+  var newIds = {}, newByAg = {}, newFirst = {};
   function daysBlock(r) {
     var d = el("div", "days");
     if (r.days_left == null) { d.className += " none"; d.appendChild(el("b", null, r.date_note || "No date listed")); }
@@ -460,13 +460,13 @@ body.proj .start .reason { font-size:1.35rem; }
     g.coming = mine.filter(function (r) { return r.status === "forecasted" && r.eligibility !== "no"; });
     g.hidden = mine.filter(function (r) { return r.eligibility === "no"; });
     g.top = open.filter(function (r) { return r.in_top10 && r.eligibility !== "no"; }).sort(function (a, b) { return a.rank - b.rank; });
-    g.soon = g.top.filter(function (r) { return r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; });
+    g.soon = open.filter(function (r) { return r.eligibility !== "no" && r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; }).sort(function (x, y) { return x.days_left - y.days_left; });
     g.ask = mine.filter(function (r) { return r.eligibility === "ask" && r.status !== "forecasted"; });
     g.fresh = mine.filter(function (r) { return newIds[r.opp_id] && r.eligibility !== "no"; });
     g.notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     return g;
   }
-  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "14 days or fewer"], ["fresh", "New", "since your last visit"], ["ask", "Read the notice", "not sure we can apply"], ["coming", "Coming up", "not open yet"]];
+  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "soonest first"], ["fresh", "New", "since your last visit"], ["ask", "Read the notice", "not sure we can apply"], ["coming", "Coming up", "not open yet"]];
   function listFor(g) {
     var rows = { top: g.top, soon: g.soon, fresh: g.fresh, ask: g.ask, coming: g.coming }[cur.tile] || g.top;
     if ($("opt-forecast").checked && cur.tile === "top") rows = rows.concat(g.coming);
@@ -556,9 +556,10 @@ body.proj .start .reason { font-size:1.35rem; }
     if (!id) { $("top").innerHTML = ""; $("learn-note").hidden = true; $("counts").textContent = "Pick an agency to see its top 10 open opportunities."; return; }
     var ag = P.agencies.filter(function (a) { return a.agency_id === id; })[0];
     var seen = lsGet("ffm_seen_v1", {}), first = !seen[id];
-    newIds = {};
     var g0 = P.rows.filter(function (r) { return r.agency_id === id; });
-    if (!first) { var prev = {}; seen[id].forEach(function (x) { prev[x] = 1; }); g0.forEach(function (r) { if (!prev[r.opp_id]) newIds[r.opp_id] = 1; }); }
+    // decide New once per agency per page load, so redraws (tile clicks) keep the same answer
+    if (!newByAg[id]) { newByAg[id] = {}; if (!first) { var prev = {}; seen[id].forEach(function (x) { prev[x] = 1; }); g0.forEach(function (r) { if (!prev[r.opp_id]) newByAg[id][r.opp_id] = 1; }); } newFirst[id] = first; }
+    newIds = newByAg[id]; first = newFirst[id];
     var g = groups(id);
     if (ag && ag.plan_stale) banner.appendChild(el("div", "banner", "This agency's plan may be out of date. Treat matches with care."));
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
