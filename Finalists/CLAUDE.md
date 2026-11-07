@@ -34,14 +34,14 @@ Reusable code is in `src/R`, `src/tool` and `src/tests` (see README.md, "Pipelin
 Decide at the design sprint whether the skeleton fits (`planning/03_problem_types.md`). Use `rank_items()` only if the user's decision is a choice among a list of items. If the problem is another type, keep the plumbing (`read_any`, cache helpers, tests, report, figure export) and write a new core; record what we keep and why in `handoff.md`. Do not bend the problem to fit the ranking code (Deloitte: do not anchor on a method before the problem is understood).
 
 ## Planning documents (Discover phase)
-`planning/` holds the Friday worksheets: `01_discovery_questions.md` (workshop questions and note-taker sheet), `02_framing_worksheet.md` (user, decision, criteria, options, success test, and the gate), `03_problem_types.md`, `04_data_prep.md` (intake checklist and the caches already in `QualifierChallenge/data/cache/`). Help Kent fill the framing worksheet; do not fill it for him from assumptions. Do not profile or download data until its gate is ticked.
+`planning/` holds the Friday worksheets: `01_discovery_questions.md` (workshop questions and note-taker sheet), `02_framing_worksheet.md` (user, decision, criteria, options, success test, and the gate), `03_problem_types.md`, `04_data_prep.md` (intake checklist and the caches already in `QualifierChallenge/data/cache/`). Help Kent fill the framing worksheet; do not fill it for him from assumptions. Pulling and merging opportunity data (R/02*, R/03) is allowed before the gate; no analysis, scoring, criteria or profiling for decisions until the gate is ticked.
 
 ## Skills
 `docs/SKILLS_GUIDE.md` says which installed skill to load for each phase and which to ignore. Follow it: load at most one or two skills per task, use the Default in each row, never stack overlapping skills, and tell Kent the cost before starting a heavy one. Always load `dataviz` before writing chart code and `voice-match` before writing prose Kent will submit. Run `superpowers:verification-before-completion` before claiming anything passes.
 
 ## Constraints
 - No participant, patient or personal data in any file.
-- No API keys in any file. Keys go in `.Renviron` (gitignored).
+- API keys: the two team keys (Simpler.Grants.gov, SAM.gov) live in `api_keys.env`, committed on purpose because the repo is private (Kent, Nov 6). Never put any other key in a file, and never print keys in chat, slides or field notes.
 - Do not edit `.Renviron` or `.RData`.
 - Do not re-run outside-service scripts casually. They call out only for uncached items.
 - Log every AI use in `AI_USAGE_LOG.md` (tool, what for, what was checked by a human).
