@@ -135,18 +135,30 @@ if (stage == "validate") {
   cat(rep, sep = "\n")
 } else if (stage == "full") {
   # One CSV per agency in model_labels/by_agency/ (finished agencies are skipped, so a rerun resumes).
-  # machine=A|B picks that machine's agencies from agency_plan.csv; part=k/n runs every n-th one of them
-  # (use it to run two or three processes on one machine).
+  # machine=A|B|C|D|E picks that machine's agencies from agency_plan.csv; part=k/n runs every n-th one of them
+  # (use it to run two or three processes on one machine). See HANDOFF_model_labeling_split.md.
   gate <- file.path(out_dir, "gate.txt")
   if (!identical(arg("force"), "1") && !(file.exists(gate) && readLines(gate, warn = FALSE)[1] == "PASS"))
     stop("Validation gate is not PASS (", gate, "). Fix the prompt or report hand labels only. force=1 overrides; say so in the report.")
   plan <- fread(file.path(out_dir, "agency_plan.csv"))[order(order)]
-  mine <- plan[machine == arg("machine", "A")]
+  mach <- arg("machine")
+  if (is.null(mach) || !mach %in% plan$machine) stop("machine= must be one of: ", paste(sort(unique(plan$machine)), collapse = ", "))
+  mine <- plan[machine == mach]
   pt <- as.integer(strsplit(arg("part", "1/1"), "/")[[1]])
   mine <- mine[((seq_len(.N) - 1L) %% pt[2]) == pt[1] - 1L]
   stopifnot(all(mine$agency %in% unique(goals$agency)))
   pool <- copy(opps)[status %in% POOL_STATUSES][, agency_funder_name := agency]
   dir.create(file.path(out_dir, "by_agency"), showWarnings = FALSE)
+  # Every machine must label the same pool, or the per-agency files cannot be compared or merged.
+  ref <- list.files(file.path(out_dir, "by_agency"), "\\.csv$", full.names = TRUE)
+  if (length(ref)) {
+    ref_ids <- fread(ref[1], select = "opp_id", colClasses = list(character = "opp_id"))$opp_id
+    if (!setequal(ref_ids, pool$opp_id))
+      stop("data/processed/opportunities.csv gives a different pool (", nrow(pool), " rows) from the finished labels (",
+           length(ref_ids), " rows in ", basename(ref[1]), "). Do not pull a refreshed opportunities.csv mid-run; ask Kent.")
+  }
+  message(sprintf("Machine %s: %d agencies (%d already done, skipped)", mach, nrow(mine),
+                  sum(file.exists(file.path(out_dir, "by_agency", paste0(gsub("^_|_$", "", gsub("[^a-z]+", "_", tolower(mine$agency))), ".csv"))))))
   for (ag in mine$agency) {
     f <- file.path(out_dir, "by_agency", paste0(gsub("^_|_$", "", gsub("[^a-z]+", "_", tolower(ag))), ".csv"))
     if (file.exists(f)) { message("skip (done): ", ag); next }

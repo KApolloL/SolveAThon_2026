@@ -13,12 +13,10 @@
 # Sources and access dates: see data/cache/api/*.accessed (written by the qualifier pulls);
 # CDC PLACES, HRSA and tigris have no .accessed record ("not found"). Printed at the end.
 
-# TODO move to 00_config.R (copied from QualifierChallenge/src/R/00_config.R)
-OVERDOSE_YEARS <- 2019:2021   # NCHS model-based drug poisoning death rates, averaged
-HPSA_AREA_TYPES <- c("Hpsa Geo", "Hpsa Geo HN", "Hpsa Pop")   # area designations only, not facilities
+here::i_am("src/R/05a_county_need.R")
+source(here::here("src", "R", "00_config.R"))   # OVERDOSE_YEARS and HPSA_AREA_TYPES live there
 
 if (!dir.exists("../data/cache/api")) stop("Run this from Finalists/src/ (cache folder not found).")
-DIR_CACHE_API <- "../data/cache/api"
 OUT_FILE      <- "../data/processed/county_need.csv"
 
 rd <- function(f) readRDS(file.path(DIR_CACHE_API, f))   # readRDS only; no fetch fallback by design

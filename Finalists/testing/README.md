@@ -4,7 +4,7 @@ Teammates role-play our users against our work using paste-ready prompts, so we 
 
 ## Reviewers and personas (built; read this first)
 
-Fifteen reviewers and personas, each written once in `testing/reviewers/` and built by `python3 testing/build_reviewers.py` (Kent runs it after editing a spec; never edit the generated files). Each one is a subagent in both Claude Code and OpenCode; the three `roleplay` personas also keep an interactive slash command.
+Twenty-six reviewers and personas (the fifteen below plus eleven added Sat Nov 7, listed after the table), each written once in `testing/reviewers/` and built by `python3 testing/build_reviewers.py` (Kent runs it after editing a spec; never edit the generated files). Each one is a subagent in both Claude Code and OpenCode; the three `roleplay` personas also keep an interactive slash command.
 
 | Agent | Kind | What it does | Interactive command | Any chat box (ChatGPT, PromptLab) |
 |---|---|---|---|---|
@@ -23,6 +23,25 @@ Fifteen reviewers and personas, each written once in `testing/reviewers/` and bu
 | `persona-state-developer` | persona | The state developer who must pick the repo up from the README | none | `prompts/paste/persona_state_developer.md` |
 | `persona-industry-mentor` | persona | The Saturday 2:00 mentor: what failed, what is the ask, what would you cut | none | `prompts/paste/persona_industry_mentor.md` |
 | `persona-federal-program-officer` | persona | A federal program officer: does our summary misstate their notice | none | `prompts/paste/persona_federal_program_officer.md` |
+
+### Added Sat Nov 7: stage judges and auditors (Marco's session)
+Eleven more reviewers, all `kind: reviewer`, built by the same script. The five stage judges each score one judging criterion against the whole repo (not just the pitch); the six auditors check things no persona covers.
+
+| Agent | What it does | Runs commands? | Any chat box |
+|---|---|---|---|
+| `stage-judge-understand` | Traces each sponsor quote to a decision and to a visible feature; flags personas used as evidence | no | `prompts/paste/stage-judge-understand.md` |
+| `stage-judge-frame` | One-sentence problem, testable requirements with pass bars fixed before results | no | `prompts/paste/stage-judge-frame.md` |
+| `stage-judge-solve` | The brief's five Solve requirements and each Azure service: built and load-bearing, or planned and decoration; walks the 1:00 gate | Rscript | `prompts/paste/stage-judge-solve.md` |
+| `stage-judge-evaluate` | Backtest verdict against the pre-set bar and both baselines, intervals, evaluation inventory | Rscript, git log | `prompts/paste/stage-judge-evaluate.md` |
+| `stage-judge-impact` | The pilot ask, cost, owner after Sunday, scale path; drafts a five-line ask from facts only | no | `prompts/paste/stage-judge-impact.md` |
+| `deliverables-auditor` | Every required deliverable element present, partial or missing; leftover TODO / [assumed] markers | no | `prompts/paste/deliverables-auditor.md` |
+| `fact-tracer` | Every number a judge can see traced to the fact sheet; stale and hard-coded numbers | Rscript | `prompts/paste/fact-tracer.md` |
+| `code-auditor` | Bugs, payload contract drift, duplicated R/JS logic, leakage in the backtest, job failure modes | Rscript | `prompts/paste/code-auditor.md` |
+| `threat-auditor` | The four organizer threats and three bonus quests: defense built, measured, said on stage | no | `prompts/paste/threat-auditor.md` |
+| `consistency-auditor` | Contradictions and stale status across README, handoff, saturday/, planning/, context.md | no | `prompts/paste/consistency-auditor.md` |
+| `security-auditor` | Secrets in tree and history (masked), personal data, Azure exposure, judges' snapshot exclusions | git log | `prompts/paste/security-auditor.md` |
+
+**Run all 26 at once (Claude Code):** `/full-review` (or `/full-review stage-judge-solve code-auditor` for a subset). The main session, on the strongest model, briefs each reviewer as a Sonnet subagent, three at a time, spot-checks their findings and writes one ranked triage file. Important: `tests/run_tests.R` rebuilds `payload.json`, so the manager runs the tests once and passes the result to reviewers; reviewers must not run it in parallel.
 
 A persona subagent is one-shot: it reads the material once, replies in character, and returns an observer report. There is no dialogue. For a live consulting meeting use the slash command, then type END.
 

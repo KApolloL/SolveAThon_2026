@@ -46,6 +46,7 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
 .panel { background: var(--surface-2); border:1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-top: 16px; }
 .panel summary { cursor: pointer; font-weight: 600; }
 .banner { background: var(--accent-soft); border-radius: var(--radius); padding: 8px 12px; margin: 10px 0; font-size:.9rem; }
+.reason.muted { color: var(--text-muted); font-style: italic; }
 .stub { background:#fde8c8; color:#5a3700; padding:6px 12px; text-align:center; font-weight:700; }
 @media (max-width: 520px) { li.row { grid-template-columns: 1fr; } .days { text-align:left; } }
 </style>
@@ -115,6 +116,7 @@ li.row { background: var(--surface-2); border:1px solid var(--border); border-ra
     if (e === "ask") meta.appendChild(document.createTextNode(" check the notice"));
     body.appendChild(meta);
     if (r.goal_snippet) { var rs = el("div", "reason", "Matches plan goal: " + r.goal_snippet); rs.title = r.goal_snippet; body.appendChild(rs); }
+    else body.appendChild(el("div", "reason muted", "No plan goal matched"));
     body.appendChild(actions(r));
     li.appendChild(body);
     return li;

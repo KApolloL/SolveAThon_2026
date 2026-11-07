@@ -8,7 +8,7 @@
 | 4 | Does the Final Submission form want a repo link or a file? | Organizers, asked by Matthew | 9:30 |
 | 5 | Does a SAM.gov bulk Assistance Listings file exist that avoids the key's rate limit? [uncertain] | Noah | 9:00 |
 | 6 | Does the Federal Audit Clearinghouse give NC awards at state-agency level? [uncertain] | Everett | 2:30 |
-| 7 | Does county need (A) enter the score, or stay a display column? It was built for the qualifier's county-level user | Kent, at merge 2 | 11:00 |
+| 7 | **Resolved: county need is a display column only; it does not enter the score.** (Was: does county need (A) enter the score? Built for the qualifier's county-level user.) | Kent, at merge 2 | 11:00 |
 | 8 | Who builds the slides from the slide brief, and when do we rehearse? | Kent | 1:00 |
 | 9 | Who writes the AI-usage disclosure from `AI_USAGE_LOG.md`? | Kent | 1:00 |
 | 10 | School bus "about one month" application window, from discovery notes: true? | Matthew | 12:15 |
@@ -23,3 +23,6 @@
 - Kent is on the critical path and does every merge. If a merge window runs over 20 minutes, the next window moves, not the gate.
 - 38-second cold start during the 11:00 mentor demo: set min replicas 1 during the day if T3 confirms it is cheap.
 - Spending: Azure does not enforce the $500 budget. Keep model calls capped in config and cached.
+
+## Decided
+- Row 7 (Sat Nov 7): county need stays a display column and does not enter the score. No opportunity carries a county, and the data was built for the qualifier's county-level user. It can feed county reach and the need map once `rows[].counties` exists. Decided by Kent, delegated to Claude; logged in `AI_USAGE_LOG.md`.
