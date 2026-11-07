@@ -11,15 +11,15 @@
   --surface-0:#f2f3f0; --surface-2:#ffffff; --border:#d9dcd6;
   --text-primary:#1e2226; --text-secondary:#4b5158; --text-muted:#737980;
   --accent:#23408e; --accent-soft:#e3e8f4;
-  --good:#0c7a0c; --warn:#9a6700; --bad:#a63d2f;
+  --good:#0c7a0c; --warn:#9a6700; --bad:#a63d2f; --bad-soft:#f6d9d3; --good-soft:#d8efd8; --warn-soft:#fbeccb; --on-warn-soft:#6b4700;
   --radius:8px;
   --font:"Franklin Gothic Book","Helvetica Neue",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root { color-scheme: dark;
     --surface-0:#181b1f; --surface-2:#252a30; --border:#30353b;
-    --text-primary:#e7e8e4; --text-secondary:#b3b7b1; --text-muted:#8b9089;
-    --accent:#93aef0; --accent-soft:#26304a; --good:#5fc15f; --warn:#d9a04a; --bad:#d8705f; }
+    --text-primary:#e7e8e4; --text-secondary:#b3b7b1; --text-muted:#a4a9a2; --bad-soft:#4a2620; --good-soft:#1f3a1f; --warn-soft:#4a3a14; --on-warn-soft:#f0c97a;
+    --accent:#93aef0; --accent-soft:#26304a; --good:#5fc15f; --warn:#d9a04a; --bad:#ee8d7d; }
 }
 * { box-sizing: border-box; }
 body { margin:0; background:var(--surface-0); color:var(--text-primary); font:16px/1.45 var(--font); }
@@ -64,7 +64,7 @@ body.large { font-size:19px; }
 .toolbar { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:10px 0; }
 .toolbar label { margin:0; font-weight:600; display:inline; }
 .badge { display:inline-block; font-size:.78rem; font-weight:700; padding:1px 8px; border-radius:10px; margin-right:6px; background:var(--accent-soft); color:var(--accent); }
-.badge.urgent { background:#f6d9d3; color:var(--bad); } .badge.new { background:#d8efd8; color:var(--good); }
+.badge.urgent { background:var(--bad-soft); color:var(--bad); } .badge.new { background:var(--good-soft); color:var(--good); }
 .days.urgent b { color:var(--bad); }
 details.drawer { margin-top:6px; font-size:.9rem; color:var(--text-secondary); }
 details.drawer summary { cursor:pointer; color:var(--accent); }
@@ -80,21 +80,52 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
 .fit { height:6px; background:var(--accent-soft); border-radius:3px; margin-top:4px; } .fit i { display:block; height:100%; background:var(--accent); border-radius:3px; }
 .prose p, .prose li { max-width:70ch; } .prose h2 { font-size:1.1rem; margin:18px 0 4px; }
 .note { color:var(--text-muted); font-size:.85rem; }
+.badge.warn { background:var(--warn-soft); color:var(--on-warn-soft); }
+.refine-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:8px 14px; margin:8px 0; }
+.refine-grid label { font-weight:400; font-size:.9rem; display:flex; flex-direction:column; gap:2px; }
+.refine-grid input[type=number], .refine-grid input[type=date], #scenario, .dsearch { font:inherit; padding:4px 6px; }
+.chips { margin:6px 0; } .chip { display:inline-block; font-size:.82rem; padding:2px 9px; border-radius:10px; margin:0 6px 4px 0; background:var(--accent-soft); color:var(--accent); }
+.chip.ignored { background:var(--surface-2); color:var(--text-muted); border:1px dashed var(--border); }
+.wrow { display:grid; grid-template-columns:1fr 150px 2.2em; gap:8px; align-items:center; font-size:.88rem; margin:3px 0; }
+.dsearch { width:100%; box-sizing:border-box; margin:6px 0; }
+.matched { color:var(--text-muted); font-size:.85rem; margin-top:2px; }
 @media (max-width: 700px) { .board { grid-template-columns:1fr; } }
+/* accessibility pass: targets, focus, motion, skip link */
+html { scroll-padding-top: 12px; }
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible, [tabindex]:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+button, select, summary, input[type=checkbox] { min-height:44px; }
+input[type=text], input[type=search], input[type=number], input[type=date] { min-height:44px; }
+input[type=checkbox] { min-width:24px; }
+summary { display:flex; align-items:center; }
+.act button { min-height:44px; padding:6px 14px; }
+.badge, .elig, .chip { white-space:nowrap; }
+.skip { position:absolute; left:-999px; top:0; background:var(--accent); color:var(--surface-2); padding:10px 14px; z-index:10; }
+.skip:focus { left:8px; top:8px; }
+@media (prefers-reduced-motion: reduce) { * { animation:none !important; transition:none !important; scroll-behavior:auto !important; } }
+.osbm-head { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; margin:10px 0; }
+.stat { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:8px 12px; }
+.stat b { display:block; font-size:1.5rem; color:var(--accent); line-height:1.1; } .stat span { font-size:.85rem; color:var(--text-secondary); }
+table.ag { width:100%; border-collapse:collapse; font-size:.92rem; background:var(--surface-2); border:1px solid var(--border); }
+table.ag th, table.ag td { padding:8px 10px; text-align:left; border-bottom:1px solid var(--border); }
+table.ag th { font-size:.82rem; color:var(--text-secondary); } table.ag td.n, table.ag th.n { text-align:right; font-variant-numeric:tabular-nums; }
+table.ag button { font:inherit; background:none; border:none; color:var(--accent); text-decoration:underline; cursor:pointer; text-align:left; padding:0; }
+.tablewrap { overflow-x:auto; }
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to the list</a>
 <div id="stub" class="stub" hidden>STUB DATA: not real opportunities</div>
 <header>
   <div><h1>Federal Funds Matchmaker</h1><div class="sub" id="asof">Loading data...</div></div>
   <div class="spacer"></div>
   <button type="button" id="large" aria-pressed="false" title="Enlarge text for a projector">Larger text</button>
 </header>
-<main>
+<main id="main" tabindex="-1">
   <div class="tabs" role="tablist" aria-label="Views">
     <button type="button" role="tab" id="tab-opps" aria-selected="true" data-tab="opps">Opportunities</button>
     <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
     <button type="button" role="tab" id="tab-map" aria-selected="false" data-tab="map">County map</button>
+    <button type="button" role="tab" id="tab-osbm" aria-selected="false" data-tab="osbm">OSBM overview</button>
     <button type="button" role="tab" id="tab-marks" aria-selected="false" data-tab="marks">My decisions</button>
     <button type="button" role="tab" id="tab-how" aria-selected="false" data-tab="how">How this works</button>
   </div>
@@ -106,7 +137,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     <div class="tiles" id="tiles" hidden role="group" aria-label="Views of this agency's list"></div>
     <div class="toolbar" id="toolbar" hidden>
       <label for="order">Order by</label>
-      <select id="order" aria-label="Order by"><option value="rank">Best match</option><option value="deadline">Soonest deadline</option></select>
+      <select id="order" aria-label="Order by"><option value="rank">Best match</option><option value="deadline">Soonest deadline</option><option value="priority">My plan priorities</option></select>
       <button type="button" id="csv">Export CSV</button>
     </div>
     <p class="counts" id="counts" role="status"></p>
@@ -114,11 +145,30 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     <details class="panel" id="refine" hidden><summary>Refine (optional)</summary>
       <label style="font-weight:400"><input type="checkbox" id="opt-forecast"> Also list forecasts (not open yet) in the main list</label>
       <label style="font-weight:400"><input type="checkbox" id="opt-hidden"> Also list items hidden as not eligible in the main list</label>
-      <p class="note">The list works with this closed. These only change what is shown, never the ranking.</p>
+      <p class="note">The list works with this closed. Everything here changes what is shown or how your own view is ordered; the stored keyword fit scores are never changed.</p>
+      <h4>Describe your situation (optional)</h4>
+      <input type="text" id="scenario" aria-label="Describe your situation" placeholder="e.g. need 6 weeks to apply, awards over $250k, include planning" style="width:100%;box-sizing:border-box">
+      <button type="button" class="act" id="scn-go" style="font:inherit;padding:3px 10px;margin-top:4px">Apply</button>
+      <div class="chips" id="chips" aria-live="polite"></div>
+      <h4>Presets</h4>
+      <div id="presets" class="toolbar"></div>
+      <h4>Constraints</h4>
+      <div class="refine-grid">
+        <label>Reference date (counts days left from here)<input type="date" id="k-ref"></label>
+        <label>Usable runway, days (flag items closing sooner)<input type="number" id="k-run" min="0" step="1" placeholder="0 = off"></label>
+        <label>Minimum award ceiling, $ (flag lower)<input type="number" id="k-min" min="0" step="1000" placeholder="0 = off"></label>
+      </div>
+      <label style="font-weight:400"><input type="checkbox" id="k-hide"> Hide items that fail my runway or minimum award (unknown values are never hidden)</label>
+      <h4>Plan goal priorities</h4>
+      <p class="note">Weight 1 = as ranked. Moving a slider re-orders the loaded matches for this agency by keyword fit times your weight. Saved in this browser only.</p>
+      <div id="weights"></div>
+      <button type="button" class="act" id="k-reset" style="font:inherit;padding:3px 10px;margin-top:8px">Reset to defaults</button>
+      <h4>Assumptions</h4>
+      <ul class="note" id="assumptions"></ul>
     </details>
     <details class="panel" id="caps" hidden><summary id="caps-h"></summary><div id="caps-b" class="sub"></div></details>
-    <details class="panel" id="coming" hidden><summary id="coming-h"></summary><ol id="coming-l"></ol></details>
-    <details class="panel" id="hidden" hidden><summary id="hidden-h"></summary><ol id="hidden-l"></ol></details>
+    <details class="panel" id="coming" hidden><summary id="coming-h"></summary><input type="search" class="dsearch" id="coming-q" placeholder="Search this list" aria-label="Search coming up"><ol id="coming-l"></ol></details>
+    <details class="panel" id="hidden" hidden><summary id="hidden-h"></summary><input type="search" class="dsearch" id="hidden-q" placeholder="Search this list" aria-label="Search hidden items"><ol id="hidden-l"></ol></details>
   </section>
 
   <section id="v-board" role="tabpanel" aria-labelledby="tab-board" hidden>
@@ -144,6 +194,8 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     <svg id="map-svg" role="img" aria-label="Map of North Carolina counties shaded by the chosen measure" viewBox="0 0 1000 381" style="width:100%;max-width:900px;height:auto"></svg>
     <h2 style="font-size:1.05rem">Ten highest counties</h2><ol id="map-top"></ol>
   </section>
+
+  <section id="v-osbm" role="tabpanel" aria-labelledby="tab-osbm" hidden></section>
 
   <section id="v-marks" role="tabpanel" aria-labelledby="tab-marks" hidden>
     <p class="note">Saved in this browser only. Nothing is sent anywhere.</p>
@@ -212,6 +264,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     add("Award ceiling", r.award_ceiling != null ? "$" + Number(r.award_ceiling).toLocaleString() : "not listed");
     add("Assistance listing", r.cfda_list);
     add("NC has won this program before", r.nc_won_before == null ? null : (r.nc_won_before ? "Yes (shown only; not part of the ranking)" : "No record"));
+    add("Keyword fit", r.fit_score != null ? Math.round(Number(r.fit_score) * 100) + " of 100 (title and summary against the plan goals; compare only inside one agency's list)" : null);
     add("Why it is ranked here", r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
     add("Summary", r.opp_snippet);
     det.appendChild(dl); return det;
@@ -227,12 +280,14 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     if (newIds[r.opp_id]) meta.appendChild(el("span", "badge new", "New since last visit"));
     if (r.days_left != null && r.days_left <= CSD && r.status !== "forecasted") meta.appendChild(el("span", "badge urgent", "Closing soon"));
     if (r.status === "forecasted") meta.appendChild(el("span", "badge", "Not open yet"));
+    failsK(r).forEach(function (m) { meta.appendChild(el("span", "badge warn", m)); });
     var e = r.eligibility || "ask";
     meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), "Eligible: " + (ELIG[e] || "Ask")));
     meta.appendChild(document.createTextNode(e === "ask" ? " check the notice" : " " + ELIG_WORDS[e]));
     body.appendChild(meta);
     if (r.goal_snippet) { var rs = el("div", "reason", "Matches plan goal: " + r.goal_snippet); rs.title = r.goal_snippet; body.appendChild(rs); }
     else body.appendChild(el("div", "reason muted", "No plan goal matched"));
+    var sw = sharedWords(r); if (sw.length) body.appendChild(el("div", "matched", "Words in common with the goal: " + sw.join(", ")));
     body.appendChild(drawer(r));
     body.appendChild(actions(r));
     li.appendChild(body); return li;
@@ -240,6 +295,69 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
   function fill(list, rows) { list.innerHTML = ""; rows.forEach(function (r) { list.appendChild(rowEl(r)); }); }
 
   // ---- opportunities tab ----
+
+  // ---- Refine: constraints, goal priorities, scenario text (display and own-view order only) ----
+  var K = lsGet("ffm_k_v1", { ref: "", run: 0, min: 0, hide: false });
+  var W = lsGet("ffm_w_v1", {});
+  function saveK() { lsSet("ffm_k_v1", K); } function saveW() { lsSet("ffm_w_v1", W); }
+  function applyRef() {
+    if (!P) return;
+    var t = K.ref ? Date.parse(K.ref + "T00:00:00") : NaN;
+    P.rows.forEach(function (r) {
+      if (r._dl0 === undefined) r._dl0 = r.days_left;
+      r.days_left = (!isNaN(t) && r.close_date) ? Math.round((Date.parse(r.close_date + "T00:00:00") - t) / 864e5) : r._dl0;
+    });
+  }
+  function failsK(r) {
+    var out = [];
+    if (K.run > 0 && r.days_left != null && r.days_left >= 0 && r.days_left < K.run) out.push("Under your runway");
+    if (K.min > 0 && r.award_ceiling != null && Number(r.award_ceiling) < K.min) out.push("Below your minimum award");
+    return out;
+  }
+  function wkey(r) { return r.agency_id + "|" + (r.goal_id || ""); }
+  function wOf(r) { var w = W[wkey(r)]; return w == null ? 1 : w; }
+  function sharedWords(r) {
+    if (!r.goal_snippet) return [];
+    var a = {}; tokens(r.goal_snippet).forEach(function (w) { a[w] = 1; });
+    var seen = {}, out = [];
+    tokens((r.title || "") + " " + (r.opp_snippet || "")).forEach(function (w) { if (a[w] && !seen[w]) { seen[w] = 1; out.push(w); } });
+    out.sort(function (x, y) { return (DF[x] || 1) - (DF[y] || 1); });
+    return out.slice(0, 5);
+  }
+  function renderWeights() {
+    var box = $("weights"); box.innerHTML = ""; if (!cur.id) return;
+    var seen = {}, goals = [];
+    P.rows.filter(function (r) { return r.agency_id === cur.id && r.goal_id; }).forEach(function (r) { if (!seen[r.goal_id]) { seen[r.goal_id] = 1; goals.push(r); } });
+    if (!goals.length) { box.appendChild(el("p", "note", "Not available for this agency: no plan goals matched.")); return; }
+    goals.forEach(function (r) {
+      var row = el("div", "wrow"), lab = el("span", null, r.goal_id + (r.goal_snippet ? ": " + r.goal_snippet.replace(/^Goal \d+\s*[–-]?\s*/, "").slice(0, 70) : ""));
+      var rng = el("input"); rng.type = "range"; rng.min = 0; rng.max = 3; rng.step = 0.5; rng.value = wOf(r); rng.setAttribute("aria-label", "Priority weight for " + r.goal_id);
+      var val = el("span", null, String(rng.value));
+      rng.addEventListener("input", function () { W[wkey(r)] = Number(rng.value); val.textContent = rng.value; saveW(); cur.order = "priority"; $("order").value = "priority"; show(true); });
+      row.appendChild(lab); row.appendChild(rng); row.appendChild(val); box.appendChild(row);
+    });
+  }
+  function syncK() { $("k-ref").value = K.ref || ""; $("k-run").value = K.run || ""; $("k-min").value = K.min || ""; $("k-hide").checked = !!K.hide; }
+  function resetAll() { K = { ref: "", run: 0, min: 0, hide: false }; W = {}; saveK(); saveW(); syncK(); applyRef(); $("chips").innerHTML = ""; $("scenario").value = ""; cur.order = "rank"; $("order").value = "rank"; $("opt-forecast").checked = false; $("opt-hidden").checked = false; show(); }
+  var PRESETS = [
+    ["Deadline crunch", function () { K.run = 21; K.hide = false; cur.order = "deadline"; $("order").value = "deadline"; }],
+    ["Big awards only", function () { K.min = 500000; K.hide = false; }],
+    ["Planning ahead", function () { $("opt-forecast").checked = true; }],
+    ["Only what I can start now", function () { K.run = 14; K.hide = true; }]
+  ];
+  function parseScenario(t) {
+    var chips = [], low = String(t || "").toLowerCase(), m;
+    if ((m = low.match(/(\d+(?:\.\d+)?)\s*(week|wk|day)/))) { var d = Math.round(Number(m[1]) * (m[2] === "day" ? 1 : 7)); K.run = d; chips.push(["Usable runway: " + d + " days", 0]); }
+    if ((m = low.match(/\$\s*(\d[\d,]*(?:\.\d+)?)\s*(k|m|million|thousand)?/)) || (m = low.match(/(?:award|over|above|at least|minimum)[^\d$]{0,12}(\d[\d,]*(?:\.\d+)?)\s*(k|m|million|thousand)?/))) {
+      var n = Number(m[1].replace(/,/g, "")), u = m[2]; if (u === "k" || u === "thousand") n *= 1e3; if (u === "m" || u === "million") n *= 1e6;
+      if (n >= 1000) { K.min = n; chips.push(["Minimum award: $" + n.toLocaleString(), 0]); }
+    }
+    if (/forecast|planning|plan ahead|not open yet|coming up/.test(low)) { $("opt-forecast").checked = true; chips.push(["Including forecasts", 0]); }
+    if (/soonest|deadline|urgent|crunch/.test(low)) { cur.order = "deadline"; $("order").value = "deadline"; chips.push(["Ordered by soonest deadline", 0]); }
+    if (/no match|cost.?shar|matching funds|fte|staff/.test(low)) chips.push(["Matching funds and staff limits are not in this data, so not applied", 1]);
+    if (!chips.length && low.trim()) chips.push(["Nothing recognised. Try weeks, a dollar amount, or the word planning.", 1]);
+    return chips;
+  }
   var cur = { id: "", tile: "top", order: "rank" };
   function groups(id) {
     var mine = P.rows.filter(function (r) { return r.agency_id === id; });
@@ -260,10 +378,13 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     if ($("opt-forecast").checked && cur.tile === "top") rows = rows.concat(g.coming);
     if ($("opt-hidden").checked && cur.tile === "top") rows = rows.concat(g.hidden);
     rows = rows.slice();
+    if (K.hide) rows = rows.filter(function (r) { return !failsK(r).length; });
+    if (cur.order === "priority") rows.sort(function (a, b) { return (b.fit_score || 0) * wOf(b) - (a.fit_score || 0) * wOf(a); });
     if (cur.order === "deadline") rows.sort(function (a, b) { return (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left); });
     return rows;
   }
-  function show() {
+  function filt(rows, q) { q = String(q || "").toLowerCase().trim(); if (!q) return rows; return rows.filter(function (r) { return ((r.title || "") + " " + (r.opp_number || "") + " " + (r.goal_snippet || "")).toLowerCase().indexOf(q) >= 0; }); }
+  function show(keepW) {
     var id = cur.id, banner = $("banner"); banner.innerHTML = "";
     ["coming", "hidden", "refine", "caps"].forEach(function (k) { $(k).hidden = true; });
     $("tiles").hidden = $("toolbar").hidden = !id;
@@ -290,9 +411,9 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
       ((ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length) + " hidden as not eligible, " + Math.max(0, below) + " ranked below the top 10, " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " not open yet" +
       (g.notices ? ", " + g.notices + " notice" + (g.notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
     fill($("top"), shown);
-    $("refine").hidden = false; renderCaps(cur.id);
-    if (cur.tile !== "coming" && g.coming.length && !$("opt-forecast").checked) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + g.coming.length; fill($("coming-l"), g.coming); }
-    if (g.hidden.length && !$("opt-hidden").checked) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + g.hidden.length; fill($("hidden-l"), g.hidden); }
+    $("refine").hidden = false; renderCaps(cur.id); if (!keepW) renderWeights();
+    if (cur.tile !== "coming" && g.coming.length && !$("opt-forecast").checked) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + g.coming.length; fill($("coming-l"), filt(g.coming, $("coming-q").value)); }
+    if (g.hidden.length && !$("opt-hidden").checked) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + g.hidden.length; fill($("hidden-l"), filt(g.hidden, $("hidden-q").value)); }
     // remember what this browser has now seen for this agency (after the New badges were decided)
     seen[id] = g0.map(function (r) { return r.opp_id; }); lsSet("ffm_seen_v1", seen);
   }
@@ -456,15 +577,66 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     b.appendChild(tb);
   }
 
+
+  // ---- OSBM overview: all agencies at once, computed only from the loaded payload ----
+  var osbmSort = "soon";
+  function renderOsbm() {
+    var v = $("v-osbm"); v.innerHTML = ""; if (!P) return;
+    var rows = P.rows, open = rows.filter(function (r) { return r.status === "posted"; });
+    var elig = open.filter(function (r) { return r.eligibility !== "no"; });
+    var soon = elig.filter(function (r) { return r.in_top10 && r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; });
+    var byOpp = {}; elig.filter(function (r) { return r.in_top10; }).forEach(function (r) { (byOpp[r.opp_id] = byOpp[r.opp_id] || []).push(r); });
+    var shared = Object.keys(byOpp).filter(function (k) { return byOpp[k].length > 1; }).map(function (k) { return byOpp[k]; }).sort(function (a, b) { return b.length - a.length; });
+    var mk = Object.keys(marks).length;
+    v.appendChild(el("p", "note", "Every number here is counted from the opportunities loaded in this tool (the best matches per agency, not every open grant). Click an agency to open its list."));
+    var head = el("div", "osbm-head");
+    [[P.agencies.length, "agencies loaded"], [elig.length, "open, state-eligible or unclear (per-agency rows)"], [soon.length, "top-10 rows closing in " + CSD + " days or fewer"], [shared.length, "opportunities in the top 10 of two or more agencies"], [mk, "decisions marked in this browser"]].forEach(function (a) {
+      var s = el("div", "stat"); s.appendChild(el("b", null, String(a[0]))); s.appendChild(el("span", null, a[1])); head.appendChild(s); });
+    v.appendChild(head);
+    v.appendChild(el("h3", null, "Who should apply together?"));
+    if (!shared.length) v.appendChild(el("p", "note", "No opportunity is in the top 10 of more than one agency in the loaded data."));
+    else { var ul = el("ul"); shared.slice(0, 8).forEach(function (g) {
+      var li = el("li"), r0 = g[0], u = safeUrl(r0.url);
+      var t = u ? el("a", null, r0.title) : el("span", null, r0.title); if (u) { t.href = u; t.target = "_blank"; t.rel = "noopener"; }
+      li.appendChild(t); li.appendChild(document.createTextNode(" — " + g.length + " agencies: " + g.map(function (r) { return agName(r.agency_id); }).join("; "))); ul.appendChild(li); }); v.appendChild(ul);
+      v.appendChild(el("p", "note", "A shared top-10 spot means the keyword match fits more than one agency's plan, so the agencies could coordinate one application. A person decides.")); }
+    v.appendChild(el("h3", null, "Agency by agency"));
+    var data = P.agencies.map(function (a) {
+      var mine = open.filter(function (r) { return r.agency_id === a.agency_id; }), e = mine.filter(function (r) { return r.eligibility !== "no"; }), top = e.filter(function (r) { return r.in_top10; });
+      return { a: a, top: top.length, soon: top.filter(function (r) { return r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; }).length,
+               ask: e.filter(function (r) { return r.eligibility === "ask"; }).length, hid: a.n_hidden_ineligible != null ? a.n_hidden_ineligible : 0, flag: (a.plan_stale ? "plan old" : "") + (a.plan_thin ? (a.plan_stale ? ", " : "") + "plan short" : "") };
+    });
+    data.sort(function (x, y) { return osbmSort === "name" ? (x.a.agency_name < y.a.agency_name ? -1 : 1) : (y[osbmSort] - x[osbmSort]) || (x.a.agency_name < y.a.agency_name ? -1 : 1); });
+    var wrap = el("div", "tablewrap"), tb = el("table", "ag"); tb.appendChild(el("caption", "note", "Sorted by " + ({ soon: "closing soon", top: "top-10 count", ask: "check eligibility", name: "name" })[osbmSort] + ". Sort with the buttons below."));
+    var hr = el("tr"); [["Agency", "name", ""], ["Top 10", "top", "n"], ["Closing soon", "soon", "n"], ["Check eligibility", "ask", "n"], ["Hidden not eligible", "hid", "n"], ["Plan notes", null, ""]].forEach(function (c) { hr.appendChild(el("th", c[2], c[0])); });
+    var thead = el("thead"); thead.appendChild(hr); tb.appendChild(thead); var tbody = el("tbody");
+    data.forEach(function (d) { var tr = el("tr"), td = el("td"), b = el("button", null, d.a.agency_name); b.type = "button"; b.addEventListener("click", function () { cur.id = d.a.agency_id; cur.tile = "top"; $("agency").value = cur.id; tab("opps"); show(); window.scrollTo(0, 0); }); td.appendChild(b); tr.appendChild(td);
+      [d.top, d.soon, d.ask, d.hid].forEach(function (n) { tr.appendChild(el("td", "n", String(n))); }); tr.appendChild(el("td", null, d.flag)); tbody.appendChild(tr); });
+    tb.appendChild(tbody); wrap.appendChild(tb); v.appendChild(wrap);
+    var bar = el("div", "toolbar"); [["soon", "Sort: closing soon"], ["top", "Sort: top-10 count"], ["ask", "Sort: check eligibility"], ["name", "Sort: name"]].forEach(function (o) {
+      var b = el("button", null, o[1]); b.type = "button"; b.setAttribute("aria-pressed", osbmSort === o[0] ? "true" : "false"); b.addEventListener("click", function () { osbmSort = o[0]; renderOsbm(); }); bar.appendChild(b); });
+    v.appendChild(bar);
+  }
+
   // ---- wiring ----
   function tab(name) {
-    ["opps", "board", "map", "marks", "how"].forEach(function (k) {
+    ["opps", "board", "map", "osbm", "marks", "how"].forEach(function (k) {
       $("v-" + k).hidden = k !== name; $("tab-" + k).setAttribute("aria-selected", k === name ? "true" : "false"); });
-    if (name === "map") renderMap(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
+    if (name === "map") renderMap(); if (name === "osbm") renderOsbm(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
   }
   Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
   $("large").addEventListener("click", function (e) { var on = document.body.classList.toggle("large"); e.target.setAttribute("aria-pressed", on); });
   $("order").addEventListener("change", function () { cur.order = this.value; show(); });
+  $("coming-q").addEventListener("input", function () { var g = groups(cur.id); fill($("coming-l"), filt(g.coming, this.value)); });
+  $("hidden-q").addEventListener("input", function () { var g = groups(cur.id); fill($("hidden-l"), filt(g.hidden, this.value)); });
+  $("k-ref").addEventListener("change", function () { K.ref = this.value; saveK(); applyRef(); show(true); });
+  $("k-run").addEventListener("change", function () { K.run = Math.max(0, Number(this.value) || 0); saveK(); show(true); });
+  $("k-min").addEventListener("change", function () { K.min = Math.max(0, Number(this.value) || 0); saveK(); show(true); });
+  $("k-hide").addEventListener("change", function () { K.hide = this.checked; saveK(); show(true); });
+  $("k-reset").addEventListener("click", resetAll);
+  $("scn-go").addEventListener("click", function () { var ch = parseScenario($("scenario").value); saveK(); syncK(); var box = $("chips"); box.innerHTML = ""; ch.forEach(function (c) { box.appendChild(el("span", "chip" + (c[1] ? " ignored" : ""), c[0])); }); show(true); });
+  PRESETS.forEach(function (pr) { var b = el("button", null, pr[0]); b.type = "button"; b.addEventListener("click", function () { pr[1](); saveK(); syncK(); show(true); }); $("presets").appendChild(b); });
+  [["Days left are counted from the data date unless you set a reference date", 0], ["Keyword fit comes from the stored scores; priorities only re-order your own view", 0], ["Items with no listed award or date are never hidden by a constraint", 0], ["Matching funds, staff, impact and county reach are not in this payload", 0]].forEach(function (a) { $("assumptions").appendChild(el("li", null, a[0])); });
   $("opt-forecast").addEventListener("change", show); $("opt-hidden").addEventListener("change", show);
   $("csv").addEventListener("click", function () { if (!cur.id) return; download("opportunities_" + cur.id + ".csv", [CSVH].concat(listFor(groups(cur.id)).map(csvRow))); });
   $("marks-csv").addEventListener("click", function () {
@@ -480,7 +652,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     p.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) {
       var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o); });
     sel.addEventListener("change", function () { cur.id = sel.value; cur.tile = "top"; show(); });
-    buildIdf(); initBoard(); renderHow(); show();
+    applyRef(); syncK(); buildIdf(); initBoard(); renderHow(); show();
   }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
 })();
 </script>
