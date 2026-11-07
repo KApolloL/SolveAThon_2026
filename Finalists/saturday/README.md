@@ -29,6 +29,7 @@ Rules that apply all day:
 | `03_contract.md` | File ownership, branch names, `payload.json` and backtest file schemas |
 | `04_mentor_questions.md` | Questions per mentor and slot, plus how to log answers |
 | `05_open_questions.md` | Things still undecided or unverified, and who answers them |
+| `prompts.md` | The exact first message each person sends to their AI at 8:30 |
 | `06_dependencies.md` | Who waits on whom, by when, and what happens if it is late |
 | `mentor_log.md` | Matthew fills it during mentor slots |
 | `people/*.md` | One brief per person: goal, owned files, steps with times, done means, handoff |
