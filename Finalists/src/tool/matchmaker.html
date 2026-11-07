@@ -94,6 +94,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
   <div class="tabs" role="tablist" aria-label="Views">
     <button type="button" role="tab" id="tab-opps" aria-selected="true" data-tab="opps">Opportunities</button>
     <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
+    <button type="button" role="tab" id="tab-map" aria-selected="false" data-tab="map">County map</button>
     <button type="button" role="tab" id="tab-marks" aria-selected="false" data-tab="marks">My decisions</button>
     <button type="button" role="tab" id="tab-how" aria-selected="false" data-tab="how">How this works</button>
   </div>
@@ -115,6 +116,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
       <label style="font-weight:400"><input type="checkbox" id="opt-hidden"> Also list items hidden as not eligible in the main list</label>
       <p class="note">The list works with this closed. These only change what is shown, never the ranking.</p>
     </details>
+    <details class="panel" id="caps" hidden><summary id="caps-h"></summary><div id="caps-b" class="sub"></div></details>
     <details class="panel" id="coming" hidden><summary id="coming-h"></summary><ol id="coming-l"></ol></details>
     <details class="panel" id="hidden" hidden><summary id="hidden-h"></summary><ol id="hidden-l"></ol></details>
   </section>
@@ -133,6 +135,14 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
       </div>
       <div><h3 id="b-right-h">Grants</h3><ul id="b-grants"></ul></div>
     </div>
+  </section>
+
+  <section id="v-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+    <p class="note">County indicators from public sources (CDC PLACES, ACS 2023, HRSA, NCHS, OpenFEMA). Darker means a higher value among the 100 NC counties. This shows where a measure is high; it does not say a grant reaches that county.</p>
+    <div class="toolbar"><label for="map-ind" style="margin:0">Measure</label><select id="map-ind"></select></div>
+    <p class="counts" id="map-readout" aria-live="polite">Choose a county for its value.</p>
+    <svg id="map-svg" role="img" aria-label="Map of North Carolina counties shaded by the chosen measure" viewBox="0 0 1000 381" style="width:100%;max-width:900px;height:auto"></svg>
+    <h2 style="font-size:1.05rem">Ten highest counties</h2><ol id="map-top"></ol>
   </section>
 
   <section id="v-marks" role="tabpanel" aria-labelledby="tab-marks" hidden>
@@ -255,7 +265,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
   }
   function show() {
     var id = cur.id, banner = $("banner"); banner.innerHTML = "";
-    ["coming", "hidden", "refine"].forEach(function (k) { $(k).hidden = true; });
+    ["coming", "hidden", "refine", "caps"].forEach(function (k) { $(k).hidden = true; });
     $("tiles").hidden = $("toolbar").hidden = !id;
     if (!id) { $("top").innerHTML = ""; $("counts").textContent = "Pick an agency to see its top 10 open opportunities."; return; }
     var ag = P.agencies.filter(function (a) { return a.agency_id === id; })[0];
@@ -280,7 +290,7 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
       ((ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length) + " hidden as not eligible, " + Math.max(0, below) + " ranked below the top 10, " + g.coming.length + (g.coming.length >= 10 ? "+" : "") + " not open yet" +
       (g.notices ? ", " + g.notices + " notice" + (g.notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
     fill($("top"), shown);
-    $("refine").hidden = false;
+    $("refine").hidden = false; renderCaps(cur.id);
     if (cur.tile !== "coming" && g.coming.length && !$("opt-forecast").checked) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + g.coming.length; fill($("coming-l"), g.coming); }
     if (g.hidden.length && !$("opt-hidden").checked) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + g.hidden.length; fill($("hidden-l"), g.hidden); }
     // remember what this browser has now seen for this agency (after the New badges were decided)
@@ -399,14 +409,58 @@ details.drawer dt { font-weight:600; } details.drawer dd { margin:0; overflow-wr
     h("What is loaded right now"); p(n + " rows are loaded across " + P.agencies.length + " agencies: the best matches per agency, not every open opportunity. " + hid + " of these rows are marked not eligible. Data as of " + (P.data_as_of || "unknown") + ".");
     h("Closing soon, New, and your decisions"); p("Closing soon means " + CSD + " days or fewer left. New since last visit and your Pursue, Maybe and Pass marks live only in this browser. Nothing is sent to a server or by email.");
     h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature tier is not set yet, so it reads Unknown. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
-    h("Not shown"); p("County reach, need maps and a capability-gap table need data this payload does not carry. They are not shown rather than guessed.");
+    h("County map and capabilities"); p("The County map tab shows 18 public county measures from the qualifier round. The capability table appears for DHHS and DMVA only, the two agencies where we built it. Per-grant county reach, impact sliders and a scatter are not shown: the payload carries no county list per grant, and we do not guess one.");
+  }
+
+  // ---- county map (qualifier county data) ----
+  var MAPINIT = false, NEEDBY = {};
+  function renderMap() {
+    var CN = P.county_need, svg = $("map-svg");
+    if (!CN || !P.counties) { $("map-readout").textContent = "County data is not in this payload."; return; }
+    var sel = $("map-ind");
+    if (!MAPINIT) {
+      MAPINIT = true;
+      CN.values.forEach(function (v) { (NEEDBY[v.id] = NEEDBY[v.id] || {})[v.fips] = v; });
+      CN.indicators.forEach(function (i) { var o = el("option", null, i.label); o.value = i.id; sel.appendChild(o); });
+      sel.addEventListener("change", renderMap);
+    }
+    var id = sel.value || CN.indicators[0].id, lab = CN.indicators.filter(function (i) { return i.id === id; })[0].label, by = NEEDBY[id] || {};
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var NS = "http://www.w3.org/2000/svg";
+    P.counties.forEach(function (c) {
+      var v = by[c.fips], pa = document.createElementNS(NS, "path");
+      pa.setAttribute("d", c.path); pa.setAttribute("fill", "var(--accent)");
+      pa.setAttribute("fill-opacity", v ? (0.1 + 0.9 * v.pct).toFixed(2) : "0.03");
+      pa.setAttribute("stroke", "var(--surface-2)"); pa.setAttribute("stroke-width", "1.5"); pa.setAttribute("tabindex", "0");
+      var say = function () { $("map-readout").textContent = c.county + " County: " + (v ? v.v + " (" + Math.round(v.pct * 100) + "th percentile of 100 counties)" : "no value") + ". " + lab; };
+      pa.addEventListener("mouseenter", say); pa.addEventListener("focus", say); pa.addEventListener("click", say);
+      var t = document.createElementNS(NS, "title"); t.textContent = c.county + (v ? ": " + v.v : ""); pa.appendChild(t);
+      svg.appendChild(pa);
+    });
+    var rows = P.counties.map(function (c) { return { c: c, v: by[c.fips] }; }).filter(function (x) { return x.v; }).sort(function (a, b) { return b.v.v - a.v.v; }).slice(0, 10);
+    var ol = $("map-top"); ol.innerHTML = "";
+    rows.forEach(function (x) { ol.appendChild(el("li", null, x.c.county + " County: " + x.v.v)); });
+    $("map-readout").textContent = lab + ". Choose a county for its value.";
+  }
+
+  // ---- capabilities (DHHS and DMVA only; hand-built in the qualifier) ----
+  function renderCaps(id) {
+    var rows = (P.capabilities || []).filter(function (c) { return c.agency_id === id; }), box = $("caps");
+    if (!rows.length) { box.hidden = true; return; }
+    box.hidden = false; $("caps-h").textContent = "Who controls what here: " + rows.length + " capabilities";
+    var b = $("caps-b"); b.innerHTML = "";
+    b.appendChild(el("p", null, "Hand-built from public pages in the qualifier round. A grant is easier to win when the agency delivers the service itself. To resolve says what would have to change."));
+    var tb = el("table"), th = el("tr");
+    ["Capability", "Control", "Notes", "To resolve"].forEach(function (h) { th.appendChild(el("th", null, h)); }); tb.appendChild(th);
+    rows.forEach(function (c) { var tr = el("tr"); [c.label, c.control_level, c.notes, c.to_resolve].forEach(function (x) { tr.appendChild(el("td", null, x || "")); }); tb.appendChild(tr); });
+    b.appendChild(tb);
   }
 
   // ---- wiring ----
   function tab(name) {
-    ["opps", "board", "marks", "how"].forEach(function (k) {
+    ["opps", "board", "map", "marks", "how"].forEach(function (k) {
       $("v-" + k).hidden = k !== name; $("tab-" + k).setAttribute("aria-selected", k === name ? "true" : "false"); });
-    if (name === "board") renderBoard(); if (name === "marks") renderMarks();
+    if (name === "map") renderMap(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
   }
   Array.prototype.forEach.call(document.querySelectorAll(".tabs button"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
   $("large").addEventListener("click", function (e) { var on = document.body.classList.toggle("large"); e.target.setAttribute("aria-pressed", on); });

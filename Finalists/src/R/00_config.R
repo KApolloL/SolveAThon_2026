@@ -103,6 +103,10 @@ SNIPPET_CHARS   <- 240L   # opp_snippet length
 CLOSING_SOON_DAYS <- 14L  # [assumed] a Top 10 row with this many days left or fewer counts as closing soon
 
 PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
+COUNTY_NEED_FILE   <- file.path(DIR_PROCESSED, "county_need.csv")      # from 05a (qualifier caches)
+COUNTY_SHAPES_FILE <- file.path(DIR_PROCESSED, "county_shapes.csv")    # from 05c (qualifier tigris cache)
+CAPABILITIES_FILE  <- here("..", "QualifierChallenge", "data", "manual", "agency_capabilities.csv")  # hand-built in the qualifier; DHHS and DMVA only
+CAPABILITY_AGENCY_IDS <- c(DHHS = "dhhs", DMVA = "dmva")
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")
 TOOL_HTML_OUT <- file.path(DIR_OUTS, "criteria_tool.html")
 TOOL_MAX_BYTES <- 25 * 1024^2

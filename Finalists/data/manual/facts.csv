@@ -25,3 +25,6 @@ f23,Top 10 rows closing within 14 days (all agencies),"sum(payload$rows$in_top10
 f24,Agencies with at least one Top 10 row closing within 14 days,"sum(payload$agencies$n_closing_soon > 0)",26,0
 f25,Plan goals in payload.json (match board),"nrow(payload$goals)",153,0
 f26,Agencies with at least one plan goal in payload.json,"length(unique(payload$goals$agency_id))",32,0
+f27,NC counties with an outline and need values in payload.json,"nrow(payload$counties)",100,0
+f28,County need indicators in payload.json,"nrow(payload$county_need$indicators)",18,0
+f29,Hand-built capability rows in payload.json (DHHS 14 + DMVA 14),"nrow(payload$capabilities)",28,0

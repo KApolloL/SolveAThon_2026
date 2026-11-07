@@ -94,8 +94,20 @@ goals <- goal_src |>
   filter(agency_id %in% active$agency_id, !is.na(goal_text), goal_text != "") |>
   distinct(agency_id, goal_id, .keep_all = TRUE)
 
+# Qualifier datasets carried into the tool: county outlines + need indicators (need map), and the
+# hand-built capability table for DHHS and DMVA (who controls what; other agencies are absent).
+shapes <- read_csv(COUNTY_SHAPES_FILE, show_col_types = FALSE, col_types = chr)
+need   <- read_csv(COUNTY_NEED_FILE, show_col_types = FALSE, col_types = cols(.default = col_character(), value = col_double(), percentile = col_double()))
+county_need <- list(
+  indicators = need |> distinct(indicator, label) |> arrange(label) |> transmute(id = indicator, label),
+  values = need |> arrange(indicator, fips) |> transmute(fips, id = indicator, v = round(value, 3), pct = round(percentile, 3)))
+capabilities <- read_csv(CAPABILITIES_FILE, show_col_types = FALSE, col_types = chr) |>
+  mutate(agency_id = unname(CAPABILITY_AGENCY_IDS[agency])) |>
+  filter(!is.na(agency_id), agency_id %in% active$agency_id) |>
+  transmute(agency_id, capability_id, label = capability_label, control_level, notes, source_url, to_resolve)
 payload <- list(data_as_of = PAYLOAD_AS_OF, window_days = WINDOW_DEFAULT_WEEKS * 7L,
-                closing_soon_days = as.integer(CLOSING_SOON_DAYS), agencies = agencies, goals = goals, rows = rows)
+                closing_soon_days = as.integer(CLOSING_SOON_DAYS), agencies = agencies, goals = goals,
+                counties = shapes, county_need = county_need, capabilities = capabilities, rows = rows)
 write_json(payload, PAYLOAD_JSON, auto_unbox = TRUE, null = "null", na = "null", pretty = TRUE, digits = NA)
 message("Wrote payload.json: ", length(agencies), " agencies, ", nrow(rows), " rows (",
         sum(rows$in_top10), " top 10, ", sum(!rows$in_top10 & rows$eligibility != "no"), " coming up, ",
