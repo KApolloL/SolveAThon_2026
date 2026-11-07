@@ -129,6 +129,14 @@ if (file.exists(PAYLOAD_JSON) && file.exists(BACKTEST_CSV)) {
   check("backtest contract", "every item closes on or after window start", all(bt$close_date >= bt$window_start))
 }
 
+# ---- 5c. Rerun check: same input gives an identical payload.json ----------------------
+if (file.exists(PAYLOAD_JSON) && file.exists(file.path(DIR_PROCESSED, "items.csv")) && file.exists(RANKING_CSV)) {
+  before <- unname(tools::md5sum(PAYLOAD_JSON))
+  status <- system2("Rscript", here::here("src", "R", "11_build_payload.R"), stdout = FALSE, stderr = FALSE)
+  check("rerun", "11_build_payload.R runs", status == 0)
+  check("rerun", "payload.json identical after rerun", identical(before, unname(tools::md5sum(PAYLOAD_JSON))))
+}
+
 # ---- 6. LLM guard: labels need a verifiable quote; cache; shards -------------------
 l <- "llm guard"
 DIR_CACHE_LLM <- tempfile("llm_cache_"); LLM_MODEL <- "test-model"
