@@ -29,7 +29,7 @@ This proves hosting only. There is no matching, ranking or AI yet, and no one sh
 4. **Azure OpenAI.** Ask at the 9:00 check-in whether it is ours to create. Do not create it before then.
 
 ## Bring to the 9:00 check-in
-- **Azure OpenAI.** The chosen design (Option B) needs it for plain-language reasons. Cost is not the obstacle: one full pass over 34 agencies at the top 20 each, plus embeddings for all open items, is roughly **$0.50** at list price [estimate; assumes 3,000 input and 300 output tokens per call]. If refused, Option A still works with TF-IDF.
+- **Azure OpenAI.** Option B, the worksheet's draft choice that Kent has not confirmed, needs it for plain-language reasons. Cost is not the obstacle: one full pass over 34 agencies at the top 20 each, plus embeddings for all open items, is roughly **$0.50** at list price [estimate; assumes 3,000 input and 300 output tokens per call]. If refused, Option A still works with TF-IDF.
 - **Data handling.** Read Azure's documentation before anyone says prompts stay out of training. It is still [uncertain].
 - **The $500.** It is a monthly budget *alert* that goes to the organizers, alongside a $6,000 annual alert. Neither is a hard limit, and the subscription's spending limit is off. Ask if there is a real limit.
 
@@ -37,8 +37,10 @@ This proves hosting only. There is no matching, ranking or AI yet, and no one sh
 1. **The known-good test cannot pass as written.** The worksheet expects Clean School Bus (CFDA 66.045). That CFDA has **0 rows** in `opportunities.csv`. The nearest item is the 2026 DERA notice, `EPA-OAR-OTAQ-26-01` (CFDA 66.039, posted, closes 2027-01-22), which is the only opportunity whose title or summary mentions school buses. Pick a replacement before scoring, not after.
 2. **Keyword noise is visible now.** Searching "school bus" in the live table returns 690 rows, because it matches each word separately across all columns. This is a table search, not a measured baseline, so it is not a slide number. It does show what the keyword baseline needs to beat.
 3. **Missing values are common.** Of 1,472 open items, 723 have no award ceiling and 117 have no close date (68 of those are forecasts). Both must display as "unknown", as the worksheet says.
-4. **Nothing to score with yet.** `data/manual/` is empty, so `criteria.csv`, test cases and facts still need writing. The worksheet's [assumed] lines are not sponsor-approved, and Claude could not verify the mentor gate box.
-5. **Required deliverables have not started:** field notes, state-developer README, fact sheet. `handoff.md` still reads as Friday morning; suggested Azure row below.
+4. **Forecast dates go stale.** 197 forecasted items have a close date before Nov 6 (for example `RFA-HD-27-001`, Nov 2), so "days left" would be negative or misleading. Only 1 posted item does. Also: 47 open items close after 2030, 60 list an award of 0, and about 440 have HTML codes in their text. Decide how each is shown before the ranking uses them.
+5. **Evaluation kit is ready for review** in `drafts/claude/eval/`: blank blind sheets for 2 agencies (30 items, 2 labelers each), keyword baseline, metrics (20 of 20 tests pass, on fake data only), and 12 proposed test cases. Kent decides the demo agencies, pass marks, the DERA replacement, and whether higher-education-only counts as ineligible. **Regenerate the sheets with the ranking file before labeling**, otherwise few of the ranker's top 10 will have labels and precision@10 means little. Labeling is people only.
+6. **Nothing to score with yet.** `data/manual/` is empty, so `criteria.csv`, test cases and facts still need writing. The worksheet's [assumed] lines are not sponsor-approved, and Claude could not verify the mentor gate box.
+7. **Required deliverables are drafts or empty.** Field notes and the state-developer README are drafted in `drafts/claude/docs/`, with a `[TO FILL]` list for Saturday. The fact sheet is empty. `handoff.md` still reads as Friday morning; suggested Azure row below.
 
 ## Marco's day
 | When | Do | Done means |

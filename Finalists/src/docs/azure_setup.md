@@ -3,13 +3,15 @@
 Written Fri Nov 6, 2026, late evening, by Marco with Claude Code. No keys, tokens or connection strings are in this file. Where a secret is needed, the placeholder is `$AOAI_KEY` etc.
 
 ## Rules that still apply
-- **Spending limit: $500** for the team subscription (told to us by the organizers). Stay on the cheapest tiers; see "Cost guard".
+- **$500 is a monthly budget alert, not a hard limit** (read from Azure Friday night; the subscription spending limit is off). Treat it as the ceiling anyway. Stay on the cheapest tiers; see "Cost guard".
 - Ask before every `az ... create`, delete, role assignment or install. One command at a time. On an error: show the exact command and error, propose one fix, no blind retries.
 - Never print or write a key. Read it into a shell variable from `az` and use it in the same command.
 - Work only on the branch `marco_testing`. No commits to `main`. Commit only when Marco says so; push only to `origin/marco_testing`, then open a PR for Kent. Before each work block: `git fetch origin`, then `git merge --ff-only origin/main`.
 - AI use for Friday is logged in `Finalists/AI_USAGE_LOG.md`; add a row for each new block of work.
 
 ## State at end of Friday
+_Updated Fri 10:50 pm: rows below show the state after the proof run. Details are in the proof sections further down._
+
 Signed in as `gullotto@AD.UNC.EDU` (CLI 2.92.0, installed with Homebrew; `containerapp` extension installed, preview). Default subscription: `unc-sdis-solveathon-team15`.
 
 | What | Name | State |
@@ -22,12 +24,12 @@ Signed in as `gullotto@AD.UNC.EDU` (CLI 2.92.0, installed with Homebrew; `contai
 | Log Analytics workspace | `ffm-logs` | created |
 | Container Registry | `ffmacrteam15` (Basic) | created |
 | Container Apps environment | `ffm-env` | created |
-| Hello app | `Finalists/app/app.R`, `Finalists/app/Dockerfile` (`rocker/shiny:4.4.2`, port 3838, `MODE` env var, `MODE=job` is a stub that exits 0) | written, **not built, not committed** |
+| Proof app | `Finalists/app/` (image `ffm-app:v1`, display only) | **built and live**; replaced the hello skeleton |
 | Azure OpenAI resource | `ffm-aoai-team15` | **not created** (Marco had not answered; no Azure OpenAI exists in the subscription) |
-| Container App | `ffm-app` | **not created** |
-| Budget alerts ($250, $400) | | **not created**; Claude offered, Marco did not answer |
+| Container App | `ffm-app` | **created and live**: https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/ |
+| Budget alerts | `ffm-guard` | **created**: $50, $100, $250, $400. Alerts only; they do not stop spending |
 
-Nothing has been tested yet. No URL exists yet.
+Tested Friday night: see "Browser check" below. Azure OpenAI is still not created.
 
 ## Plan for Saturday (in order)
 
