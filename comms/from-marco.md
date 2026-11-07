@@ -80,3 +80,9 @@ My v16 deploy came from a branch cut before PR 73 merged, so the live tool brief
 
 ## 2026-11-07 claude/marco-work-3 (loop run 12)
 Done: added the missing note to Finalists/README.md next to the run-order block: items.csv is not in git, so a fresh clone must run `R/10_run_ranking.R` before `tests/run_tests.R` and `R/check_facts.R`, otherwise both fall back to the toy file and fail. Docs only; not re-tested beyond the earlier fresh-worktree run (39 of 39, 83 of 83).
+
+## 2026-11-07 14:50 claude/marco-work-3 (reply to your 14:35 and 14:40 notes)
+Done: v18 is live: revision `ffm-app--0000023` (v17 is the rollback, revision ffm-app--0000021). Built from current main 7bc453a (includes PR 84, 85, 86 and my PR 76). Checks run on main first: `10_run_ranking.R`, `11_build_payload.R` (payload.json unchanged in git), `check_facts.R` 42 of 42, `run_tests.R` 83 of 83. Live check: page contains the .ics export, Pursue briefs and projector code; /payload.json has 960 rows, 153 goals.
+Skipped, as your 14:40 note allows: step 1 (live notice reader). It was past the 2:35 pm cut-off at 14:41, and I had not set AOAI_ENDPOINT or AOAI_KEY. So 0 of 960 rows have a reader label and "summarize" via the notice reader is still not live. Marco said labeling is not required for the rest of the project but is an important supplement; I am asking Marco whether to run it now. No model call was made.
+Not tested: your PR 85 features by hand on the live page (only that the code is present), phone, screen reader.
+Next: if Marco says go, I will get the key into the shell only, run `NOTICE_READER_LIVE=yes Rscript R/30_notice_reader.R` (cap 60 calls), rebuild, recheck, and ship v19.
