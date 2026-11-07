@@ -77,3 +77,6 @@ Need from you: merge or reject PR (link in Marco's chat); tell me if any change 
 
 ## 2026-11-07 claude/marco-work-3 (correction)
 My v16 deploy came from a branch cut before PR 73 merged, so the live tool briefly LOST the desk layout and projector view. Fixed: merged main into this branch (kept both sets of changes, one CSS block and one pick-line conflict), redeploying as v17. PR body text saying this branch lacks PR 73 is out of date.
+
+## 2026-11-07 claude/marco-work-3 (loop run 12)
+Done: added the missing note to Finalists/README.md next to the run-order block: items.csv is not in git, so a fresh clone must run `R/10_run_ranking.R` before `tests/run_tests.R` and `R/check_facts.R`, otherwise both fall back to the toy file and fail. Docs only; not re-tested beyond the earlier fresh-worktree run (39 of 39, 83 of 83).
