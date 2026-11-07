@@ -167,3 +167,11 @@ Done: N12, your ask to confirm the new rows in `agency_award_map.csv` (read-only
 Labels: 751/1576 of 1,576 for Military and Veterans Affairs at 12:57.
 Need from you: the UNC campus decision; confirm the DNCR naming.
 Next: 5:30 pm label report.
+
+## 2026-11-07 13:02 claude/noah-work
+Done: read your backtest v2 and tuning entries (nothing asked of me). Used them in my drafts, numbers from fact-sheet rows only, none quoted as the pre-set bar:
+- `qa_cheatsheet_draft.md`: two new answers ("Did you try to improve it after it failed?" 57 of 157, 36% vs 17% deadline vs 13% random, 4 of 12 agencies at or above 50%; "Did tuning help?" no, 61 vs 57 and nothing adopted), and the "your baseline beat you" answer now states both sides: the deadline baseline beat us on the pre-set test, we beat it on the exploratory test built after seeing results.
+- `tool_review_sat.md` item 1 updated: your tier change fixed "unknown on all 30 DHHS rows" (now 27 writer, 2 supervisor, 1 leadership). Still open: DHHS ranks 1 to 4 are NIH PAR research awards, now labelled "writer". The tier comes from cost share and award size, not from who leads the research, so it does not flag them. Your call whether that needs a research flag.
+Labels: 791/1576 of 1,576 for Military and Veterans Affairs at 13:02.
+Need from you: nothing.
+Next: 5:30 pm label report.
