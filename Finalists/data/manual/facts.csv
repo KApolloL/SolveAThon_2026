@@ -38,3 +38,6 @@ f36,v2 backtest: agencies at or above 50% in the Top 10 (4-week windows),"sum(bt
 f37,"Tuning grid: current setting (title x1, mean centering) Top 10 catches over the 12 agencies","sum(bt_tune$caught[bt_tune$title_rep == 1 & bt_tune$center == 'mean'])",57,0
 f38,Tuning grid: no centering across agencies Top 10 catches (shows centering helps),"sum(bt_tune$caught[bt_tune$title_rep == 1 & bt_tune$center == 'none'])",40,0
 f39,Tuning grid: best setting on all 12 (z centering) Top 10 catches,"sum(bt_tune$caught[bt_tune$title_rep == 1 & bt_tune$center == 'z'])",61,0
+f40,Reach: won programs a newest-posted-first alert reaches in its Top 10 (same 12 agencies),"round(sum((bt_v2$newest_pct * bt_v2$won_in_pool)[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3]))",33,0
+f41,Reach: won programs our Top 10 reached that the newest-posted Top 10 did not,"sum(bt_v2$only_model[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3])",36,0
+f42,Reach: won programs the newest-posted Top 10 reached that our Top 10 did not,"sum(bt_v2$only_newest[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3])",12,0
