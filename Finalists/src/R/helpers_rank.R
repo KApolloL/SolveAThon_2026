@@ -133,7 +133,9 @@ assign_eligibility <- function(agency_id, codes, text) {
   tx <- text_eligibility(text)
   decided <- !is.na(tx$text_call)
   tibble(
-    eligibility = case_when(yes_code | he_ok ~ "yes", ask_code & decided ~ tx$text_call,
+    # A text phrase can rule an item out but never confirm it: "state governments" also appears in lists
+    # of who is NOT the target (EPSCoR, Fair Housing). Text "yes" stays "ask" with its quote shown.
+    eligibility = case_when(yes_code | he_ok ~ "yes", ask_code & decided & tx$text_call == "no" ~ "no",
                             ask_code ~ "ask", TRUE ~ "no"),
     elig_source = case_when(yes_code | he_ok ~ "code", ask_code & decided ~ "rule", TRUE ~ "code"),
     elig_quote  = if_else(!(yes_code | he_ok) & ask_code & decided, tx$text_quote, NA_character_))
