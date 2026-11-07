@@ -31,16 +31,18 @@ Read the notice and the agency's mission. Tag in the blank column: `real gap` (n
 
 | Program | Notice | Top shared words | Everett's tag |
 |---|---|---|---|
-| commerce 17.245 | Change 1 to Training and Employment Guidance Letter No. 01-25: Process | state program year workforce employment | |
-| dacs 15.657 | F24AS00431 FY24 Recovery Implementation | service measure resource time plan | |
-| deq 81.041 | Inflation Reduction Act (IRA) of 2022: State-Based Home Energy Efficie | community program provide state support | |
-| dhhs 10.579 | USDA-FNS-CN-EAG-FY26 | service improve department support promote | |
-| dhhs 93.052 | Advancing State Implementation of the National Strategy to Support Fam | plan support partner supporting address | |
-| dhhs 93.788 | Tribal Opioid Response | service access support program community | |
-| dpi 10.579 | USDA-FNS-CN-EAG-FY26 | school student public education state | |
-| dps 16.606 | BJA FY25 State Criminal Alien Assistance Program (SCAAP) | service safety public program resource | |
-| dps 97.023 | Fiscal Year 26 Community Assistance Program - State Support Services E | service program ensure community reduce | |
-| wrc 97.056 | Fiscal Year 2025 Port Security Grant Program | program opportunity state management associated | |
+| commerce 17.245 | Change 1 to Training and Employment Guidance Letter No. 01-25: Process | state program year workforce employment |  [Claude provisional] other: DOL guidance letter on fiscal process, not a funding call |
+| dacs 15.657 | F24AS00431 FY24 Recovery Implementation | service measure resource time plan |  [Claude provisional] off-mission: USFWS species recovery, not an agriculture programme (fit 0) |
+| deq 81.041 | Inflation Reduction Act (IRA) of 2022: State-Based Home Energy Efficie | community program provide state support |  [Claude provisional] real gap: DOE state energy-efficiency training; NC Energy Office sits in DEQ |
+| dhhs 10.579 | USDA-FNS-CN-EAG-FY26 | service improve department support promote |  [Claude provisional] off-mission for DHHS: child-nutrition equipment grants for school food authorities (DPI's lane) |
+| dhhs 93.052 | Advancing State Implementation of the National Strategy to Support Fam | plan support partner supporting address |  [Claude provisional] real gap: family caregivers is DHHS aging work |
+| dhhs 93.788 | Tribal Opioid Response | service access support program community |  [Claude provisional] off-mission: tribal recipients, state cannot apply |
+| dpi 10.579 | USDA-FNS-CN-EAG-FY26 | school student public education state |  [Claude provisional] real gap: same USDA child-nutrition grant, school food is DPI's lane |
+| dps 16.606 | BJA FY25 State Criminal Alien Assistance Program (SCAAP) | service safety public program resource |  [Claude provisional] other: corrections reimbursement, likely belongs to Adult Correction not DPS; unsure |
+| dps 97.023 | Fiscal Year 26 Community Assistance Program - State Support Services E | service program ensure community reduce |  [Claude provisional] real gap: FEMA emergency management support; Emergency Management is in DPS |
+| wrc 97.056 | Fiscal Year 2025 Port Security Grant Program | program opportunity state management associated |  [Claude provisional] off-mission: port security, not WRC's mission |
+
+**Provisional tags (Claude, not Everett; from titles and my general knowledge of NC agencies, [unverified]):** 4 real gap (rows 3, 5, 7, 9), 4 off-mission (2, 4, 6, 10), 2 other (1, 8). Read: in this sample of 10, 4 look like on-mission notices ranked low, so a keyword gap is plausible for some, but 4 would not have been pursued and the sample is too small to generalise. Everett must confirm or overwrite each tag before any number is quoted.
 
 ## Limits
 - Fit is a relative score (centered per notice, scaled by the agency's best), so a low value can also mean the plan is thin; plan text length differs by agency.
