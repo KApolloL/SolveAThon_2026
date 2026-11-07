@@ -4,21 +4,28 @@ Teammates role-play our users against our work using paste-ready prompts, so we 
 
 ## Reviewers and personas (built; read this first)
 
-Ten reviewers and personas, each written once in `testing/reviewers/` and built into two formats by `python3 testing/build_reviewers.py` (Kent runs it after editing a spec; never edit the generated files).
+Fifteen reviewers and personas, each written once in `testing/reviewers/` and built by `python3 testing/build_reviewers.py` (Kent runs it after editing a spec; never edit the generated files). Each one is a subagent in both Claude Code and OpenCode; the three `roleplay` personas also keep an interactive slash command.
 
-| Reviewer | What it does | Claude Code | Any chat box (ChatGPT, PromptLab) |
-|---|---|---|---|
-| hostile-judge | Scores the five judging criteria, checks 5-minute fit, asks the 8 hardest Q&A questions | agent `hostile-judge` | `prompts/paste/hostile-judge.md` |
-| data-critic | Attacks criteria, fields, filters, weights, claims | agent `data-critic` | `prompts/paste/data-critic.md` |
-| test-breaker | Writes expected-vs-actual test cases, tries to break the ranking | agent `test-breaker` | `prompts/paste/test-breaker.md` |
-| persona_user | Role-play the busy agency staffer (interactive) | `/persona_user <what you present>` | `prompts/paste/persona_user.md` |
-| persona_supervisor | Role-play their supervisor (interactive) | `/persona_supervisor ...` | `prompts/paste/persona_supervisor.md` |
-| persona_director | Role-play the non-technical budget director (interactive) | `/persona_director ...` | `prompts/paste/persona_director.md` |
-| persona-user, persona-supervisor, persona-director | One-shot versions of the three personas: read the material once, report in character, no dialogue | agents `persona-user`, `persona-supervisor`, `persona-director` | same paste files |
-| persona-nongrants-staffer | Agency staffer with no grants experience and no time (the Public Instruction attendee) | agent `persona-nongrants-staffer` | `prompts/paste/persona_nongrants_staffer.md` |
-| persona-it-architect | State IT Office of AI architect: privacy, security, cost, handover | agent `persona-it-architect` | `prompts/paste/persona_it_architect.md` |
-| persona-osbm-sponsor | OSBM chief scientist whose goal is NC pulling down federal funds | agent `persona-osbm-sponsor` | `prompts/paste/persona_osbm_sponsor.md` |
-| persona-dhhs-grant-writer | Experienced state grant writer (qualifier user): eligibility, burden, signatures | agent `persona-dhhs-grant-writer` | `prompts/paste/persona_dhhs_grant_writer.md` |
+| Agent | Kind | What it does | Interactive command | Any chat box (ChatGPT, PromptLab) |
+|---|---|---|---|---|
+| `hostile-judge` | reviewer | Scores the five judging criteria, checks 6-minute fit, asks the 8 hardest Q&A questions | none | `prompts/paste/hostile-judge.md` |
+| `data-critic` | reviewer | Attacks criteria, fields, filters, weights, claims, coverage | none | `prompts/paste/data-critic.md` |
+| `test-breaker` | reviewer | Writes expected-vs-actual test cases, tries to break the ranking | none | `prompts/paste/test-breaker.md` |
+| `persona-user` | roleplay | The time-poor agency staffer who screens grants on top of a full job | `/persona_user` | `prompts/paste/persona_user.md` |
+| `persona-supervisor` | roleplay | The user's division director: staff time, risk, rules | `/persona_supervisor` | `prompts/paste/persona_supervisor.md` |
+| `persona-director` | roleplay | Non-technical OSBM budget director who could fund a pilot | `/persona_director` | `prompts/paste/persona_director.md` |
+| `persona-nongrants-staffer` | persona | The "average person who does not normally do grants" (Public Instruction) | none | `prompts/paste/persona_nongrants_staffer.md` |
+| `persona-dhhs-grant-writer` | persona | Experienced state grant writer (qualifier user): eligibility, burden, signatures | none | `prompts/paste/persona_dhhs_grant_writer.md` |
+| `persona-it-architect` | persona | State IT Office of AI architect: privacy, security, cost, handover | none | `prompts/paste/persona_it_architect.md` |
+| `persona-osbm-sponsor` | persona | OSBM chief scientist: did the work serve the people who will use it | none | `prompts/paste/persona_osbm_sponsor.md` |
+| `persona-osbm-analyst` | persona | The OSBM analyst who runs the cross-agency view and answers a legislator | none | `prompts/paste/persona_osbm_analyst.md` |
+| `persona-deputy-secretary` | persona | Agency deputy secretary: match money, liability, the promise we cannot keep | none | `prompts/paste/persona_deputy_secretary.md` |
+| `persona-state-developer` | persona | The state developer who must pick the repo up from the README | none | `prompts/paste/persona_state_developer.md` |
+| `persona-industry-mentor` | persona | The Saturday 2:00 mentor: what failed, what is the ask, what would you cut | none | `prompts/paste/persona_industry_mentor.md` |
+| `persona-federal-program-officer` | persona | A federal program officer: does our summary misstate their notice | none | `prompts/paste/persona_federal_program_officer.md` |
+
+A persona subagent is one-shot: it reads the material once, replies in character, and returns an observer report. There is no dialogue. For a live consulting meeting use the slash command, then type END.
+
 
 **One-time, at release (Kent):** approve `testing/context.md` (drafted by Claude from the repo on Nov 6; every reviewer reads it). Agents are picked up when Claude Code starts in `Finalists/`; restart the session after a rebuild.
 
