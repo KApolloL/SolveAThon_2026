@@ -8,7 +8,7 @@
 | 4 | Does the Final Submission form want a repo link or a file? | Organizers, asked by Matthew | 9:30 |
 | 5 | Does a SAM.gov bulk Assistance Listings file exist that avoids the key's rate limit? [uncertain] | Noah | 9:00 |
 | 6 | Does the Federal Audit Clearinghouse give NC awards at state-agency level? [uncertain] | Everett | 2:30 |
-| 7 | Does county need (A) enter the score, or stay a display column? It was built for the qualifier's county-level user | Kent, at merge 2 | 11:00 |
+| 7 | **Resolved: county need is a display column only; it does not enter the score.** (Was: does county need (A) enter the score? Built for the qualifier's county-level user.) | Kent, at merge 2 | 11:00 |
 | 8 | Who builds the slides from the slide brief, and when do we rehearse? | Kent | 1:00 |
 | 9 | Who writes the AI-usage disclosure from `AI_USAGE_LOG.md`? | Kent | 1:00 |
 | 10 | School bus "about one month" application window, from discovery notes: true? | Matthew | 12:15 |

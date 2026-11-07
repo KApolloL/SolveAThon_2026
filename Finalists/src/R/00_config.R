@@ -79,7 +79,7 @@ ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government
 
 # Geography: fit is multiplied by GEO_PENALTY when the opportunity TITLE names another US state or
 # region and does not name North Carolina. Titles only: summaries list many states in passing.
-# [assumed] 0.5; the item is demoted, never hidden.
+# 0.5 confirmed by Kent in person (Nov 7); a team judgment, not derived. The item is demoted, never hidden.
 GEO_PENALTY <- 0.5
 GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida",
   "Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts",
@@ -89,7 +89,7 @@ GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colo
   "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake")
 
 # Program map: a hand table (data/manual/program_map.csv) naming Assistance Listing numbers that belong to an
-# agency regardless of keywords. A mapped pair gets fit of at least MAP_FIT_FLOOR [assumed] and a note saying why.
+# agency regardless of keywords. A mapped pair gets fit of at least MAP_FIT_FLOOR (0.8, confirmed by Kent in person Nov 7; a team judgment) and a note saying why.
 # It never overrides the eligibility filter.
 PROGRAM_MAP_FILE <- file.path(DIR_MANUAL, "program_map.csv")
 MAP_FIT_FLOOR    <- 0.8
