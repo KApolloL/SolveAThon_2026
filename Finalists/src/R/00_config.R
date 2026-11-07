@@ -57,6 +57,9 @@ TOOL_MAX_BYTES <- 25 * 1024^2
 # =============================================================================
 # Opportunity sources (data setup). Keys are read from .Renviron only, never written here.
 # =============================================================================
+# Team keys live in api_keys.env at the project root (private repo, Kent's decision). Loaded here
+# so every script sees SIMPLER_GRANTS_KEY and SAM_API_KEY through Sys.getenv().
+if (file.exists(here("api_keys.env"))) readRenviron(here("api_keys.env"))
 DIR_CACHE_GRANTS   <- here("data", "cache", "api", "grantsgov")
 DIR_CACHE_EXTRACT  <- here("data", "cache", "api", "grantsgov_extract")
 CLOSED_SINCE       <- as.Date("2024-11-06")   # keep closed/archived items closing on or after this
