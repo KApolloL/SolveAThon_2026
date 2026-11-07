@@ -211,7 +211,7 @@ body.proj .start .reason { font-size:1.35rem; }
       <dl class="gloss">
         <dt>Best match</dt><dd>How many words a grant's title and summary share with your agency's plan goals. It is a keyword score, not a judgment of quality. Compare scores only inside one agency's list.</dd>
         <dt>Your agency can apply</dt><dd>Federal applicant-type codes or a quoted line in the notice say state agencies are allowed.</dd>
-        <dt>Not sure we can apply</dt><dd>The applicant list is unclear. Read the notice (the link on the title) before spending time.</dd>
+        <dt>Eligibility unclear</dt><dd>The applicant list is unclear. The notice's own words are shown under the title; read the notice (the link on the title) before spending time.</dd>
         <dt>Who signs</dt><dd>Who has to approve an application: you can start now, your boss must sign, or leadership must sign. Shown only when the notice makes it clear.</dd>
         <dt>Closing soon</dt><dd>14 days or fewer left to apply.</dd>
         <dt>Coming up</dt><dd>Forecasts: the funder says it plans to post this. You cannot apply yet, but you can plan.</dd>
@@ -373,9 +373,10 @@ body.proj .start .reason { font-size:1.35rem; }
     if (r.status === "forecasted") meta.appendChild(el("span", "badge", "Not open yet"));
     failsK(r).forEach(function (m) { meta.appendChild(el("span", "badge warn", m)); });
     var e = r.eligibility || "ask";
-    var PLAIN = { yes: "Your agency can apply", no: "Your agency cannot apply", ask: "Not sure we can apply: read the notice" };
+    var PLAIN = { yes: "Your agency can apply", no: "Your agency cannot apply", ask: "Eligibility unclear: check the notice before you spend time" };
     meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), PLAIN[e] || PLAIN.ask));
     body.appendChild(meta);
+    if (e === "ask" && r.elig_quote) { var eq = String(r.elig_quote).replace(/\s+/g, " "); body.appendChild(el("div", "reason muted", "The notice says: “" + (eq.length > 160 ? eq.slice(0, 157).replace(/\s+\S*$/, "") + "…" : eq) + "”")); }
     if (r.goal_snippet) { var rs = el("div", "whyfit"); rs.appendChild(el("b", null, "Why it fits: ")); var gt = r.goal_snippet.replace(/^Goal\s*\d+\s*[–-]?\s*/i, ""); rs.appendChild(document.createTextNode(gt.length > 170 ? gt.slice(0, 167).replace(/\s+\S*$/, "") + "…" : gt)); rs.title = r.goal_snippet; body.appendChild(rs); }
     else body.appendChild(el("div", "reason muted", "No plan goal matched"));
     var sw = sharedWords(r); if (sw.length) body.appendChild(el("div", "matched", "Words in common: " + sw.join(", ")));
@@ -542,7 +543,7 @@ body.proj .start .reason { font-size:1.35rem; }
   // ---- Start here: the three best open matches, one next step each ----
   function renderStart(g, id) {
     var box = $("start"); box.innerHTML = "";
-    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 0; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).slice(0, document.body.classList.contains("proj") ? 5 : 3);
+    var pick = g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 1; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).slice(0, document.body.classList.contains("proj") ? 5 : 3);
     box.hidden = (cur.tile !== "top" && !document.body.classList.contains("proj")) || !pick.length; if (box.hidden) return;
     box.appendChild(el("h2", null, "Start here: your " + pick.length + " best open matches"));
     var soon = g.soon.length;
@@ -965,6 +966,8 @@ body.proj .start .reason { font-size:1.35rem; }
   if (lsGet("ffm_proj_v1", false) || /[?&]present=1/.test(location.search)) { document.body.classList.add("proj"); $("proj").setAttribute("aria-pressed", "true"); $("proj-exit").hidden = false; }
   // ---- end PROJECTOR ----
 
+  // the Azure container sleeps when idle: say so instead of looking broken
+  var warm = setTimeout(function () { if (!P) $("asof").textContent = "Loading data... the server is waking up, this can take up to 40 seconds."; }, 4000);
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
     P = p; CSD = p.closing_soon_days || 14;
     $("asof").textContent = "Data as of " + (p.data_as_of || "unknown");
@@ -973,7 +976,12 @@ body.proj .start .reason { font-size:1.35rem; }
     p.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) {
       var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o); });
     sel.addEventListener("change", function () { cur.id = sel.value; cur.tile = "top"; show(); });
-    applyRef(); syncK(); buildIdf(); initBoard(); renderHow(); show();
+    applyRef(); syncK(); buildIdf(); initBoard(); renderHow();
+    // first screen is never empty: ?agency=<id> wins, else start on Environmental Quality (the demo agency)
+    var want = new URLSearchParams(location.search).get("agency"), pre = null;
+    p.agencies.forEach(function (a) { if (a.agency_id === want || (!want && !pre && /Environmental Quality/i.test(a.agency_name))) pre = a; });
+    if (pre) { sel.value = pre.agency_id; cur.id = pre.agency_id; cur.tile = "top"; }
+    show();
   }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
 })();
 </script>
