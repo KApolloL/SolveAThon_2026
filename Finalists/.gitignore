@@ -12,3 +12,6 @@ data/cache/llm/
 
 # Large raw downloads (record source in data/raw/README.md)
 data/cache/api/grantsgov_extract/
+
+# compiled OCR helper (rebuild: swiftc -O -o data/cache/ocr_vision src/tools/ocr_vision.swift)
+data/cache/ocr_vision
