@@ -7,6 +7,8 @@
 # agencies with 3+ won programs. Random is the exact expected value from 21_backtest_v2.R.
 # NOT HERE: the "in-time" line (catch with >= IN_TIME_DAYS before close). backtest_v2_result.csv has no
 # in-time column, and 21_backtest_v2.R is Kent's file. Adding it needs a small change there (ask Kent).
+# Only Top 10 (57 of 157, 36%), Top 50 (95 of 157, 61%) and the Top 10 baselines (17%, 13%) are in the fact sheet (rows 26 to 29).
+# The Top 20 bars, the Top 50 baselines and the in-time counts are NOT in the fact sheet: do not speak them until Kent adds them.
 # Limits (printed on the figures): exploratory, not the pre-set bar; program-level match favors repeat
 # funding; award data never enters the score; small denominators; no notice-level award link exists.
 
@@ -36,7 +38,7 @@ p1 <- ggplot(long, aes(top_n, share, fill = method)) +
   scale_fill_manual(values = c("Tool ranking" = FIG_COLORS$main, "Soonest deadline" = FIG_COLORS$muted,
                                "Random" = FIG_COLORS$accent)) +
   scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
-  labs(title = "Would the tool have surfaced programs NC agencies later won?",
+  labs(title = "Would the tool have surfaced programs NC agencies won?",
        subtitle = paste0("Share of ", pooled$n_prog[1], " won programs (12 agencies with 3+, 4-week windows) that reach the list"),
        x = NULL, y = "Won programs reached", fill = NULL, caption = caption) +
   theme_finals() + theme(legend.position = "bottom")

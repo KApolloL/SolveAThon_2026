@@ -34,3 +34,9 @@ Done: Everett told me to check the open items and decide. Checked the four award
 Decision: I did NOT change `agency_award_map.csv`, because it would move your fact rows 26 to 29. A scratch rerun with Employment Security, DMV and Adult Correction promoted gives 58 of 159 Top 10 (was 57 of 157), 42 in time (was 41).
 Need from Kent: apply the three promotions (58 of 159) or keep the map and say in Q&A that divisions are not counted; also confirm the DMV line against an official NCDOT page.
 Next: PR for E8.
+
+## 2026-11-07 claude/everett-work (7)
+Done: Kent's message (via Everett's session) asked for the task list; answered in chat. Ran a hostile-judge pass on the backtest evidence: `Finalists/drafts/everett/backtest_hostile_judge.md`. Facts 39 of 39 and tests 83 of 83 on main after `10_run_ranking.R`.
+For Kent (your files): `backtest_framing.md:32` ("beats both baselines once fair") holds pooled only, not for Commerce, DEQ, DHHS, DNCR; `:40` ("at its ceiling") overreaches for a 9-setting grid; `slide_brief.md:35` figure name; the Top 20, Top 50 baseline and in-time numbers are not in the fact sheet, so do not speak them unless you add them. In my files I fixed the pooled-figure title ("later won" removed) and corrected my E2 timing wording.
+Need from Kent: the earlier list (E5 placeholders, map promotions 58 of 159, fact-sheet numbers, DMV source).
+Next: PR for E9.

@@ -1,4 +1,4 @@
-# Where the v2 Top 10 would not have flagged programs agencies later won (E2 draft)
+# Where the v2 Top 10 would not have flagged programs agencies won (E2 draft)
 
 Status: draft by Everett's Claude, for Kent. Numbers come from `src/R/24_backtest_misses.R` (offline, reads `agency_award_map.csv` and `nc_awards_by_cfda.csv`, rebuilds the 4-week full pool the way `21_backtest_v2.R` does). Not in `fact_sheet.md`; **Kent adds what he wants and confirms.** Unverified by a human. Exploratory, not the pre-set bar. Program-level match favors repeat funding; there is no link from an award to a notice.
 
@@ -19,7 +19,7 @@ For the 157 won programs (12 agencies with 3+ won programs, 4-week windows) that
 1. **Below-50 programs show up in fewer windows (median 3 vs 5 to 6).** That fits the idea that these are programs with sparse or oddly timed notices, but I did not test causes.
 2. **Keyword fit is the likeliest cause, still untested.** Sample below-50 titles are administrative or off-topic for the agency's plan words, e.g. Commerce: "Training and Employment Guidance Letter", "Work Opportunity Tax Credit Additional Funding Allotments"; DACS: "FY24 Recovery Implementation"; DEQ: "Clean Vessel Act", "Geologic Mapping". These are titles, not tests. A real test needs the notice text vs the plan text for each one (a word-level check, or Noah's labels once done).
 3. **DHHS is the weakest case:** 19 of its 30 won programs sit below rank 50 and 4 reach the Top 10. Worth a sentence in the weakness write-up.
-4. **Timing is not the main story:** at the best rank, 37 of 57 (Top 10), 31 of 38 and 48 of 62 had under 21 days left from the window end. The share is similar across groups, so deadline does not separate flagged from not flagged in this data. (Computed from `days_left_at_best`; 21 is `IN_TIME_DAYS`.)
+4. **Timing is a weak signal, not ruled out:** measured at the best-ranked notice, 37 of 57 (65%) Top 10 programs had under 21 days left from the window end, against 31 of 38 (82%) and 48 of 62 (77%) in the other two groups. So programs that reach the Top 10 are somewhat more often in time, but most are not. This is a different measure from the in-time count in `backtest_v2_intime.csv` (41 of 57 reach the Top 10 with 21+ days left on ANY Top 10 notice), so the two numbers do not conflict but must not be quoted together. Corrected after the hostile-judge pass; the earlier wording 'does not separate' was too strong.
 
 ## Limits
 - "Won" means a confirmed recipient on the award map; repeat funding inflates recall.
