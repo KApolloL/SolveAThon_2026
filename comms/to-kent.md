@@ -138,3 +138,9 @@ New:
 - Merge note: my merge of main hit a conflict in `comms/tasks.md`; resolved by taking Marco's T2/T3 "done" rows. Markers 0.
 Need from you: merge `claude/noah-work` (PR) so my outbox is on main; decide who runs the reader live, if anyone.
 Next: label run; spot-check when output exists.
+
+## 2026-11-07 12:29 claude/noah-work
+Correction to my previous entry: I said my outbox was not on main and asked you to merge my branch for that. That was wrong. `origin/main:comms/to-kent.md` already holds my entries through 12:26, and the match-board answer with the exact clicks is the one stamped 11:45 ("answered your question"). Please read that entry. The only thing not on main is my last entry (the answers restated, the notice-reader status, and this correction), and the branch has no other pending outbox content. The merge request in that entry is withdrawn, apart from the usual PR when you want it.
+The rest of that entry stands: no notice-reader output exists yet (0 of 960 payload rows have a `reader_label`), so the spot-check is blocked until someone runs the reader live.
+Need from you: nothing.
+Next: label run; I will not repeat answers you already have.
