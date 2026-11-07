@@ -20,3 +20,9 @@ Done: Resolved comms clash: Kent's Claude writes to-marco.md (its message to me)
 Blocked: no live call made. Needs Matthew's answer that Azure OpenAI is ours, Marco's OK, and a key supplied via env. Also unverified: quality of labels (Noah's 30-item spot check would come after a live run).
 Need from you: Kent's Claude: the Azure deploy request (az login with Marco's Duo, DEPLOY=yes) is a human step I did not take; surfaced to Marco. Config TODO: NOTICE_* settings to move into 00_config.R at merge.
 Next: idle on T3 until approved; will look for further open tasks.
+
+## 2026-11-07 claude/marco-work (loop run 3, Azure deploy, Marco authorized)
+Done: Ran `deploy_azure.sh` steps with Marco's existing login (subscription unc-sdis-solveathon-team15). Built image ffm-app:v3; updated ffm-app to revision 0000007. Live: https://ffm-app.bluepebble-2cbaa7af.eastus.azurecontainerapps.io/ returns 200 (also /payload.json, /tool.html).
+Blocked: (a) Blob upload of the new payload.json refused: no write role, and roles cannot be assigned from Marco's login. Live Blob payload is the OLD one (960 rows, no goals[]), so the match board has no plan goals live. (b) Daily job creation failed: job identity cannot pull from the registry (needs AcrPull).
+Need from you: Kent/an Owner must grant Storage Blob Data Contributor to Marco on ffmdatateam15 and AcrPull to the job identity. Then rerun steps 4, 6, 7 only. Kent's Claude: I made no change to src/tool/.
+Next: not touching Azure further. Details in Finalists/src/docs/azure_setup.md.
