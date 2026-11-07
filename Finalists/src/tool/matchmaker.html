@@ -542,6 +542,9 @@ ul.gl-bars button:disabled { cursor:default; }
 li.hot .gl-tr i { background:var(--bad); } li.hot .gl-k { color:var(--bad); font-weight:700; }
 .gl-v { font-variant-numeric:tabular-nums; font-weight:650; font-size:.8rem; color:var(--text-primary); }
 body.proj .swipe-cta, body.proj #glance, body.proj .ag-budget { display:none !important; }
+
+.c2.est { border:1px dashed currentColor; }
+.c2.est.c-odds.o-good { border-style:solid; }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -665,9 +668,9 @@ body.proj .tour-card { font-size:1.2rem; }
         <dt>Rolling</dt><dd>No close date is listed. Check the announcement for how long it stays open.</dd>
         <dt>Pursue, Maybe, Pass</dt><dd>Your own marks, saved only in this browser. Pursue puts the grant in your cart and opens a plan. Nothing is sent anywhere.</dd>
         <dt>Tier 1, 2, 3</dt><dd>Who has to sign, as in the qualifier tool. Tier 1: you can start. Tier 2: your boss signs (matching money). Tier 3: leadership signs (matching money on an award of $1M or more).</dd>
-        <dt>Odds</dt><dd>A rough read of competition from the listing: how many awards will be made, who else is allowed to apply, and whether NC has won this program before. Good, Fair, Long shot, or Unknown when the listing says nothing. It never changes the ranking.</dd>
-        <dt>Effort</dt><dd>Easy, Medium or Hard from who signs and whether matching money is needed. The weeks shown (2, 4, 8) are our rough guess, not a measurement.</dd>
-        <dt>Payoff</dt><dd>The most one award can be, divided by those rough weeks of work. Use it to compare grants, not as a promise of money.</dd>
+        <dt>Odds (≈)</dt><dd>A rough read of competition from the listing: how many awards will be made, who else is allowed to apply, and whether NC has won this program before. Good, Fair, Long shot, or Unknown when the listing says nothing. It never changes the ranking.</dd>
+        <dt>Effort (≈)</dt><dd>Easy, Medium or Hard from who signs and whether matching money is needed. The weeks shown (2, 4, 8) are our rough guess, not a measurement.</dd>
+        <dt>Payoff (≈)</dt><dd>The most one award can be, divided by those rough weeks of work. Shown only when the listing says your agency can apply. Use it to compare grants, not as a promise of money.</dd>
       </dl>
     </details>
     <details class="panel" id="refine" hidden><summary>Refine (optional)</summary>
@@ -947,7 +950,8 @@ body.proj .tour-card { font-size:1.2rem; }
     if (cs) why.push("The agency must put up matching money"); else if (r.cost_sharing === "No") why.push("No matching money needed");
     return { level: lvl, weeks: lvl ? EFFORT_WEEKS[lvl] : null, label: lvl ? { easy: "Easy", medium: "Medium effort", hard: "Hard" }[lvl] : "Effort unknown", why: why };
   }
-  function payoff(r) { if (r.eligibility === "ask" && limitedTo(r)) return null; var m = money(r).max, e = effort(r); return m && e.weeks ? m / e.weeks : null; }
+  // No payoff figure until the listing says your agency can apply.
+  function payoff(r) { if (r.eligibility !== "yes") return null; var m = money(r).max, e = effort(r); return m && e.weeks ? m / e.weeks : null; }
   function cap(t) { t = String(t || ""); return t.charAt(0).toUpperCase() + t.slice(1); }
   function tierInfo(r) { return { writer: [1, "Tier 1: you can start"], supervisor: [2, "Tier 2: your boss signs"], leadership: [3, "Tier 3: leadership signs"] }[r.signature_tier] || [0, "Who signs: not stated"]; }
   function tight(r) { var e = effort(r); return r.days_left != null && r.days_left >= 0 && e.weeks && r.days_left < e.weeks * 7; }
@@ -1308,14 +1312,16 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function titleCase(x) { return String(x).toLowerCase().replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); }).replace(/\bNc\b/g, "NC"); }
   function starStr(n) { return "★★★★★".slice(0, n) + "☆☆☆☆☆".slice(0, 5 - n); }
+  var FED_SWING = 5; // [assumed] year-to-year ratio above which a change is called unusual, not a trend
   function fedTrend(r) {
     // SAM.gov often leaves a year at $0 when it was not reported; show that year as unknown, not as a cut to $0.
     var nz = function (v) { return v === 0 || v === "0" ? null : v; };
     var a = nz(r.fed_fy25), b = nz(r.fed_fy26), c = nz(r.fed_fy24); if (a == null && b == null) return null;
     var dir = null, ch = (a > 0 && b != null) ? (b - a) / a : null;
-    if (ch != null) dir = ch > 0.1 ? "growing" : ch < -0.1 ? "shrinking" : "steady";
+    // A jump of more than 5 times (or a drop below a fifth) is usually a reporting quirk, not a real trend: say so instead of "growing".
+    if (ch != null) dir = (b / a > FED_SWING || b / a < 1 / FED_SWING) ? "unusual" : ch > 0.1 ? "growing" : ch < -0.1 ? "shrinking" : "steady";
     return { fy24: c, fy25: a, fy26: b, dir: dir,
-      text: "Federal spending on this program: " + (c != null ? usd(c) + " in 2024, " : "") + (a != null ? usd(a) + " in 2025" : "") + (b != null ? ", " + usd(b) + " planned for 2026" : "") + (dir ? " (" + dir + ")" : "") + " (federal budget years). Source: SAM.gov program listings." };
+      text: "Federal spending on this program: " + (c != null ? usd(c) + " in 2024, " : "") + (a != null ? usd(a) + " in 2025" : "") + (b != null ? ", " + usd(b) + " planned for 2026" : "") + (dir === "unusual" ? " (a very large swing between years, often a reporting quirk: check the program page)" : dir ? " (" + dir + ")" : "") + " (federal budget years). Source: SAM.gov program listings." };
   }
   function agBudget(id) { var a = P.agencies.filter(function (x) { return x.agency_id === id; })[0]; return a && a.gf_base_fy2526 ? Number(a.gf_base_fy2526) : null; }
   function shareOfBudget(r) {
@@ -1353,7 +1359,7 @@ body.proj .tour-card { font-size:1.2rem; }
     function num(big, small, cls) { var x = el("div", "sw-num" + (cls ? " " + cls : "")); x.appendChild(el("b", null, big)); x.appendChild(el("span", null, small)); g4.appendChild(x); }
     num(r.days_left != null ? String(r.days_left) : "–", r.days_left != null ? (r.days_left === 1 ? "day left" : "days left") : (cap(r.date_note) || "No fixed date"), r.days_left != null && r.days_left <= CSD && r.status !== "forecasted" ? "urgent" : null);
     num(usd(money(r).max) || "Not listed", "max per award", money(r).max ? null : "na");
-    num(starStr(tr.stars), tr.label, "stars");
+    num(starStr(tr.stars), "≈ " + tr.label + " (our estimate)", "stars");
     num(ti[0] ? ["", "You", "Your boss", "Leadership"][ti[0]] : "?", ti[0] ? (ti[0] === 1 ? "can start it" : "signs") + " · Tier " + ti[0] : "who signs not stated", "who");
     c.appendChild(g4);
     if (r.eligibility === "ask") c.appendChild(el("p", "sw-note", limitedTo(r) ? "May be only for " + limitedTo(r) + ". Check eligibility." : "Check eligibility in the announcement."));
@@ -1421,11 +1427,11 @@ body.proj .tour-card { font-size:1.2rem; }
         ["Funder", function (r) { return r.funder || "Not listed"; }],
         ["Days left", function (r) { return r.days_left != null ? String(r.days_left) : (r.date_note || "No fixed date"); }],
         ["Money per award", function (r) { return usd(money(r).max) || "Not listed"; }],
-        ["Track record", function (r) { var t0 = track(r); return starStr(t0.stars) + " " + t0.label; }],
+        ["Track record (estimate)", function (r) { var t0 = track(r); return starStr(t0.stars) + " " + t0.label; }],
         ["Who signs", function (r) { return tierInfo(r)[1]; }],
-        ["Chance of winning", function (r) { return odds(r).label; }],
-        ["Effort", function (r) { var e = effort(r); return e.label + (e.weeks ? " (~" + e.weeks + " wks)" : ""); }],
-        ["Payoff", function (r) { return payoff(r) ? usd(payoff(r)) + " per week of work" : "Unknown"; }],
+        ["Chance of winning (estimate)", function (r) { return odds(r).label; }],
+        ["Effort (estimate)", function (r) { var e = effort(r); return e.label + (e.weeks ? " (~" + e.weeks + " wks)" : ""); }],
+        ["Payoff (estimate)", function (r) { return payoff(r) ? usd(payoff(r)) + " per week of work" : (r.eligibility === "yes" ? "Unknown" : "Check eligibility first"); }],
         ["Matching money", function (r) { return r.cost_sharing === "Yes" ? "Required" : r.cost_sharing === "No" ? "Not required" : "Not stated"; }],
         ["Federal program budget", function (r) { var f = fedTrend(r); return f ? (f.fy26 != null ? usd(f.fy26) + " planned for the 2026 federal budget" : usd(f.fy25) + " in the 2025 federal budget") + (f.dir ? ", " + f.dir : "") : "Not reported"; }],
         ["Size vs. agency budget", function (r) { return shareOfBudget(r) || "Unknown"; }],
@@ -1560,11 +1566,12 @@ body.proj .tour-card { font-size:1.2rem; }
     if (r.status === "forecasted") box.appendChild(chip("c-info", "Not open yet"));
     if (newIds[r.opp_id]) box.appendChild(chip("c-new", "New"));
     box.appendChild(chip("c-tier t" + ti[0], ti[1], ef.why.join(". ")));
-    box.appendChild(chip("c-odds o-" + od.level, od.label, od.why.join(". ")));
-    box.appendChild(chip("c-eff e-" + (ef.level || "unknown"), ef.label + (ef.weeks ? " · ~" + ef.weeks + " wks" : ""), ef.why.join(". ")));
-    if (po) box.appendChild(chip("c-pay", usd(po) + " per week of work", "Payoff: award divided by rough weeks of work. A guide, not a promise."));
-    var tk = track(r); box.appendChild(chip("c-track s" + tk.stars, starStr(tk.stars) + " " + tk.label, tk.why.join(". ")));
-    var ft = fedTrend(r); if (ft && ft.dir && ft.dir !== "steady") box.appendChild(chip("c-fed " + ft.dir, "Federal budget " + ft.dir, ft.text));
+    var EST = "Our estimate, not a measured value. ";
+    box.appendChild(chip("est c-odds o-" + od.level, "≈ " + od.label, EST + od.why.join(". ")));
+    box.appendChild(chip("est c-eff e-" + (ef.level || "unknown"), "≈ " + ef.label + (ef.weeks ? " · ~" + ef.weeks + " wks" : ""), EST + ef.why.join(". ")));
+    if (po) box.appendChild(chip("est c-pay", "≈ " + usd(po) + " per week of work", EST + "Payoff: most one award can be, divided by rough weeks of work. Shown only when the listing says your agency can apply."));
+    var tk = track(r); box.appendChild(chip("est c-track s" + tk.stars, "≈ " + starStr(tk.stars) + " " + tk.label, EST + tk.why.join(". ")));
+    var ft = fedTrend(r); if (ft && (ft.dir === "growing" || ft.dir === "shrinking")) box.appendChild(chip("c-fed " + ft.dir, "Federal budget " + ft.dir, ft.text));
     if (F.matchAmt > 0 && r.cost_sharing === "Yes") box.appendChild(chip("c-warn", "Needs matching money: check the % against your " + usd(F.matchAmt)));
     box.appendChild(chip("c-elig " + e, { yes: "Can apply", no: "Can't apply", ask: "Check eligibility" }[e] || "Check eligibility", e === "ask" && r.elig_quote ? "The announcement says: " + r.elig_quote : null));
     if (limitedTo(r)) box.appendChild(chip("c-warn", "May be only for " + limitedTo(r), "The summary names this group. Read the announcement's eligibility section."));
@@ -1742,7 +1749,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var pick = sortRows(g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 1; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).filter(passF)).slice(0, document.body.classList.contains("proj") ? 5 : 3);
     box.hidden = (cur.tile !== "top" && !document.body.classList.contains("proj")) || !pick.length; if (box.hidden) return;
     box.appendChild(el("h2", null, cur.order === "rank" ? (pick.length === 1 ? "Start here: your best open match" : "Start here: your " + pick.length + " best open matches") : "Start here: top " + pick.length + " by " + ORDER_LABEL[cur.order]));
-    box.appendChild(el("p", "note", "Big number on the left: days left. Right: the most money one award can be. Press Pursue to add a grant to your cart and get a step-by-step plan."));
+    box.appendChild(el("p", "note", "Big number on the left: days left. Right: the most money one award can be. Both come from Grants.gov, as does who signs. Chips marked ≈ (odds, effort, payoff, stars) are our own estimates. Press Pursue to add a grant to your cart and get a step-by-step plan."));
     var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
   }
   function show(keepW) {
