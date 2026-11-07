@@ -1497,7 +1497,7 @@ body.proj .tour-card { font-size:1.2rem; }
     });
     bars(box, "When they close", "Grants in your list, by time left. Click a bar to show only those.", wk, function (x) { F.when = F.when === x.k ? "" : x.k; show(true); });
     var nm = {}, ns = {}; rows.forEach(function (r) { var nn = needs(r); if (!nn.length) nn = ["?"]; nn.forEach(function (n) { var k = n === "?" ? "Not labeled" : (NEED[n] || n); nm[k] = (nm[k] || 0) + 1; ns[k] = (ns[k] || 0) + (money(r).max || 0); }); });
-    var ni = Object.keys(nm).sort(function (a, b) { return ns[b] - ns[a] || nm[b] - nm[a]; }).slice(0, 6).map(function (k) { return { k: k, v: ns[k], lab: (usd(ns[k]) || "amount not listed") + " · " + nm[k], tip: k + ": " + nm[k] + " grants" + (usd(ns[k]) ? ", up to " + usd(ns[k]) + " per award added up" : "; no award amount listed") }; });
+    var ni = Object.keys(nm).sort(function (a, b) { return ns[b] - ns[a] || nm[b] - nm[a]; }).slice(0, 6).map(function (k) { return { k: k, v: ns[k], lab: ((ns[k] > 0 && usd(ns[k])) || "amount not listed") + " · " + nm[k], tip: k + ": " + nm[k] + " grants" + ((ns[k] > 0 && usd(ns[k])) ? ", up to " + usd(ns[k]) + " per award added up" : "; no award amount listed") }; });
     bars(box, "What the money is for", "Most money one award can be, added up, by Grants.gov need type. Click to filter.", ni, function (x) { if (x.k === "Not labeled") return; F.need = x.k; show(true); syncF(); });
     var tc = [0, 0, 0, 0]; rows.forEach(function (r) { tc[tierInfo(r)[0]]++; });
     bars(box, "Who has to sign", "Click a bar to show only those grants.", [{ k: "You can start", v: tc[1], lab: String(tc[1]), s: "1" }, { k: "Your boss signs", v: tc[2], lab: String(tc[2]), s: "2" }, { k: "Leadership signs", v: tc[3], lab: String(tc[3]), s: "3" }, { k: "Not stated", v: tc[0], lab: String(tc[0]), s: "0" }], function (x) { F.exact = F.exact === x.s ? "" : x.s; show(true); });
@@ -1770,7 +1770,7 @@ body.proj .tour-card { font-size:1.2rem; }
       b.addEventListener("click", function () { cur.tile = t[0]; show(); }); tiles.appendChild(b);
     });
     var below = g.open.length - g.hidden.filter(function (r) { return r.status === "posted"; }).length - g.top.length;
-    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open opportunities among the best matches loaded";
+    var ofText = (ag && ag.open_total != null) ? ag.open_total + " open opportunities" : g.open.length + " open grants loaded for this agency";
     fillFacetSelects(g);
     var shown = listFor(g);
     var nh = (ag && ag.n_hidden_ineligible != null) ? ag.n_hidden_ineligible : g.hidden.length;
