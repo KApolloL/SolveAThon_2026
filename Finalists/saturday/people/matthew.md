@@ -1,6 +1,6 @@
 # Matthew: human checks and mentors
 
-No Claude needed. Do the checks yourself and write answers down. If you use any AI tool, log it in `AI_USAGE_LOG.md` and check it yourself.
+You use ChatGPT, not Claude Code. Start a new chat and paste the rules block from `tasks/teammate_ai_rules.md`, then paste this whole file under it. ChatGPT cannot open Grants.gov or the repo for you: open each page yourself and paste the text you want checked into the chat. Never accept a number, quote or eligibility answer from ChatGPT that you have not confirmed on the page yourself, and write the page link in `sat_checks.csv`. Log every ChatGPT use in `AI_USAGE_LOG.md`. For git, ask Kent or a teammate's Claude; if you only fill `sat_checks.csv` and `mentor_log.md`, send the files to Kent and he commits them.
 
 ## Goal
 Run every mentor slot, finish the verification sheet by **12:15**, and ask two questions of the organizers at the 9:00 check-in.

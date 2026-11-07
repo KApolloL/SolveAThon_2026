@@ -1,6 +1,6 @@
 # Kent: pipeline, merges, fact sheet
 
-You are Kent's Claude. Kent does every merge. Read `../README.md` rules first. This brief covers what the critical path needs.
+You are Kent's Claude. Kent does every merge. Read `../README.md` rules first, then `../06_dependencies.md`. This brief covers what the critical path needs. Branch: `claude/prototype-timeline-plan-7017d0` (Kent's choice). Pull `main` into it before each merge window. Review other lanes only at merge windows, not between: every hour before 11:00 spent elsewhere comes out of the gate.
 
 ## Goal
 By 1:00: real `payload.json` (keyword top 10 per agency for all 32 agencies, eligibility from codes and rules, goal snippets) and `rankings_backtest.csv`, so Marco's tool and Everett's backtest run on real output.

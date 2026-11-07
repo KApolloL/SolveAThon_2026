@@ -8,7 +8,8 @@ This folder is the plan for Saturday. It overrides `planning/08_saturday_plan.md
 1. Read this file.
 2. Read your person's brief in `people/<name>.md` (kent, marco, everett, noah, matthew). Start on its first unchecked step.
 3. Read `03_contract.md` before writing any file. It says which files you own and the shape of `payload.json`.
-4. Read other files here only when your brief points to them.
+4. Read `06_dependencies.md` so you know who waits on you and what you wait on.
+5. Read other files here only when your brief points to them.
 
 Rules that apply all day:
 - Edit only the files your brief says you own. Need a change in someone else's file? Write it in your brief's "Handoff" section and tell your person to tell the owner.
@@ -28,5 +29,6 @@ Rules that apply all day:
 | `03_contract.md` | File ownership, branch names, `payload.json` and backtest file schemas |
 | `04_mentor_questions.md` | Questions per mentor and slot, plus how to log answers |
 | `05_open_questions.md` | Things still undecided or unverified, and who answers them |
+| `06_dependencies.md` | Who waits on whom, by when, and what happens if it is late |
 | `mentor_log.md` | Matthew fills it during mentor slots |
 | `people/*.md` | One brief per person: goal, owned files, steps with times, done means, handoff |
