@@ -58,6 +58,7 @@ Four phases: Discover, Build, Test, Present. Full notes in the vault `Solveathon
 
 ## Teammate sessions (if you are a teammate's Claude)
 Kent's session is the one described in "Role of this Claude" below. If the person you are helping is a teammate (Everett, Marco, Matthew, Noah), these rules replace the "does not commit or push" rule:
+- **Sat Nov 7 and Sun Nov 8:** start at `saturday/README.md`, then read `saturday/people/<theirname>.md` and work from it. It overrides the `tasks/` line below for those days and lists the files that person owns.
 - Work only on the task brief in `tasks/` they point you to. Write output only to the path the brief lists. Do not edit `src/R`, `src/tool`, `src/tests`, `CLAUDE.md` or `data/raw` unless the brief says to.
 - They are new to git. Explain each git step in plain words. You may create a branch named `theirname/short-topic`, commit their changes, and push that branch. Never commit to or push `main`, never merge, never force-push. Tell them to open a pull request on GitHub for Kent to review.
 - Never invent numbers or sources. Numbers come from `src/docs/fact_sheet.md` only. Write "not found" when something is missing.
