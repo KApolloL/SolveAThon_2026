@@ -1,0 +1,48 @@
+# Persona run 30: persona-federal-program-officer (simulated; hypotheses, not user evidence)
+
+Material read: 14 Top-10 rows in `data/processed/payload.json` (deq, dhhs x2, osa, 4 Federal Register notices under commerce, dac, dacs, dmva, dncr, doa, doi) against `data/processed/opportunities.csv` and `federal_register_notices.csv`; `assign_eligibility()` and text rules in `src/R/helpers_rank.R` and `src/R/00_config.R`; `src/tool/matchmaker.html`. REF_DATE is 2026-11-06 (config); payload `data_as_of` is 2026-11-07.
+
+## 1. First reaction
+
+I read the notices, not the summaries. The tool is more careful than most: it says "Ask" when it does not know. But "Yes" is the problem. It means one applicant-type code ("state governments") matched, and my notice often says something narrower underneath. The screen also shows no quoted sentence, no award, no cost share, and a "Matches plan goal" line that is a heading of the agency's own plan, not a statement from my notice. An applicant would trust "Eligible: Yes". I would be the one taking the call.
+
+## 2. Findings
+
+| # | Where in the material | What was unclear, wrong or missing | Type | Severity | Suggested fix |
+|---|---|---|---|---|---|
+| 1 | PAR-25-003 (dhhs) "Eligible: Yes" | Code 00 only. Source text says eligibility is limited to state animal food safety programs with an FDA inspectional contract in good standing and a valid 20.88 agreement, with funding tracks. Tool shows Yes with no condition. NC's animal food program may not sit in DHHS; tool cannot tell. | trust | high | If eligibility_text names conditions beyond the code, show "Yes, if..." with the first condition quoted, or downgrade to Ask. |
+| 2 | HHS-2026-ACF-ECD-TP-0039 (dhhs) "Eligible: Yes" | Source says "Specific states and territories are eligible and will be identified in the NOFO." Code 00 alone says yes. Whether NC is on the list is not checked. Also cost share = Yes, ceiling 15,000,000 vs 25 awards, floor 500,000; none shown. Closes in 14 days. | trust | high | Treat "will be identified" / "specific ... eligible" text as Ask. Show cost share and floor-to-ceiling. |
+| 3 | AFPRA-20-04 (osa, dst, sos rank 1-2) | A U.S. Embassy Praia (Cape Verde) self-help grant ranks first for three NC agencies. Source text: "All applicants must be registered Non-Profit Organizations", community groups, $3,000 to $10,000, close date NA. Tool shows "Ask / check the notice"; no rule catches "registered Non-Profit Organizations" or a foreign post. | trust | high | Add text rules for NPO-only and for foreign-embassy/overseas programs; do not rank them top 10. |
+| 4 | Four Federal Register rows, "rolling or no date listed" | The FR csv has only title, abstract, agency, publication date. No deadline field exists, so "rolling or no date listed" is a claim the data cannot make. These are May 2026 USDA RD NOFOs (published 5/13 to 5/26) with a fixed application window that probably has passed or is near. Eligibility "Ask", mapped to commerce. | confusing output | high | For notices say "Deadline not read from the Federal Register text" and show publication date. Never imply rolling. Flag as possibly closed. |
+| 5 | O-BJA-2026-172698 (dac), "0 days left" | REF_DATE is 2026-11-06, close_date 2026-11-06. The payload is stamped 11-07 11:00, so the real status is closed, but the screen reads "0 days left" and the card is shown as open. Ten Top-10 rows show 0 (BJA 172698, 172690, 172775, 172779, NNH25ZDA001N-BIOS). Time of day and timezone (Grants.gov closes at a stated hour ET) are not shown. | confusing output | high | Compute days_left from data_as_of, label "closes today, time not shown", drop negatives, show the hour when the notice states it. |
+| 6 | EPA-OAR-OTAQ-26-01 (deq) "Eligible: Ask" | Code 25 "other", source text only says "See Section 2". The tool cannot read Section 2, so Ask is correct, but DERA is a national program with 120 awards and 12,000,000 as the ceiling; cost share = Yes. DERA is actually a strong fit for DEQ per map_note, but the reason shown is a plan goal heading, and the map_note ("grants cut diesel exhaust, an air quality matter") is not in the UI. | missing requirement | medium | Show map_note as the reason. Show the cost-share flag. State that the ceiling is a program-level figure, not a per-applicant award. |
+| 7 | "Matches plan goal: ..." (matchmaker.html rowEl) | Only goal_snippet appears. elig_quote, opp_snippet, award, cost share and the map_note are in the payload but never displayed. The brief promises quoted reasons; the screen quotes the agency plan only, and nothing from the notice. | trust | high | Add one quoted sentence from the notice (exact string, checked) beside each reason, and ceiling/floor/cost share. |
+| 8 | Eligibility "Yes" source = code on 257 of 259 posted Top-10 rows | Only 2 posted rows have a rule-based call; 12 rows carry elig_quote overall, and these are the keyword hits "State Agencies" / "state governments". That quote proves the phrase appears, not that a state agency may apply (it can be a partner, a subrecipient, or a list of excluded entities). | trust | high | Text rule must tell applicant from partner. Print the full sentence, not the 2-word match. Never let "state governments" alone decide Yes. |
+| 9 | O-NIJ-2026-172804 (doi) "Yes" | eligibility_text is NA; code 00 and 12 other types. Yes is fair on type, but it is a research solicitation (elderly abuse research) and may need a research team / PI rules. Tool says nothing. DOI is Insurance (OSFM/doi mapping). Fit looks keyword-driven. | framing | medium | Do not present keyword fit as fit. Say "keyword similarity to plan text". |
+| 10 | 26-511 NSF SBIR/STTR (doa) "Ask" | Source eligibility_text is a "Who May Serve as PI" paragraph. The real restriction (small business concerns only) is not in the text, so the tool says Ask without a reason. A state agency cannot apply at all. | trust | high | SBIR/STTR is small business only. Add a program rule (or a "small business" phrase rule) to mark No. Same for USDA-NIFA-SBIR-012221 (commerce rank 1, Ask). |
+| 11 | AAHC-FY27 (dncr) Ask | Source: "See the Notice of Funding Opportunity for eligibility information." Tool says Ask, which is right. But 7 days left, cost share Yes, 32 awards, and the museum must be an African American museum. Summary hides all of this. | missing requirement | medium | Show Ask as "Ask: text not in the data" vs "Ask: conflicting". |
+| 12 | RBCS-2026-AIC (dacs) Yes | Codes list state governments, but this is an "Agriculture Innovation Center" program (technical assistance centers), 3 awards, 600,000 to 1,000,000, cost share. Eligible code says Yes; the applicant must be a center. | trust | medium | Same as 1: pass conditions through. |
+| 13 | W81XWH-22-DHAPP (dmva) | Posted 2022, close 2027-09-18 (316 days), and the notice says "This announcement will be revised regularly". It is a DoD HIV/AIDS prevention program that is mostly overseas. Ceiling NA. The long close date from a revised-regularly notice is listed as a firm date. | confusing output | medium | Show "date may change: notice is revised regularly". Cap trust in dates more than a year out. |
+| 14 | Score and rank display | Rank and Top 10 are keyword similarity centered per opportunity, then divided by the agency's best, so rank 1 gets 1.00 by construction. A rank can read as a probability of winning. Backtest numbers are not shown to the applicant. | trust | medium | Never show the score as a number; say "ranked by keyword overlap with your plan". |
+| 15 | Posted close_date vs forecast vs FR | Each row has one status. The FR notices are a separate row, not linked to the Grants.gov posting for the same program (opp_number is None; fr_url exists in opportunities.csv). If the posting and the FR notice disagree on dates, the tool will not tell. | missing requirement | medium | Where a posted opp has an fr_url, show both dates and flag a mismatch. |
+
+## 3. Questions for the team (hardest first)
+
+1. What does "Eligible: Yes" mean in your tool: "an applicant type code includes state governments" or "NC may apply"? Which sentence on the screen tells the reader which?
+2. For HHS-2026-ACF-ECD-TP-0039, the notice says specific states will be identified. How does a row like that become Yes?
+3. Why does a Cape Verde embassy program for registered non-profits rank first for the State Auditor, State Treasurer and Secretary of State? What is the rule that should have excluded it?
+4. A row says "0 days left" for a deadline that was yesterday by the data stamp. What is the plan for the hour and timezone of close?
+5. Federal Register rows show "rolling or no date listed". Where did you read that?
+6. Who checks a quote? You say a script checks that each quote appears in the source. Does it check that the quote means what the reason claims (applicant vs partner)?
+
+## 4. What I needed that is not shown
+
+- The full notice text (Section 2 for DERA, the NOFO body for the ACF and FDA programs). I only saw the Grants.gov synopsis fields.
+- Any displayed award or cost-share fields; the screen shows none.
+- Deadline hour and timezone.
+- Whether the UI hides rows with days_left below 0 (I saw `days_left` 0 rows only).
+- How the Federal Register rows appear on screen: the code counts them as "notice (not ranked)", so these four rows may never be shown to a user. If so, finding 4 matters only where counts or links expose them; I cannot tell.
+
+## 5. Could I state the next step?
+
+Yes, in part: pick an agency, open the linked Grants.gov page, and read the notice before deciding. The screen says "check the notice" only on Ask rows; on Yes rows it gives no such instruction, which is the main risk.

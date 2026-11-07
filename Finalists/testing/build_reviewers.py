@@ -42,6 +42,11 @@ Output, in this order, and nothing else:
 Save the full output to testing/transcripts/NN_{name}_YYYYMMDD.md if you can write files; otherwise end with "Save this to testing/transcripts/".
 """
 
+# Reviewers that may run the test suite / fact check, and read git history.
+RSCRIPT_OK = {"test-breaker", "stage-judge-solve", "stage-judge-evaluate", "fact-tracer", "code-auditor"}
+GIT_READ_OK = {"stage-judge-evaluate", "security-auditor"}
+
+
 def oc_permissions(name):
     """OpenCode V2 `permissions`: an ordered list of rules, last match wins.
 
@@ -49,8 +54,11 @@ def oc_permissions(name):
     `permission: {edit: ask, bash: deny}` map is V1 and is ignored in V2.
     """
     rules = [("shell", "*", "deny")]
-    if name == "test-breaker":
+    if name in RSCRIPT_OK:
         rules.append(("shell", "Rscript *", "allow"))
+    if name in GIT_READ_OK:
+        rules.append(("shell", "git log *", "allow"))
+        rules.append(("shell", "git ls-files *", "allow"))
     rules.append(("edit", "*", "ask"))
     lines = ["permissions:"]
     for action, resource, effect in rules:
