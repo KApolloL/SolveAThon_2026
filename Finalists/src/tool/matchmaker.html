@@ -580,6 +580,32 @@ body.proj .swipe-cta, body.proj #glance, body.proj .ag-budget { display:none !im
 #print-sheet .ps-h2 { font-size:13pt; margin:14pt 0 4pt; } #print-sheet .ps-list { margin:0; padding-left:16pt; } #print-sheet .ps-list li { margin:2pt 0; }
 body.proj #matrix, body.proj .themebtn { display:none !important; }
 @media (max-width:560px) { .appbar .themebtn { display:inline-flex !important; } }
+
+.fbbtn { display:inline-flex !important; align-items:center; gap:6px; }
+.fbbtn b { background:#f2c14e; color:#1d2a10; font-size:.72rem; min-width:18px; height:18px; border-radius:999px; display:inline-grid; place-items:center; padding:0 5px; } .fbbtn b[hidden] { display:none; }
+#fb-h { margin:0 0 4px; font-size:1.25rem; }
+fieldset.fb-q { border:none; padding:0; margin:12px 0; display:flex; gap:8px; flex-wrap:wrap; } fieldset.fb-q legend { font-weight:700; margin-bottom:8px; padding:0; }
+.fb-choice { font:inherit; font-weight:700; min-width:96px; min-height:48px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); cursor:pointer; }
+.fb-choice[aria-pressed="true"] { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.fb-field { display:flex; flex-direction:column; gap:6px; margin:12px 0; font-weight:700; }
+.fb-field input, .fb-field textarea { font:inherit; font-weight:400; padding:10px 12px; border:1px solid var(--border); border-radius:10px; background:var(--paper); color:var(--text-primary); }
+.fb-btn { display:inline-flex; align-items:center; justify-content:center; font:inherit; font-weight:700; padding:10px 18px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); cursor:pointer; text-decoration:none; min-height:46px; }
+.fb-btn.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.fb-send { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+.fb-thanks { display:flex; flex-direction:column; gap:4px; background:var(--good-soft); color:var(--good); border-radius:10px; padding:12px 14px; } .fb-thanks span { color:var(--text-secondary); }
+.fb-past { margin-top:14px; }
+.linkbtn { font:inherit; background:none; border:none; color:var(--accent); text-decoration:underline; cursor:pointer; padding:0 4px; min-height:0 !important; }
+.fb-match { display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--rule); font-size:.82rem; }
+.fb-ask { color:var(--text-muted); font-weight:600; margin-right:2px; }
+.fb-mini { font:inherit; font-size:.8rem; padding:4px 10px; border-radius:999px; border:1px solid var(--border); background:transparent; color:var(--text-secondary); cursor:pointer; min-height:32px !important; }
+.fb-mini:hover { border-color:var(--accent); color:var(--accent); }
+.fb-done { color:var(--good); font-weight:600; }
+.fb-note { font:inherit; font-size:.85rem; padding:5px 10px; border:1px solid var(--border); border-radius:8px; min-width:220px; flex:1; background:var(--paper); color:var(--text-primary); }
+.fb-toast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:1100; display:flex; align-items:center; gap:8px; flex-wrap:wrap; background:var(--text-primary); color:var(--surface-2); padding:10px 14px 10px 18px; border-radius:999px; box-shadow:0 10px 30px rgba(0,0,0,.3); font-weight:600; max-width:calc(100vw - 24px); }
+.fb-toast .fb-mini { color:var(--surface-2); border-color:rgba(255,255,255,.4); } .fb-toast .linkbtn { color:var(--surface-2); }
+.fb-x { font:inherit; font-size:1.2rem; background:none; border:none; color:inherit; cursor:pointer; padding:0 4px; }
+body.proj .fb-match, body.proj .fbbtn { display:none !important; }
+@media (max-width:560px) { .fbbtn { font-size:0 !important; gap:0 !important; padding:6px 10px !important; } .fbbtn svg { width:18px; height:18px; } .appbar .fbbtn { display:inline-flex !important; } }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -611,6 +637,7 @@ body.proj .tour-card { font-size:1.2rem; }
     <div class="spacer"></div>
     <button type="button" id="cart-open" class="cartbtn" aria-label="My grant cart"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.1a2 2 0 0 0 2-1.5L22 8H6"/></svg><span>My grants</span><b id="cart-n" hidden>0</b></button>
     <span class="fresh" title="When the opportunity data was last refreshed"><span class="dot" aria-hidden="true"></span><span id="asof">Loading data...</span></span>
+    <button type="button" id="fb-open" class="fbbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Give feedback<b id="fb-n" hidden>0</b></button>
     <button type="button" id="theme" class="themebtn">Dark mode</button>
     <button type="button" id="large" aria-pressed="false" title="Enlarge text">Larger text</button>
     <button type="button" id="proj" aria-pressed="false" title="Show only the best matches in very large type (shortcut: p)">Projector view</button>
@@ -793,6 +820,8 @@ body.proj .tour-card { font-size:1.2rem; }
 </div>
 <dialog id="cmp-dlg" class="sheet wide" aria-labelledby="cmp-h"><button type="button" class="x" id="cmp-x" aria-label="Close compare">×</button><div style="padding:18px 22px"><h2 id="cmp-h">Compare side by side</h2><div id="cmp-body"></div></div></dialog>
 <dialog id="save-dlg" class="sheet" aria-labelledby="save-h"><button type="button" class="x" id="save-x" aria-label="Close">×</button><div style="padding:18px 22px"><h2 id="save-h">Save</h2><div id="save-body"></div></div></dialog>
+<dialog id="fb-dlg" class="sheet" aria-labelledby="fb-h"><button type="button" class="x" id="fb-x" aria-label="Close">×</button><div style="padding:18px 22px"><h2 id="fb-h">Tell us how it went</h2><div id="fb-body"></div></div></dialog>
+<div id="fb-toast" class="fb-toast" role="status" hidden></div>
 <div id="print-sheet" aria-hidden="true"></div>
 <!-- Evidence shown on the home screen and in How this works. Every value is copied from
      src/docs/fact_sheet.md (row numbers in "fact"); change them there first, then here.
@@ -858,7 +887,7 @@ body.proj .tour-card { font-size:1.2rem; }
         var on = marks[key] !== name;
         if (on) marks[key] = name; else delete marks[key];
         saveMarks(); syncMarkButtons(key); renderMarks();
-        if (on && name === "Pursue") openPlan(r);
+        if (on && name === "Pursue") { openPlan(r); setTimeout(function () { quickAsk("Pursue"); }, 400); }
       });
       box.appendChild(b);
     });
@@ -1644,7 +1673,7 @@ body.proj .tour-card { font-size:1.2rem; }
     $("save-h").textContent = "Save " + what;
     box.appendChild(el("p", "note", "Pick a format. Nothing is sent anywhere; the file is made in your browser."));
     var list = el("div", "save-grid");
-    function opt(label, sub, icon, fn) { var b = el("button", "save-opt"); b.type = "button"; b.innerHTML = '<span class="save-ic" aria-hidden="true">' + icon + '</span>'; var t = el("span"); t.appendChild(el("b", null, label)); t.appendChild(el("small", null, sub)); b.appendChild(t); b.addEventListener("click", function () { fn(); $("save-dlg").close(); }); list.appendChild(b); }
+    function opt(label, sub, icon, fn) { var b = el("button", "save-opt"); b.type = "button"; b.innerHTML = '<span class="save-ic" aria-hidden="true">' + icon + '</span>'; var t = el("span"); t.appendChild(el("b", null, label)); t.appendChild(el("small", null, sub)); b.appendChild(t); b.addEventListener("click", function () { fn(); $("save-dlg").close(); setTimeout(function () { quickAsk("saving"); }, 800); }); list.appendChild(b); }
     var base = safeName(what);
     opt("PDF", "Opens the print window: choose Save as PDF", "PDF", function () { printDoc(getDoc()); });
     opt("Word (.docx)", "Opens in Microsoft Word or Google Docs", "DOC", function () { var bl = docToDocx(getDoc()), a = document.createElement("a"); a.href = URL.createObjectURL(bl); a.download = base + ".docx"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500); });
@@ -1697,6 +1726,79 @@ body.proj .tour-card { font-size:1.2rem; }
     });
     var qw = rows.filter(function (r) { return impact(r).score >= 50 && effort(r).level === "easy"; }).length;
     $("mx-note").textContent = "Each dot is one grant in your list. Higher means more impact (plan fit and money). Left means less work. Bigger dots mean bigger awards; red outline means closing within " + CSD + " days. " + (qw ? qw + (qw === 1 ? " grant is a quick win." : " grants are quick wins.") : "No quick wins in this list right now.") + " Click a dot to jump to it.";
+  }
+
+  // ---- feedback: whole tool, each grant match, and one quick question after Pursue or a save ----
+  // Where it goes: kept in this browser, and the person can send it by email or through the team's form.
+  // Set these two when they exist; an empty value hides that button.
+  var FEEDBACK_EMAIL = "";   // e.g. a team inbox; mailto opens the person's own email with everything filled in
+  var FEEDBACK_FORM = "";    // e.g. a Microsoft Forms or Google Forms link
+  var fbAll = lsGet("ffm_feedback_v1", []);
+  function fbSave(item) { item.when = new Date().toISOString(); item.agency = cur.id ? agName(cur.id) : ""; fbAll.push(item); lsSet("ffm_feedback_v1", fbAll); renderFbCount(); return item; }
+  function renderFbCount() { var n = $("fb-n"); if (n) { n.textContent = String(fbAll.length); n.hidden = !fbAll.length; } }
+  function fbText(items) {
+    return items.map(function (x) {
+      var L = ["When: " + x.when.replace("T", " ").slice(0, 16), "Agency: " + (x.agency || "none picked"), "Type: " + x.kind];
+      if (x.grant) L.push("Grant: " + x.grant + (x.opp ? " (" + x.opp + ")" : ""));
+      if (x.rating) L.push("Answer: " + x.rating);
+      if (x.task) L.push("Trying to do: " + x.task);
+      if (x.note) L.push("Note: " + x.note);
+      return L.join("\n");
+    }).join("\n\n----\n\n");
+  }
+  function fbSendRow(box, items) {
+    var row = el("div", "fb-send"), txt = fbText(items);
+    if (FEEDBACK_EMAIL) { var a = el("a", "fb-btn primary", "Send by email"); a.href = "mailto:" + FEEDBACK_EMAIL + "?subject=" + encodeURIComponent("Federal Funds Matchmaker feedback") + "&body=" + encodeURIComponent(txt.slice(0, 1800)); row.appendChild(a); }
+    if (FEEDBACK_FORM && safeUrl(FEEDBACK_FORM)) { var f = el("a", "fb-btn", "Open the feedback form"); f.href = FEEDBACK_FORM; f.target = "_blank"; f.rel = "noopener"; row.appendChild(f); }
+    var c = el("button", "fb-btn", "Copy"); c.type = "button"; c.addEventListener("click", function () { try { navigator.clipboard.writeText(txt); c.textContent = "Copied"; } catch (e) { c.textContent = "Copy failed"; } }); row.appendChild(c);
+    box.appendChild(row);
+  }
+  function fbThanks(box, items, msg) {
+    box.innerHTML = ""; var t = el("div", "fb-thanks"); t.appendChild(el("b", null, msg || "Thank you. Your feedback is saved in this browser."));
+    t.appendChild(el("span", null, FEEDBACK_EMAIL || FEEDBACK_FORM ? "Send it to the team so it counts:" : "To share it, copy it into an email to the team.")); box.appendChild(t); fbSendRow(box, items);
+  }
+  // whole-tool form
+  function openFeedback() {
+    var box = $("fb-body"); box.innerHTML = "";
+    box.appendChild(el("p", "note", "Three quick questions. Do not include personal or private information."));
+    var q1 = el("fieldset", "fb-q"); q1.appendChild(el("legend", null, "Was this tool helpful today?"));
+    var pick = "";
+    ["Yes", "Somewhat", "No"].forEach(function (v) { var b = el("button", "fb-choice", v); b.type = "button"; b.setAttribute("aria-pressed", "false"); b.addEventListener("click", function () { pick = v; [].forEach.call(q1.querySelectorAll(".fb-choice"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); }); q1.appendChild(b); });
+    box.appendChild(q1);
+    var l2 = el("label", "fb-field"); l2.appendChild(el("span", null, "What were you trying to do?")); var task = el("input"); task.type = "text"; task.maxLength = 300; task.placeholder = "e.g. find school bus money closing this month"; l2.appendChild(task); box.appendChild(l2);
+    var l3 = el("label", "fb-field"); l3.appendChild(el("span", null, "What got in the way, or what should we add?")); var note = el("textarea"); note.maxLength = 1500; note.rows = 4; l3.appendChild(note); box.appendChild(l3);
+    var go = el("button", "fb-btn primary", "Save feedback"); go.type = "button";
+    go.addEventListener("click", function () { if (!pick && !task.value.trim() && !note.value.trim()) { go.textContent = "Answer at least one question"; return; } var it = fbSave({ kind: "Whole tool", rating: pick, task: task.value.trim(), note: note.value.trim() }); fbThanks(box, [it]); });
+    box.appendChild(go);
+    if (fbAll.length) { var all = el("p", "note fb-past"); all.appendChild(document.createTextNode(fbAll.length + (fbAll.length === 1 ? " piece" : " pieces") + " of feedback saved in this browser. ")); var dl = el("button", "linkbtn", "Download all"); dl.type = "button"; dl.addEventListener("click", function () { saveFile("matchmaker_feedback.txt", fbText(fbAll), "text/plain;charset=utf-8"); }); all.appendChild(dl); box.appendChild(all); }
+    var d = $("fb-dlg"); if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute("open", "");
+  }
+  // "Is this match right?" on each grant
+  var FB_MATCH = ["Good match", "Wrong agency", "We can't apply", "Not useful", "Something else"];
+  var fbByKey = lsGet("ffm_fb_match_v1", {});
+  function matchFeedback(r) {
+    var key = r.agency_id + "|" + r.opp_id, wrap = el("div", "fb-match");
+    function draw() {
+      wrap.innerHTML = "";
+      if (fbByKey[key]) { var done = el("span", "fb-done", "Thanks: you said “" + fbByKey[key] + "”"); var ch = el("button", "linkbtn", "Change"); ch.type = "button"; ch.addEventListener("click", function () { delete fbByKey[key]; lsSet("ffm_fb_match_v1", fbByKey); draw(); }); wrap.appendChild(done); wrap.appendChild(ch); return; }
+      wrap.appendChild(el("span", "fb-ask", "Is this match right?"));
+      FB_MATCH.forEach(function (v) { var b = el("button", "fb-mini", v); b.type = "button"; b.addEventListener("click", function () {
+        fbByKey[key] = v; lsSet("ffm_fb_match_v1", fbByKey); var it = fbSave({ kind: "Grant match", rating: v, grant: r.title, opp: r.opp_number || r.opp_id, note: "" }); draw();
+        var add = el("button", "linkbtn", "Add a note"); add.type = "button"; add.addEventListener("click", function () {
+          add.remove(); var inp = el("input", "fb-note"); inp.type = "text"; inp.maxLength = 300; inp.placeholder = "What is wrong with it? (no personal information)"; inp.setAttribute("aria-label", "Note about this match");
+          var ok = el("button", "fb-mini", "Save note"); ok.type = "button"; ok.addEventListener("click", function () { it.note = inp.value.trim(); lsSet("ffm_feedback_v1", fbAll); inp.remove(); ok.remove(); wrap.appendChild(el("span", "fb-done", "Note saved.")); });
+          wrap.appendChild(inp); wrap.appendChild(ok); inp.focus(); });
+        wrap.appendChild(add); }); wrap.appendChild(b); });
+    }
+    draw(); return wrap;
+  }
+  // one question after Pursue or a save (asked at most once a day)
+  function quickAsk(where) {
+    var last = lsGet("ffm_fb_quick_v1", 0); if (Date.now() - last < 864e5) return;
+    var bar = $("fb-toast"); bar.innerHTML = ""; bar.hidden = false;
+    bar.appendChild(el("span", null, "Did this save you time?"));
+    ["Yes", "A little", "No"].forEach(function (v) { var b = el("button", "fb-mini", v); b.type = "button"; b.addEventListener("click", function () { lsSet("ffm_fb_quick_v1", Date.now()); var it = fbSave({ kind: "Quick question after " + where, rating: v }); bar.innerHTML = ""; bar.appendChild(el("span", null, "Thanks!")); var more = el("button", "linkbtn", "Tell us more"); more.type = "button"; more.addEventListener("click", function () { bar.hidden = true; openFeedback(); }); bar.appendChild(more); setTimeout(function () { bar.hidden = true; }, 6000); }); bar.appendChild(b); });
+    var x = el("button", "fb-x", "×"); x.type = "button"; x.setAttribute("aria-label", "Close"); x.addEventListener("click", function () { lsSet("ffm_fb_quick_v1", Date.now()); bar.hidden = true; }); bar.appendChild(x);
   }
 
   // ---- row ----
@@ -1780,6 +1882,7 @@ body.proj .tour-card { font-size:1.2rem; }
     body.appendChild(chipsFor(r));
     body.appendChild(drawer(r));
     body.appendChild(actions(r));
+    body.appendChild(matchFeedback(r));
     li.appendChild(body); li.appendChild(moneyBlock(r));
     return li;
   }
@@ -2370,6 +2473,9 @@ body.proj .tour-card { font-size:1.2rem; }
     else if (e.key === "ArrowUp") { e.preventDefault(); swDecide("up"); } else if (e.key === "Backspace" || e.key === "z") { e.preventDefault(); swUndo(); } else if (e.key === "Escape") { e.preventDefault(); exitSwipe(); }
   }, true);
   $("save-x").addEventListener("click", function () { $("save-dlg").close(); });
+  $("fb-open").addEventListener("click", openFeedback); $("fb-x").addEventListener("click", function () { $("fb-dlg").close(); });
+  $("fb-dlg").addEventListener("click", function (e) { if (e.target === this) this.close(); });
+  renderFbCount();
   $("save-dlg").addEventListener("click", function (e) { if (e.target === this) this.close(); });
   $("cart-open").addEventListener("click", function () { renderCart(); var d = $("cart-dlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); });
 
