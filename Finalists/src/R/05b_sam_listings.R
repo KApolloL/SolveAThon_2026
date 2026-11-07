@@ -55,13 +55,16 @@ out <- data.frame(
 
 dups <- sum(duplicated(out$cfda))
 if (dups) warning(dups, " duplicate CFDA numbers in the SAM file; first kept.")
-out <- out[!duplicated(out$cfda) & grepl("^\\d{2}\\.\\d{3}$", out$cfda), ]
+CFDA_RE <- "^\\d{2}\\.[0-9A-Z]{2,4}$"   # lettered numbers (11.63A, 93.00B, 93.1CF) are real programs
+bad <- !grepl(CFDA_RE, out$cfda)
+if (any(bad)) warning(sum(bad), " rows dropped, not a CFDA number: ", paste(head(out$cfda[bad]), collapse = ", "))
+out <- out[!duplicated(out$cfda) & !bad, ]
 
 # Which listings back at least one open opportunity in our pool
 opps <- read.csv(OPPS_FILE, colClasses = "character")
 pool <- opps[opps$status %in% POOL_STATUSES, ]
 pool_cfda <- unique(trimws(unlist(strsplit(pool$cfda_list[!is.na(pool$cfda_list)], "[|;, ]+"))))
-pool_cfda <- pool_cfda[grepl("^\\d{2}\\.\\d{3}$", pool_cfda)]
+pool_cfda <- pool_cfda[grepl(CFDA_RE, pool_cfda)]
 out$in_open_pool <- out$cfda %in% pool_cfda
 out <- out[order(out$cfda), ]
 
