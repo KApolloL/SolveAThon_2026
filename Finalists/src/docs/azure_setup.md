@@ -193,3 +193,10 @@ To replace the SAS with managed identity once roles exist: assign Reader to the 
 - Min replicas: set to 1 on Sat Nov 7 at about 9:55 am with Marco's OK (about $0.054 per hour active at list price, about $1.30 per day; ask T3 whether there is a cheaper warm-up). Set back to 0 after Sunday's talk.
 - Daily Container Apps Job: `app/job.R` written (checks the payload shape, stamps `shipped_at`, uploads to Blob; dry run by default, tested locally on three inputs). Not yet built into an image or created as an Azure job. Writing to Blob needs a write SAS (`BLOB_WRITE_SAS`) or the Contributor role for the app identity, neither of which exists yet. Creating the job resource needs Marco's OK.
 - Phone check and warm-load timing.
+
+## Sat Nov 7 deploy run (Marco's Claude, 11:40 am)
+- Done: `ffm-app:v3` built in `ffmacrteam15` (run ca6, succeeded). `ffm-app` updated to revision `ffm-app--0000007`. Live URL answers 200: `/` (0.09 s warm), `/payload.json`, `/tool.html`.
+- Not done, step 4 (upload new `payload.json` to Blob): refused, Marco's login lacks a Storage Blob Data write role, and role assignment is refused. The Blob still holds the older payload (960 rows, 32 agencies, no `goals[]`), so the new tool's match board has no plan goals live.
+- Not done, step 6 (daily job): `az containerapp job create` failed, the job's system identity cannot pull from the registry (no AcrPull). Needs an Owner to grant `AcrPull` on `ffmacrteam15` to the job identity, or a job created with the registry admin credentials (not enabled).
+- Step 7 not run (no job). Spend added today: not measured (an image build is about $0.02 by the script's estimate; unverified).
+- Needs from a subscription Owner (Kent or organizers): `Storage Blob Data Contributor` for Marco on `ffmdatateam15`, `AcrPull` for the job identity.
