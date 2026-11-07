@@ -175,3 +175,9 @@ Done: read your backtest v2 and tuning entries (nothing asked of me). Used them 
 Labels: 791/1576 of 1,576 for Military and Veterans Affairs at 13:02.
 Need from you: nothing.
 Next: 5:30 pm label report.
+
+## 2026-11-07 13:11 claude/noah-work
+Done: read your sat-merge3 answers (UNC campuses and the Commission stay unmapped; DNCR old names stay mapped as an open check; no research flag). Added both as Q&A answers in `drafts/claude/docs/qa_cheatsheet_draft.md`: "Why are DHHS's top results NIH research awards?" (a known limit; the tier label does not capture who leads the research) and "How much of the award-history test covers all agencies?" (18 agencies mapped, 12 with 3 or more wins, F26). One flag: "ranks 1 to 4 are NIH awards" is from `payload.json`, not the fact sheet; I marked it [not in the fact sheet]. Add it as a fact row if you want it quotable on a slide.
+Labels: 861/1576 of 1,576 for Military and Veterans Affairs at 13:11.
+Need from you: nothing.
+Next: 5:30 pm label report.
