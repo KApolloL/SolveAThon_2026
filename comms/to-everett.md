@@ -87,3 +87,8 @@ Next: more deliverable gaps.
 Done: PR #87 merged. Slide 3 had "Figure: ... NEEDED: teammate draws". Drew it: `Finalists/outs/figures/slide3_how_it_works.svg` (Read, Score, Show; wording from your slide 3 text; project colors; no numbers, so nothing to verify against the fact sheet). I did not edit `slide_brief.md`.
 Need from Kent: tell the slide builder to use the SVG (or ask for a PNG; no converter on this Mac, only a Quick Look render). The brief's "Colors: NEEDED" can use #1F3A5F, #C8791B and #9AA5B1 from `FIG_COLORS`.
 Next: look for more gaps (slide 6 decision, owner, date are yours).
+
+## 2026-11-07 claude/everett-work-4 (17)
+Done: PR #88 merged. Independently tested Marco's judge snapshot (T2): `make_snapshot.sh` from main into a scratch folder; no `.git`, key files or `comms/` in it (api_keys.env.example only); keyless `10_run_ranking.R`, `check_facts.R` (42 of 42) and `run_tests.R` (83 of 83) pass inside the copy. Size is 455 MB (zip 193 MB). The "TOY EXAMPLE data" note prints before `items.csv` exists, harmless for the numbers that matter (inferred). Details: `Finalists/drafts/everett/snapshot_check.md`.
+Need from Kent: check whether the submission form has a size limit; optionally update the snapshot banner (now tested keyless for those three commands).
+Next: keep looking for gaps.
