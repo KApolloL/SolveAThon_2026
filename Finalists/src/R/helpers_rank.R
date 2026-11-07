@@ -169,6 +169,11 @@ geo_other <- function(title) {
   other & !str_detect(t, regex("\\bNorth Carolina\\b|\\bNC\\b", ignore_case = TRUE))
 }
 
+# TRUE when the funder is a U.S. Embassy, Mission or Consulate abroad (see OVERSEAS_POST_PATTERN).
+overseas_post <- function(funder) {
+  !is.na(funder) & str_detect(funder, regex(OVERSEAS_POST_PATTERN, ignore_case = TRUE))
+}
+
 # Program map: adds map_note and lifts fit to MAP_FIT_FLOOR for agency x Assistance Listing pairs in the table.
 apply_program_map <- function(items, cfda_list, pmap) {
   hit <- vapply(seq_len(nrow(items)), function(i) {
@@ -239,6 +244,7 @@ build_items <- function(opps, ag, plans, pmap) {
   items <- bind_cols(items, assign_eligibility(items$agency_id, items$applicant_types, items$eligibility_text))
   items$eligibility_text <- NULL
   items$geo_other <- geo_other(items$title)
+  items$overseas_post <- overseas_post(opps$agency[match(items$opp_id, opps$opp_id)])
   items$fit <- ifelse(items$geo_other, items$fit * GEO_PENALTY, items$fit)
   apply_program_map(items, opps$cfda_list[match(items$opp_id, opps$opp_id)], pmap)
 }

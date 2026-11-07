@@ -81,6 +81,12 @@ ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government
 # region and does not name North Carolina. Titles only: summaries list many states in passing.
 # 0.5 confirmed by Kent in person (Nov 7); a team judgment, not derived. The item is demoted, never hidden.
 GEO_PENALTY <- 0.5
+
+# Overseas posts: a notice whose funder (Grants.gov agency name) is a U.S. Embassy, U.S. Mission or Consulate
+# is run by a post abroad for applicants in that country. criteria.csv filter "us_based" drops it. Matched on the
+# funder field, not the title. Checked Sat Nov 7: 60 of 1,472 open notices, all State Department posts; Washington
+# bureaus (fellowships, ECA, TIP) stay in. Kent's call (Nov 7), after embassy notices showed up in agency lists.
+OVERSEAS_POST_PATTERN <- "^\\s*U\\.?S\\.? (Mission|Embassy)\\b|\\bEmbassy\\b|\\bConsulate\\b"
 GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida",
   "Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts",
   "Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico",
