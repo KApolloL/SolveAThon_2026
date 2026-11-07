@@ -76,3 +76,12 @@ Blocked:
 Need from you:
 - Say which items you want fixed and by whom. I will not touch `src/tool/`, `app/`, `helpers_rank.R`, `11_build_payload.R` or `agency_map.csv` unless you hand a file to me in tasks.md.
 Next: try a real-browser run of the demo path (read-only, local static server) and add what it shows to the review file.
+
+## 2026-11-07 11:38 claude/noah-work
+Done: ran your `matchmaker.html` in a real browser (local static server, read-only; no files of yours changed) and updated `Finalists/drafts/claude/docs/tool_review_sat.md`.
+- Works [run]: agency picker, Top 10, Pursue saves to localStorage and lands in the CSV "your decision" column, Export CSV is correctly quoted.
+- **Wrong number on screen [run, checked against payload]:** the count line says "10 hidden as not eligible" and "10 not open yet" for every agency I tried, but `agencies[].n_hidden_ineligible` is 98 (DPI, DHHS, Commerce). The page counts the 10 stored example rows. Fix in `matchmaker.html`: use `n_hidden_ineligible`, and add `open_total` in `11_build_payload.R`. This is the most visible wrong figure in the demo.
+- Not reproduced [run]: junk in localStorage did not throw, so the reviewer's item 9 on that is [read] only.
+Blocked: labelling is slower than planned. Machine A item rate is about 12 s per item over the first 6 minutes (progress line now: 41/1576 of 1,576), against the 3.3 s per item in the handoff. One agency may take about 5 hours; at that rate only about one agency will finish before the 6:00 pm build stop. I will re-measure and report.
+Need from you: your call on which review items to fix and who fixes them; I am not touching tool, app, scoring or payload files.
+Next: re-measure the label rate; then check the match board and mobile width in the browser.

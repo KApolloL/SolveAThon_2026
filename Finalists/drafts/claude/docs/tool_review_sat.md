@@ -19,16 +19,21 @@ Only items already in `testing/triage_20261107_full_review.md` are marked STILL;
 | 5 | **"Why it is ranked here" is not a reason.** The drawer says "Keyword match to the plan goal above". 6 of DHHS's 10 cite the same plan heading ("Behavioral Health Crisis Care"). `map_note` is null for those rows | [persona] and [read]; `map_note` not re-checked by me | drawer text; show the matching words | small |
 | 6 | **Deadlines mix scales.** 63 rows have more than 400 days left and DPI rank 8 shows 427. Forecasts show "N days left" beside "Not open yet". The 10-day OJJDP items sit at DHHS ranks 5 and 6 (the page now has a Closing soon badge and an order-by-soonest control, which helps). STILL | [verified] for 63 rows and the OJJDP ranks | label "listing stays open" or cap the display | small |
 | 7 | **Agency name:** the picker says "Department of Public Schools". A DPI user looks for "Public Instruction", and our own discovery notes use "public instruction" | [verified] name; wording from notes | `agency_map.csv` display name | trivial |
-| 8 | **Count line says "among the best matches loaded"** because `open_total` is null for all 32 agencies, so "open items for this agency" is never shown | [read] | add `open_total` in the payload build | small |
-| 9 | **Robustness (minor):** `localStorage` holding a non-array under `ffm_seen_v1` or `ffm_projects_v1` throws; an unknown eligibility value prints "undefined"; the "Check eligibility" tile counts notices because the filter does not require `status == "posted"`; the CSV formula guard misses a leading space or full-width character before "=" | [read], [not run] | `matchmaker.html` (Array.isArray, `ELIG_WORDS[e] \|\| ""`, `s.trim()`) | trivial each |
+| 8 | **Count line is wrong:** it says "10 hidden as not eligible" and "10 not open yet" (the stored example rows); the payload says 98 hidden per agency. `open_total` is null for all 32, so it also reads "among the best matches loaded" | [run] and [verified] | add `open_total` in the payload build | small |
+| 9 | **Robustness (minor):** `localStorage` holding a non-array under `ffm_seen_v1` or `ffm_projects_v1` throws; an unknown eligibility value prints "undefined"; the "Check eligibility" tile counts notices because the filter does not require `status == "posted"`; the CSV formula guard misses a leading space or full-width character before "=" | [read]; the localStorage case did not reproduce when run | `matchmaker.html` (Array.isArray, `ELIG_WORDS[e] \|\| ""`, `s.trim()`) | trivial each |
 | 10 | **Jargon a first-time user will not know** (quoted from the page): "Signature needed: Unknown", "Quote behind it", "Notice reader", "Assistance listing", "Award ceiling", "Match board". "Pursue" does nothing visible, and the "saved in this browser only" note is on another tab | [persona] | wording only | small |
 
 ## Things the reviewers cleared
 - No 2099 dates reach a Top 10 row (`close_date` null, shown as "rolling or no date listed"); no title starts with = + - @; HTML entities in titles: none found in this payload; fields render through `textContent` and links through `safeUrl`.
 - Award ceiling, closing-soon tiles and badges, and the order toggle now exist.
 
-## What I did not test
-Nobody ran the page. Click flows, `localStorage` failure, the CSV download and the match board are read, not run. A real browser pass on the demo path is the missing step.
+## Run in a real browser (added later, Noah's Claude)
+I served the repo read-only on localhost and drove the page in the built-in browser (`matchmaker.html?payload=/data/processed/payload.json`). Tags: [run].
+- **Works [run]:** the page loads 32 agencies (33 options with the prompt); picking an agency renders the Top 10; **Pursue** saves under `ffm_marks_v1` and shows in the CSV's "your decision" column; **Export CSV** gives a correctly quoted file with a header and 10 data rows for DPI.
+- **Wrong number on screen [run, and checked against the payload]:** the count line says "10 hidden as not eligible" and "10 not open yet" for every agency I tried (DPI, Commerce, Justice), but `agencies[].n_hidden_ineligible` is 98 for DPI, DHHS and Commerce. The page is counting the 10 stored example rows, not the total, so the on-screen number understates by about 10 times. This is item 8 made concrete: add `open_total`, and use `n_hidden_ineligible`. It is the most visible wrong figure in the demo.
+- **Short list disclosed [run]:** Commerce reads "Showing 2 of 6 open ... 8 notices (not ranked)", so the page does say why it shows 2. Item 3 stands as a flaw (a "Top 10" of 2), but it is not hidden.
+- **Not reproduced [run]:** with `ffm_seen_v1` set to a string and `ffm_marks_v1` set to `[1,2]`, picking Justice did not throw. Item 9's localStorage point is [read] only and may be guarded; treat it as unconfirmed.
+- **Still not tested:** the match board, "My decisions" tab, Larger text mode, mobile width, and a failing or absent `localStorage`.
 
 ## Not changed by me
 Items 1 to 10 touch Kent's and Marco's files (`src/tool/`, `app/`, `src/R/helpers_rank.R`, `11_build_payload.R`, `data/manual/agency_map.csv`). I have not edited any of them.
