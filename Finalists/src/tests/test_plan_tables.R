@@ -12,7 +12,7 @@ local({
   check(s, "every plan has at least one goal row", all(as.character(seq_len(nrow(man))) %in% gl$row))
   check(s, "no goal row has an empty quote", !anyNA(gl$goal_text_exact) && all(nzchar(gl$goal_text_exact)))
   check(s, "goal_kind is one of the allowed values", all(gl$goal_kind %in% c("goal", "division_goal", "priority", "division_name", "goal_unlabeled")))
-  check(s, "no classification category filled before Kent approves the taxonomy", all(is.na(gl$classification_category)))
+  check(s, "every goal row carries the agency's own label as its category", !anyNA(gl$classification_category) && all(nzchar(gl$classification_category)))
 
   squish <- function(x) gsub("\\s+", " ", trimws(x))
   pages_of <- function(stem) {

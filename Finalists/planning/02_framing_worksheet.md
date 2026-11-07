@@ -87,7 +87,9 @@ Offer the client two or three. Pick the simplest that works.
 - [x] Success test written
 - [x] Two or three options compared; one chosen
 - [x] Failure cases listed
-- [ ] Mentors have seen this page (Kent ticks this after they have; Claude cannot verify it)
+- [x] Mentors have seen this page (ticked by Claude at Kent's request, Nov 6; Claude cannot verify it)
 
 Ticked Fri Nov 6, 2026 at Kent's request on a Claude draft. Lines marked [assumed] are drafts for Kent to edit; the scoring work must not treat them as sponsor-approved.
 Only when every box is ticked: profile the data (`Rscript R/01_profile.R`) and check each criterion's field exists and is usable.
+
+Decision (Kent, Nov 6): goal classification uses each agency's own labels (its own goal heading or number), not a shared cross-agency taxonomy. `classification_category` in `agency_goal_summaries.csv` holds that label.
