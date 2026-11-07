@@ -27,3 +27,5 @@ Every number used on a slide or in a handout is listed here with the script that
 | 21 | NC counties drawn on the County map tab, each with 18 measures | 100 | `data/manual/facts.csv` f27, `src/R/05c_county_shapes.R`, `src/R/05a_county_need.R` | Claude; Kent to confirm | 2026-11-07 |
 | 22 | County measures carried in `payload.json` (CDC PLACES, ACS 2023, HRSA, NCHS, OpenFEMA; all from the qualifier caches) | 18 | `data/manual/facts.csv` f28 | Claude; Kent to confirm | 2026-11-07 |
 | 23 | Capability rows (who controls what) for DHHS and DMVA, hand-built in the qualifier; other agencies have none | 28 | `data/manual/facts.csv` f29, `src/R/11_build_payload.R` | Claude; Kent to confirm | 2026-11-07 |
+| 24 | Top 10 rows (all agencies) with a known signature tier; the 61 notices read Unknown because they state no cost share | 259 | `data/manual/facts.csv` f30, `src/R/helpers_rank.R` signature_tier() | Claude; Kent to confirm | 2026-11-07 |
+| 25 | Top 10 rows needing leadership (cost share on an award of $1M or more) | 24 | `data/manual/facts.csv` f31 | Claude; Kent to confirm | 2026-11-07 |

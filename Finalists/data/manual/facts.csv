@@ -28,3 +28,5 @@ f26,Agencies with at least one plan goal in payload.json,"length(unique(payload$
 f27,NC counties with an outline and need values in payload.json,"nrow(payload$counties)",100,0
 f28,County need indicators in payload.json,"nrow(payload$county_need$indicators)",18,0
 f29,Hand-built capability rows in payload.json (DHHS 14 + DMVA 14),"nrow(payload$capabilities)",28,0
+f30,Top 10 rows with a known signature tier (cost share stated on the notice),"sum(payload$rows$in_top10 & payload$rows$signature_tier != 'unknown')",259,0
+f31,Top 10 rows whose tier is leadership (cost share on an award of $1M or more),"sum(payload$rows$in_top10 & payload$rows$signature_tier == 'leadership')",24,0
