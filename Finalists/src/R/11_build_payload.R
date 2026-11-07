@@ -7,6 +7,7 @@
 #   Hidden   the HIDDEN_N best-fitting items the eligibility filter hides (eligibility "no", rank null),
 #            so the tool can show its count and toggle. agencies[].n_hidden_ineligible is the full count
 #            (an addition to the contract).
+# map_note (additive field) says why a hand-mapped program was lifted; null otherwise.
 # Unknown values are null, never 0. nc_won_before is shown only; it never enters fit or rank.
 # Run: Rscript R/11_build_payload.R
 
@@ -70,7 +71,7 @@ rows <- sel |>
     fit_score = round(as.numeric(fit), 4), rank, in_top10,
     eligibility, elig_source = na_if(elig_source, ""), elig_quote = na_if(elig_quote, ""),
     reader_label = NA_character_, reader_quote = NA_character_,
-    goal_id = na_if(goal_id, ""), goal_snippet = na_if(goal_snippet, ""),
+    map_note = na_if(map_note, ""), goal_id = na_if(goal_id, ""), goal_snippet = na_if(goal_snippet, ""),
     opp_snippet = str_sub(str_squish(summary), 1, SNIPPET_CHARS),
     cfda_list, award_ceiling = as.numeric(award_ceiling),
     signature_tier = "unknown", tier_source = NA_character_,

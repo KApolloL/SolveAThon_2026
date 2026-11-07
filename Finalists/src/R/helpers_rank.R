@@ -146,6 +146,17 @@ geo_other <- function(title) {
   other & !str_detect(t, regex("\\bNorth Carolina\\b|\\bNC\\b", ignore_case = TRUE))
 }
 
+# Program map: adds map_note and lifts fit to MAP_FIT_FLOOR for agency x Assistance Listing pairs in the table.
+apply_program_map <- function(items, cfda_list, pmap) {
+  hit <- vapply(seq_len(nrow(items)), function(i) {
+    m <- pmap$why[pmap$agency_id == items$agency_id[i] & pmap$cfda %in% strsplit(cfda_list[i], "[|,; ]+")[[1]]]
+    if (length(m)) m[1] else NA_character_
+  }, character(1))
+  items$map_note <- hit
+  items$fit <- ifelse(!is.na(hit), pmax(items$fit, MAP_FIT_FLOOR), items$fit)
+  items
+}
+
 # ---- Shared steps for 10_run_ranking.R, 11_build_payload.R and 12_backtest.R ------------
 read_criteria <- function(path = CRITERIA_FILE) {
   cr <- read_csv(path, show_col_types = FALSE, col_types = cols(.default = col_character()))
@@ -160,12 +171,13 @@ load_rank_inputs <- function() {
   opps <- prep_opportunities(read_csv(OPPS_FILE, show_col_types = FALSE, col_types = chr), REF_DATE)
   opps$post_date <- as.Date(opps$post_date)
   list(opps = opps, amap = amap,
+       pmap = read_csv(PROGRAM_MAP_FILE, show_col_types = FALSE, col_types = chr),
        ag = agency_goals(read_csv(GOALS_FILE, show_col_types = FALSE, col_types = chr), amap),
        plans = plan_texts(amap, file.path(DIR_PROCESSED, "agency_plan_text", "all")))
 }
 
 # One row per agency x opportunity with fit, goal match, dates, award and eligibility.
-build_items <- function(opps, ag, plans) {
+build_items <- function(opps, ag, plans, pmap) {
   items <- build_pairs(opps, ag, plans) |>
     left_join(opps[, c("opp_id", "opp_number", "title", "status", "post_date", "close_date", "date_note", "days_left",
                        "award_ceiling", "log_ceiling", "cost_sharing", "applicant_types", "eligibility_text")], by = "opp_id") |>
@@ -174,7 +186,7 @@ build_items <- function(opps, ag, plans) {
   items$eligibility_text <- NULL
   items$geo_other <- geo_other(items$title)
   items$fit <- ifelse(items$geo_other, items$fit * GEO_PENALTY, items$fit)
-  items
+  apply_program_map(items, opps$cfda_list[match(items$opp_id, opps$opp_id)], pmap)
 }
 
 # Rank inside each agency (needs score.R sourced). Returns the ranked and dropped rows with agency_id.

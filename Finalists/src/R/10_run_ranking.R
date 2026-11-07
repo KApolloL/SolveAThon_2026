@@ -15,7 +15,7 @@ cr <- read_criteria()
 inp <- load_rank_inputs()
 opps <- inp$opps[inp$opps$status %in% OPEN_STATUSES, ]
 
-items <- build_items(opps, inp$ag, inp$plans)
+items <- build_items(opps, inp$ag, inp$plans, inp$pmap)
 dir.create(DIR_PROCESSED, showWarnings = FALSE, recursive = TRUE)
 write_csv(items, file.path(DIR_PROCESSED, "items.csv"), na = "")
 

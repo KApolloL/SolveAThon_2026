@@ -55,6 +55,12 @@ check("unit: score", "dropped_by holds filter ids", identical(rank_items(d2, fo,
 
 check("geography", "other state in title is flagged", identical(geo_other(c("Grant for California schools","Great Lakes Unit","Texas and North Carolina pilot","Clean air grants",NA)), c(TRUE,TRUE,FALSE,FALSE,FALSE)))
 
+check("program map", "mapped listing lifts fit to the floor and notes why", {
+  m <- apply_program_map(tibble::tibble(agency_id = c("deq", "deq", "dpi"), fit = c(0.1, 0.95, 0.1)),
+                         c("66.039", "66.039", "10.001"), data.frame(agency_id = "deq", cfda = "66.039", why = "w"))
+  identical(m$fit, c(MAP_FIT_FLOOR, 0.95, 0.1)) && identical(m$map_note, c("w", "w", NA_character_))
+})
+
 # ---- 3. Integration: whole pipeline on the project data -----------------------------
 i <- "integration"
 items <- read_any(ITEMS_FILE)
@@ -127,6 +133,14 @@ if (file.exists(PAYLOAD_JSON) && file.exists(BACKTEST_CSV)) {
         "opp_number","cfda_list","close_date","fit_score","rank")))
   check("backtest contract", "at most 50 per agency and window", max(table(bt$agency_id, bt$window_start, bt$window_weeks)) <= 50)
   check("backtest contract", "every item closes on or after window start", all(bt$close_date >= bt$window_start))
+}
+
+# ---- 5c. Rerun check: same input gives an identical payload.json ----------------------
+if (file.exists(PAYLOAD_JSON) && file.exists(file.path(DIR_PROCESSED, "items.csv")) && file.exists(RANKING_CSV)) {
+  before <- unname(tools::md5sum(PAYLOAD_JSON))
+  status <- system2("Rscript", here::here("src", "R", "11_build_payload.R"), stdout = FALSE, stderr = FALSE)
+  check("rerun", "11_build_payload.R runs", status == 0)
+  check("rerun", "payload.json identical after rerun", identical(before, unname(tools::md5sum(PAYLOAD_JSON))))
 }
 
 # ---- 6. LLM guard: labels need a verifiable quote; cache; shards -------------------

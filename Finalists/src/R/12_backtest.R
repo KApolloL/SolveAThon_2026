@@ -26,7 +26,7 @@ closed <- closed |> filter(!is.na(close_date), close_date >= CLOSED_SINCE, close
                            !is.na(post_date), close_date < FAR_FUTURE_DATE)
 message(nrow(closed), " closed opportunities in range")
 
-items <- build_items(closed, inp$ag, inp$plans)
+items <- build_items(closed, inp$ag, inp$plans, inp$pmap)
 items$close_date <- as.Date(closed$close_date[match(items$opp_id, closed$opp_id)])
 rk <- rank_by_agency(items, cr)$ranked
 rk <- left_join(rk, items[, c("id", "opp_id", "opp_number", "post_date", "close_date")], by = "id") |>
