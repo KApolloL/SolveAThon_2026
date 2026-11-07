@@ -1,5 +1,6 @@
 agency_id,cfda,windows_with_notice,best_rank,pool_at_best,best_total,best_passed,days_left_at_best,best_title,group
 commerce,17.207,7,4,1463,66.5378,TRUE,56,Next Level Now Technical Assistance Collaborative,reached Top 10
+commerce,17.225,15,2,868,90.344,TRUE,6,"Funding to Support Ongoing Administration of Certain Coronavirus Aid, Relief, and Economic Security Act Programs - Pandemic Unemployment Assistance",reached Top 10
 commerce,17.245,3,71,907,36.4501,TRUE,-1,Change 1 to Training and Employment Guidance Letter No. 01-25: Process for Requesting Fiscal Year 2026 Trade Adjustment Assistance Program Funds,rank below 50
 commerce,17.258,4,21,799,41.6531,TRUE,3,Workforce Innovation and Opportunity Act (WIOA) Adult Activities Program Allotments for Program Year (PY) 2025,rank 11 to 50
 commerce,17.259,4,27,799,39.8924,TRUE,3,Workforce Innovation and Opportunity Act (WIOA) Youth Program Allotments for Program Year (PY) 2025,rank 11 to 50
@@ -10,6 +11,8 @@ commerce,17.277,22,137,793,25.0508,TRUE,-8,Rapid Reskill Employment Recovery Nat
 commerce,17.278,4,63,799,32.0861,TRUE,3,Workforce Innovation and Opportunity Act (WIOA) Dislocated Worker Program Allotments for Program Year (PY) 2025,rank below 50
 commerce,17.281,3,4,1463,66.5378,TRUE,56,Next Level Now Technical Assistance Collaborative,reached Top 10
 commerce,81.253,11,5,542,48.3084,TRUE,-22,NOI to Issue Infrastructure Investment and Jobs Act (IIJA) Funding Opportunity Announcement No. DE-FOA-0003587 titled &#8220;Rare Earth Elements Demonstration Facility&#8221;.,reached Top 10
+dac,16.828,2,1,466,100,TRUE,23,BJA FY25 Strengthening Community Supervision Agency Operations Program,reached Top 10
+dac,16.831,3,8,466,41.3619,TRUE,34,OJJDP FY25 Second Chance Act Addressing the Needs of Incarcerated Parents and Their Minor Children,reached Top 10
 dacs,10.025,12,1,722,48.9996,TRUE,6,Plant Protection Act Section 7721 Plant Pest and Disease Management and Disaster Prevention Program,reached Top 10
 dacs,10.031,4,4,145,32.4098,TRUE,-15,Plant Protection Act Section 7721 Fiscal Year 2027 National Clean Plant Network (NCPN),reached Top 10
 dacs,10.170,6,3,766,49.6141,TRUE,48,Specialty Crop Block Grant Program Farm Bill 2025,reached Top 10
@@ -132,6 +135,7 @@ ncccs,84.002,2,279,781,15.9643,TRUE,7,Estimated Fiscal Year 2026 Adult Education
 ncdot,20.200,24,14,1174,33.4406,TRUE,-22,Support of the American Association of State Highway Transportation Officials (AASHTO) Innovation Management (AIM) Program,rank 11 to 50
 ncdot,20.205,22,1,1463,44.6696,TRUE,545,"Fiscal Year (FY) 2023 through FY 2026 Bridge Investment Program, Planning and Bridge Project Grants",reached Top 10
 ncdot,20.215,3,333,1483,9.0626,TRUE,-18,NOTICE OF FUNDING OPPORTUNITY FOR FISCAL YEAR (FY) 2024 &#8211; 2026 GARRETT A. MORGAN TECHNOLOGY AND TRANSPORTATION EDUCATION PROGRAM,rank below 50
+ncdot,20.232,5,14,799,33.1942,TRUE,20,FY2025 Commercial Driver's License Program Implementation (CDLPI),rank 11 to 50
 ncdot,20.276,3,4,793,46.3708,TRUE,-26,Fiscal Years 2024 Through 2026 Nationally Significant Federal Lands and Tribal Projects Competitive Grant Program,reached Top 10
 ncdot,20.284,3,2,145,39.65,TRUE,-25,"FYs 2024 through 2026 - Promoting Resilient Operations for Transformative, Efficient, and Cost-saving Transportation (PROTECT) Competitive Grant Program Notice of Funding Opportunity",reached Top 10
 ncdot,20.301,3,25,632,25.4665,TRUE,-15,FY25 Transportation Emergency Response Training,rank 11 to 50

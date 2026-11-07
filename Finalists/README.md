@@ -23,8 +23,9 @@
 | `outs/` | Generated files. Safe to delete and rebuild. |
 | `planning/` | Friday worksheets: discovery questions, framing worksheet, problem types, data prep, and [tonight's plan with teammate AI prompts](planning/06_tonight_plan.md). |
 | `testing/` | Persona role-play testing: personas, scenarios, paste-ready prompts, transcripts, results log. |
-| `tasks/` | One brief per teammate task. Finished briefs move to `tasks/done/`. |
+| `tasks/` | One brief per teammate task. Finished briefs move to `archive/tasks-done/`. |
 | `deliverables/` | Final files teammates produce (slides, disclosure, handouts). |
+| `archive/` | Inert history: `stale/`, `graphify-out/`, `tasks-done/`. Nothing reads from here. See [archive/README.md](archive/README.md). Planned later cleanup: [docs/REORG_PLAN.md](docs/REORG_PLAN.md). |
 
 `deliverables/slide_brief.md` is the handoff to the teammate whose AI agent builds the slides. `src/docs/qa_cheatsheet.md` holds likely judge questions.
 

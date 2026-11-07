@@ -22,6 +22,6 @@ p <- ggplot(d, aes(top, share, fill = method)) +
   scale_fill_manual(values = c(Ranking = FIG_COLORS$main, `Soonest deadline` = FIG_COLORS$muted, Random = FIG_COLORS$accent)) +
   scale_y_continuous(limits = c(0, 0.75), labels = scales::percent) +
   labs(title = "Share of programs an agency has won that reach its Top N",
-       subtitle = "157 won programs, 12 agencies, 4-week windows.\nExploratory: the pre-set bar failed. Repeat funding favors this test.") +
+       subtitle = "159 won programs, 12 agencies, 4-week windows.\nExploratory: the pre-set bar failed. Repeat funding favors this test.") +
   theme_finals(13) + theme(legend.position = "top", legend.title = element_blank(), axis.title = element_blank())
 export_figure(p, "backtest_recall_v2", width = 8, height = 4.5)

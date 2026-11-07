@@ -35,6 +35,7 @@ aoai_chat <- function(prompt) {
   url <- sprintf("%s/openai/deployments/%s/chat/completions?api-version=%s",
                  sub("/$", "", ep), NOTICE_DEPLOYMENT, NOTICE_API_VERSION)
   resp <- httr2::request(url) |> httr2::req_headers(`api-key` = key) |> httr2::req_timeout(60) |>
+    httr2::req_retry(max_tries = 5) |>   # waits and retries on 429 (low capacity deployment)
     httr2::req_body_json(list(temperature = 0, seed = LLM_SEED, max_tokens = 200,
       response_format = list(type = "json_object"),
       messages = list(list(role = "user", content = prompt)))) |>
@@ -73,7 +74,7 @@ read_notice <- function(text, live = FALSE, calls = new.env(), chat_fn = aoai_ch
 run_notice_reader <- function(payload_path = here::here("data", "processed", "payload.json"), extract_path = here::here("data", "processed", "grantsgov_extract.csv"),
                               live = identical(Sys.getenv("NOTICE_READER_LIVE"), "yes"), chat_fn = aoai_chat) {
   pl <- jsonlite::read_json(payload_path, simplifyVector = TRUE)$rows
-  ask <- pl |> filter(eligibility == "ask") |> distinct(opp_id)
+  ask <- pl |> filter(eligibility == "ask") |> arrange(desc(in_top10), rank) |> distinct(opp_id)   # Top 10 rows first, so the call cap covers what users see
   ex <- read_csv(extract_path, col_types = cols(.default = "c"), show_col_types = FALSE) |>
     distinct(opp_id, .keep_all = TRUE) |>
     transmute(opp_id, text = str_squish(paste(eligibility_text, summary)))

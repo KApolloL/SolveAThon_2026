@@ -34,3 +34,25 @@ Done: Everett told me to check the open items and decide. Checked the four award
 Decision: I did NOT change `agency_award_map.csv`, because it would move your fact rows 26 to 29. A scratch rerun with Employment Security, DMV and Adult Correction promoted gives 58 of 159 Top 10 (was 57 of 157), 42 in time (was 41).
 Need from Kent: apply the three promotions (58 of 159) or keep the map and say in Q&A that divisions are not counted; also confirm the DMV line against an official NCDOT page.
 Next: PR for E8.
+
+## 2026-11-07 claude/everett-work (7)
+Done: Kent's message (via Everett's session) asked for the task list; answered in chat. Ran a hostile-judge pass on the backtest evidence: `Finalists/drafts/everett/backtest_hostile_judge.md`. Facts 39 of 39 and tests 83 of 83 on main after `10_run_ranking.R`.
+For Kent (your files): `backtest_framing.md:32` ("beats both baselines once fair") holds pooled only, not for Commerce, DEQ, DHHS, DNCR; `:40` ("at its ceiling") overreaches for a 9-setting grid; `slide_brief.md:35` figure name; the Top 20, Top 50 baseline and in-time numbers are not in the fact sheet, so do not speak them unless you add them. In my files I fixed the pooled-figure title ("later won" removed) and corrected my E2 timing wording.
+Need from Kent: the earlier list (E5 placeholders, map promotions 58 of 159, fact-sheet numbers, DMV source).
+Next: PR for E9.
+
+## 2026-11-07 claude/everett-work (8)
+Done: Kent (via Everett's session) answered: apply the three award-map promotions; fact-sheet numbers to carry: in-time, miss split, keyword-gap counts; E5 placeholders (length, agencies, cost, decision/owner/date) are Kent's to supply, values not given yet; draft rewordings for his files. Applied the map change (Adult Correction to `dac`, Employment Security to `commerce`, Motor Vehicles to `ncdot`) and reran 20, 21, 22, 24, 25, 26 and the figures, offline. Results: v2 Top 10 58 of 159 (was 57 of 157), Top 50 97 of 159, in time 42 of 58, split 58 / 39 / 62 (reached / 11 to 50 / below 50). The v1 pre-set result is unchanged.
+BREAKS until you act: `R/check_facts.R` is now 33 of 39. Six values in `facts.csv` need updating: f33 157 to 159, f34 57 to 58, f35 95 to 97, f37 57 to 58, f38 40 to 41, f39 61 to 63. Table with fact-sheet rows in `Finalists/drafts/everett/award_map_open_checks.md`. I did not edit `facts.csv` or the fact sheet. Anything quoting 57 of 157 (slide 4, Q&A draft, framing doc, tool text) needs the same change.
+Need from Kent: apply those six; tell me pilot length, agencies, cost and staffing, decision, owner, date for E5 (I will not invent them).
+Next: PR; then rewordings for your overreach lines.
+
+## 2026-11-07 claude/everett-work (9)
+Done: Kent said "you decide" on the E5 placeholders. I filled them as PROPOSALS, labeled "[proposed]" or "[to decide]": 3-month pilot, 3 agencies that differ on purpose (one strong, one middle, DHHS as the hard case), measures as before. I did not invent a cost, staffing level, owner name or date: those stay "[to decide]" because nothing in the repo gives them. Also asked: `drafts/everett/rewordings_for_kent.md` and the six `facts.csv` values (still your action).
+Need from Kent: confirm or change the proposals; supply cost, owner, date.
+Next: PR #77 carries everything; waiting.
+
+## 2026-11-07 claude/everett-work (10)
+Done: Kent/Everett's session said "you decide, and merge it". Decision: apply everything so main stays consistent. Updated `facts.csv` (f33 159, f34 58, f35 97, f37 58, f38 41, f39 63), `fact_sheet.md` rows 26, 27, 29, 30, `handoff.md` lines 112 and 116, `slide_brief.md` slide 4, `backtest_framing.md` (numbers, plus the two overreach lines reworded as in `rewordings_for_kent.md`), the subtitle in `23_figure_backtest_v2.R` (157 to 159) and regenerated `backtest_recall_v2.png`. The tuning verdict still holds on the new map (fold A to B tie 28 of 80; B to A worse 27 vs 30 of 79; nothing adopted). `check_facts.R` 39 of 39, `run_tests.R` 83 of 83. Merging PR #77 now by the PR route, on the human's say-so.
+Still open for Kent: Noah's `drafts/claude/docs/qa_cheatsheet_draft.md` lines 17, 18 and 65 still quote 57 of 157 and 61 vs 57; Noah's Claude should update them. Cost, owner and date for E5. DIT stays uncertain. Row 29's random baseline is 13.5%.
+Next: idle unless a task is added.

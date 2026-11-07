@@ -31,7 +31,7 @@ Work through these. Read-only: do not edit, delete, rotate or move anything. Do 
 3. Azure: read `src/docs/azure_setup.md` and `app/`. Is any key or connection string in a file instead of a managed identity or secret? Is Blob public? Is the app URL unauthenticated, and does it expose anything other than public data? Is there a feedback endpoint that stores free text?
 4. Model use: what text goes to Azure OpenAI (notice text only, or agency data)? Is data-use and training terms evidence written down, or only assumed?
 5. Personal data: grep for email addresses, phone numbers and names of discovery attendees or mentors in tracked files (`notes/`, `saturday/mentor_log.md`, `planning/07_discovery_findings.md`). Team members' own names are fine. Report file and line, masked.
-6. Snapshot readiness: list every path that should be left out of the judges' snapshot (keys, `.Renviron`, caches with tokens, personal notes, `stale/`), and whether a script for decision 10 exists.
+6. Snapshot readiness: list every path that should be left out of the judges' snapshot (keys, `.Renviron`, caches with tokens, personal notes, `archive/`), and whether a script for decision 10 exists.
 
 Output, in this order, and nothing else:
 1. Findings table: # | file:line or commit | kind (secret, personal data, exposure, model use, process) | masked evidence | severity (high, medium, low) | fix.

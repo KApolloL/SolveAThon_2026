@@ -15,7 +15,7 @@ git archive HEAD -- . \
   ':(exclude)Finalists/api_keys.env' \
   ':(exclude)Finalists/tasks/everett_api_keys.md' \
   ':(exclude).claude' ':(exclude)Finalists/.claude' \
-  ':(exclude)comms' ':(exclude)Finalists/graphify-out' \
+  ':(exclude)comms' ':(exclude)Finalists/archive/graphify-out' \
   | tar -x -C "$OUT"
 
 # Placeholder so a developer knows what to create.
