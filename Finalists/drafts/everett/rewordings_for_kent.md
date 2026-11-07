@@ -1,6 +1,6 @@
 # Exact rewordings for the overreach lines (draft by Everett's Claude; Kent pastes, I edit none of his files)
 
-> Historical note (Sat Nov 7, ~5:30 pm): this file records an earlier change and is kept as written. After the overseas-embassy filter the current values are in `src/docs/fact_sheet.md` (Top 10 59 of 159, Top 50 100, baselines 19.5% and 14.0%, in-time 4-week 42 of 59, hidden pairs 4,758).
+> Historical note (Sat Nov 7, ~5:30 pm): this file records an earlier change and is kept as written. After the overseas-embassy filter the current values are in `src/docs/fact_sheet.md` (updated Sat Nov 7, ~7 pm, after the embassy filter, region list and tribal-title rule: Top 10 61 of 157, Top 50 98, baselines 19.7% and 14.1%, rows 26, 27, 29).
 
 Source: `backtest_hostile_judge.md`. Numbers shown are the NEW ones after the award-map promotions (58 of 159); update first, then paste.
 

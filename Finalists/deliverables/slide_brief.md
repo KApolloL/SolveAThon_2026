@@ -44,7 +44,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - **On the slide (heard → changed table; figure `outs/figures/heard_changed.png`, NEEDED):**
   | Sponsors told us | So we built |
   |---|---|
-  | Users don't know eligibility rules | The tool sorts eligibility: 4,758 agency-opportunity pairs hidden (clearly not eligible, or run by a U.S. embassy abroad), 16,924 shown with "check eligibility" (rows 7, 8) |
+  | Users don't know eligibility rules | The tool sorts eligibility: 5,394 agency-opportunity pairs hidden (clearly not eligible, run by a U.S. embassy abroad, or a tribal-only program), 16,288 shown with "check eligibility" (rows 7, 8) |
   | No time; more questions is bad | One required question (pick your agency). Everything else optional |
   | A deadline was missed because nobody noticed | Days-to-deadline on every row and a closing-soon list |
   | Nobody knows which agency should apply | All 32 agencies ranked (row 2), plus a view across agencies |
@@ -83,11 +83,11 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - **Message:** We tested it against grants agencies actually won, set the bar first, and it did not pass. Here is what that tells us.
 - **On the slide:**
   - "Bar set before the test: at least 50% of an agency's won programs in its Top 10, in 2 of 3 agencies."
-  - Result, 4-week windows: DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11. **1 of 3 agencies met the bar** (row 15). Say it this way. If asked: after two later ranking fixes (embassy filter, region list) the rerun reaches 2 of 3, exactly at 50% (DPI 2 of 4, DEQ 4 of 8); we report the pre-set result because the fixes came after we saw it.
+  - Result, 4-week windows: DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11. **1 of 3 agencies met the bar** (row 15). Say it this way. If asked: after three later ranking fixes (embassy filter, region list, tribal-title rule) the rerun reaches 2 of 3 (DPI 2 of 4, DEQ 4 of 7, DHHS 4 of 10); we report the pre-set result because the fixes came after we saw it.
   - "A plain sort by soonest deadline did at least as well in all 3" (row 16).
   - "Our AI labels failed a blind check, so none are used in the ranking." (`drafts/claude/docs/holdout/label_check_result.md`; no number on the slide.)
 - **Figure:** `outs/figures/backtest_recall.png` (exists).
-- **Optional line (exploratory, rows 7 and 26) [Kent to confirm]:** "A Claude review of our own output caught overseas U.S. Embassy grants in state agencies' lists. That was our keyword ranking, not the AI labels. One filter rule removed them, and reach rose from 58 to 59 of 159 won programs; a second fix for out-of-region grants (Gulf Coast, RESTORE Act) took it to 60 (row 26)." Also fits backup slide 13 and the field notes' "AI was wrong" table.
+- **Optional line (exploratory, rows 7 and 26) [Kent to confirm]:** "A Claude review of our own output caught overseas U.S. Embassy grants in state agencies' lists. That was our keyword ranking, not the AI labels. One filter rule removed them. A second review, playing a hostile judge, found a Gulf Coast-only grant (RESTORE Act) at DEQ #3 and Tribal Colleges (TCUP) at DPI #1; a wider region list and a tribal-only eligibility rule fixed both, each quoting the title. After the fixes, reach rose to 61 of 157 won programs (rows 7, 26)." Also fits backup slide 13 and the field notes' "AI was wrong" table.
 - **Speaker note:** Use `src/docs/backtest_framing.md`. Why it still helps: the test rewards repeat funding, not new fits, and the samples are small (3 to 11 programs). The tool does what a deadline sort cannot: removes ineligible items, shows the plan goal, flags other-state items. The 50% bar is a team judgment. We did not move it after seeing the result.
 
 ### Slide 8: Weakness and tradeoff (Evaluate, 4:30 to 4:45)
@@ -101,7 +101,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
   - **Replaces:** each agency scanning Grants.gov alone, and the contact-and-survey approach that did not work.
   - **Measure built in:** grant leads mark Pursue / Maybe / Pass and keep their usual manual checks; each week we report what the tool caught, what it would not have flagged, and what was pursued. Today the marks stay in the browser; saving them centrally is pilot work (say so).
   - **Cost:** NEEDED: measured Azure cost from Marco, added to the fact sheet first.
-  - **Why now:** 73 Top 10 items close within 14 days, across 26 agencies (rows 17, 18). [Recheck rows 17 and 18 after the payload drops already-closed rows (close date Nov 6, 0 days left); the count may fall.]
+  - **Why now:** 71 Top 10 items close within 14 days, across 24 agencies (rows 17, 18).
 - **Speaker note:** One sentence: "We are asking for a yes on a 60-day pilot, an OSBM owner, and three grant leads."
 
 ### Slide 10: Roadmap and risks (Drive Impact, 5:35 to 6:00)
