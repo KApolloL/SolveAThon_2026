@@ -55,3 +55,76 @@ Blocked:
 - Notice-reader spot-check: Marco's T3 (the reader) is still open and blocked on whether Azure OpenAI is ours, so there is nothing for me to check yet.
 Need from you: PR for `claude/noah-work` (05b fix, raw README note, board ids).
 Next: report each finished agency; push label files on `claude/noah-labels`.
+
+## 2026-11-07 11:33 claude/noah-work
+Done:
+- Read your last note (PR #47 merged, keep N2 going). Labels are running, nothing to report yet.
+- N8: Q&A cheat sheet draft, because `src/docs/qa_cheatsheet.md` is an empty template and nobody had it on the board. File: `Finalists/drafts/claude/docs/qa_cheatsheet_draft.md`. About 35 likely judge questions by criterion, each with a 2-sentence answer, the fact-sheet row (F#) or file behind it, and who answers. I did not touch your file; promote or edit it as you like.
+- Every number is a fact-sheet number. Where the fact sheet has nothing the answer says "not found": label-check figures, cost spent, cold-start time, pilot cost, stale-plan count, privacy statement.
+Need from you:
+- All 18 fact-sheet rows still read "Kent to confirm", and the Q&A leans on rows 7, 13 to 17. Confirm them before rehearsal.
+- Add the label-check figures to the fact sheet (or keep them out of the talk). I wrote that the gate failed and gave no numbers.
+Next: labels. I will not start anything in the tool, app, scoring or payload files.
+
+## 2026-11-07 11:37 claude/noah-work
+Done:
+- N9: ran 3 read-only reviewers on your new `matchmaker.html` and `payload.json` (test-breaker, DHHS grant-writer persona, non-grants staffer persona) and re-checked the data claims by script. I edited none of your files. Findings, ranked, with a tag for what I verified versus what is persona opinion: `Finalists/drafts/claude/docs/tool_review_sat.md`.
+- Top items, all [verified] in the payload: (1) DHHS ranks 1 to 4 are NIH research awards marked Eligible yes, signature tier unknown on all 30 DHHS rows, eligibility from codes only; (2) 10 tribal-only programs are still in Top 10 as "ask" (TCUP in DPI, NCCCS, UNC; BJA tribal in DOJ, IDS, SBI; and others), so the gate item "tribal-only hidden" is not met for them; (3) 61 notice rows take Top-10 slots the page does not show, so 18 of 32 agencies display fewer than 10 rows (Commerce, OSC, OAH show 2); (4) every DPI row is "ask".
+- Cheapest fixes: tribal text rule in `assign_eligibility()`; fill Top 10 from posted items only in `11_build_payload.R`; display name "Department of Public Schools" vs "Public Instruction" in `agency_map.csv`; `open_total` for the count line; three one-line JS guards listed as item 9.
+Blocked:
+- Nobody has run the page: no node, jsdom or V8 here. Click flows, localStorage failure and the CSV download are read, not run.
+Need from you:
+- Say which items you want fixed and by whom. I will not touch `src/tool/`, `app/`, `helpers_rank.R`, `11_build_payload.R` or `agency_map.csv` unless you hand a file to me in tasks.md.
+Next: try a real-browser run of the demo path (read-only, local static server) and add what it shows to the review file.
+
+## 2026-11-07 11:38 claude/noah-work
+Done: ran your `matchmaker.html` in a real browser (local static server, read-only; no files of yours changed) and updated `Finalists/drafts/claude/docs/tool_review_sat.md`.
+- Works [run]: agency picker, Top 10, Pursue saves to localStorage and lands in the CSV "your decision" column, Export CSV is correctly quoted.
+- **Wrong number on screen [run, checked against payload]:** the count line says "10 hidden as not eligible" and "10 not open yet" for every agency I tried, but `agencies[].n_hidden_ineligible` is 98 (DPI, DHHS, Commerce). The page counts the 10 stored example rows. Fix in `matchmaker.html`: use `n_hidden_ineligible`, and add `open_total` in `11_build_payload.R`. This is the most visible wrong figure in the demo.
+- Not reproduced [run]: junk in localStorage did not throw, so the reviewer's item 9 on that is [read] only.
+Blocked: labelling is slower than planned. Machine A item rate is about 12 s per item over the first 6 minutes (progress line now: 41/1576 of 1,576), against the 3.3 s per item in the handoff. One agency may take about 5 hours; at that rate only about one agency will finish before the 6:00 pm build stop. I will re-measure and report.
+Need from you: your call on which review items to fix and who fixes them; I am not touching tool, app, scoring or payload files.
+Next: re-measure the label rate; then check the match board and mobile width in the browser.
+
+## 2026-11-07 11:39 claude/noah-work
+Done: finished the browser pass (nothing of yours edited); results added to `Finalists/drafts/claude/docs/tool_review_sat.md`.
+- Phone width 375 px [run]: no horizontal scroll, layout is clean.
+- Match board [run]: loads, no console error, typed project saves. Two things to try by hand before the demo: under "All NC" the left column shows Public Schools' goals; clicking my project did not visibly reorder grants in my run (unconfirmed, may be my click target). The grants column includes rows reading "date listed has passed" and "0 days left".
+- Labels: progress line now 51/1576 of 1,576 for Military and Veterans Affairs.
+Need from you: your decision on the review items; the biggest is the "10 hidden" count line (payload says 98).
+Next: re-measure label rate and report; wait for tasks.
+
+## 2026-11-07 11:45 claude/noah-work
+Done: answered your question. The match board reorder works; my earlier "did not reorder" was my test artifact (a synthetic click on an inner element, not a real click on the item). Exact clicks, on merged build 35df84f, agency left at the default "All NC":
+1. Real click on a plan goal in the left column (the page had shifted, so it selected "3. Enhance Parent, Caregiver and Community Support"): grants reordered; the first five became drug-development, Alzheimer's, OJJDP and NIH items.
+2. Real click on a saved project, "Replace diesel school buses with electric buses": grants reordered, DERA first (twice, one per mapped agency).
+3. Real click on the DERA grant: the left column re-ranked goals, grouped by agency, with fit bars. "All NC" lists all 153 goals grouped by agency, so Public Schools appearing first is just the first group, not a bug (I misread it earlier).
+Two data oddities for you to judge, neither a page bug: (a) Adult Correction's goal text reads "Upgrade infrastructure and technology1, 3, 4, 5, 6" (stray digits glued on; it is in `src/docs/agency_goal_summaries.csv`, I have not traced it) and it is the top fit for DERA; (b) the grants column shows "0 days left" and "date listed has passed" rows. Details in `Finalists/drafts/claude/docs/tool_review_sat.md`.
+Labels: progress line is 91/1576 of 1,576 for Military and Veterans Affairs. I will report which agencies are done at 5:30 pm as you asked; the rest stay "no model labels".
+Need from you: nothing new.
+Next: look at the goal-text digits in the goal table (read-only) and report the cause.
+
+## 2026-11-07 11:45 claude/noah-work
+Done: traced the stray digits. They are in the plan's own extracted text for Adult Correction (`department_of_adult_correction.txt` lines 38 and 169), not added by our pipeline, probably cross-reference markers flattened from superscripts. 5 of 153 payload goals are affected, all Adult Correction (workforce, employees, technology, correctional healthcare, recidivism). Cosmetic; a trailing-`\d(, \d)+` strip in `11_build_payload.R` would fix the display. I did not check whether it moves any fit score, and I did not edit any file of yours.
+Need from you: nothing.
+Next: labels; I will report which agencies are done at 5:30 pm.
+
+## 2026-11-07 12:13 claude/noah-work
+Done: nothing new from you (last note was the sat-fix1 reply). Label progress is a measured number you can plan with.
+- Military and Veterans Affairs: 321 of 1,576 at 12:13. The last 26 minutes ran 210 items, about 7.4 s each (slower than the 3.3 s in the handoff, faster than my first 12 s reading).
+- Projection (arithmetic on that rate, not a promise): about 3.2 hours per agency, so Military and Veterans Affairs finishes around 2:50 pm and a second agency would finish after 5:30 pm. By your 5:30 cutoff, expect 1 finished agency and part of a second.
+Need from you: if you want more than one agency by 5:30, someone on machines B to E has to take agencies from `agency_plan.csv`. Tell me which and I will drop those from my queue so two machines do not label the same one. Otherwise I keep going in the current order.
+Next: push the first agency's CSV on `claude/noah-labels` when it appears.
+
+## 2026-11-07 12:26 claude/noah-work
+Done: N10, the state-developer README draft refreshed against main (`Finalists/drafts/claude/docs/README_state_developer_draft.md`, sections 1, 4, 5, 9 and 11). It still said "no scoring, no ranking, MODE=job is a stub". I ran the real order on a fresh worktree, offline, no key, no model:
+- `Rscript R/10_run_ranking.R`: 32 agencies, 50,432 pairs, 3,030 dropped (matches fact-sheet rows 4 and 7). `git status` showed no tracked file changed.
+- `Rscript tests/run_tests.R`: **79 of 80 pass.** The failing row is a placeholder in the "R and JS agree" section: "agreement test pending new ranker for contract-shape payload.json". A judge or state developer can see a failing test. Your call: delete it or implement it.
+- `Rscript R/check_facts.R`: **29 of 29 pass.**
+Three README gaps a state developer would hit (fixed in my draft, not in your `Finalists/README.md`):
+1. No R package list anywhere. On a clean machine `run_tests.R` stops at the first missing package: readr, tidyr and janitor (every script uses readr and janitor). Optional: ggplot2, sf (`05c`), shiny and DT (the app).
+2. `items.csv` and `ranking.csv` are gitignored, so `run_tests.R` fails on a fresh clone until `10_run_ranking.R` runs first (it falls back to the toy file).
+3. The Friday README skeleton still says ingestion and scoring are "not built until needed".
+Note: to run this I installed readr, tidyr and janitor from CRAN into Noah's R library. Nothing in the repo changed.
+Need from you: promote the draft to `Finalists/README.md` when you are ready (it is yours); and the failing-placeholder decision. I did not touch tool, app or scoring files.
+Next: labels (item count in my next entry); reply to anything you send.

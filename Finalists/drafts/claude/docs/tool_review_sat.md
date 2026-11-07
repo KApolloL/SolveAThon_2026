@@ -1,0 +1,46 @@
+# Review of the new tool build (matchmaker.html), Sat Nov 7
+
+Three read-only reviewers ran on `src/tool/matchmaker.html` with `data/processed/payload.json` (data as of 2026-11-07 11:00): a test-breaker, a DHHS grant-writer persona and a non-grants staffer persona. Nothing was edited. These are findings for Kent and Marco, who own the tool, app, scoring and payload files.
+
+**How to read the tags**
+- **[verified]**: I re-checked it against `payload.json` by script.
+- **[read]**: from reading the page's JS; nobody ran the page (no node, jsdom or V8 here), so click behavior is untested.
+- **[persona]**: a simulated persona's view. Not user evidence. Do not quote it as what users said.
+Only items already in `testing/triage_20261107_full_review.md` are marked STILL; the rest are new.
+
+## Ranked by what hurts the demo most
+
+| # | Finding | Tag | Where the fix lives | Size |
+|---|---|---|---|---|
+| 1 | **DHHS ranks 1 to 4 are NIH research awards (`PAR-25-285`, `-310`, `-283`, `-317`), all "Eligible: yes".** All 30 DHHS rows have signature tier "unknown", eligibility source "code" and no quote. A writer cannot sign a university-led research award. STILL | [verified] | eligibility and tier rules (`helpers_rank.R`, `signature_tier`) | medium |
+| 2 | **Tribal-only programs are still in Top 10 as "ask":** TCUP (DPI 1, NCCCS 3, UNC 6), BJA Tribal Legal Assistance (IDS 1, SBI 3, DOJ 6), OVW Tribal DV (DOA 2), Tribal Broadband (OSBM 9), TIRBE (NCSBE 6), Native American job pilot (DOL 5). 10 real programs; the test-breaker's other 2 hits are Housing Voucher notices and are not tribal grants. Gate item "tribal-only hidden" is not met for these | [verified] | a tribal-only text rule in `assign_eligibility()` | small |
+| 3 | **Short lists:** 61 notice rows take Top-10 slots and the page does not show them, so 18 of 32 agencies display fewer than 10 rows. Commerce, State Controller and Administrative Hearings show 2. The page does say "N notices (not ranked)" in its count line. STILL | [verified] | fill the top 10 from posted items only, in `11_build_payload.R` | small |
+| 4 | **All 10 DPI rows are "Ask" including DERA; none says Yes.** "Ask" is explained only as "check the notice", with no "ask whom" or "where in the notice". Say this openly in the demo instead of hoping nobody opens DPI | [verified] for DPI; [persona] for the explanation gap | wording, plus a one-line "Ask means..." | small |
+| 5 | **"Why it is ranked here" is not a reason.** The drawer says "Keyword match to the plan goal above". 6 of DHHS's 10 cite the same plan heading ("Behavioral Health Crisis Care"). `map_note` is null for those rows | [persona] and [read]; `map_note` not re-checked by me | drawer text; show the matching words | small |
+| 6 | **Deadlines mix scales.** 63 rows have more than 400 days left and DPI rank 8 shows 427. Forecasts show "N days left" beside "Not open yet". The 10-day OJJDP items sit at DHHS ranks 5 and 6 (the page now has a Closing soon badge and an order-by-soonest control, which helps). STILL | [verified] for 63 rows and the OJJDP ranks | label "listing stays open" or cap the display | small |
+| 7 | **Agency name:** the picker says "Department of Public Schools". A DPI user looks for "Public Instruction", and our own discovery notes use "public instruction" | [verified] name; wording from notes | `agency_map.csv` display name | trivial |
+| 8 | **Count line is wrong:** it says "10 hidden as not eligible" and "10 not open yet" (the stored example rows); the payload says 98 hidden per agency. `open_total` is null for all 32, so it also reads "among the best matches loaded" | [run] and [verified] | add `open_total` in the payload build | small |
+| 9 | **Robustness (minor):** `localStorage` holding a non-array under `ffm_seen_v1` or `ffm_projects_v1` throws; an unknown eligibility value prints "undefined"; the "Check eligibility" tile counts notices because the filter does not require `status == "posted"`; the CSV formula guard misses a leading space or full-width character before "=" | [read]; the localStorage case did not reproduce when run | `matchmaker.html` (Array.isArray, `ELIG_WORDS[e] \|\| ""`, `s.trim()`) | trivial each |
+| 10 | **Jargon a first-time user will not know** (quoted from the page): "Signature needed: Unknown", "Quote behind it", "Notice reader", "Assistance listing", "Award ceiling", "Match board". "Pursue" does nothing visible, and the "saved in this browser only" note is on another tab | [persona] | wording only | small |
+
+## Things the reviewers cleared
+- No 2099 dates reach a Top 10 row (`close_date` null, shown as "rolling or no date listed"); no title starts with = + - @; HTML entities in titles: none found in this payload; fields render through `textContent` and links through `safeUrl`.
+- Award ceiling, closing-soon tiles and badges, and the order toggle now exist.
+
+## Run in a real browser (added later, Noah's Claude)
+I served the repo read-only on localhost and drove the page in the built-in browser (`matchmaker.html?payload=/data/processed/payload.json`). Tags: [run].
+- **Works [run]:** the page loads 32 agencies (33 options with the prompt); picking an agency renders the Top 10; **Pursue** saves under `ffm_marks_v1` and shows in the CSV's "your decision" column; **Export CSV** gives a correctly quoted file with a header and 10 data rows for DPI.
+- **Wrong number on screen [run, and checked against the payload]:** the count line says "10 hidden as not eligible" and "10 not open yet" for every agency I tried (DPI, Commerce, Justice), but `agencies[].n_hidden_ineligible` is 98 for DPI, DHHS and Commerce. The page is counting the 10 stored example rows, not the total, so the on-screen number understates by about 10 times. This is item 8 made concrete: add `open_total`, and use `n_hidden_ineligible`. It is the most visible wrong figure in the demo.
+- **Short list disclosed [run]:** Commerce reads "Showing 2 of 6 open ... 8 notices (not ranked)", so the page does say why it shows 2. Item 3 stands as a flaw (a "Top 10" of 2), but it is not hidden.
+- **Not reproduced [run]:** with `ffm_seen_v1` set to a string and `ffm_marks_v1` set to `[1,2]`, picking Justice did not throw. Item 9's localStorage point is [read] only and may be guarded; treat it as unconfirmed.
+- **Match board, re-tested with real clicks on the merged build `35df84f` [run]** (Kent asked for the exact clicks). Agency left at the default "All NC". In the left column "Plan goals" lists all 153 goals grouped by agency, so Public Schools appears first only as the first group; that is not a bug, and my earlier note that it looked wrong was a misread.
+  1. Clicked the first plan goal in the column (the page had shifted and the click selected "3. Enhance Parent, Caregiver and Community Support"). The grants column reordered: first five became "Collaborations to Enhance Drug Development and Regulatory Science", an Alzheimer's programs grant, two OJJDP youth-treatment items and an NIH collaboration. Reorder works. The match looks word-driven (the goal's word "Enhance"); that cause is my inference [uncertain].
+  2. Typed no new project this time; the one from my first run ("Replace diesel school buses with electric buses") was still saved. Clicked it: first two grants became the DERA National Program (twice, once per agency it is mapped to), then an NIJ school-safety grant and two HTYPE items. Reorder works. My first-run "no reorder" was a test artifact: I had fired a synthetic click on an inner element, not a real click on the item.
+  3. Clicked the first grant (DERA). The left column re-ranked goals, grouped by agency, with fit bars. Top goal was Adult Correction "4. Upgrade infrastructure and technology" with a full bar, DEQ "Goal 2 Community Restoration and Resilience" with a short one. Works, but the top fit for a diesel-emissions grant is a corrections infrastructure goal.
+- **Data oddity [run]:** Adult Correction's goal text reads "Upgrade infrastructure and technology1, 3, 4, 5, 6", with stray reference digits glued onto the title. Traced: the digits are in the plan's own extracted text (lines 38 and 169 of `data/processed/agency_plan_text/all/department_of_adult_correction.txt`), so they come from the PDF, probably cross-reference markers flattened out of superscripts, not from our pipeline. It affects 5 of 153 goals, all Adult Correction ("Grow our workforce1, 3, 6", "Support our employees1, 3, 6", "...technology1, 3, 4, 5, 6", "...healthcare system3, 6", "Reduce recidivism1, 2, 3"). Cosmetic in the display; stripping a trailing `\d(, \d)+` in the payload build would fix it. I have not checked whether it changes any fit score.
+- **Grants column [run]:** with nothing selected it lists rows reading "0 days left" (a BJA Second Chance grant) and "date listed has passed" (Ambassadors Fund), among the 579 loaded.
+- **Phone width, 375 px [run]:** no horizontal scroll, tiles stack cleanly, controls reachable. 95 buttons, selects and links are under 32 px tall (a tap-target note, not a break).
+- **Still not tested:** "My decisions" tab contents, Larger text mode, and a failing or absent `localStorage`.
+
+## Not changed by me
+Items 1 to 10 touch Kent's and Marco's files (`src/tool/`, `app/`, `src/R/helpers_rank.R`, `11_build_payload.R`, `data/manual/agency_map.csv`). I have not edited any of them.

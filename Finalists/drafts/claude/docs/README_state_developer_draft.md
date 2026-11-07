@@ -1,26 +1,26 @@
 # Federal Funds Matchmaker: guide for a state developer (DRAFT)
 
-> **DRAFT written Fri Nov 6, 2026, late evening.** It is meant to replace `Finalists/README.md` after the team edits it. It describes the repo as it is now. Every part that is not built is tagged **[PLANNED, not built]**. Commands were checked against the files in the repo but not re-run, except where noted. Update this before the Sunday 9:00 am submission.
+> **DRAFT, refreshed Sat Nov 7, 12:2x (Noah's Claude).** Sections 1, 4, 5 and 11 were rewritten against the repo on main at that time. Commands in sections 4 and 11 were run on a fresh worktree (offline, from cache) and the results are stated there. Sections 2, 3 and 6 to 10 are still the Friday-night text and may be out of date; they are marked where I know. It is meant to replace `Finalists/README.md` after Kent edits it. Anything not built is tagged **[PLANNED, not built]**; anything not run is tagged **[not run]**.
 
 Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt. Built for the Solve-A-Thon 2026 Final Quest, sponsor NC OSBM. Organizer text: `docs/QUEST_BRIEF.md`.
 
 ## 1. What it does and does not do today
 
-> **Update (Fri Nov 6 night).** Kent confirmed 15 product decisions (`planning/08_product_decisions.md` on `origin/main`, not yet merged here). They are all **[PLANNED, not built]**. The live deployment is unchanged and is still the display-only Shiny page.
-
-**Does today**
-- Loads federal funding opportunities from four public sources into one table of 6,523 rows: Grants.gov, Simpler.Grants.gov, Federal Register notices, and USAspending past awards. Counts and rules: `handoff.md` ("Data setup notes") and `src/docs/azure_setup.md`.
-- Holds text and goal tables for 34 NC agency strategic plans (`src/docs/plan_text_check.csv`, `src/docs/agency_goal_summaries.csv`, 158 goal rows per `handoff.md`).
-- Serves a display-only R Shiny page on Azure Container Apps. It lists the opportunity table with column filters and links to the qualifier grant triage tool at `/tool.html`. That tool is a static HTML file copied from `../QualifierChallenge/outs/`; it runs in the browser on the qualifier's data, not on the Finalists opportunities.
+**Does today** (each line checked in the repo or by running it, Sat Nov 7)
+- **Loads open federal opportunities** from public sources into one table (`data/processed/opportunities.csv`): Grants.gov, Simpler.Grants.gov, Federal Register notices and USAspending past awards. 1,576 of them are open (posted, forecasted or notice) and get ranked (fact sheet row 3).
+- **Builds a profile for each agency** from its strategic plan text and goal table (`src/docs/agency_goal_summaries.csv`). The tool ranks for 32 agencies (fact sheet row 2).
+- **Scores and ranks** every agency by opportunity pair (50,432 pairs; 3,030 hidden as clearly not eligible; fact sheet rows 4 and 7). Reproduced by `Rscript R/10_run_ranking.R` on Nov 7: 32 agencies, 50,432 pairs, 3,030 dropped. Ranking is keyword fit between the opportunity and the agency's plan goals, with eligibility rules (`src/R/helpers_rank.R`, criteria in `data/manual/criteria.csv`). No AI model decides a rank.
+- **Shows a per-agency list** in a single static page, `src/tool/matchmaker.html`, reading `data/processed/payload.json` (960 rows: a Top 10, a Coming up list and hidden examples per agency). Each row shows days left, eligibility (Yes, No or Ask), the plan goal it matched with a snippet, a Pursue, Maybe or Pass mark saved in the browser, and a CSV export. Also a closing-soon view, a match board, a county map tab and a capability table (from the qualifier data). Run in a browser on Nov 7: picker, Top 10, Pursue and CSV export work.
+- **Serves it on Azure.** `app/app.R` (R Shiny in a container) serves `matchmaker.html` at `/`, the qualifier grant-triage tool at `/tool.html`, and `payload.json` from Blob Storage at `/payload.json`. A daily job script exists (`app/job.R`, `src/R/13_daily_refresh.R`); see `src/docs/daily_job.md`.
+- **Backtests itself** against past awards (`src/R/20_backtest_awards.R`): see section 9 for the result.
 
 **Does not do today**
-- No scoring, ranking, matching of opportunities to agency goals, or fit reasons. The planned design is in section 2.
-- No AI summaries. No Azure OpenAI resource exists.
-- No user accounts, decision buttons (Pursue, Maybe, Pass), saved decisions or feedback.
-- No scheduled refresh. `MODE=job` is a stub that prints one line and exits 0.
-- The app does not read from Blob Storage. It reads a CSV copied into the image.
-- No evaluation has been run. `data/manual/` is empty (no criteria, test cases or hand labels).
-- SAM.gov postings and the USDOT page are not loaded. The SAM Assistance Listings catalog (2,875 listings, 2,672 with a statutory authority) is built from GSA's public bulk file by `src/R/05b_sam_listings.R` into `data/processed/sam_listings.csv`; nothing in the ranking reads it yet.
+- **It does not pass its own backtest.** On 4-week windows only 1 of 3 agencies reached the 50% bar the team set beforehand, and a soonest-deadline baseline beat the ranking in all 3 (fact sheet rows 15 and 16).
+- **No AI model is in the ranking path.** Model labels exist for a few agencies (Noah's local run) but failed their agreement check and are not used in the tool.
+- **The daily job re-scores cached data only.** It does not fetch new postings (`src/R/13_daily_refresh.R` header). `JOB_DRY_RUN` defaults to 1, which checks and stamps but writes nothing to Blob (`app/job.R`).
+- **SAM.gov postings and the USDOT page are not loaded.** The SAM Assistance Listings catalog (2,875 listings, 2,672 with a statutory authority) is built from GSA's public bulk file by `src/R/05b_sam_listings.R` into `data/processed/sam_listings.csv`; nothing in the ranking reads it yet.
+- **No user accounts, no shared decisions.** Pursue, Maybe and Pass marks live in each browser only.
+- **No evaluation with real agency staff.** Our user feedback so far is from the organizers' discovery session and simulated reviewers, which are not user evidence.
 
 A person makes every decision. The system is meant to support a grants lead, not replace them (`docs/QUEST_BRIEF.md`).
 
@@ -28,7 +28,7 @@ A person makes every decision. The system is meant to support a grants lead, not
 
 **Live today.** Data scripts in R pull public sources into CSV files under `data/processed/`. One container image holds an R Shiny app and a small entrypoint script. The entrypoint reads the `MODE` environment variable. `MODE=app` starts the web page on port 3838. `MODE=job` is meant to run a daily refresh but is a stub. The image is built in Azure Container Registry with `az acr build` and runs as one Azure Container App (0.5 vCPU, 1 Gi, 0 to 1 replicas) with a system-assigned identity that pulls from the registry. A Blob container `ffm-data` exists but the app does not use it. Source: `src/docs/azure_setup.md`. The design follows the organizers' Starter Kit (`src/docs/organizer_materials_notes.md`, section 1).
 
-**Planned (decision 6, Kent, `planning/08_product_decisions.md`) [PLANNED, not built].** An R pipeline scores every opportunity against every agency and writes `payload.json`. Azure OpenAI makes embeddings (one score per opportunity and agency pair, cached) and short reasons with quotes for flagged or shown pairs only. A script checks each quote appears in its source. Blob Storage holds the payload and the cache. The qualifier's JavaScript tool (`../QualifierChallenge/src/tool/`) reads the payload in the browser and shows an agency picker, sliders and a per-item breakdown. Container Apps hosts it. Rules decide the flag and the score only orders. The model never decides. None of this exists yet: there is no Azure OpenAI resource, no payload, no `data/manual/criteria.csv`.
+**[Update Sat Nov 7: the scoring pipeline and the static page below are now built; see section 1. The text in this section is the Friday plan and is kept for the design reasoning.] Planned (decision 6, Kent, `planning/08_product_decisions.md`).** An R pipeline scores every opportunity against every agency and writes `payload.json`. Azure OpenAI makes embeddings (one score per opportunity and agency pair, cached) and short reasons with quotes for flagged or shown pairs only. A script checks each quote appears in its source. Blob Storage holds the payload and the cache. The qualifier's JavaScript tool (`../QualifierChallenge/src/tool/`) reads the payload in the browser and shows an agency picker, sliders and a per-item breakdown. Container Apps hosts it. Rules decide the flag and the score only orders. The model never decides. None of this exists yet: there is no Azure OpenAI resource, no payload, no `data/manual/criteria.csv`.
 
 **Fallback.** If the planned flow is not ready at the code freeze, the R Shiny page above stays as the deployed product (decision 6). Fields-only signature tiers ship if the labeling pass is untested (decision 13).
 
@@ -54,24 +54,42 @@ All paths are under `Finalists/`. The git root is one level up.
 
 ## 4. Run locally
 
-Requirements: R (the qualifier used 4.5), and the R packages the scripts load. From a grep of `library()` calls in `src/R` and `src/tests`: digest, dplyr, ggplot2, here, httr2, janitor, jsonlite, pdftools, purrr, readr, stringi, stringr, tibble, tidyr. The app also needs shiny, data.table and DT (`app/Dockerfile`). Also `V8` if you run the tier tool (qualifier README). A complete package list or lockfile does not exist **[PLANNED, not built]**.
+**Requirements.** R 4.4 or newer (the container uses `rocker/shiny:4.4.2`; the qualifier used 4.5). From a scan of `library()` calls on Nov 7, these R packages are needed, and **none of this was listed in the old README**: dplyr, stringr, purrr, tibble, jsonlite, httr2, digest, stringi, pdftools, here, data.table, Matrix, **readr, tidyr, janitor** (every script and test load readr and janitor). Extra, only for specific steps: ggplot2 (`helpers_report.R`, charts), sf (`05c_county_shapes.R`, county map outlines), shiny and DT (`app/app.R`, the web page). On a clean machine, `Rscript tests/run_tests.R` stops at the first missing package, so install first:
 
-Run all R commands from `Finalists/src`.
+```r
+install.packages(c("dplyr","stringr","purrr","tibble","jsonlite","httr2","digest","stringi",
+                   "pdftools","here","data.table","Matrix","readr","tidyr","janitor"))
+# optional: ggplot2, sf, shiny, DT
+```
+
+Run all R commands from `Finalists/src`. The ranking and tests need no key, no network and no model: they read the committed files in `data/processed/` and `data/manual/`.
 
 ```bash
 cd Finalists/src
-Rscript tests/run_tests.R     # runner; prints "N of N tests pass" per the older Finalists README. Not re-run for this draft
+Rscript R/10_run_ranking.R      # writes data/processed/items.csv and ranking.csv (both gitignored) and outs/top_results.csv
+Rscript tests/run_tests.R       # needs items.csv from the line above
+Rscript R/check_facts.R         # reproduces the fact-sheet numbers
 ```
 
-To run the web page on your machine **[command not verified]**: stage the two files, then start Shiny from `app/`:
+**Order matters.** `items.csv` and `ranking.csv` are not in git. Without running `10_run_ranking.R` first, `tests/run_tests.R` falls back to the toy example file and fails with "criteria point at columns that are not in the items" (seen Nov 7). The toy data in `data/example/` is fake and is used only when the real file is missing.
+
+To open the tool by itself, serve the folder and pass the payload path **[run Nov 7]**:
 
 ```bash
-sh Finalists/app/stage_proof_assets.sh        # run from the git root
-cd Finalists/app
-Rscript -e 'shiny::runApp(".", port = 3838)'  # then open http://localhost:3838
+cd Finalists
+python3 -m http.server 8765
+# open http://127.0.0.1:8765/src/tool/matchmaker.html?payload=/data/processed/payload.json
 ```
 
-The stage script is the only step that makes `app/data/opportunities.csv` and `app/www/tool.html`. The app fails to start without them. The container uses `shiny::runApp("/srv/app", host = "0.0.0.0", port = 3838)` (`app/entrypoint.sh`).
+To run the full web app on your machine **[not run]**: stage the files, then start Shiny from `app/`:
+
+```bash
+sh Finalists/app/stage_proof_assets.sh        # from the git root; copies matchmaker.html to app/www/index.html and the qualifier tool to www/tool.html
+cd Finalists/app
+Rscript -e 'shiny::runApp(".", port = 3838)'
+```
+
+The stage script is the only step that makes `app/data/opportunities.csv` and `app/www/*`. The app fails to start without them. The container runs `shiny::runApp("/srv/app", host = "0.0.0.0", port = 3838)` (`app/entrypoint.sh`).
 
 ## 5. Rebuild the data pipeline
 
@@ -94,6 +112,21 @@ All seven script names exist in `src/R/` (checked). Notes:
 - `04_plan_text_extract.R` uses macOS Vision OCR for image-only pages. The compile command is in `.gitignore`: `swiftc -O -o data/cache/ocr_vision src/tools/ocr_vision.swift`. This step needs a Mac. Cached OCR text is in `data/cache/ocr/`.
 - Do not rerun outside-service scripts casually. They call live services for anything not cached.
 - Tests for these outputs: `src/tests/test_ingest.R` and `src/tests/test_plan_tables.R`, run through `tests/run_tests.R`.
+
+**After the data steps, the ranking and payload steps** (all offline, from `data/processed/` and `data/manual/`):
+
+```bash
+Rscript R/05a_county_need.R          # -> data/processed/county_need.csv (qualifier caches only)
+Rscript R/05b_sam_listings.R         # -> data/processed/sam_listings.csv (local bulk file, no key)
+Rscript R/05c_county_shapes.R        # -> data/processed/county_shapes.csv (needs the sf package)
+Rscript R/10_run_ranking.R           # -> items.csv, ranking.csv, outs/top_results.csv
+Rscript R/11_build_payload.R         # -> data/processed/payload.json
+Rscript R/12_backtest.R              # -> data/processed/rankings_backtest.csv (closed items, 2, 4 and 6 week windows)
+Rscript R/20_backtest_awards.R       # -> data/processed/backtest_result.csv (award-history check)
+Rscript R/13_daily_refresh.R         # 10 then 11 in one step; stops at the first failure
+```
+
+`10_run_ranking.R` was re-run on Nov 7 and reproduced the fact-sheet counts. `git status` showed no tracked file changed afterward. The other scripts in this block were **[not re-run for this draft]**.
 
 A single script that runs all steps and checks them **[PLANNED, not built]**. `handoff.md` has an empty "How to rebuild" section for this.
 
@@ -179,10 +212,10 @@ Azure's cost data lags by hours. Check Cost analysis by hand. Total added by the
 
 ## 9. Known limits
 
-- Match quality is unmeasured because there is no matching yet. The planned test is three agencies (Public Schools, Environmental Quality, DHHS), 20 items each, two labelers, 70% recall in the top N. Labels will be team-labelled, not ground truth (decision 12) [PLANNED, not built].
+- **Match quality was measured and the result is weak.** Award-history backtest, 4-week windows: only 1 of 3 agencies reached the 50% bar (DPI 2 of 3 programs, DEQ 3 of 7, DHHS 4 of 11), and a soonest-deadline baseline beat the ranking in all 3 (fact sheet rows 15 and 16). The bar is a team judgment, fixed before the run. Counts are programs, not notices, program-level matching favors repeat funding, and the intervals are wide. The labelled-pool test with two labelers (decision 12) is not done; the model labels failed their agreement gate and are not used.
 - The named weakness we plan to report is recall versus shortlist length (decision 11). Stale plans and the missing SAM.gov postings and USDOT sources are also limits.
 - The table includes 4,947 closed items next to 884 posted and 588 forecasted (`azure_setup.md`). A reader could mistake a closed item for an open one.
-- Missing values are common: of 1,472 open items, 723 have no award ceiling and 117 have no close date (`planning/08_saturday_plan.md`). They must display as unknown, never zero. The page does not yet do any special display for them.
+- Missing values are common: 488 of the 1,576 open opportunities have no usable close date and 887 have no usable award ceiling (fact sheet rows 5 and 6). The page shows "rolling or no date listed" for missing dates and "not listed" for missing awards, never zero (seen in the browser on Nov 7). The "10 hidden" style counts were fixed on Nov 7 to use the agency-level total.
 - 70 posted items have close dates after 2030, some in 2099, and one posted item has a past close date (`handoff.md`).
 - Table search is word by word across all columns. "school bus" returns 690 of 6,523 rows. It is noisy.
 - The planned known-good test case, Clean School Bus (CFDA 66.045), has 0 rows in `opportunities.csv` (`planning/08_saturday_plan.md`). A replacement is not chosen.
@@ -207,15 +240,19 @@ Azure's cost data lags by hours. Check Cost analysis by hand. Total added by the
 
 ```bash
 cd Finalists/src
-Rscript tests/run_tests.R      # runs unit and ingest tests; also includes test_plan_tables.R
-Rscript R/check_facts.R        # reproduces fact-sheet rows; see the note below
+Rscript R/10_run_ranking.R     # first: makes items.csv and ranking.csv (see section 4)
+Rscript tests/run_tests.R
+Rscript R/check_facts.R
 ```
 
-- `tests/test_ingest.R` checks that `opp_id` is unique, status values are valid and API-posted ids are posted in the table, among others.
-- `tests/test_plan_tables.R` checks every goal quote against its cited page. `handoff.md` reports 56 of 56 pass. Not re-run for this draft.
-- `R/check_facts.R` exists in `src/R/`, but `src/docs/fact_sheet.md` has only a header (7 lines), and `data/manual/facts.csv` does not exist. Expect it to find nothing to check. **[not verified]**
-- App checks done by hand on Nov 6 night (`azure_setup.md`): `/` and `/tool.html` return 200, row counts match, websocket connects, table filters in a real browser, no console errors. No automated test of the app exists **[PLANNED, not built]**.
-- Evaluation tests (labels, recall, known-bad item) are not written. The plan is in `planning/02_framing_worksheet.md`, section 4.
+**Results on a fresh worktree, Sat Nov 7, 12:2x (offline, after installing readr, tidyr and janitor):**
+- `tests/run_tests.R`: **79 of 80 tests pass.** The one failing row is a placeholder in the "R and JS agree" section named "agreement test pending new ranker for contract-shape payload.json". It is a known gap, not a regression, but it is a visible failing test; Kent to decide whether to remove or implement it.
+- `R/check_facts.R`: **29 of 29 rows pass.** (The 29 rows come from `data/manual/facts.csv`; the Friday text of this README said the fact sheet was empty and is out of date.)
+- Both print "one or more parsing issues" warnings from `readr`. They did not change the results; I have not traced them.
+
+What the tests cover: `tests/test_ingest.R` (ids unique, status values valid, API-posted ids are posted in the table), `tests/test_plan_tables.R` (every goal quote against its cited page; `handoff.md` reported 56 of 56 on Nov 6, **[not re-run here]**), and ranking, eligibility and payload-shape checks in `tests/run_tests.R`.
+
+Not covered: the web page's behavior (click flows, CSV download, browser storage failure), which was checked by hand in a browser on Nov 7 (`drafts/claude/docs/tool_review_sat.md`); the Azure app (checked by hand per `azure_setup.md`); and the model labels. No automated test of the page exists **[PLANNED, not built]**.
 
 ## 12. Where the team's status lives
 

@@ -29,3 +29,8 @@ Next: Kent's Claude keeps to tool, app, merges, fact sheet, handoff.
 ## 2026-11-07 kent/sat-fix1
 Done: read your tool review. Fixed the count line: DPI now shows 98 hidden (uses `n_hidden_ineligible`), and "not open yet" shows `10+` because the payload holds only 10 examples. Merged to main. Label rate: 12 s/item is too slow to finish all 23; finish agencies in your current order and report which complete by 5:30 pm; the rest stay "no model labels" and the field notes say so.
 Need from you: re-check the match board "All NC" reorder by hand and tell me exactly what you clicked.
+
+## 2026-11-07 kent/sat-noah-merge
+Done: merged Marco's work (PR #59, replaces #58; tool now has County map, capability panel, Refine panel, OSBM overview). Merged your drafts, review and board lines (N8 to N10) in this PR; to-kent.md unchanged. Facts 29 of 29, tests 79 of 80.
+Need from you: re-check the "All NC" match board reorder by hand and say exactly what you clicked. Report which label agencies finish by 5:30 pm.
+Next: merge N2 label files when pushed on claude/noah-labels.
