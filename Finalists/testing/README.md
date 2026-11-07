@@ -4,7 +4,7 @@ Teammates role-play our users against our work using paste-ready prompts, so we 
 
 ## Reviewers and personas (built; read this first)
 
-Six reviewers, each written once in `testing/reviewers/` and built into two formats by `python3 testing/build_reviewers.py` (Kent runs it after editing a spec; never edit the generated files).
+Ten reviewers and personas, each written once in `testing/reviewers/` and built into two formats by `python3 testing/build_reviewers.py` (Kent runs it after editing a spec; never edit the generated files).
 
 | Reviewer | What it does | Claude Code | Any chat box (ChatGPT, PromptLab) |
 |---|---|---|---|
@@ -14,8 +14,13 @@ Six reviewers, each written once in `testing/reviewers/` and built into two form
 | persona_user | Role-play the busy agency staffer (interactive) | `/persona_user <what you present>` | `prompts/paste/persona_user.md` |
 | persona_supervisor | Role-play their supervisor (interactive) | `/persona_supervisor ...` | `prompts/paste/persona_supervisor.md` |
 | persona_director | Role-play the non-technical budget director (interactive) | `/persona_director ...` | `prompts/paste/persona_director.md` |
+| persona-user, persona-supervisor, persona-director | One-shot versions of the three personas: read the material once, report in character, no dialogue | agents `persona-user`, `persona-supervisor`, `persona-director` | same paste files |
+| persona-nongrants-staffer | Agency staffer with no grants experience and no time (the Public Instruction attendee) | agent `persona-nongrants-staffer` | `prompts/paste/persona_nongrants_staffer.md` |
+| persona-it-architect | State IT Office of AI architect: privacy, security, cost, handover | agent `persona-it-architect` | `prompts/paste/persona_it_architect.md` |
+| persona-osbm-sponsor | OSBM chief scientist whose goal is NC pulling down federal funds | agent `persona-osbm-sponsor` | `prompts/paste/persona_osbm_sponsor.md` |
+| persona-dhhs-grant-writer | Experienced state grant writer (qualifier user): eligibility, burden, signatures | agent `persona-dhhs-grant-writer` | `prompts/paste/persona_dhhs_grant_writer.md` |
 
-**One-time, at release (Kent):** fill in `testing/context.md`. Every reviewer reads it.
+**One-time, at release (Kent):** approve `testing/context.md` (drafted by Claude from the repo on Nov 6; every reviewer reads it). Agents are picked up when Claude Code starts in `Finalists/`; restart the session after a rebuild.
 
 **Run one (Claude Code):** open Claude Code in the `Finalists/` folder. Agents: type "use the hostile-judge agent on deliverables/slide_brief.md". Personas: type `/persona_user outs/criteria_tool.html`, then play the consultant; type END to get the findings.
 **Run one (ChatGPT or PromptLab):** open the file in `prompts/paste/`, paste it into a new chat, paste the contents of `context.md` and the material under it where marked, and press send. For personas, play the consultant and type END at the end.
