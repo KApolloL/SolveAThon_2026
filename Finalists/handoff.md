@@ -109,8 +109,8 @@ Official schedule is in the vault hub `Projects/Competitions/Solveathon/Solveath
 ## Backtest v2 (step 1, measure fix)
 - Original bar (50% on 4-week windows, 2 of 3 agencies) failed 1 of 3 and stays reported. Not retuned.
 - `src/R/21_backtest_v2.R` fixes the denominator (full window pool, not stored top 50), adds Top 20 and 50 and 15 more agencies by exact-name map rows in `data/manual/agency_award_map.csv`. Facts f32 to f36, fact sheet rows 26 to 29. Exploratory.
-- Result: Top 10 57 of 157 won programs (36%), deadline sort about 17%, random about 13%.
+- Result: Top 10 58 of 159 won programs (36%), deadline sort about 17%, random about 13.5%. (Sat Nov 7: three award-map rows promoted by Everett per Kent: Adult Correction, Employment Security, Motor Vehicles; before that 57 of 157.)
 - Step 2 (improve the ranking with a leave-one-program-out holdout) not started; see to-noah and the board.
 
 ## Backtest step 2 (tuning with held-out agencies)
-- `src/R/22_backtest_tune.R`: 9 text settings, two agency folds. No setting beat the current one on held-out agencies in both directions. Nothing adopted; pipeline and payload unchanged. Facts f37 to f39, fact sheet row 30. Centering across agencies matters (40 vs 57 of 157 without it). Next lever, untested: embeddings.
+- `src/R/22_backtest_tune.R`: 9 text settings, two agency folds. No setting beat the current one on held-out agencies in both directions. Nothing adopted; pipeline and payload unchanged. Facts f37 to f39, fact sheet row 30. Centering across agencies matters (41 vs 58 of 159 without it). Next lever, untested: embeddings.

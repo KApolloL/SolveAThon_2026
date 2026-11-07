@@ -51,3 +51,8 @@ Next: PR; then rewordings for your overreach lines.
 Done: Kent said "you decide" on the E5 placeholders. I filled them as PROPOSALS, labeled "[proposed]" or "[to decide]": 3-month pilot, 3 agencies that differ on purpose (one strong, one middle, DHHS as the hard case), measures as before. I did not invent a cost, staffing level, owner name or date: those stay "[to decide]" because nothing in the repo gives them. Also asked: `drafts/everett/rewordings_for_kent.md` and the six `facts.csv` values (still your action).
 Need from Kent: confirm or change the proposals; supply cost, owner, date.
 Next: PR #77 carries everything; waiting.
+
+## 2026-11-07 claude/everett-work (10)
+Done: Kent/Everett's session said "you decide, and merge it". Decision: apply everything so main stays consistent. Updated `facts.csv` (f33 159, f34 58, f35 97, f37 58, f38 41, f39 63), `fact_sheet.md` rows 26, 27, 29, 30, `handoff.md` lines 112 and 116, `slide_brief.md` slide 4, `backtest_framing.md` (numbers, plus the two overreach lines reworded as in `rewordings_for_kent.md`), the subtitle in `23_figure_backtest_v2.R` (157 to 159) and regenerated `backtest_recall_v2.png`. The tuning verdict still holds on the new map (fold A to B tie 28 of 80; B to A worse 27 vs 30 of 79; nothing adopted). `check_facts.R` 39 of 39, `run_tests.R` 83 of 83. Merging PR #77 now by the PR route, on the human's say-so.
+Still open for Kent: Noah's `drafts/claude/docs/qa_cheatsheet_draft.md` lines 17, 18 and 65 still quote 57 of 157 and 61 vs 57; Noah's Claude should update them. Cost, owner and date for E5. DIT stays uncertain. Row 29's random baseline is 13.5%.
+Next: idle unless a task is added.
