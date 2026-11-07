@@ -139,6 +139,13 @@ assign_eligibility <- function(agency_id, codes, text) {
     elig_quote  = if_else(!(yes_code | he_ok) & ask_code & decided, tx$text_quote, NA_character_))
 }
 
+# TRUE when a title names another US state or region and not North Carolina.
+geo_other <- function(title) {
+  t <- ifelse(is.na(title), "", title)
+  other <- str_detect(t, regex(paste0("\\b(", paste(GEO_OTHER_PLACES, collapse = "|"), ")\\b"), ignore_case = TRUE))
+  other & !str_detect(t, regex("\\bNorth Carolina\\b|\\bNC\\b", ignore_case = TRUE))
+}
+
 # ---- Shared steps for 10_run_ranking.R, 11_build_payload.R and 12_backtest.R ------------
 read_criteria <- function(path = CRITERIA_FILE) {
   cr <- read_csv(path, show_col_types = FALSE, col_types = cols(.default = col_character()))
@@ -165,6 +172,8 @@ build_items <- function(opps, ag, plans) {
     mutate(id = paste(agency_id, opp_id, sep = ":"))
   items <- bind_cols(items, assign_eligibility(items$agency_id, items$applicant_types, items$eligibility_text))
   items$eligibility_text <- NULL
+  items$geo_other <- geo_other(items$title)
+  items$fit <- ifelse(items$geo_other, items$fit * GEO_PENALTY, items$fit)
   items
 }
 

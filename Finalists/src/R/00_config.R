@@ -77,6 +77,17 @@ ELIG_TEXT_NO  <- c("state governments are not eligible", "state agencies are not
 ELIG_TEXT_YES <- c("state governments", "state government agencies", "state agencies", "agencies of state")
 ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government|agenc)"
 
+# Geography: fit is multiplied by GEO_PENALTY when the opportunity TITLE names another US state or
+# region and does not name North Carolina. Titles only: summaries list many states in passing.
+# [assumed] 0.5; the item is demoted, never hidden.
+GEO_PENALTY <- 0.5
+GEO_OTHER_PLACES <- c("Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","Florida",
+  "Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts",
+  "Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico",
+  "New York","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota",
+  "Tennessee","Texas","Utah","Vermont","Virginia","Wisconsin","Wyoming","Great Lakes","Pacific Northwest","Northern Forest",
+  "Californian","Seattle","Denver","Austin","Chicago","Philadelphia","Gulf of Mexico","Gulf of America","Puerto Rico","Guam","Chesapeake")
+
 PAYLOAD_AS_OF   <- "2026-11-07T11:00:00-05:00"   # stamped into payload.json; fixed so reruns are identical
 TOP10_N         <- 10L    # open items flagged per agency (Top 10 list)
 COMING_UP_N     <- 10L    # forecasted items kept per agency ("Coming up")

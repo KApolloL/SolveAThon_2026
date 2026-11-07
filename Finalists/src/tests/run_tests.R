@@ -8,6 +8,7 @@ source(here::here("src", "R", "00_config.R"))
 source(here::here("src", "R", "helpers_io.R"))
 source(here::here("src", "R", "helpers_llm.R"))
 source(here::here("src", "R", "score.R"))
+source(here::here("src", "R", "helpers_rank.R"))
 source(here::here("src", "tests", "agreement.R"))
 suppressPackageStartupMessages({ library(readr); library(tibble); library(dplyr) })
 
@@ -51,6 +52,8 @@ check("unit: score", "filter-only table does not crash", !fails(rank_items(d2, f
 check("unit: score", "duplicate item ids are rejected", fails(rank_items(bind_rows(d2, d2[1, ]), base_cr, ref, "id", "name")))
 check("unit: score", "contains is plain text, not a regex", identical(rule_eval(c("a.b", "axb"), "contains", ".", ref), c(TRUE, FALSE)))
 check("unit: score", "dropped_by holds filter ids", identical(rank_items(d2, fo, ref, "id", "name")$dropped$dropped_by[1], "f"))
+
+check("geography", "other state in title is flagged", identical(geo_other(c("Grant for California schools","Great Lakes Unit","Texas and North Carolina pilot","Clean air grants",NA)), c(TRUE,TRUE,FALSE,FALSE,FALSE)))
 
 # ---- 3. Integration: whole pipeline on the project data -----------------------------
 i <- "integration"

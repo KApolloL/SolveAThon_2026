@@ -13,3 +13,4 @@ f11,Most Top 10 rows for any one agency in payload.json,"max(table(payload$rows$
 f12,Rows in payload.json (Top 10 + Coming up + hidden examples),"nrow(payload$rows)",960,0
 f13,Rows in rankings_backtest.csv (top 50 per agency and window),"nrow(backtest)",152000,0
 f14,"Backtest windows (2, 4 and 6 weeks from 2024-11-06)","nrow(unique(backtest[, c('window_weeks','window_start')]))",95,0
+f15,Open opportunities whose title names another state or region (fit halved),"length(unique(items$opp_id[items$geo_other]))",40,0
