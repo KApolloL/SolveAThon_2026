@@ -35,3 +35,6 @@ f33,v2 backtest: won programs across those agencies (4-week windows),"sum(bt_v2$
 f34,v2 backtest: won programs reaching the Top 10 (4-week windows),"sum(bt_v2$caught[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3])",57,0
 f35,v2 backtest: won programs reaching the Top 50 (4-week windows),"sum(bt_v2$caught[bt_v2$window_weeks == 4 & bt_v2$top_n == 50 & bt_v2$won_in_pool >= 3])",95,0
 f36,v2 backtest: agencies at or above 50% in the Top 10 (4-week windows),"sum(bt_v2$pct[bt_v2$window_weeks == 4 & bt_v2$top_n == 10 & bt_v2$won_in_pool >= 3] >= 0.5)",4,0
+f37,"Tuning grid: current setting (title x1, mean centering) Top 10 catches over the 12 agencies","sum(bt_tune$caught[bt_tune$title_rep == 1 & bt_tune$center == 'mean'])",57,0
+f38,Tuning grid: no centering across agencies Top 10 catches (shows centering helps),"sum(bt_tune$caught[bt_tune$title_rep == 1 & bt_tune$center == 'none'])",40,0
+f39,Tuning grid: best setting on all 12 (z centering) Top 10 catches,"sum(bt_tune$caught[bt_tune$title_rep == 1 & bt_tune$center == 'z'])",61,0

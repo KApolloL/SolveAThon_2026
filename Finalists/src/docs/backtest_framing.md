@@ -31,3 +31,10 @@ Keyword fit to the plan text is the likeliest source of misses. A program can be
 - Result, 4-week windows, 12 agencies, 157 won programs: Top 10 reaches 57 (36%), Top 20 reaches 72 (46%), Top 50 reaches 95 (61%). A soonest-deadline sort reaches about 17% at Top 10 and a random 10 about 13%. Four of 12 agencies are at or above 50% in the Top 10.
 - Reading: the ranking beats both baselines once the denominator is fair, but most won programs still do not reach the Top 10. This does not rescue the pre-set bar: the original test failed it and that stays reported. v2 is exploratory and was built after seeing the first result.
 - Still true: program-level match favors repeat funding; denominators are small for many agencies (see `backtest_v2_result.csv` for intervals); notice-level match is impossible because the award data has no link to a notice. Exact-name agency rows were assigned by Claude and need Kent's confirmation (DNCR's older "Cultural Resources" names are the least certain).
+
+## Step 2: tuning the text fit with held-out agencies (exploratory, tuned after seeing results)
+- `src/R/22_backtest_tune.R` tried 9 text settings (title repeated 1 to 3 times, and three ways to center fit across agencies). Award data only chose among settings; it never enters the shipped score.
+- Method: the 12 agencies were split into two folds; the best setting on one fold was scored on the other, both directions.
+- Result: no setting beat the current one on held-out agencies in both directions (fold A to B: tie, 28 of 79; B to A: worse, 26 vs 29 of 78). The best overall (spread-scaled centering) gains 4 programs of 157 (61 vs 57), within noise. Nothing was adopted.
+- One real finding: removing the centering across agencies drops recall to 40 of 157 (25%). The centering is doing real work.
+- Reading: the keyword method is at its ceiling with this plan text. The honest next lever is better matching (embeddings), which we have not tested. Say this under the named weakness.
