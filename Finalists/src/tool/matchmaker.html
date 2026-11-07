@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Federal Funds Matchmaker</title>
+<style>
+/* Tokens copied from the qualifier tool (QualifierChallenge/src/tool/styles.css). */
+:root {
+  color-scheme: light;
+  --surface-0:#f2f3f0; --surface-2:#ffffff; --border:#d9dcd6;
+  --text-primary:#1e2226; --text-secondary:#4b5158; --text-muted:#737980;
+  --accent:#23408e; --accent-soft:#e3e8f4;
+  --good:#0c7a0c; --warn:#9a6700; --bad:#a63d2f;
+  --radius:8px;
+  --font:"Franklin Gothic Book","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { color-scheme: dark;
+    --surface-0:#181b1f; --surface-2:#252a30; --border:#30353b;
+    --text-primary:#e7e8e4; --text-secondary:#b3b7b1; --text-muted:#8b9089;
+    --accent:#93aef0; --accent-soft:#26304a; --good:#5fc15f; --warn:#d9a04a; --bad:#d8705f; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--surface-0); color:var(--text-primary); font:16px/1.45 var(--font); }
+header, main { max-width: 860px; margin: 0 auto; padding: 14px 16px; }
+h1 { font-size: 1.3rem; margin: 0; }
+.sub { color: var(--text-secondary); font-size: .9rem; }
+select { font: inherit; padding: 8px; min-width: 260px; max-width: 100%; }
+label { font-weight: 600; display:block; margin: 12px 0 4px; }
+.counts { margin: 14px 0; color: var(--text-secondary); }
+ol { list-style: none; padding: 0; margin: 0; }
+li.row { background: var(--surface-2); border:1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 14px; margin-bottom: 10px; display: grid; grid-template-columns: 96px 1fr; gap: 12px; }
+.days { text-align: center; }
+.days b { display:block; font-size: 1.8rem; line-height: 1.1; color: var(--accent); }
+.days span { font-size: .8rem; color: var(--text-muted); }
+.days.none b { font-size: 1rem; }
+.title a { color: var(--accent); font-weight: 600; text-decoration: none; }
+.elig { display:inline-block; font-size:.8rem; font-weight:700; padding:1px 8px; border-radius: 10px; border:1px solid currentColor; margin-right:6px; }
+.elig.yes { color: var(--good); } .elig.ask { color: var(--warn); } .elig.no { color: var(--bad); }
+.act { margin-top: 8px; display:flex; gap:6px; flex-wrap:wrap; }
+.act button { font: inherit; font-size:.85rem; padding: 3px 10px; border:1px solid var(--border); border-radius: 14px; background: var(--surface-2); color: var(--text-primary); cursor: pointer; }
+.act button[aria-pressed="true"] { background: var(--accent); color: var(--surface-2); border-color: var(--accent); }
+.reason { color: var(--text-secondary); font-size: .92rem; margin-top: 4px; }
+.panel { background: var(--surface-2); border:1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin-top: 16px; }
+.panel summary { cursor: pointer; font-weight: 600; }
+.banner { background: var(--accent-soft); border-radius: var(--radius); padding: 8px 12px; margin: 10px 0; font-size:.9rem; }
+.stub { background:#fde8c8; color:#5a3700; padding:6px 12px; text-align:center; font-weight:700; }
+@media (max-width: 520px) { li.row { grid-template-columns: 1fr; } .days { text-align:left; } }
+</style>
+</head>
+<body>
+<div id="stub" class="stub" hidden>STUB DATA: not real opportunities</div>
+<header>
+  <h1>Federal Funds Matchmaker</h1>
+  <div class="sub" id="asof">Loading data...</div>
+</header>
+<main>
+  <label for="agency">Pick your agency</label>
+  <select id="agency" aria-label="Agency"><option value="">Choose an agency</option></select>
+  <div id="banner"></div>
+  <p class="counts" id="counts" role="status"></p>
+  <ol id="top"></ol>
+  <details class="panel" id="coming" hidden><summary id="coming-h"></summary><ol id="coming-l"></ol></details>
+  <details class="panel" id="hidden" hidden><summary id="hidden-h"></summary><ol id="hidden-l"></ol></details>
+</main>
+<script>
+(function () {
+  // Where the payload comes from: the app route /payload.json (reads Blob), else ?payload=<path> for local tests.
+  var src = new URLSearchParams(location.search).get("payload") || "payload.json";
+  var P = null;
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  function safeUrl(u) { return /^https?:\/\//i.test(u || "") ? u : null; }
+
+  function daysBlock(r) {
+    var d = el("div", "days");
+    if (r.days_left == null) { d.className += " none"; d.appendChild(el("b", null, r.date_note || "No date listed")); }
+    else { d.appendChild(el("b", null, String(r.days_left))); d.appendChild(el("span", null, r.days_left === 1 ? "day left" : "days left")); }
+    return d;
+  }
+  var ELIG = { yes: "Yes", no: "No", ask: "Ask" };
+  // Pursue / Maybe / Pass: saved in this browser only (localStorage), never sent anywhere.
+  var LS = "ffm_marks_v1";
+  function loadMarks() { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch (e) { return {}; } }
+  function saveMarks(m) { try { localStorage.setItem(LS, JSON.stringify(m)); } catch (e) {} }
+  var marks = loadMarks();
+  function actions(r) {
+    var box = el("div", "act"), key = r.agency_id + "|" + r.opp_id;
+    box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision");
+    ["Pursue", "Maybe", "Pass"].forEach(function (name) {
+      var b = el("button", null, name); b.type = "button";
+      b.setAttribute("aria-pressed", marks[key] === name ? "true" : "false");
+      b.addEventListener("click", function () {
+        if (marks[key] === name) delete marks[key]; else marks[key] = name;
+        saveMarks(marks);
+        Array.prototype.forEach.call(box.children, function (c) { c.setAttribute("aria-pressed", marks[key] === c.textContent ? "true" : "false"); });
+      });
+      box.appendChild(b);
+    });
+    return box;
+  }
+  function rowEl(r) {
+    var li = el("li", "row"), body = el("div");
+    li.appendChild(daysBlock(r));
+    var t = el("div", "title"), u = safeUrl(r.url);
+    if (u) { var a = el("a", null, r.title || r.opp_number || r.opp_id); a.href = u; a.target = "_blank"; a.rel = "noopener"; t.appendChild(a); }
+    else t.textContent = r.title || r.opp_number || r.opp_id;
+    body.appendChild(t);
+    var meta = el("div");
+    var e = r.eligibility || "ask";
+    meta.appendChild(el("span", "elig " + (ELIG[e] ? e : "ask"), "Eligible: " + (ELIG[e] || "Ask")));
+    if (e === "ask") meta.appendChild(document.createTextNode("check the notice"));
+    body.appendChild(meta);
+    if (r.goal_snippet) body.appendChild(el("div", "reason", "Matches plan goal: " + r.goal_snippet));
+    body.appendChild(actions(r));
+    li.appendChild(body);
+    return li;
+  }
+  function fill(list, rows) { list.innerHTML = ""; rows.forEach(function (r) { list.appendChild(rowEl(r)); }); }
+
+  function show(id) {
+    var top = $("top"), banner = $("banner");
+    banner.innerHTML = "";
+    ["coming", "hidden"].forEach(function (k) { $(k).hidden = true; });
+    if (!id) { top.innerHTML = ""; $("counts").textContent = "Pick an agency to see its top 10 open opportunities."; return; }
+    var ag = P.agencies.filter(function (a) { return a.agency_id === id; })[0];
+    var mine = P.rows.filter(function (r) { return r.agency_id === id; });
+    var open = mine.filter(function (r) { return r.status === "posted"; });
+    var coming = mine.filter(function (r) { return r.status === "forecasted"; });
+    var hidden = open.filter(function (r) { return r.eligibility === "no"; });
+    var shown = open.filter(function (r) { return r.in_top10 && r.eligibility !== "no"; })
+      .sort(function (a, b) { return a.rank - b.rank; });
+    if (ag && ag.plan_stale) banner.appendChild(el("div", "banner", "This agency's plan may be out of date. Treat matches with care."));
+    if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
+    var notices = mine.filter(function (r) { return r.status === "notice"; }).length;
+    var below = open.length - hidden.length - shown.length;
+    $("counts").textContent = "Showing " + shown.length + " of " + open.length + " open opportunities. " +
+      hidden.length + " hidden as not eligible, " + below + " ranked below the top 10, " + coming.length + " not open yet" + (notices ? ", " + notices + " notice" + (notices === 1 ? "" : "s") + " (not ranked)" : "") + ".";
+    fill(top, shown);
+    if (coming.length) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + coming.length; fill($("coming-l"), coming); }
+    if (hidden.length) { $("hidden").hidden = false; $("hidden-h").textContent = "Hidden as not eligible: " + hidden.length; fill($("hidden-l"), hidden); }
+  }
+
+  fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
+    P = p;
+    $("asof").textContent = "Data as of " + (p.data_as_of || "unknown");
+    if (p.stub === true || /stub/i.test(String(p.data_as_of))) $("stub").hidden = false;
+    var sel = $("agency");
+    p.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) {
+      var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o);
+    });
+    sel.addEventListener("change", function () { show(sel.value); });
+    show("");
+  }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
+})();
+</script>
+</body>
+</html>
