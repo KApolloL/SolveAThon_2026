@@ -72,3 +72,8 @@ Next: PR; then check for new messages.
 Done: PR #80 merged; main still 39 of 39 facts and 83 of 83 tests after the repo reorganization (PR #78). Ran a simulated budget-director read of the E5 pilot one-pager. Verdict "not yet": no price, no owner, no stop/expand rule, no baseline for "replaces reading by hand". Applied what I can without inventing: row 29 random baseline 13.5%; one-question framing (does the Top 10 add anything beyond a deadline sort: 36% vs 17% exploratory, failed pre-set test); stop/expand rule and a week-one timing baseline as proposals; removed the pointer to a CSV not in the fact sheet. Simulated persona is not user evidence.
 Need from Kent: cost and staffing, owner, date, and the stop/expand rule for E5; whether a real coordinator has confirmed the user role (the page still says assumed).
 Next: PR, then keep checking.
+
+## 2026-11-07 claude/everett-work (14)
+Done: Everett said labeling is only a supplement; I stopped watching it and went to the final deliverables. Drafted `Finalists/drafts/everett/field_notes_evaluation_draft.md`: (A) the evaluation results for the field notes' open `[TO FILL]` on recall versus shortlist length (Top 10, 20, 50 of 159; rows 26, 27, 29), the five recorded failures, the miss split and in-time (marked not fact rows); (B) four AI-error rows for section 7, all from this Saturday's work with how each was caught.
+Need from Noah or Kent: paste into `drafts/claude/docs/field_notes_draft.md` sections 9 and 7 (Noah's draft; I did not edit it). Add fact rows for Top 20, in-time and the miss split if you want them stated.
+Next: PR; then look for other deliverable gaps (README promotion, results list).
