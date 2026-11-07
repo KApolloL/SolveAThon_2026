@@ -32,7 +32,7 @@ A grant writer at an NC state agency cannot read every open federal opportunity;
 ### Slide 4: Does it work
 - **Message:** We tested it against grants agencies actually won, and the result was mixed; we say so.
 - **On the slide:** "Bar set before the test: at least 50% of an agency's won programs in its Top 10, in 2 of 3 agencies." Result at 4 weeks: DPI 2 of 3, DEQ 3 of 7, DHHS 4 of 11. "1 of 3 agencies met the bar" (row 15). "A plain sort by soonest deadline scored higher in all 3" (row 16).
-- **Figure:** `outs/figures/backtest_recall.png` (the pre-set test). Optional second figure, exploratory: `outs/figures/backtest_recall_v2.png`. Label it "exploratory, built after the first result". Numbers (fact sheet rows 26 to 29): Top 10 reaches 57 of 157 won programs (36%), a soonest-deadline sort 17%, a random 10 13%; Top 50 reaches 61%. Do not say the bar passed. Tuning the text fit with held-out agencies changed nothing (row 30).
+- **Figure:** `outs/figures/backtest_recall.png` (the pre-set test). Optional second figure, exploratory: `outs/figures/backtest_recall_v2.png`. Label it "exploratory, built after the first result". Numbers (fact sheet rows 26 to 29): Top 10 reaches 58 of 159 won programs (36%), a soonest-deadline sort 17%, a random 10 about 13.5%; Top 50 reaches 61% (97 of 159). Do not say the bar passed. Tuning the text fit with held-out agencies changed nothing (row 30).
 - **Speaker note:** Use `src/docs/backtest_framing.md`. Say "would not have flagged", never "missed". The 50% bar is a team judgment.
 
 ### Slide 5: Limits

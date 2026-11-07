@@ -1,6 +1,6 @@
 # Award map: the open checks, answered (E8 draft, Everett's Claude, for Kent)
 
-Status: web lookups, all [uncertain] until Kent confirms. Nothing in `data/manual/agency_award_map.csv` was changed, because any change moves fact-sheet rows 26 to 29 (Kent's). Exploratory backtest; program-level match favors repeat funding.
+Status: web lookups, all [uncertain] until Kent confirms. UPDATE: Kent chose "apply all three" (Sat Nov 7). The three rows are now confirmed in `agency_award_map.csv` and the backtest scripts were rerun; see the last section. DIT stays uncertain. Exploratory backtest; program-level match favors repeat funding.
 
 | Open check | Finding | Source | Proposed map change |
 |---|---|---|---|
@@ -19,3 +19,20 @@ I promoted the first three rows to confirmed in a scratch copy of the map and re
 
 ## Recommendation
 Apply the three promotions (after the DMV official-page check) only if Kent wants the pooled figure to be 58 of 159; otherwise keep the map as is and state in Q&A that divisions inside Commerce and NCDOT are not counted. Either way the headline (about one third reaches the Top 10, versus 17% for a deadline sort) does not change.
+
+## APPLIED (Kent chose "apply all three", Sat Nov 7)
+`agency_award_map.csv`: Adult Correction to `dac`, Employment Security to `commerce`, Motor Vehicles to `ncdot`, all `confirmed` (DIT stays uncertain). DMV check: official NCDOT pages sit under ncdot.gov/dmv and the NCDOT staff directory lists it as a unit ([NCDOT directory](https://apps.ncdot.gov/dot/directory/authenticated/UnitPage.aspx?id=197), [ncdot.gov/dmv](https://www.ncdot.gov/dmv/contact/Pages/default.aspx)); I did not open the statute for DMV [unverified].
+I reran 20, 21, 22, 24, 25 and 26 offline. `backtest_result.csv` (the pre-set v1 test) is unchanged, so fact rows 15, 16 and f18 to f22 still hold. Changed outputs: `backtest_v2_result.csv`, `backtest_tune_result.csv`, `backtest_misses.csv`, `backtest_v2_intime.csv` and the three `backtest_v2_*.png` figures.
+
+### Kent: numbers to update (check_facts shows 33 of 39 until `facts.csv` is edited)
+| Where | Old | New |
+|---|---|---|
+| facts.csv f33, fact sheet row 26 (won programs, 12 agencies) | 157 | 159 |
+| f34, row 26 (Top 10) | 57 (36%) | 58 (36%) |
+| f35, row 27 (Top 50) | 95 (61%) | 97 (61%) |
+| f37 (tuning, current setting) | 57 | 58 |
+| f38 (no centering) | 40 | 41 |
+| f39 (best setting, z centering) | 61 | 63 |
+| row 29, pooled baselines at Top 10 | 17%, 13% | 17%, 13.5% (random is 0.135, so say "about 13 or 14%") |
+| Unchanged | | f32 (12 agencies), f36 / row 28 (4 of 12 at or above 50%), rows 15 and 16 |
+Row 30 text: "57 of 157 / best 61 / none 40" becomes "58 of 159 / best 63 / none 41". Anything quoting 57 of 157 elsewhere (slide brief slide 4, `qa_cheatsheet_draft.md`, `backtest_framing.md`, tool text) needs the same change. My E-drafts in this folder are already updated. E6 in-time: 42 of 58 (DHHS still 0 of 4); E2 split: 58 / 39 / 62.

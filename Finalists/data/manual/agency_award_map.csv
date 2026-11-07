@@ -30,7 +30,7 @@ NORTH CAROLINA STATE BUREAU OF INVESTIGATION,sbi,confirmed,Exact state agency na
 NORTH CAROLINA SECRETARY OF STATE,sos,confirmed,Exact state agency name.
 NORTH CAROLINA STATE BOARD OF ELECTIONS,ncsbe,confirmed,Exact state agency name.
 DEPARTMENT OF INFORMATION TECHNOLOGY,,uncertain,State agency class but the name has no NC marker. Excluded from won set until verified.
-DEPARTMENT OF ADULT CORRECTION,,uncertain,Name has no NC marker. Excluded from won set until verified.
+DEPARTMENT OF ADULT CORRECTION,dac,confirmed,Separate NC cabinet department since 2023-01-01 (S.L. 2021-180); has its own plan (dac). Name is NC-specific [unverified]. Promoted per Kent Sat Nov 7; see drafts/everett/award_map_open_checks.md.
 "VETERANS AFFAIRS, NORTH CAROLINA DIVISION OF",,uncertain,Division of Veterans Affairs; whether it belongs to the DMVA plan is not checked. Excluded.
-DIVISION OF EMPLOYMENT SECURITY,,uncertain,Division inside Commerce; not a separate plan. Excluded.
-"MOTOR VEHICLES, NORTH CAROLINA DIVISION OF",,uncertain,Division inside NCDOT; not a separate plan. Excluded.
+DIVISION OF EMPLOYMENT SECURITY,commerce,confirmed,Division inside Commerce (N.C.G.S. 96-3); counted as Commerce awards. Promoted per Kent Sat Nov 7.
+"MOTOR VEHICLES, NORTH CAROLINA DIVISION OF",ncdot,confirmed,Division inside NCDOT; counted as NCDOT awards. Promoted per Kent Sat Nov 7; official-page check pending.
