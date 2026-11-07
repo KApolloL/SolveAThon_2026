@@ -48,8 +48,8 @@ h1, h2, h3, h4 { line-height:1.2; letter-spacing:-.01em; }
 [hidden] { display:none !important; }
 
 /* ---- top bar ---- */
-.appbar { background:var(--accent-strong); color:#fff; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .appbar { background:#0b2a23; } }
+.appbar { background:var(--bar, #14443a); color:#fff; transition:background .25s; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .appbar { background:var(--bar, #0b2a23); } }
 .appbar-in { max-width:1240px; margin:0 auto; padding:10px 20px; display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; }
 .brand { display:flex; align-items:center; gap:10px; min-width:0; }
 .brand svg { flex:none; }
@@ -454,6 +454,12 @@ details.more .dd { border-top:none; margin-top:6px; padding-top:4px; }
 .curve-svg .ln { fill:none; stroke-width:2.5; } .curve-svg .ln.l-all { stroke:#9aa6a2; } .curve-svg .ln.l-in { stroke:var(--accent); }
 .curve-svg .pt { stroke:var(--surface-2); stroke-width:2; } .curve-svg .pt.l-all { fill:#9aa6a2; } .curve-svg .pt.l-in { fill:var(--accent); }
 .curve-svg .lab { font-size:11px; font-weight:700; font-family:var(--font); } .curve-svg .lab.l-all { fill:var(--text-secondary); } .curve-svg .lab.l-in { fill:var(--accent); }
+
+.brand-icon { display:inline-grid; place-items:center; width:36px; height:36px; border-radius:10px; background:rgba(255,255,255,.14); color:#fff; flex:none; }
+.pickrow { display:flex; align-items:center; gap:14px; max-width:100%; }
+.pickrow .selwrap { min-width:0; flex:1; }
+.ag-icon { display:inline-grid; place-items:center; width:58px; height:58px; border-radius:16px; background:var(--accent-soft); color:var(--accent); flex:none; transition:background .25s, color .25s; }
+@media (max-width:560px) { .ag-icon { width:44px; height:44px; border-radius:12px; } .ag-icon svg { width:26px; height:26px; } }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -479,7 +485,7 @@ body.proj .tour-card { font-size:1.2rem; }
 <header class="appbar">
   <div class="appbar-in">
     <div class="brand">
-      <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="1" y="1" width="28" height="28" rx="7" fill="none" stroke="#cfe3dc" stroke-width="2"/><path d="M15 6 L22 15 H18 L23 22 H7 L12 15 H8 Z" fill="#fff"/><rect x="14" y="22" width="2" height="3" fill="#fff"/></svg>
+      <span class="brand-icon" id="brand-icon" aria-hidden="true"></span>
       <div><h1>Federal Funds Matchmaker</h1><div class="for">Federal grants ranked against each NC agency's own plan</div></div>
     </div>
     <div class="spacer"></div>
@@ -508,7 +514,8 @@ body.proj .tour-card { font-size:1.2rem; }
     <aside id="desk-panel" role="region" aria-label="Opportunity details" aria-live="polite"></aside>
     <div class="picker">
       <label for="agency">Show federal funding for</label>
-      <span class="selwrap"><select id="agency"><option value="">choose your agency</option></select></span>
+      <div class="pickrow"><span class="ag-icon" id="ag-icon" hidden></span>
+      <span class="selwrap"><select id="agency"><option value="">choose your agency</option></select></span></div>
     </div>
     <div id="welcome" class="welcome">
       <div>
@@ -1064,6 +1071,81 @@ body.proj .tour-card { font-size:1.2rem; }
     });
   }
 
+  // ---- agency look: an icon and a color theme per agency (24px grid, 2px round stroke, currentColor) ----
+  var ICON = {
+    funds: '<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.7-1.5-3-1.5-1.7 0-3 .8-3 2s1.3 1.7 3 2 3 .8 3 2-1.3 2-3 2c-1.3 0-2.5-.5-3-1.5M12 6v12"/>',
+    tree: '<path d="M12 3 7 10h3l-4 6h12l-4-6h3z"/><path d="M12 16v5"/>',
+    wheat: '<path d="M12 21V7"/><path d="M12 8c-2.2-.8-3.4-2.6-3.4-5 2.2.4 3.4 2.2 3.4 5zM12 8c2.2-.8 3.4-2.6 3.4-5-2.2.4-3.4 2.2-3.4 5zM12 13c-2.3-.8-3.6-2.7-3.6-5.2 2.3.5 3.6 2.3 3.6 5.2zM12 13c2.3-.8 3.6-2.7 3.6-5.2-2.3.5-3.6 2.3-3.6 5.2zM12 18c-2.3-.8-3.6-2.7-3.6-5.2 2.3.5 3.6 2.3 3.6 5.2zM12 18c2.3-.8 3.6-2.7 3.6-5.2-2.3.5-3.6 2.3-3.6 5.2z"/>',
+    fish: '<path d="M3 12c3.2-5 10-6 14 0-4 6-10.8 5-14 0z"/><path d="m17 12 4-3v6z"/><circle cx="8" cy="11" r=".9" fill="currentColor"/>',
+    drop: '<path d="M12 3s6 6.8 6 11a6 6 0 0 1-12 0c0-4.2 6-11 6-11z"/><path d="M9.5 15a2.5 2.5 0 0 0 2.5 2.5"/>',
+    car: '<path d="M5 17H3v-4.5L5.5 7h13l2.5 5.5V17h-2"/><path d="M3 12.5h18M9 17h6"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>',
+    bus: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M3 10h18M8 4v6M16 4v6M6 13h1M17 13h1"/><circle cx="7.5" cy="18.5" r="1.8"/><circle cx="16.5" cy="18.5" r="1.8"/>',
+    cap: '<path d="m2 9 10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5M22 9v6"/>',
+    heart: '<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/><path d="M12 10v4M10 12h4"/>',
+    star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/>',
+    shield: '<path d="M12 3 20 6v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+    search: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/>',
+    scales: '<path d="M12 4v16M8 20h8M5 7h14"/><path d="M5 7 2 13a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',
+    bars: '<path d="M4 21V9l8-5 8 5v12M3 21h18M9 21v-8M12 21v-8M15 21v-8M8 13h8"/>',
+    briefcase: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M3 13h18"/>',
+    hardhat: '<path d="M14.7 6.3a4 4 0 0 0-5.3 5.3L3.5 17.5a2.1 2.1 0 0 0 3 3l5.9-5.9a4 4 0 0 0 5.3-5.3l-2.4 2.4-2.6-.5-.5-2.6z"/>',
+    umbrella: '<path d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v6.5a2 2 0 0 1-4 0M12 3v0"/>',
+    receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+    bank: '<path d="m3 9.5 9-6 9 6M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 21h18M3 18h18"/>',
+    pie: '<path d="M21 12a9 9 0 1 1-9-9v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/>',
+    calc: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/>',
+    clipboard: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 12.5l2 2 4-4"/>',
+    capitol: '<path d="M4 21h16M5 21v-8h14v8M8.5 13v8M12 13v8M15.5 13v8M7 13a5 5 0 0 1 10 0M12 8V4h2"/>',
+    house: '<path d="m3 11 9-7 9 7M5 9.8V20h14V9.8M10 20v-5h4v5"/>',
+    laptop: '<rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/>',
+    ballot: '<path d="M4 12h16v9H4zM8 12V4h8v8M10.5 8l1.2 1.2L14 7"/>',
+    flame: '<path d="M12 3s5 4.5 5 9.5a5 5 0 0 1-10 0C7 10 8.5 8.5 9 7c.5 2 2 3 2 3s-.6-4 1-7z"/>',
+    people: '<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M15.6 14.2A5 5 0 0 1 21 19"/>',
+    seal: '<path d="M6 3h9l4 4v14H6zM15 3v4h4"/><circle cx="12" cy="14" r="2.5"/><path d="m10.6 16-.9 3.2 2.3-1 2.3 1-.9-3.2"/>'
+  };
+  // theme: [bar, accent, soft, dark-mode accent, dark-mode soft, dark-mode bar]
+  var THEME = {
+    pine:     ["#14443a", "#1d5a4c", "#e2eee9", "#7cc4ad", "#1d3a33", "#0b2a23"],
+    harvest:  ["#5b4309", "#7a5a10", "#f5ecd6", "#e2bf6a", "#3a2e12", "#2a2008"],
+    water:    ["#0f4a52", "#13616b", "#ddeef0", "#7cc9d2", "#173a3f", "#0a2a2e"],
+    road:     ["#1d3a5f", "#2a5285", "#e1e9f4", "#93b6e6", "#1d2d44", "#111f33"],
+    schoolbus:["#5c3b00", "#8a5a00", "#fbefd2", "#f0c46a", "#3d3015", "#2b1f05"],
+    academic: ["#1f2d5c", "#2e4486", "#e3e7f4", "#a3b4ec", "#20284a", "#121a36"],
+    health:   ["#6b1f3a", "#8f2c4f", "#f6e1e8", "#efa2bd", "#3e1f2b", "#2c1019"],
+    safety:   ["#1f3347", "#2f4d6a", "#e2e8ef", "#a2bad3", "#1f2b37", "#121c26"],
+    justice:  ["#3f2557", "#5a3878", "#ece4f3", "#c9a9e6", "#2e2240", "#1e142b"],
+    finance:  ["#2c2a63", "#413e8c", "#e6e5f4", "#b2afef", "#26254a", "#17163a"],
+    labor:    ["#5c2e0e", "#8a4718", "#f6e6d8", "#eeac7a", "#3d2617", "#2a170a"],
+    fire:     ["#6e2214", "#9a3220", "#f8e1da", "#f2a08c", "#40231c", "#2d140d"],
+    civic:    ["#2b3a44", "#3d5260", "#e3e9ec", "#a8bcc8", "#22303a", "#151f26"]
+  };
+  var LOOK = {
+    "": ["funds", "pine"], dncr: ["tree", "pine"], wrc: ["fish", "water"], dacs: ["wheat", "harvest"], deq: ["drop", "water"],
+    ncdot: ["car", "road"], doi: ["umbrella", "road"], dpi: ["bus", "schoolbus"], unc: ["cap", "academic"], ncccs: ["cap", "academic"],
+    dmva: ["star", "academic"], dhhs: ["heart", "health"], dps: ["shield", "safety"], shp: ["shield", "safety"], sbi: ["search", "safety"],
+    doj: ["scales", "justice"], ids: ["scales", "justice"], oah: ["scales", "justice"], dac: ["bars", "justice"],
+    commerce: ["briefcase", "finance"], dor: ["receipt", "finance"], dst: ["bank", "finance"], osbm: ["pie", "finance"], osc: ["calc", "finance"], osa: ["clipboard", "finance"],
+    dol: ["hardhat", "labor"], hfa: ["house", "labor"], osfm: ["flame", "fire"],
+    doa: ["capitol", "civic"], ncdit: ["laptop", "civic"], ncsbe: ["ballot", "civic"], oshr: ["people", "civic"], sos: ["seal", "civic"]
+  };
+  function iconSvg(name, size, label) {
+    return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"' +
+      (label ? ' role="img" aria-label="' + label.replace(/"/g, "") + '"' : ' aria-hidden="true"') + '>' + (ICON[name] || ICON.funds) + '</svg>';
+  }
+  var darkMQ = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : { matches: false };
+  function applyLook(id) {
+    var lk = LOOK[id] || LOOK[""], t = THEME[lk[1]], dark = darkMQ.matches && !document.body.classList.contains("proj"), rs = document.documentElement.style;
+    rs.setProperty("--accent-strong", dark ? t[3] : t[0]); rs.setProperty("--accent", dark ? t[3] : t[1]); rs.setProperty("--accent-soft", dark ? t[4] : t[2]);
+    rs.setProperty("--bar", dark ? t[5] : t[0]);
+    var nm = id && P ? agName(id) : "Federal Funds Matchmaker";
+    var b = $("brand-icon"); if (b) b.innerHTML = iconSvg(lk[0], 22, null);
+    var a = $("ag-icon"); if (a) { a.innerHTML = iconSvg(lk[0], 34, nm + " icon"); a.hidden = !id; }
+    var fav = document.querySelector('link[rel="icon"]'); if (!fav) { fav = document.createElement("link"); fav.rel = "icon"; document.head.appendChild(fav); }
+    fav.href = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="' + t[0] + '"/><g transform="translate(3 3) scale(.75)" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + (ICON[lk[0]] || ICON.funds).replace(/currentColor/g, "#fff") + '</g></svg>');
+    var mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = t[0];
+  }
+  if (darkMQ.addEventListener) darkMQ.addEventListener("change", function () { applyLook(cur.id); });
+
   // ---- row ----
   var newIds = {}, newByAg = {}, newFirst = {};
   function daysBlock(r) {
@@ -1288,6 +1370,7 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function show(keepW) {
     var id = cur.id, banner = $("banner"); banner.innerHTML = "";
+    applyLook(id);
     ["coming", "hidden", "refine", "caps"].forEach(function (k) { $(k).hidden = true; });
     $("tiles").hidden = $("toolbar").hidden = $("list-h").hidden = $("finder").hidden = !id; if (!id) $("chartbox").hidden = true; $("gloss").hidden = !id; if (!id) $("start").hidden = true;
     $("welcome").hidden = !!id; $("v-opps").classList.toggle("nopick", !id);
@@ -1778,9 +1861,9 @@ body.proj .tour-card { font-size:1.2rem; }
   function build() {
     steps = [
       { t: "Find grants in about a minute", b: "This tool reads every open federal grant and ranks them against your agency's own strategic plan. You tell it your situation, it shows the best bets, and you decide. Here is how, in 8 short steps.", sel: null },
-      { t: "1. Start here: tell us your situation", b: "Type what you are looking for and what you can handle, in plain words. For example: water quality, 4 weeks, no matching money. Press Apply. We turn your words into filters and show each one as a chip you can see.", sel: ".say", act: ["Show me an example", function () { var b = $("examples") && $("examples").firstChild; if (b) b.click(); }] },
-      { t: "2. Check your agency", b: "The list is built for the agency picked here. Change it any time.", sel: ".picker" },
-      { t: "3. Look at the top 3 first", b: "These are your best open matches for what you typed. Most days you only need these three.", sel: "#start" },
+      { t: "1. Start here: tell us your situation", b: "Remember the school bus money North Carolina missed because nobody saw it in time? Type what you need the way you would say it, for example: clean diesel school buses, I have 4 weeks. Press Apply. We turn your words into filters and show each one as a chip.", sel: ".say", act: ["Try the school bus example", function () { var i = $("scenario"); if (i) { i.value = "clean diesel school buses, I have 4 weeks"; $("scn-go").click(); } }] },
+      { t: "2. Check your agency", b: "We picked Public Schools for this example. The icon and colors change with the agency so you always know whose list you are looking at. Change it any time.", sel: ".picker" },
+      { t: "3. Look at the top 3 first", b: "These are the best open matches for what you typed, ranked against the agency's own plan. For the bus example, the top match is EPA's Diesel Emissions Reduction Act grant, which pays to upgrade or retire old diesel engines, with weeks left to apply.", sel: "#start" },
       { t: "4. Read a card in 5 seconds", b: "Big number on the left: days left to apply. Big number on the right: the most money one award can be. In the middle: the funder, who has to sign (Tier 1: you, Tier 2: your boss, Tier 3: leadership), your chance of winning, the effort, and the payoff for the work. Open \"Why it fits\" for the reasons.", sel: "#start li" },
       { t: "5. Like it? Press Pursue", b: "Pursue puts the grant in your cart and opens your application plan. Maybe or Pass if not. Nothing is sent anywhere; it stays in this browser.", sel: "#start li" },
       { t: "6. Your application plan", b: "The plan gives you the link to the full notice, a timeline worked back from the deadline (read, check logins, gather, draft, sign-off, submit two days early), and a checklist of what you will need. You can add the deadline to your calendar or print a one-page brief for your boss.", sel: "#start li", act: ["Open an example plan", function () { var b = document.querySelector("#start .act button[data-m=Pursue]"); if (b && b.getAttribute("aria-pressed") !== "true") b.click(); else if (b) { var pl = b.parentNode.querySelector(".planbtn"); if (pl) pl.click(); } close(false); var d = $("plan-dlg"), resume = idx + 1, iv2 = setInterval(function () { if (d && d.open) return; clearInterval(iv2); idx = Math.min(resume, steps.length - 1); render(); }, 300); }] },
@@ -1813,7 +1896,7 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function demoAgency() { // the home screen has no list yet: pick Environmental Quality so the tour has real rows to point at
     var sel = $("agency"); if (!sel || sel.value) return;
-    var o = [].slice.call(sel.options).filter(function (x) { return /Environmental Quality/i.test(x.text); })[0];
+    var o = [].slice.call(sel.options).filter(function (x) { return /Public Schools/i.test(x.text); })[0];
     if (o) { sel.value = o.value; sel.dispatchEvent(new Event("change", { bubbles: true })); }
   }
   function start() { close(false); if (document.body.classList.contains("proj")) return; demoAgency(); build(); idx = 0; if (steps.length) render(); }
