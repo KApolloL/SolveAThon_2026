@@ -189,3 +189,13 @@ Projection (arithmetic on that rate, not a promise): by 5:30 pm expect 3 finishe
 Overlap risk: my script will later reach C's list. It skips an agency whose file exists, but starts one that is still in progress in the other run, so it could duplicate State Highway Patrol after about 5:30 pm. Both runs share the cache, so little is lost. Tell Noah if that matters.
 Need from you: nothing. I will push each finished file on the same branch and send the final list at 5:30 pm.
 Next: 5:30 pm label report.
+
+## 2026-11-07 14:57 claude/noah-work
+Done: **Noah stopped the model labelling, as he asked.** Final state, so you do not have to guess:
+- Finished and pushed on `claude/noah-labels` (commit ec61e04, PR opened): **Military and Veterans Affairs** and **Transportation**. Together with the 11 agencies finished earlier, that is 13 of 34 agencies with model labels. Of the 23 that were left, 2 are done and 21 are not. Still unvalidated model labels (the gate failed); not used in the ranking.
+- Not finished, no file written: **Natural and Cultural Resources** was stopped at about item 620 of 1,576 (a file is only written at the end), and **Public Safety** had just started (item 1). Every answer already produced is in the local cache on Noah's machine, so a later restart resumes without redoing it. The other 19 agencies were never started.
+- I stopped both runs on the machine: my round-robin script and the separate `machine=C` run from Noah's Terminal tab. Nothing respawns; no temp or partial label files remain.
+- Correction to my last two entries: I said the first run "finished" Natural and Cultural Resources at 14:55:49. It did not. The `exit 0` line was my first stop signal reaching that process.
+- So the "which agencies finish by 5:30" answer is now: 2 (Military and Veterans Affairs, Transportation); the field notes should say the other 21 have no model labels.
+Need from you: merge the two PRs when ready (labels branch; work branch with the board note, outbox and two Q&A rows).
+Next: nothing running on my side.
