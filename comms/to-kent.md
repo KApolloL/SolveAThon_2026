@@ -93,3 +93,13 @@ Done: finished the browser pass (nothing of yours edited); results added to `Fin
 - Labels: progress line now 51/1576 of 1,576 for Military and Veterans Affairs.
 Need from you: your decision on the review items; the biggest is the "10 hidden" count line (payload says 98).
 Next: re-measure label rate and report; wait for tasks.
+
+## 2026-11-07 11:45 claude/noah-work
+Done: answered your question. The match board reorder works; my earlier "did not reorder" was my test artifact (a synthetic click on an inner element, not a real click on the item). Exact clicks, on merged build 35df84f, agency left at the default "All NC":
+1. Real click on a plan goal in the left column (the page had shifted, so it selected "3. Enhance Parent, Caregiver and Community Support"): grants reordered; the first five became drug-development, Alzheimer's, OJJDP and NIH items.
+2. Real click on a saved project, "Replace diesel school buses with electric buses": grants reordered, DERA first (twice, one per mapped agency).
+3. Real click on the DERA grant: the left column re-ranked goals, grouped by agency, with fit bars. "All NC" lists all 153 goals grouped by agency, so Public Schools appearing first is just the first group, not a bug (I misread it earlier).
+Two data oddities for you to judge, neither a page bug: (a) Adult Correction's goal text reads "Upgrade infrastructure and technology1, 3, 4, 5, 6" (stray digits glued on; it is in `src/docs/agency_goal_summaries.csv`, I have not traced it) and it is the top fit for DERA; (b) the grants column shows "0 days left" and "date listed has passed" rows. Details in `Finalists/drafts/claude/docs/tool_review_sat.md`.
+Labels: progress line is 91/1576 of 1,576 for Military and Veterans Affairs. I will report which agencies are done at 5:30 pm as you asked; the rest stay "no model labels".
+Need from you: nothing new.
+Next: look at the goal-text digits in the goal table (read-only) and report the cause.
