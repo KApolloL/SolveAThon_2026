@@ -7,7 +7,7 @@
 # Azure embeddings can replace keyword_fit() without touching anything else.
 # Requires dplyr, stringr, Matrix.
 
-suppressPackageStartupMessages({ library(dplyr); library(stringr); library(Matrix) })
+suppressPackageStartupMessages({ library(dplyr); library(stringr); library(Matrix); library(readr) })
 
 # Short English stop list; IDF over the whole corpus takes care of grant boilerplate.
 STOPWORDS <- c("the", "and", "for", "with", "that", "this", "from", "are", "will", "its", "our",
@@ -137,4 +137,40 @@ assign_eligibility <- function(agency_id, codes, text) {
                             ask_code ~ "ask", TRUE ~ "no"),
     elig_source = case_when(yes_code | he_ok ~ "code", ask_code & decided ~ "rule", TRUE ~ "code"),
     elig_quote  = if_else(!(yes_code | he_ok) & ask_code & decided, tx$text_quote, NA_character_))
+}
+
+# ---- Shared steps for 10_run_ranking.R, 11_build_payload.R and 12_backtest.R ------------
+read_criteria <- function(path = CRITERIA_FILE) {
+  cr <- read_csv(path, show_col_types = FALSE, col_types = cols(.default = col_character()))
+  cr$weight <- if ("weight" %in% names(cr)) suppressWarnings(as.numeric(cr$weight)) else NA_real_
+  cr
+}
+
+# Cleaned opportunities (all statuses), the agency goal table and the full plan texts.
+load_rank_inputs <- function() {
+  chr <- cols(.default = col_character())
+  amap <- read_csv(AGENCY_MAP_FILE, show_col_types = FALSE, col_types = chr)
+  opps <- prep_opportunities(read_csv(OPPS_FILE, show_col_types = FALSE, col_types = chr), REF_DATE)
+  opps$post_date <- as.Date(opps$post_date)
+  list(opps = opps, amap = amap,
+       ag = agency_goals(read_csv(GOALS_FILE, show_col_types = FALSE, col_types = chr), amap),
+       plans = plan_texts(amap, file.path(DIR_PROCESSED, "agency_plan_text", "all")))
+}
+
+# One row per agency x opportunity with fit, goal match, dates, award and eligibility.
+build_items <- function(opps, ag, plans) {
+  items <- build_pairs(opps, ag, plans) |>
+    left_join(opps[, c("opp_id", "opp_number", "title", "status", "post_date", "close_date", "date_note", "days_left",
+                       "award_ceiling", "log_ceiling", "cost_sharing", "applicant_types", "eligibility_text")], by = "opp_id") |>
+    mutate(id = paste(agency_id, opp_id, sep = ":"))
+  items <- bind_cols(items, assign_eligibility(items$agency_id, items$applicant_types, items$eligibility_text))
+  items$eligibility_text <- NULL
+  items
+}
+
+# Rank inside each agency (needs score.R sourced). Returns the ranked and dropped rows with agency_id.
+rank_by_agency <- function(items, cr) {
+  res <- lapply(split(items, items$agency_id), function(it) rank_items(it, cr, REF_DATE, ID_COL, NAME_COL, top_n = Inf))
+  tag <- function(part) bind_rows(lapply(names(res), function(a) mutate(res[[a]][[part]], agency_id = a, .before = 1)))
+  list(ranked = tag("ranked"), dropped = tag("dropped"))
 }

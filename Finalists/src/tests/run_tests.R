@@ -102,6 +102,30 @@ if (!file.exists(PAYLOAD_JSON)) {
   for (k in seq_len(nrow(ag))) check("R and JS agree", ag$name[k], ag$ok[k], ag$got[k])
 }
 
+# ---- 5b. payload.json and rankings_backtest.csv follow saturday/03_contract.md ----------
+if (file.exists(PAYLOAD_JSON) && file.exists(BACKTEST_CSV)) {
+  pl <- jsonlite::fromJSON(PAYLOAD_JSON); pr <- pl$rows
+  want <- c("agency_id","opp_id","opp_number","title","status","close_date","days_left","date_note","fit_score","rank",
+            "in_top10","eligibility","elig_source","elig_quote","reader_label","reader_quote","goal_id","goal_snippet",
+            "opp_snippet","cfda_list","award_ceiling","signature_tier","tier_source","nc_won_before","url")
+  check("payload contract", "top level keys", all(c("data_as_of","window_days","agencies","rows") %in% names(pl)))
+  check("payload contract", "every contract row field present", all(want %in% names(pr)))
+  check("payload contract", "32 agencies", nrow(pl$agencies) == 32)
+  check("payload contract", "at most 10 Top 10 rows per agency", max(table(pr$agency_id[pr$in_top10])) <= 10)
+  check("payload contract", "Top 10 holds open items only (no forecasts)", !any(pr$status[pr$in_top10] == "forecasted"))
+  check("payload contract", "Top 10 rows are never hidden as ineligible", !any(pr$eligibility[pr$in_top10] == "no"))
+  check("payload contract", "eligibility is yes, no or ask", all(pr$eligibility %in% c("yes","no","ask")))
+  check("payload contract", "fit_score within 0 to 1", all(pr$fit_score >= 0 & pr$fit_score <= 1, na.rm = TRUE))
+  check("payload contract", "unknown ceiling is null, never 0", !any(pr$award_ceiling == 0, na.rm = TRUE))
+  check("payload contract", "unknown tier is 'unknown', never a tier guess", all(pr$signature_tier == "unknown"))
+  check("payload contract", "no stub flag", is.null(pl$stub))
+  bt <- readr::read_csv(BACKTEST_CSV, show_col_types = FALSE)
+  check("backtest contract", "columns", identical(names(bt), c("agency_id","window_start","window_end","window_weeks","opp_id",
+        "opp_number","cfda_list","close_date","fit_score","rank")))
+  check("backtest contract", "at most 50 per agency and window", max(table(bt$agency_id, bt$window_start, bt$window_weeks)) <= 50)
+  check("backtest contract", "every item closes on or after window start", all(bt$close_date >= bt$window_start))
+}
+
 # ---- 6. LLM guard: labels need a verifiable quote; cache; shards -------------------
 l <- "llm guard"
 DIR_CACHE_LLM <- tempfile("llm_cache_"); LLM_MODEL <- "test-model"

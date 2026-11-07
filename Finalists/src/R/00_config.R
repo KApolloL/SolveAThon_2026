@@ -77,6 +77,13 @@ ELIG_TEXT_NO  <- c("state governments are not eligible", "state agencies are not
 ELIG_TEXT_YES <- c("state governments", "state government agencies", "state agencies", "agencies of state")
 ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government|agenc)"
 
+PAYLOAD_AS_OF   <- "2026-11-07T11:00:00-05:00"   # stamped into payload.json; fixed so reruns are identical
+TOP10_N         <- 10L    # open items flagged per agency (Top 10 list)
+COMING_UP_N     <- 10L    # forecasted items kept per agency ("Coming up")
+HIDDEN_N        <- 10L    # best-fitting clearly-ineligible items kept per agency so the tool can show the toggle
+BACKTEST_TOP_N  <- 50L    # ranked items written per agency and window in rankings_backtest.csv
+SNIPPET_CHARS   <- 240L   # opp_snippet length
+
 PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")
 TOOL_HTML_OUT <- file.path(DIR_OUTS, "criteria_tool.html")

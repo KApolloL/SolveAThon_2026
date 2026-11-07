@@ -1,8 +1,7 @@
 # 10_run_ranking.R: open opportunities x active agencies -> filter, score, rank, explain,
-# one ranking per agency. Reads opportunities.csv, the agency map, the goal table and the
-# full plan text; writes data/processed/items.csv (one row per agency x opportunity),
-# ranking.csv (per-agency ranks) and outs/top_results.csv (top N per agency).
-# payload.json in the contract shape is built by the payload step (not here).
+# one ranking per agency. Writes data/processed/items.csv (one row per agency x opportunity),
+# ranking.csv (ranked rows, per-agency ranks) and outs/top_results.csv (top N per agency).
+# 11_build_payload.R turns these into payload.json; 12_backtest.R ranks closed items.
 # Run: Rscript R/10_run_ranking.R
 
 here::i_am("src/R/10_run_ranking.R")
@@ -10,42 +9,24 @@ source(here::here("src", "R", "00_config.R"))
 source(here::here("src", "R", "helpers_io.R"))
 source(here::here("src", "R", "helpers_rank.R"))
 source(here::here("src", "R", "score.R"))
-suppressPackageStartupMessages(library(readr))
 
 stop_if_toy(CRITERIA_FILE)
-cr <- read_csv(CRITERIA_FILE, show_col_types = FALSE, col_types = cols(.default = col_character()))
-cr$weight <- if ("weight" %in% names(cr)) suppressWarnings(as.numeric(cr$weight)) else NA_real_
+cr <- read_criteria()
+inp <- load_rank_inputs()
+opps <- inp$opps[inp$opps$status %in% OPEN_STATUSES, ]
 
-chr <- cols(.default = col_character())
-opps <- prep_opportunities(read_csv(OPPS_FILE, show_col_types = FALSE, col_types = chr), REF_DATE)
-opps <- opps[opps$status %in% OPEN_STATUSES, ]
-opps$award_ceiling <- as.numeric(opps$award_ceiling)
-amap <- read_csv(AGENCY_MAP_FILE, show_col_types = FALSE, col_types = chr)
-ag <- agency_goals(read_csv(GOALS_FILE, show_col_types = FALSE, col_types = chr), amap)
-plans <- plan_texts(amap, file.path(DIR_PROCESSED, "agency_plan_text", "all"))
-
-pairs <- build_pairs(opps, ag, plans)
-items <- pairs |>
-  dplyr::left_join(opps[, c("opp_id", "opp_number", "title", "status", "close_date", "date_note", "days_left",
-                            "award_ceiling", "log_ceiling", "cost_sharing", "applicant_types", "eligibility_text")], by = "opp_id") |>
-  dplyr::mutate(id = paste(agency_id, opp_id, sep = ":"))
-items <- dplyr::bind_cols(items, assign_eligibility(items$agency_id, items$applicant_types, items$eligibility_text))
-items$eligibility_text <- NULL
+items <- build_items(opps, inp$ag, inp$plans)
 dir.create(DIR_PROCESSED, showWarnings = FALSE, recursive = TRUE)
 write_csv(items, file.path(DIR_PROCESSED, "items.csv"), na = "")
 
-# Rank inside each agency: an opportunity is compared with others for the same agency only.
-by_agency <- lapply(split(items, items$agency_id), function(it)
-  rank_items(it, cr, REF_DATE, ID_COL, NAME_COL, top_n = Inf))
-ranked <- dplyr::bind_rows(lapply(names(by_agency), function(a)
-  dplyr::mutate(by_agency[[a]]$ranked, agency_id = a, .before = 1)))
-dropped <- dplyr::bind_rows(lapply(names(by_agency), function(a)
-  dplyr::mutate(by_agency[[a]]$dropped, agency_id = a, .before = 1)))
-message(length(by_agency), " agencies; ", nrow(items), " pairs; ", nrow(dropped), " dropped by filters; ", nrow(ranked), " ranked")
+# An opportunity is compared with others for the same agency only.
+rk <- rank_by_agency(items, cr)
+message(length(unique(items$agency_id)), " agencies; ", nrow(items), " pairs; ", nrow(rk$dropped),
+        " dropped by filters; ", nrow(rk$ranked), " ranked")
 
-write_csv(ranked, RANKING_CSV, na = "")
+write_csv(rk$ranked, RANKING_CSV, na = "")
 dir.create(DIR_OUTS, showWarnings = FALSE, recursive = TRUE)
-top <- ranked[ranked$rank <= TOP_N, c("agency_id", "rank", "id", "name", "total", "why")]
-top <- dplyr::left_join(top, items[, c("id", "opp_number", "close_date", "date_note", "award_ceiling", "goal_snippet")], by = "id")
+top <- rk$ranked[rk$ranked$rank <= TOP_N, c("agency_id", "rank", "id", "name", "total", "why")]
+top <- left_join(top, items[, c("id", "opp_number", "close_date", "date_note", "award_ceiling", "goal_snippet")], by = "id")
 write_csv(top, file.path(DIR_OUTS, "top_results.csv"), na = "")
 message("Wrote items.csv, ranking.csv, top_results.csv")
