@@ -75,6 +75,11 @@ ELIG_TEXT_NO  <- c("state governments are not eligible", "state agencies are not
                    "applications from federal, state, or tribal governments will not be considered",
                    "tribal governments only", "federally recognized tribes only", "individuals only")
 ELIG_TEXT_YES <- c("state governments", "state government agencies", "state agencies", "agencies of state")
+# Tribal programs (gate: "tribal-only items are hidden"). An item whose eligibility is still "ask" (code 25 or none)
+# and whose TITLE names a tribal program becomes "no", quoting the title words. Titles that also name a State or
+# States are left alone ("for State, Territorial, and Tribal", "for States and Tribes"). Kent, Sat Nov 7 evening,
+# after the hostile-judge pass found TCUP at DPI #1. 21 open titles match; none with a state-government code.
+ELIG_TRIBAL_TITLE <- "\\bTribal\\b|\\bTribes\\b|Indian Reservations?|\\bTCUP\\b"
 ELIG_TEXT_NEGATION <- "(not|ineligible|exclud|except)[^.]{0,80}state (government|agenc)"
 
 # Geography: fit is multiplied by GEO_PENALTY when the opportunity TITLE names another US state or
