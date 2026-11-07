@@ -97,3 +97,4 @@ Official schedule is in the vault hub `Projects/Competitions/Solveathon/Solveath
 - Azure NOT deployed. `app/deploy_azure.sh` is ready (dry run by default). `az` is not on Kent's Mac; Marco holds the login. Marco runs `DEPLOY=yes sh app/deploy_azure.sh` from `Finalists/`. Details in `comms/to-marco.md`.
 - Not in the tool (no data): county reach, need map, capability gaps, impact sliders. `signature_tier` is all "unknown".
 - Noah's Claude is running the 23-agency labels on his machine (N2). Marco's Claude: snapshot repo (T2), notice reader (T3, blocked).
+- Checked Sat Nov 7 (Kent's Claude): rerun of `10_run_ranking.R` then `11_build_payload.R` gives an identical `payload.json` (md5 fa2e2a6c1c8fca628cf7bc30bea7f21e). DERA ranks 1 for DEQ and 3 for DPI, both eligibility "ask". `check_facts.R` 24 of 24. Azure is Marco's computer's job.
