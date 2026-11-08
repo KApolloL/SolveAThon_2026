@@ -164,6 +164,8 @@ Marco approved every Azure create. Kent chose every design option in the plannin
 
 **Evaluation built into the solution.** Every Pursue / Maybe / Skip mark is sent to the app's feedback log (agency, grant, rank, mark and a random browser code; no name or email). `app/pilot_scorecard.sh` turns that log into the pilot's running measure: of the Top 10 grants people marked, the share they kept, by agency. Each user sees their own version in My grants. With manual monitoring kept running beside it, this gives both precision (how many Top 10 grants are worth keeping) and, from what manual monitoring finds that we did not show, recall. No real user has produced marks yet, so we report no hit rate.
 
+**What the refresh job really does.** On Nov 8 at 05:02 UTC we ran the Azure job once by hand on the current image. It succeeded: it checked the payload (32 agencies), dropped 15 rows whose close date had passed, and wrote nothing because it is in dry-run mode. It did not re-score, because the app image does not carry the ranking code.
+
 **Not verified.** The Azure daily refresh job exists but runs in dry-run mode (`JOB_DRY_RUN=1`): it re-scores cached data and does not fetch new postings. We do not claim a live daily refresh. Measured Azure spend is not in the fact sheet.
 
 ---

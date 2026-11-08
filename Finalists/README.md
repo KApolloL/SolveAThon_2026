@@ -137,7 +137,7 @@ Status (Sat Nov 7, night): image `ffm-app:v24` is live, and the page it serves i
 
 What it does not do: it does not fetch new postings. It re-scores the cached data. Fetching (`02*` to `03`) is still run by hand.
 
-Status: the daily job running on its schedule is not verified. The job image (`Dockerfile.job`) is not confirmed built or pushed.
+Status (Sun Nov 8): the job runs on image v36 and a run started by hand at 05:02 UTC succeeded. With the app image it skips scoring (no `src/R` inside), checks the baked payload, drops rows whose close date has passed, and, because `JOB_DRY_RUN=1`, writes nothing. Its first scheduled run is 11:00 UTC Nov 8. Real daily re-scoring needs the job image (`Dockerfile.job`, not built yet) and a Blob write role; fetching new postings stays manual. Details in [src/docs/azure_setup.md](src/docs/azure_setup.md).
 
 ## How to extend
 
