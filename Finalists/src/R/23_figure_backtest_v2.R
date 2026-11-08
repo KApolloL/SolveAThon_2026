@@ -14,6 +14,7 @@ d <- r |> group_by(top_n) |>
   pivot_longer(-top_n, names_to = "method", values_to = "share") |>
   mutate(method = factor(method, levels = c("Ranking", "Soonest deadline", "Random")),
          top = factor(paste("Top", top_n), levels = paste("Top", sort(unique(top_n)))))
+n_won <- sum(r$won_in_pool[r$top_n == min(r$top_n)]); n_ag <- n_distinct(r$agency_id)
 p <- ggplot(d, aes(top, share, fill = method)) +
   geom_col(position = position_dodge(width = 0.8), width = 0.7) +
   geom_text(aes(label = scales::percent(share, accuracy = 1)), position = position_dodge(width = 0.8), vjust = -0.4, size = 4.2, color = "#222222") +
@@ -22,6 +23,6 @@ p <- ggplot(d, aes(top, share, fill = method)) +
   scale_fill_manual(values = c(Ranking = FIG_COLORS$main, `Soonest deadline` = FIG_COLORS$muted, Random = FIG_COLORS$accent)) +
   scale_y_continuous(limits = c(0, 0.75), labels = scales::percent) +
   labs(title = "Share of programs an agency has won that reach its Top N",
-       subtitle = "159 won programs, 12 agencies, 4-week windows.\nExploratory: the pre-set bar failed. Repeat funding favors this test.") +
+       subtitle = paste0(n_won, " won programs, ", n_ag, " agencies, 4-week windows.\nExploratory: the pre-set bar failed. Repeat funding favors this test.")) +
   theme_finals(13) + theme(legend.position = "top", legend.title = element_blank(), axis.title = element_blank())
 export_figure(p, "backtest_recall_v2", width = 8, height = 4.5)

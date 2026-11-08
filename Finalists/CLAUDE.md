@@ -41,7 +41,7 @@ Decide at the design sprint whether the skeleton fits (`planning/03_problem_type
 
 ## Constraints
 - No participant, patient or personal data in any file.
-- API keys: the two team keys (Simpler.Grants.gov, SAM.gov) live in `api_keys.env`, committed on purpose because the repo is private (Kent, Nov 6). Never put any other key in a file, and never print keys in chat, slides or field notes.
+- API keys: the two team keys (Simpler.Grants.gov, SAM.gov) live in `api_keys.env`, which is git-ignored and untracked (repo goes public, Nov 8). Keep your local copy; `api_keys.env.example` shows the format. Never put any key in a tracked file, and never print keys in chat, slides or field notes.
 - Do not edit `.Renviron` or `.RData`.
 - Do not re-run outside-service scripts casually. They call out only for uncached items.
 - Log every AI use in `AI_USAGE_LOG.md` (tool, what for, what was checked by a human).

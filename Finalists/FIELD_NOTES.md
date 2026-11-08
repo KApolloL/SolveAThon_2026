@@ -79,7 +79,7 @@ How to read this. Every number comes from [src/docs/fact_sheet.md](src/docs/fact
 ### 1.6 What we tested with people, and what we did not
 
 - **Discovery session (Fri Nov 6):** agency and OSBM staff. This shaped every row of table 1.2.
-- **Tool testing (Sat Nov 7):** a round of fixes was logged as coming from user testing: tour flow, wrong-agency jumps, "Match an idea" matching, the map, mobile swipe ([AI_USAGE_LOG.md](AI_USAGE_LOG.md), last row). `[TEAM TO CONFIRM before submitting: who the testers were (role, not name) and whether any was agency staff.]`
+- **Tool testing (Sat Nov 7):** a round of fixes was logged as coming from user testing: tour flow, wrong-agency jumps, "Match an idea" matching, the map, mobile swipe ([AI_USAGE_LOG.md](AI_USAGE_LOG.md), last row). The testers were other undergraduates, people working in the field (consultants and government workers), and other adults. None was agency or OSBM staff, so none of this is evidence from the real users.
 - **Simulated reviewers:** 37 AI persona and judge transcripts in [testing/transcripts/](testing/transcripts/), covering grant writer, non-grants staffer, budget director, IT architect, hostile judge and others. They found real bugs, such as embassy notices and out-of-region grants in Top 10 lists. **They are not user evidence**, and we do not report their opinions as what users said.
 - **Not done:** no agency coordinator has used the tool on their own work over days. That is what the pilot is for.
 
@@ -99,7 +99,7 @@ Sources: [AI_USAGE_LOG.md](AI_USAGE_LOG.md), one row per session, with what a pe
 | Local Ollama `qwen2.5:14b` | Kent | Trial relevance labels for an evaluation pool. They failed validation and are **not** used in the tool |
 | Azure OpenAI `gpt-4o-mini` (resource `ffm-aoai-team15`) | Team | **In the product:** notice summaries with a checked quote (`src/R/31_swipe_summary.R`, about 558 calls, about $0.07 as logged) and an advisory "can a state agency apply as lead?" label (`src/R/30_notice_reader.R`). Neither sets rank, eligibility or tier |
 
-`[TEAM TO CONFIRM: no other tool (UNC PromptLab, ChatGPT) was used.]`
+No other generative AI tool was used: no UNC PromptLab, no ChatGPT. The only tools were Claude Code, OpenCode and Codex (as logged), local Ollama, and Azure OpenAI in the product.
 
 ### 2.2 Key prompts
 
