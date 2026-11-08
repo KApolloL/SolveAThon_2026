@@ -804,6 +804,35 @@ details.mb-box ul { margin-top:8px !important; max-height:420px; overflow:auto; 
 table.ship-t { border-collapse:collapse; width:100%; font-size:.9rem; margin:8px 0 10px; } table.ship-t th, table.ship-t td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--rule); vertical-align:top; } table.ship-t th { background:var(--surface-3); font-size:.82rem; color:var(--text-secondary); }
 table.ship-t td:first-child { font-weight:700; white-space:nowrap; } .ship-dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:8px; vertical-align:-1px; border:2px solid var(--border); }
 .ship-dot.blue { background:#2a6fb0; border-color:#2a6fb0; } .ship-dot.pink { background:#d16aa0; border-color:#d16aa0; } .ship-dot.red { background:#c0392b; border-color:#c0392b; } .ship-dot.green { background:#2e8b57; border-color:#2e8b57; } .ship-dot.gold { background:#c99a1e; border-color:#c99a1e; } .ship-dot.white { background:#fff; border-color:var(--text-muted); }
+
+/* ---- ticket rip: Pursue tears the deadline stub off and it flies into My grants ---- */
+.rip-fly { position:fixed; z-index:1200; pointer-events:none; margin:0; box-sizing:border-box; border-right:none !important; box-shadow:0 10px 24px rgba(0,0,0,.28); will-change:transform, opacity; transform-origin:30% 50%; }
+.rip-fly::before, .rip-fly::after { display:none !important; }
+.days.torn { background:repeating-linear-gradient(135deg, transparent 0 7px, var(--surface-3) 7px 8px); justify-content:center; gap:4px; cursor:pointer; padding:10px 6px; }
+.days.torn > :not(.torn-slot) { display:none !important; }
+.torn-slot { all:unset; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:100%; height:100%; min-height:72px; text-align:center; cursor:pointer; border-radius:8px; color:var(--text-secondary); font-size:.78rem; line-height:1.25; }
+.torn-slot svg { color:var(--accent); }
+.torn-slot u { color:var(--accent); font-weight:700; text-underline-offset:2px; }
+.torn-slot:hover u { text-decoration-thickness:2px; }
+.torn-slot:focus-visible { outline:3px solid var(--accent); outline-offset:-3px; }
+.days.reattach { animation:ripStick .32s cubic-bezier(.2,1.4,.4,1); }
+@keyframes ripStick { 0% { transform:translateX(-22px) rotate(-6deg); opacity:.2; } 100% { transform:none; opacity:1; } }
+#tab-marks.got-ticket { animation:ripGot .5s ease-out; }
+@keyframes ripGot { 0% { transform:scale(1); } 35% { transform:scale(1.14); color:var(--accent); } 100% { transform:scale(1); } }
+.rip-toast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:1100; display:flex; align-items:center; gap:6px 12px; flex-wrap:wrap; background:var(--text-primary); color:var(--surface-2); padding:8px 10px 8px 18px; border-radius:999px; box-shadow:0 10px 30px rgba(0,0,0,.3); font-weight:600; font-size:.92rem; max-width:calc(100vw - 24px); }
+.rip-toast button { font:inherit; font-weight:700; color:var(--surface-2); background:none; border:1px solid rgba(255,255,255,.4); border-radius:999px; padding:6px 14px; min-height:36px; cursor:pointer; }
+.rip-toast button:hover { background:rgba(255,255,255,.12); }
+.rip-toast button:focus-visible { outline:3px solid #f2c14e; outline-offset:2px; }
+body.proj .rip-toast { display:none !important; }
+/* Pass: rubber stamp */
+.pass-stamp { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; z-index:5; }
+.pass-stamp span { --ink:#c8372d; color:var(--ink); border:4px solid var(--ink); outline:2px solid var(--ink); outline-offset:3px; border-radius:8px; padding:4px 18px; font-weight:900; font-size:clamp(1.6rem, 1rem + 2.4vw, 2.6rem); letter-spacing:.18em; text-indent:.18em; transform:rotate(-14deg); opacity:.88; background:rgba(200,55,45,.06);
+  -webkit-mask:radial-gradient(circle at 20% 30%, transparent 0 2px, #000 3px) 0 0/11px 13px, linear-gradient(#000,#000); mask:radial-gradient(circle at 20% 30%, transparent 0 2px, #000 3px) 0 0/11px 13px, linear-gradient(#000,#000); -webkit-mask-composite:source-in; mask-composite:intersect;
+  animation:stampSlam .3s cubic-bezier(.2,1.6,.4,1) both; }
+[data-theme="dark"] .pass-stamp span, .dark .pass-stamp span { --ink:#ff6b5e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pass-stamp span { --ink:#ff6b5e; } }
+@keyframes stampSlam { 0% { transform:rotate(-24deg) scale(2.4); opacity:0; } 60% { transform:rotate(-13deg) scale(.92); opacity:.95; } 100% { transform:rotate(-14deg) scale(1); opacity:.88; } }
+.sw-card .pass-stamp span { font-size:2.6rem; }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -840,6 +869,7 @@ body.proj .tour-card { font-size:1.2rem; }
     <details class="dispmenu"><summary>Display ▾</summary><div class="dispmenu-pop">
       <div class="dm-row"><span>Text size</span><button type="button" id="txt-dn" aria-label="Smaller text">A−</button><span id="txt-v" class="dm-v">Normal</span><button type="button" id="txt-up" aria-label="Larger text">A+</button></div>
       <div class="dm-row"><span>Zoom</span><button type="button" id="zm-dn" aria-label="Zoom out">−</button><span id="zm-v" class="dm-v">100%</span><button type="button" id="zm-up" aria-label="Zoom in">+</button></div>
+      <button type="button" id="snd" aria-pressed="true" title="A short paper-tear sound when you save a grant">Sound effects: on</button>
       <button type="button" id="large" aria-pressed="false" hidden>Larger text</button>
       <button type="button" id="proj" aria-pressed="false" title="Show only the best matches in very large type (shortcut: p)">Projector view</button></div></details>
   </div>
@@ -1042,6 +1072,8 @@ body.proj .tour-card { font-size:1.2rem; }
 <dialog id="save-dlg" class="sheet" aria-labelledby="save-h"><button type="button" class="x" id="save-x" aria-label="Close">×</button><div style="padding:18px 22px"><h2 id="save-h">Save</h2><div id="save-body"></div></div></dialog>
 <dialog id="fb-dlg" class="sheet" aria-labelledby="fb-h"><button type="button" class="x" id="fb-x" aria-label="Close">×</button><div style="padding:18px 22px"><h2 id="fb-h">Tell us how it went</h2><div id="fb-body"></div></div></dialog>
 <div id="fb-toast" class="fb-toast" role="status" hidden></div>
+<div id="rip-toast" class="rip-toast" role="status" hidden></div>
+<div class="sr-only" id="rip-live" aria-live="polite"></div>
 <div id="print-sheet" aria-hidden="true"></div>
 <!-- Evidence shown on the home screen and in How this works. Every value is copied from
      src/docs/fact_sheet.md (row numbers in "fact"); change them there first, then here.
@@ -1105,15 +1137,157 @@ body.proj .tour-card { font-size:1.2rem; }
       b.setAttribute("aria-pressed", marks[key] === name ? "true" : "false");
       b.addEventListener("click", function () {
         var on = marks[key] !== name;
+        // Pursue tears the ticket stub off: copy it before the card switches to its torn look
+        var fly = on && name === "Pursue" ? ripClone(stubFor(box)) : null;
         if (on) marks[key] = name; else delete marks[key];
         saveMarks(); syncMarkButtons(key); renderMarks();
-        if (on && name === "Pursue") { openPlan(r); setTimeout(function () { quickAsk("Pursue"); }, 400); }
-        if (name === "Pass" && box.closest("#v-opps")) show(true);
+        if (on && name === "Pursue") { ripGo(fly); ripToast(r, key); }
+        if (name === "Pass" && box.closest("#v-opps")) { if (on) stampPass(box.closest("li.row"), function () { show(true); }); else show(true); }
+        else if (on && name === "Pass") stampPass(null);
       });
       box.appendChild(b);
     });
     var pl = el("button", "planbtn", "See my plan"); pl.type = "button"; pl.addEventListener("click", function () { openPlan(r); }); box.appendChild(pl);
     return box;
+  }
+
+  // ---- ticket rip: Pursue tears the deadline stub off along the perforation and it flies into My grants ----
+  var SND_ON = lsGet("ffm_snd_v1", true) !== false, AUD = null;
+  function calm() { return matchMedia("(prefers-reduced-motion: reduce)").matches; }
+  function stubFor(box) { var host = box && (box.closest("li.row") || box.closest(".desk-card") || box.parentNode); return host ? host.querySelector(".days:not(.torn)") : null; }
+  // a paper tear made in code: crackly noise through a rising band-pass filter, about a third of a second
+  function tearSound() {
+    if (!SND_ON) return;
+    try {
+      var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+      AUD = AUD || new C(); if (AUD.state === "suspended") AUD.resume();
+      var sr = AUD.sampleRate, dur = 0.34, n = Math.floor(sr * dur), buf = AUD.createBuffer(1, n, sr), x = buf.getChannelData(0), hold = 0, v = 0;
+      for (var i = 0; i < n; i++) {
+        var t = i / n; if (hold-- <= 0) { hold = 8 + Math.floor(Math.random() * 60); v = Math.random() < 0.45 ? 1 : 0.2; }
+        x[i] = (Math.random() * 2 - 1) * v * Math.min(1, t / 0.03) * Math.pow(1 - t, 1.4);
+      }
+      var s = AUD.createBufferSource(); s.buffer = buf;
+      var f = AUD.createBiquadFilter(); f.type = "bandpass"; f.Q.value = 0.9; f.frequency.setValueAtTime(1300, AUD.currentTime); f.frequency.exponentialRampToValueAtTime(3800, AUD.currentTime + dur);
+      var g = AUD.createGain(); g.gain.value = 0.22;
+      s.connect(f); f.connect(g); g.connect(AUD.destination); s.start();
+    } catch (e) {}
+  }
+  // a fixed-position copy of the stub with a jagged right edge where it tore
+  function ripClone(stub) {
+    if (!stub || calm() || !stub.getClientRects().length) return null;
+    var rc = stub.getBoundingClientRect(); if (!rc.width || rc.bottom < 0 || rc.top > innerHeight) return null;
+    var c = stub.cloneNode(true); c.className += " rip-fly"; c.removeAttribute("id");
+    c.style.cssText += ";left:" + rc.left + "px;top:" + rc.top + "px;width:" + rc.width + "px;height:" + rc.height + "px;border-radius:var(--radius) 0 0 var(--radius)";
+    var w = rc.width, h = rc.height, pts = ["0px 0px", w + "px 0px"], step = 7, y = 0, k = 0;
+    while (y < h) { y = Math.min(h, y + step); k++; pts.push((w - (k % 2 ? 5 + Math.random() * 3 : Math.random() * 2)).toFixed(1) + "px " + y.toFixed(1) + "px"); }
+    pts.push("0px " + h + "px");
+    c.style.clipPath = "polygon(" + pts.join(",") + ")";
+    document.body.appendChild(c); return c;
+  }
+  function ripTarget() {
+    var t = $("tab-marks"); if (t && t.getClientRects().length) { var r = t.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) return r; }
+    return { left: innerWidth - 90, top: 10, width: 60, height: 30 };
+  }
+  function ripGo(c) {
+    tearSound();
+    if (!c) { bumpTab(); return; }
+    if (!c.animate) { c.remove(); bumpTab(); return; }
+    var a = c.getBoundingClientRect(), t = ripTarget();
+    var dx = (t.left + t.width / 2) - (a.left + a.width / 2), dy = (t.top + t.height / 2) - (a.top + a.height / 2);
+    var tug = c.animate([
+      { transform: "translate(0,0) rotate(0deg)" },
+      { transform: "translate(-4px,1px) rotate(-2deg)", offset: 0.5 },
+      { transform: "translate(-16px,8px) rotate(-9deg)" }
+    ], { duration: 190, easing: "cubic-bezier(.3,.7,.4,1)", fill: "forwards" });
+    tug.onfinish = function () {
+      var fly = c.animate([
+        { transform: "translate(-16px,8px) rotate(-9deg) scale(1)", opacity: 1 },
+        { transform: "translate(" + (dx * 0.45 - 16) + "px," + (dy * 0.45 - 70) + "px) rotate(-24deg) scale(.72)", opacity: 1, offset: 0.5 },
+        { transform: "translate(" + dx + "px," + dy + "px) rotate(-38deg) scale(.14)", opacity: 0.35 }
+      ], { duration: 640, easing: "cubic-bezier(.45,0,.55,1)", fill: "forwards" });
+      fly.onfinish = function () { c.remove(); bumpTab(); };
+    };
+  }
+  function bumpTab() { var t = $("tab-marks"); if (!t) return; t.classList.remove("got-ticket"); void t.offsetWidth; t.classList.add("got-ticket"); }
+  // torn look on every visible card for this grant, with a button that sticks the stub back on
+  function setTorn(d, key, on) {
+    if (!d) return;
+    var slot = d.querySelector(".torn-slot");
+    if (on) {
+      d.classList.add("torn");
+      if (!slot) {
+        slot = el("button", "torn-slot"); slot.type = "button";
+        slot.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Stub in My&nbsp;grants</span><u>Undo</u>';
+        slot.setAttribute("aria-label", "Saved to My grants. Undo: put the stub back and remove this grant from My grants");
+        slot.addEventListener("click", function () { unrip(key); });
+        d.appendChild(slot);
+      }
+    } else if (d.classList.contains("torn")) {
+      d.classList.remove("torn"); if (slot) slot.remove();
+      if (!calm()) { d.classList.remove("reattach"); void d.offsetWidth; d.classList.add("reattach"); }
+    }
+  }
+  function syncStubs(key) {
+    Array.prototype.forEach.call(document.querySelectorAll("li.row"), function (li) {
+      if (li.dataset.ag + "|" + li.dataset.opp !== key) return;
+      setTorn(li.querySelector(".days"), key, marks[key] === "Pursue");
+    });
+  }
+  function unrip(key) {
+    if (marks[key] !== "Pursue") return;
+    delete marks[key]; saveMarks(); syncMarkButtons(key); renderMarks();
+    var tb = $("rip-toast"); if (tb && tb.dataset.key === key) tb.hidden = true;
+    var live = $("rip-live"); if (live) live.textContent = "Removed from My grants";
+  }
+  // Pass: a red PASSED rubber stamp slams onto the ticket, the card shudders, then folds away
+  function thudSound() {
+    if (!SND_ON) return;
+    try {
+      var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+      AUD = AUD || new C(); if (AUD.state === "suspended") AUD.resume();
+      var t0 = AUD.currentTime, o = AUD.createOscillator(), g = AUD.createGain();
+      o.type = "sine"; o.frequency.setValueAtTime(150, t0); o.frequency.exponentialRampToValueAtTime(55, t0 + 0.14);
+      g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.35, t0 + 0.008); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.2);
+      o.connect(g); g.connect(AUD.destination); o.start(t0); o.stop(t0 + 0.22);
+      var sr = AUD.sampleRate, n = Math.floor(sr * 0.06), buf = AUD.createBuffer(1, n, sr), x = buf.getChannelData(0);
+      for (var i = 0; i < n; i++) x[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
+      var s = AUD.createBufferSource(), f = AUD.createBiquadFilter(), g2 = AUD.createGain(); s.buffer = buf; f.type = "lowpass"; f.frequency.value = 900; g2.gain.value = 0.25;
+      s.connect(f); f.connect(g2); g2.connect(AUD.destination); s.start(t0);
+    } catch (e) {}
+  }
+  function stampOn(host) {
+    var s = el("div", "pass-stamp"); s.setAttribute("aria-hidden", "true"); s.appendChild(el("span", null, "PASSED"));
+    host.appendChild(s); return s;
+  }
+  function stampPass(li, done) {
+    done = done || function () {};
+    thudSound();
+    var live = $("rip-live"); if (live) live.textContent = "Passed";
+    if (!li || calm() || !li.animate) { done(); return; }
+    stampOn(li);
+    li.animate([{ transform: "translate(0,0)" }, { transform: "translate(0,3px) scale(.995)", offset: 0.35 }, { transform: "translate(-3px,0)", offset: 0.55 }, { transform: "translate(2px,0)", offset: 0.75 }, { transform: "translate(0,0)" }], { duration: 260, delay: 90, easing: "ease-out" });
+    setTimeout(function () {
+      var h = li.offsetHeight;
+      li.style.overflow = "hidden";
+      var fold = li.animate([
+        { height: h + "px", opacity: 1, transform: "translateX(0) rotate(0deg)", marginBottom: "10px" },
+        { height: h + "px", opacity: 0.85, transform: "translateX(-24px) rotate(-1.5deg)", marginBottom: "10px", offset: 0.35 },
+        { height: "0px", opacity: 0, transform: "translateX(-60px) rotate(-3deg)", marginBottom: "0px", paddingTop: "0px", paddingBottom: "0px" }
+      ], { duration: 420, easing: "cubic-bezier(.5,0,.75,0)", fill: "forwards" });
+      fold.onfinish = done;
+    }, 620);
+  }
+
+  var ripTimer = null;
+  function ripToast(r, key) {
+    var bar = $("rip-toast"); if (!bar) return;
+    bar.innerHTML = ""; bar.hidden = false; bar.dataset.key = key;
+    var nm = (r.title || r.opp_number || "Grant"); if (nm.length > 48) nm = nm.slice(0, 46) + "…";
+    bar.appendChild(el("span", null, "Saved to My grants: " + nm));
+    var u = el("button", null, "Undo"); u.type = "button"; u.addEventListener("click", function () { unrip(key); });
+    var p = el("button", null, "See my plan"); p.type = "button"; p.addEventListener("click", function () { bar.hidden = true; openPlan(r); });
+    bar.appendChild(u); bar.appendChild(p);
+    clearTimeout(ripTimer); ripTimer = setTimeout(function () { if (!bar.contains(document.activeElement)) bar.hidden = true; else ripTimer = setTimeout(function () { bar.hidden = true; }, 6000); }, 7000);
   }
 
   // ---- one-page printable brief (for the supervisor or leader who has to sign) ----
@@ -1538,6 +1712,7 @@ body.proj .tour-card { font-size:1.2rem; }
       if (bx.dataset.key !== key) return; bx.dataset.mark = marks[key] || "";
       Array.prototype.forEach.call(bx.querySelectorAll("button[data-m]"), function (c) { c.setAttribute("aria-pressed", marks[key] === c.dataset.m ? "true" : "false"); if (c.dataset.m === "Pursue") c.textContent = marks[key] === "Pursue" ? "✓ In My grants" : "Pursue: save to My grants"; });
     });
+    syncStubs(key);
   }
 
   // ---- agency look: an icon and a color theme per agency (24px grid, 2px round stroke, currentColor) ----
@@ -1657,6 +1832,7 @@ body.proj .tour-card { font-size:1.2rem; }
   function startSwipe() {
     if (!cur.id) return;
     SW = { deck: deckFor(), i: 0, hist: [], added: 0, maybes: 0 };
+    $("rip-toast").hidden = true;
     $("swipe").hidden = false; document.body.classList.add("swiping");
     renderSwipe(); $("sw-exit").focus();
   }
@@ -1705,8 +1881,11 @@ body.proj .tour-card { font-size:1.2rem; }
     marks[key] = name; saveMarks(); syncMarkButtons(key);
     if (name === "Pursue") SW.added++; if (name === "Maybe") SW.maybes++;
     var card = document.querySelector("#sw-stack .sw-card:not(.behind)");
+    if (name === "Pursue") ripGo(ripClone(card && card.querySelector(".sw-num")));
     var go = function () { SW.i++; SW.busy = false; renderMarks(); renderSwipe(); };
-    if (card && !matchMedia("(prefers-reduced-motion: reduce)").matches) { SW.busy = true; card.classList.add("fly-" + kind); setTimeout(go, 220); } else go();
+    if (name === "Pass") thudSound();
+    if (card && !calm() && name === "Pass") { SW.busy = true; stampOn(card); setTimeout(function () { card.classList.add("fly-left"); setTimeout(go, 220); }, 380); }
+    else if (card && !calm()) { SW.busy = true; card.classList.add("fly-" + kind); setTimeout(go, 220); } else go();
     $("sw-live").textContent = name === "Pursue" ? "Saved to My grants" : name === "Maybe" ? "Set aside as maybe" : "Passed";
   }
   function swUndo() {
@@ -2450,7 +2629,8 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function rowEl(r) {
     var li = el("li", "row"), body = el("div", "rbody"); li.dataset.opp = r.opp_id; li.dataset.ag = r.agency_id;
-    li.appendChild(daysBlock(r));
+    var stub = daysBlock(r); li.appendChild(stub);
+    if (marks[r.agency_id + "|" + r.opp_id] === "Pursue") setTorn(stub, r.agency_id + "|" + r.opp_id, true);
     var t = el("div", "title"), u = safeUrl(r.url);
     if (u) { var a = el("a", null, r.title || r.opp_number || r.opp_id); a.href = u; a.target = "_blank"; a.rel = "noopener"; a.title = "Open the full grant announcement on Grants.gov (new tab)"; a.setAttribute("aria-label", (r.title || "Grant") + " (opens the announcement on Grants.gov in a new tab)"); t.appendChild(a); }
     else t.textContent = r.title || r.opp_number || r.opp_id;
@@ -2621,7 +2801,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var box = $("start"); box.innerHTML = "";
     box.hidden = !pick.length; if (box.hidden) return;
     box.appendChild(el("h2", null, cur.order === "rank" ? (pick.length === 1 ? "Start here: your best open match" : "Start here: your " + pick.length + " best open matches") : "Start here: top " + pick.length + " by " + ORDER_LABEL[cur.order]));
-    box.appendChild(el("p", "note", "Big number: days left to apply. Right: the most one award can be. Press Pursue to get a step-by-step plan."));
+    box.appendChild(el("p", "note", "Big number: days left to apply. Right: the most one award can be. Pursue tears off the stub and saves the grant; See my plan gives a step-by-step plan."));
     var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
   }
   function show(keepW) {
@@ -2972,6 +3152,9 @@ body.proj .tour-card { font-size:1.2rem; }
   $("zm-dn").addEventListener("click", function () { zmI = Math.max(0, zmI - 1); applyDisplay(); }); $("zm-up").addEventListener("click", function () { zmI = Math.min(ZM.length - 1, zmI + 1); applyDisplay(); });
   applyDisplay();
   $("theme").addEventListener("click", function () { setTheme(isDark() ? "light" : "dark"); });
+  function sndLabel() { var b = $("snd"); b.textContent = "Sound effects: " + (SND_ON ? "on" : "off"); b.setAttribute("aria-pressed", SND_ON ? "true" : "false"); }
+  $("snd").addEventListener("click", function () { SND_ON = !SND_ON; lsSet("ffm_snd_v1", SND_ON); sndLabel(); if (SND_ON) tearSound(); });
+  sndLabel();
   setTheme(lsGet("ffm_theme_v1", "") || "");
   if (darkMQ.addEventListener) darkMQ.addEventListener("change", function () { if (!document.documentElement.dataset.theme) setTheme(""); });
   function setLarge(on) { document.body.classList.toggle("large", on); $("large").setAttribute("aria-pressed", on); lsSet("ffm_large_v1", on); }
