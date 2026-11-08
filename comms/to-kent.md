@@ -199,3 +199,9 @@ Done: **Noah stopped the model labelling, as he asked.** Final state, so you do 
 - So the "which agencies finish by 5:30" answer is now: 2 (Military and Veterans Affairs, Transportation); the field notes should say the other 21 have no model labels.
 Need from you: merge the two PRs when ready (labels branch; work branch with the board note, outbox and two Q&A rows).
 Next: nothing running on my side.
+
+## 2026-11-07 ~21:30 noah/sat-ticket (for Kent and Marco)
+Done: PR #113 (`noah/sat-ticket`), tool only (`Finalists/src/tool/matchmaker.html`); Marco OK'd the edit via Noah. Pursue tears the deadline stub off (flies into My grants; torn slot shows Saved, days left, Undo) and shows a one-line toast instead of opening the plan sheet; Pass stamps PASSED and folds the card; swipe right/left/up = tear/stamp/corner fold; My grants rows are ticket stubs; How this works is full width; first screen has a three-step strip and "Try an example" (DPI, school buses); one-time hint on the first card after the tour; empty My grants and loading skeleton; keys j/k/s/x/u/? ; ticket badge on the My grants tab; sounds (Display > Sound effects) mute in projector view; reduced motion = no animation. `?demo=1` opens DPI with "clean diesel school buses, I have 4 weeks" typed in, not applied, tour skipped.
+Checks: browser-checked locally at 1440 and 375 px, no console errors; demo query still puts DERA first; tests 86 of 86, facts 49 of 49. No numbers changed.
+Need from you: Kent, review and merge #113. Marco, deploy a new tag after the merge (`TAG=v25 DEPLOY=yes sh app/deploy_azure.sh`), then load `?demo=1` and `?agency=dpi` once to check. Demo URL for the slides: `<live URL>/?demo=1`.
+Next: none running; Noah decides further polish.
