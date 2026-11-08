@@ -939,6 +939,14 @@ kbd { font:inherit; font-size:.82rem; font-weight:700; background:var(--surface-
 @keyframes skelMove { to { background-position:-200% 0; } }
 .skel-err { margin-top:16px; padding:16px 18px; border-radius:var(--radius); background:var(--bad-soft); color:var(--text-primary); }
 #v-opps.nopick .skel { display:none; }
+/* ---- Who a grant reaches ---- */
+p.reach-line { margin:4px 0 0; font-size:.9rem; color:var(--text-secondary); }
+p.reach-line b { color:var(--text-primary); }
+body:not(.detail) p.reach-line { display:none; }
+.reach-box { display:grid; gap:10px; }
+.reach-g h4 { margin:0 0 4px; font-size:.95rem; }
+.reach-g p { margin:2px 0; }
+.reach-q span { color:var(--text-secondary); } .reach-q q { font-style:italic; }
 /* ---- Simple / Detailed cards ---- */
 body:not(.detail) li.row details.impact, body:not(.detail) li.row .money small, body:not(.detail) .c2.est, body:not(.detail) .c2.c-track, body:not(.detail) .c2.c-fed { display:none !important; }
 body.detail .st-fit, body.detail .st-fit + .tip { display:none !important; }
@@ -2999,11 +3007,56 @@ body.proj .tour-card { font-size:1.2rem; }
     }
     return d;
   }
+  // ---- Who a grant reaches in NC (display only; from keyword tags + qualifier population geography) ----
+  var REACH = {};
+  function initReach() {
+    var R = P.reach; if (!R || !R.groups || !P.county_need) return;
+    var pop = R.county_pop || {}, ids = [];
+    R.groups.forEach(function (g) {
+      REACH[g.id] = g; if (!g.county) return;
+      var mid = "grp_" + g.id, vals = [];
+      Object.keys(g.county).forEach(function (f) { if (pop[f] > 0) vals.push({ fips: f, v: Math.round(1000 * g.county[f] / pop[f]) / 10 }); });
+      var sorted = vals.map(function (x) { return x.v; }).sort(function (a, b) { return a - b; });
+      vals.forEach(function (x) { var below = 0; while (below < sorted.length && sorted[below] < x.v) below++; P.county_need.values.push({ fips: x.fips, id: mid, v: x.v, pct: sorted.length > 1 ? below / (sorted.length - 1) : 1 }); });
+      P.county_need.indicators.push({ id: mid, label: g.label + ", share of residents (" + String(g.source || "").replace(/\s*\(.*$/, "") + ", %)" }); ids.push(mid);
+    });
+    if (ids.length) MEASURE_GROUPS.push(["Who grants reach (share of residents)", ids]);
+  }
+  function cname(f) { var c = (P.counties || []).filter(function (x) { return x.fips === f; })[0]; return c ? c.county : f; }
+  function topCounties(g, n) { var c = g.county || {}; return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).slice(0, n); }
+  function reachLine(r) {
+    var gs = (r.reach || []).map(function (x) { return REACH[x.id]; }).filter(Boolean); if (!gs.length) return null;
+    var p = el("p", "reach-line"); p.appendChild(el("b", null, "Who it reaches: "));
+    p.appendChild(document.createTextNode(gs.map(function (g) { return g.label.charAt(0).toLowerCase() + g.label.slice(1); }).join(" and ") + " \u00b7 most live in " + topCounties(gs[0], 3).map(cname).join(", ")));
+    return p;
+  }
+  function showGroupOnMap(id) { tab("map"); var sel = $("map-ind"); sel.value = "grp_" + id; MAPSEL = null; renderMap(); window.scrollTo(0, 0); }
+  function reachBlock(r) {
+    var R = P.reach, tags = (r.reach || []).filter(function (x) { return REACH[x.id]; }); if (!R || !tags.length) return null;
+    var box = el("div", "reach-box");
+    tags.forEach(function (x) {
+      var g = REACH[x.id], sec = el("div", "reach-g");
+      sec.appendChild(el("h4", null, g.label + (g.n ? ": " + Math.round(g.n).toLocaleString() + " in NC" : "")));
+      if (x.quote) { var q = el("p", "reach-q"); q.appendChild(el("span", null, "Why we think so: ")); q.appendChild(el("q", null, x.quote)); sec.appendChild(q); }
+      if (g.county) {
+        sec.appendChild(el("p", null, "Most live in " + topCounties(g, 5).map(function (f) { return cname(f) + " (" + Math.round(g.county[f]).toLocaleString() + ")"; }).join(", ") + "."));
+        var ru = { rural: 0, suburban: 0, urban: 0 }, tot = 0;
+        Object.keys(g.county).forEach(function (f) { var k = (R.county_rurality || {})[f]; if (ru[k] != null) { ru[k] += g.county[f]; tot += g.county[f]; } });
+        if (tot) sec.appendChild(el("p", null, "Where they live: " + Math.round(100 * ru.rural / tot) + "% in rural counties, " + Math.round(100 * ru.suburban / tot) + "% suburban, " + Math.round(100 * ru.urban / tot) + "% urban."));
+      }
+      if (g.district) { var d = g.district, top = Object.keys(d).sort(function (a, b) { return d[b] - d[a]; }).slice(0, 3); sec.appendChild(el("p", null, "Most in congressional " + top.map(function (k) { return String((R.district_names || {})[k] || k).replace(/^Congressional /, "") + " (" + Math.round(d[k]).toLocaleString() + ")"; }).join(", ") + " (2023 district lines; NC redrew them for 2024).")); }
+      if (g.county) { var b = el("button", "linkbtn", "Show where they live on the map"); b.type = "button"; b.addEventListener("click", function () { showGroupOnMap(g.id); }); sec.appendChild(b); }
+      box.appendChild(sec);
+    });
+    box.appendChild(el("p", "note", (R.caveat || "Where the people live, not where the money goes.") + " Groups come from words in the announcement, so check the quote."));
+    return box;
+  }
   function drawer(r) {
     var det = el("details", "drawer"); det.appendChild(el("summary", null, "Why it fits, odds and details"));
     var dl = el("dl");
     function add(k, v) { if (v == null || v === "") return; dl.appendChild(el("dt", null, k)); dl.appendChild(el("dd", null, String(v))); }
     add("Why it fits your plan", r.goal_snippet || "No plan goal matched");
+    var rb = reachBlock(r); if (rb) { dl.appendChild(el("dt", null, "Who this reaches in NC")); var rdd = el("dd"); rdd.appendChild(rb); dl.appendChild(rdd); }
     var od = odds(r), ef = effort(r), m = money(r);
     add("Chance of winning: " + od.label, od.why.join(". ") + ".");
     add("Effort: " + ef.label, (ef.why.join(". ") || "Not stated") + (ef.weeks ? ". Roughly " + ef.weeks + " weeks of one person's time." : "."));
@@ -3072,6 +3125,7 @@ body.proj .tour-card { font-size:1.2rem; }
     body.appendChild(el("div", "funder", r.funder || "Federal funder not listed"));
     var gs = r.goal_snippet ? String(r.goal_snippet).replace(/^Goal\s*\S*\s*[\u2013-]?\s*/i, "").trim() : "";
     if (gs) { var wy = el("p", "why"); wy.appendChild(el("b", null, "Why it's here: ")); wy.appendChild(document.createTextNode("matches your plan goal \u201c" + gs + "\u201d")); body.appendChild(wy); }
+    var rl = reachLine(r); if (rl) body.appendChild(rl);
     body.appendChild(statusLine(r));
     if (r.eligibility !== "no") body.appendChild(impactBox(r));
     if (r.eligibility !== "no") body.appendChild(actions(r));
@@ -3974,7 +4028,7 @@ body.proj .tour-card { font-size:1.2rem; }
   // the Azure container sleeps when idle: say so instead of looking broken
   var warm = setTimeout(function () { if (!P) $("asof").textContent = "Loading data... the server is waking up, this can take up to 40 seconds."; }, 4000);
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
-    P = p; CSD = p.closing_soon_days || 14; dropClosed(); var sk = $("skel"); if (sk) sk.remove();
+    P = p; CSD = p.closing_soon_days || 14; dropClosed(); try { initReach(); } catch (e) {} var sk = $("skel"); if (sk) sk.remove();
     P.rows.forEach(function (r) { if (r.date_note === "date listed has passed") r.date_note = "Expected date passed; not posted yet"; });
     $("asof").textContent = fmtAsOf(p.data_as_of); $("asof").parentNode.title = "Data as of " + (p.data_as_of || "unknown");
     if (p.stub === true || /stub/i.test(String(p.data_as_of))) $("stub").hidden = false;

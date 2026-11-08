@@ -36,7 +36,7 @@ Run everything from `src/`. Start with the ranking, then the two checks:
 ```bash
 cd src
 Rscript R/10_run_ranking.R     # writes data/processed/items.csv and ranking.csv, and outs/top_results.csv
-Rscript tests/run_tests.R      # prints "86 of 86 tests pass"
+Rscript tests/run_tests.R      # prints "89 of 89 tests pass"
 Rscript R/check_facts.R        # prints "49 of 49 rows pass"
 ```
 
@@ -82,7 +82,7 @@ Four steps, all in R, all rule-based:
 1. **Filter.** Hide opportunities that clearly exclude state agencies (applicant code, then fixed text rules). Unknown stays visible with an "Ask" badge. Criteria filters such as eligibility and overseas-post grants live in `data/manual/criteria.csv`.
 2. **Score.** Fit is keyword overlap between the opportunity text and the agency's plan goals. Other criteria (award size, cost share, time to apply) are in the table with weights.
 3. **Rank.** Open items go to the Top 10. Forecasted items go to "Coming up".
-4. **Explain.** Each row carries the matched plan goal, a one-sentence note on how the score was reached, and a signature tier (who must sign off, from cost share and award size).
+4. **Explain.** Each row carries the matched plan goal, a one-sentence note on how the score was reached, and a signature tier (who must sign off, from cost share and award size). Each row can also say **who it reaches**: a population group from keyword rules on the announcement (with the matching quote), and where that group lives in NC (counties, rural or urban, congressional districts), from the qualifier's ACS data. Display only; never enters the rank.
 
 Rules to know:
 - [data/manual/criteria.csv](data/manual/criteria.csv) is the method. One row per rule, with a plain-language reason and a source. Change the table, not the code, where you can.
