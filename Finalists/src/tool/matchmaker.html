@@ -769,7 +769,18 @@ ol.map-top { list-style:none; margin:0; padding:0; display:grid; gap:2px; }
 .bars-axis { display:grid; grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 5.6em; gap:10px; margin-top:4px; } .bars-axis .ticks { position:relative; height:16px; border-top:1px solid var(--border); } .bars-axis .ticks span { position:absolute; top:2px; transform:translateX(-50%); font-size:.8rem; color:var(--text-muted); } .bars li { grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 8.5em !important; } .bars-axis { grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 8.5em !important; }
 .bars-axis-t { font-size:.8rem; color:var(--text-secondary); margin:2px 0 0; text-align:center; }
 @media (max-width:560px) { .bars-axis { grid-template-columns:1fr 4.6em; } .bars-axis > span:first-child { display:none; } }
-.how-h1 { font-size:1.6rem; margin:0 0 8px; } #v-how .evidence > h2 { display:none; } #v-how .evidence { max-width:760px; }
+.how-h1 { font-size:1.6rem; margin:0 0 8px; }
+#v-how.how-full { max-width:none; width:min(1640px, calc(100vw - 40px)); margin-left:calc((100% - min(1640px, calc(100vw - 40px))) / 2); }
+@media (max-width:560px) { #v-how.how-full { width:auto; margin-left:0; } }
+#v-how .how-lead { background:var(--accent-soft); border-radius:var(--radius); padding:22px 26px; margin-bottom:18px; }
+#v-how .how-lead .how-h1 { font-size:clamp(1.6rem, 1.1rem + 1.6vw, 2.3rem); margin:0 0 8px; color:var(--text-primary); }
+#v-how .how-lead p { font-size:1.05rem; max-width:80ch; margin:0; color:var(--text-primary); }
+#v-how .how-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap:16px; align-items:stretch; }
+#v-how .how-card { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:18px 22px; box-shadow:var(--shadow); min-width:0; }
+#v-how .how-card.wide { grid-column:1 / -1; }
+#v-how .how-card > h2:first-child { margin-top:0; }
+#v-how .how-card .evidence { border:none; box-shadow:none; padding:0; background:none; max-width:none; }
+#v-how .how-card .tablewrap { overflow-x:auto; } #v-how .evidence > h2 { display:none; } #v-how .evidence { max-width:760px; }
 
 /* ---- Round 8 ---- */
 summary { list-style:none; } summary::-webkit-details-marker { display:none; }
@@ -810,8 +821,14 @@ table.ship-t td:first-child { font-weight:700; white-space:nowrap; } .ship-dot {
 .rip-fly::before, .rip-fly::after { display:none !important; }
 .days.torn { background:repeating-linear-gradient(135deg, transparent 0 7px, var(--surface-3) 7px 8px); justify-content:center; gap:4px; cursor:pointer; padding:10px 6px; }
 .days.torn > :not(.torn-slot) { display:none !important; }
-.torn-slot { all:unset; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; width:100%; height:100%; min-height:72px; text-align:center; cursor:pointer; border-radius:8px; color:var(--text-secondary); font-size:.78rem; line-height:1.25; }
-.torn-slot svg { color:var(--accent); }
+.torn-slot { all:unset; box-sizing:border-box; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:2px; width:100%; min-height:72px; padding:4px 2px; text-align:center; cursor:pointer; border-radius:8px; color:var(--text-secondary); font-size:.74rem; line-height:1.2; overflow-wrap:anywhere; }
+.torn-slot .ts-ok { display:inline-flex; align-items:center; gap:3px; font-weight:800; color:var(--good, var(--accent)); background:var(--good-soft, var(--accent-soft)); border-radius:999px; padding:2px 8px 2px 6px; margin-bottom:4px; font-size:.72rem; letter-spacing:.02em; }
+.torn-slot .ts-days { font-size:1.9rem; line-height:1; font-weight:800; color:var(--text-muted); font-variant-numeric:tabular-nums; letter-spacing:-.03em; opacity:.85; }
+.torn-slot .ts-days.urgent { color:var(--bad); }
+.torn-slot .ts-lab { color:var(--text-muted); }
+.torn-slot u { margin-top:6px; }
+.days.torn { justify-content:flex-start !important; padding-top:14px !important; }
+@media (max-width:560px) { .torn-slot .ts-days { font-size:1.45rem; } .torn-slot .ts-ok { padding:2px 6px; } }
 .torn-slot u { color:var(--accent); font-weight:700; text-underline-offset:2px; }
 .torn-slot:hover u { text-decoration-thickness:2px; }
 .torn-slot:focus-visible { outline:3px solid var(--accent); outline-offset:-3px; }
@@ -819,11 +836,25 @@ table.ship-t td:first-child { font-weight:700; white-space:nowrap; } .ship-dot {
 @keyframes ripStick { 0% { transform:translateX(-22px) rotate(-6deg); opacity:.2; } 100% { transform:none; opacity:1; } }
 #tab-marks.got-ticket { animation:ripGot .5s ease-out; }
 @keyframes ripGot { 0% { transform:scale(1); } 35% { transform:scale(1.14); color:var(--accent); } 100% { transform:scale(1); } }
-.rip-toast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:1100; display:flex; align-items:center; gap:6px 12px; flex-wrap:wrap; background:var(--text-primary); color:var(--surface-2); padding:8px 10px 8px 18px; border-radius:999px; box-shadow:0 10px 30px rgba(0,0,0,.3); font-weight:600; font-size:.92rem; max-width:calc(100vw - 24px); }
+.rip-toast { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:1100; display:flex; align-items:center; gap:10px; flex-wrap:nowrap; box-sizing:border-box; width:max-content; max-width:min(620px, calc(100vw - 24px)); background:var(--text-primary); color:var(--surface-2); padding:8px 8px 8px 16px; border-radius:14px; box-shadow:0 10px 30px rgba(0,0,0,.3); font-size:.92rem; animation:rtIn .22s ease-out; }
+@keyframes rtIn { from { transform:translate(-50%, 12px); opacity:0; } to { transform:translate(-50%, 0); opacity:1; } }
+.rip-toast .rt-msg { flex:1 1 auto; min-width:0; display:flex; flex-direction:column; line-height:1.25; }
+.rip-toast .rt-msg b { font-weight:800; font-size:.8rem; letter-spacing:.02em; opacity:.8; }
+.rip-toast .rt-name { font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rip-toast button { flex:none; white-space:nowrap; }
+@media (max-width:420px) { .rip-toast { flex-wrap:wrap; } .rip-toast .rt-msg { flex-basis:100%; } }
 .rip-toast button { font:inherit; font-weight:700; color:var(--surface-2); background:none; border:1px solid rgba(255,255,255,.4); border-radius:999px; padding:6px 14px; min-height:36px; cursor:pointer; }
 .rip-toast button:hover { background:rgba(255,255,255,.12); }
 .rip-toast button:focus-visible { outline:3px solid #f2c14e; outline-offset:2px; }
 body.proj .rip-toast { display:none !important; }
+/* My grants: each saved grant shows its torn ticket stub; passed ones carry a small PASSED stamp */
+li.mg-item .mg-days { align-self:stretch; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--stub); border-right:2px dashed var(--border); border-radius:8px 4px 4px 8px; padding:10px 4px; position:relative;
+  clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 92%, 4px 86%, 0 80%, 4px 74%, 0 68%, 4px 62%, 0 56%, 4px 50%, 0 44%, 4px 38%, 0 32%, 4px 26%, 0 20%, 4px 14%, 0 8%); }
+li.mg-item .mg-days.urgent { background:var(--stub-urgent); }
+li.mg-item.passed .mg-days b { color:var(--text-muted); }
+li.mg-item.passed .mg-days::after { content:"PASSED"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-16deg); font-size:.7rem; font-weight:900; letter-spacing:.14em; color:#c8372d; border:2px solid #c8372d; border-radius:4px; padding:1px 5px; background:var(--surface-2); opacity:.9; }
+[data-theme="dark"] li.mg-item.passed .mg-days::after { color:#ff6b5e; border-color:#ff6b5e; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) li.mg-item.passed .mg-days::after { color:#ff6b5e; border-color:#ff6b5e; } }
 .dispmenu-pop button[aria-pressed="true"] { background:var(--accent-soft) !important; color:var(--text-primary) !important; border-color:var(--accent) !important; }
 /* Pass: rubber stamp */
 .pass-stamp { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; z-index:5; }
@@ -1218,8 +1249,13 @@ body.proj .tour-card { font-size:1.2rem; }
       d.classList.add("torn");
       if (!slot) {
         slot = el("button", "torn-slot"); slot.type = "button";
-        slot.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Stub in My&nbsp;grants</span><u>Undo</u>';
-        slot.setAttribute("aria-label", "Saved to My grants. Undo: put the stub back and remove this grant from My grants");
+        var nb = d.querySelector(":scope > b"), ns = d.querySelector(":scope > span"), big = nb ? nb.textContent : "", small = ns ? ns.textContent : "";
+        var num = /^\d+$/.test(big);
+        slot.innerHTML = '<span class="ts-ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>Saved</span>';
+        if (num) { slot.appendChild(el("b", "ts-days" + (d.classList.contains("urgent") ? " urgent" : ""), big)); slot.appendChild(el("span", "ts-lab", small)); }
+        else if (big) slot.appendChild(el("span", "ts-lab", big));
+        slot.appendChild(el("u", null, "Undo"));
+        slot.setAttribute("aria-label", "Saved to My grants" + (big ? ", " + big + (small ? " " + small : "") : "") + ". Undo: put the stub back and remove this grant from My grants");
         slot.addEventListener("click", function () { unrip(key); });
         d.appendChild(slot);
       }
@@ -1283,8 +1319,9 @@ body.proj .tour-card { font-size:1.2rem; }
   function ripToast(r, key) {
     var bar = $("rip-toast"); if (!bar) return;
     bar.innerHTML = ""; bar.hidden = false; bar.dataset.key = key;
-    var nm = (r.title || r.opp_number || "Grant"); if (nm.length > 48) nm = nm.slice(0, 46) + "…";
-    bar.appendChild(el("span", null, "Saved to My grants: " + nm));
+    var nm = (r.title || r.opp_number || "Grant"), msg = el("span", "rt-msg");
+    msg.appendChild(el("b", null, "Saved to My grants")); msg.appendChild(el("span", "rt-name", nm)); msg.title = nm;
+    bar.appendChild(msg);
     var u = el("button", null, "Undo"); u.type = "button"; u.addEventListener("click", function () { unrip(key); });
     var p = el("button", null, "See my plan"); p.type = "button"; p.addEventListener("click", function () { bar.hidden = true; openPlan(r); });
     bar.appendChild(u); bar.appendChild(p);
@@ -2543,6 +2580,19 @@ body.proj .tour-card { font-size:1.2rem; }
     ul(["It does not decide for you. It ranks and explains; you choose Pursue or Pass.", "It does not let an AI model set rank or eligibility.", "It does not use past awards to rank, so new programs are not buried.", "Your saved grants stay in this browser. Feedback you choose to send goes to the project team only."]);
     h("Coming next (not built yet)");
     ul(["Cities, counties and school districts: many have no strategic plan online, so the match would start from eligibility and local priorities.", "Grants that go straight from a federal agency to local groups (for example some Department of Education programs).", "Switching on the daily data refresh.", "An AI writing helper on the state's Azure service, after a data-handling review. Today there is a proposal starter outline."]);
+    layoutHow(v);
+  }
+
+  // How this works: full width. The intro becomes a lead band; each h2 and what follows becomes a card in a grid.
+  // Wide parts (the Shipley table, the evidence charts) span the whole row.
+  function layoutHow(v) {
+    var kids = Array.prototype.slice.call(v.childNodes), lead = el("div", "how-lead"), grid = el("div", "how-grid"), card = null;
+    kids.forEach(function (n) {
+      if (n.tagName === "H2") { card = el("section", "how-card"); grid.appendChild(card); }
+      (card || lead).appendChild(n);
+    });
+    Array.prototype.forEach.call(grid.children, function (c) { if (c.querySelector("table, #evidence-how")) c.classList.add("wide"); });
+    v.innerHTML = ""; v.appendChild(lead); v.appendChild(grid); v.classList.add("how-full");
   }
 
   // ---- OSBM: put "who should apply together" under a dropdown ----
