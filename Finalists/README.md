@@ -108,7 +108,7 @@ Rules to know:
 | [data/example/](data/example/) | Fake toy data, used only when real files are missing. |
 | [outs/](outs/) | Generated files. Safe to delete. |
 | [saturday/](saturday/) | Build-day decisions and the payload contract. |
-| [planning/](planning/), [docs/](docs/) | Discovery findings and framing worksheets; the organizer brief ([docs/QUEST_BRIEF.md](docs/QUEST_BRIEF.md)) and judging rubric. |
+| [planning/](planning/), [docs/](docs/) | Discovery findings and framing worksheets; the organizer brief ([docs/QUEST_BRIEF.md](docs/QUEST_BRIEF.md)) and judging rubric; [requirements](docs/REQUIREMENTS.md), [Q&A defense](docs/QA_DEFENSE.md), [pilot plan](docs/PILOT_PLAN.md) and [handover for a state developer](docs/HANDOVER.md). |
 | [FIELD_NOTES.md](FIELD_NOTES.md) | Solution Design and GenAI Field Notes (submission deliverable). |
 | [handoff.md](handoff.md), [AI_USAGE_LOG.md](AI_USAGE_LOG.md) | Team status notes and the log of AI use. |
 | `_team/` | Team-internal process files: task briefs, runbook, archived drafts, vault copies. Not needed to run or judge the work. |
@@ -159,7 +159,7 @@ Status (Sun Nov 8): the job runs on image v36 and a run started by hand at 05:02
 - Only 2 agencies (DHHS and DMVA) have a capability table.
 - The daily job exists in Azure but runs with `JOB_DRY_RUN=1`, so it writes nothing yet, and it re-scores cached data rather than fetching new postings. Do not describe the refresh as live.
 - No evaluation with real agency staff has been done.
-- API keys: `api_keys.env` is tracked in git, so those keys are in history. Rotate them and remove the file from history before the repo is shared outside the team.
+- API keys: `api_keys.env` is no longer tracked and is git-ignored (copy `api_keys.env.example`, add your own free Simpler.Grants.gov and SAM.gov keys). Only the data-collection scripts need keys. The ranking, tests and the Azure app need none.
 
 ## Where the numbers come from
 
