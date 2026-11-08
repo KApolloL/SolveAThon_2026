@@ -939,6 +939,9 @@ kbd { font:inherit; font-size:.82rem; font-weight:700; background:var(--surface-
 @keyframes skelMove { to { background-position:-200% 0; } }
 .skel-err { margin-top:16px; padding:16px 18px; border-radius:var(--radius); background:var(--bad-soft); color:var(--text-primary); }
 #v-opps.nopick .skel { display:none; }
+/* ---- pilot measure line in My grants ---- */
+.mg-score { margin:4px 0 12px; padding:10px 14px; border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:10px; background:var(--surface-2); max-width:760px; font-size:.92rem; }
+.mg-score .note { display:block; margin-top:4px; }
 /* ---- Who a grant reaches ---- */
 p.reach-line { margin:4px 0 0; font-size:.9rem; color:var(--text-secondary); }
 p.reach-line b { color:var(--text-primary); }
@@ -1229,7 +1232,7 @@ body.proj .tour-card { font-size:1.2rem; }
         <dt>Closing soon</dt><dd>14 days or fewer left to apply.</dd>
         <dt>Coming up</dt><dd>Forecasts: the funder says it plans to post this. You cannot apply yet, but you can plan.</dd>
         <dt>Rolling</dt><dd>No close date is listed. Open the grant announcement (the official notice on Grants.gov) to see how long it stays open.</dd>
-        <dt>Pursue, Maybe, Skip</dt><dd>Your own marks, saved only in this browser. Pursue puts the grant in My grants and opens a plan. Nothing is sent anywhere.</dd>
+        <dt>Pursue, Maybe, Skip</dt><dd>Your own marks, saved in this browser. Pursue puts the grant in My grants and opens a plan. Each mark (agency, grant and mark only; no name or email) is also sent to the project team to measure the pilot.</dd>
         <dt>Tier 1, 2, 3</dt><dd>Who has to sign, as in the qualifier tool. Tier 1: you can start. Tier 2: your manager signs (matching money). Tier 3: leadership signs (matching money on an award of $1M or more).</dd>
         <dt>Impact (≈)</dt><dd>A 0 to 100 score: 60% how well the grant fits your agency's plan, 40% how big one award can be ($10K scores 0, $100M or more scores 100). Strategic plan fit only when no amount is listed. Our estimate; it never changes the ranking.</dd>
         <dt>Past wins</dt><dd>From federal award records. ★★★ your agency has won this program before; ★★ another NC group has; ★ your agency has won other grants from the same federal department. No stars means "New to NC": no NC win on record, which is not a bad sign.</dd>
@@ -1305,7 +1308,7 @@ body.proj .tour-card { font-size:1.2rem; }
 
   <section id="v-marks" role="tabpanel" aria-labelledby="tab-marks" hidden>
     <div id="mg-body"></div>
-    <p class="note">Saved in this browser only. Nothing is sent anywhere.</p>
+    <p class="note">Saved in this browser. Only your Pursue, Maybe and Skip marks are sent to the project team (no name or email).</p>
     <div class="toolbar"><button type="button" id="marks-csv">Export decisions CSV</button><button type="button" id="marks-clear">Clear all</button><button type="button" id="marks-brief">Copy briefs for all Pursue items</button><button type="button" id="marks-ics">Download deadlines (.ics)</button></div>
     <div class="savebox" id="savebox"><b>Keep your work</b>
       <p>There are no accounts. Everything you mark saves automatically in this browser on this device, and nothing is sent to anyone. To move it to another computer or keep a backup, save a progress file, then open it on the other device.</p>
@@ -1388,7 +1391,22 @@ body.proj .tour-card { font-size:1.2rem; }
 
   // ---- marks (Pursue / Maybe / Pass), browser only ----
   var marks = lsGet("ffm_marks_v1", {});
-  function saveMarks() { lsSet("ffm_marks_v1", marks); }
+  // Pilot measure: each change to a mark goes to the team's feedback log (agency, grant, rank, mark and a random
+  // browser code; no name, email or other personal data), so the team can count how many Top 10 grants people keep.
+  var MARK_SENT = lsGet("ffm_marks_sent_v1", null); if (!MARK_SENT) { MARK_SENT = JSON.parse(JSON.stringify(marks)); lsSet("ffm_marks_sent_v1", MARK_SENT); }
+  var BROWSER_CODE = lsGet("ffm_bcode_v1", ""); if (!BROWSER_CODE) { BROWSER_CODE = Math.random().toString(36).slice(2, 10); lsSet("ffm_bcode_v1", BROWSER_CODE); }
+  function sendMarkChanges() {
+    var keys = {}; Object.keys(marks).concat(Object.keys(MARK_SENT)).forEach(function (k) { keys[k] = 1; });
+    Object.keys(keys).forEach(function (k) {
+      if ((marks[k] || "") === (MARK_SENT[k] || "")) return;
+      var r = null; if (P) for (var i = 0; i < P.rows.length; i++) { if (P.rows[i].agency_id + "|" + P.rows[i].opp_id === k) { r = P.rows[i]; break; } }
+      var parts = k.split("|");
+      try { sendFeedback({ type: "mark", v: 1, b: BROWSER_CODE, ag: parts[0], opp: parts[1], mark: marks[k] || "none", rank: r ? r.rank : null, top10: r ? !!r.in_top10 : null, as_of: P ? P.data_as_of : null }); } catch (e) {}
+      if (marks[k]) MARK_SENT[k] = marks[k]; else delete MARK_SENT[k];
+    });
+    lsSet("ffm_marks_sent_v1", MARK_SENT);
+  }
+  function saveMarks() { lsSet("ffm_marks_v1", marks); sendMarkChanges(); }
   // recent decisions (this browser): newest first, at most 20, each can be undone from My grants
   var HIST = lsGet("ffm_hist_v1", []);
   function logHist(key, name, prev, r) {
@@ -2018,7 +2036,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var bar = el("div", "cart-btns");
     var sv = el("button", "primary", "Save my grants… (PDF, Word, Excel, calendar)"); sv.type = "button"; sv.addEventListener("click", function () { saveRows("my grant cart", ur); }); bar.appendChild(sv);
     box.appendChild(bar);
-    box.appendChild(el("p", "note", "Saved in this browser only. Nothing is sent anywhere."));
+    box.appendChild(el("p", "note", "Saved in this browser. Only your Pursue, Maybe and Skip marks are sent to the project team (no name or email)."));
   }
   function syncMarkButtons(key) {
     Array.prototype.forEach.call(document.querySelectorAll(".act"), function (bx) {
@@ -2767,6 +2785,15 @@ body.proj .tour-card { font-size:1.2rem; }
       et.appendChild(eb); box.appendChild(et);
       var ld = head.querySelector(".mg-lede"); if (ld) ld.remove();
     }
+    // Pilot measure in this browser: of the Top 10 grants you marked, how many you kept (Pursue or Maybe)
+    var sc = {}; Object.keys(marks).forEach(function (k) { var r = by[k]; if (!r || !r.in_top10) return; var a = sc[r.agency_id] = sc[r.agency_id] || { n: 0, keep: 0 }; a.n++; if (marks[k] === "Pursue" || marks[k] === "Maybe") a.keep++; });
+    var scA = Object.keys(sc);
+    if (scA.length) {
+      var sp = el("div", "mg-score"); sp.appendChild(el("b", null, "Pilot measure: "));
+      sp.appendChild(document.createTextNode(scA.map(function (a) { var x = sc[a]; return agName(a) + ": you kept " + x.keep + " of " + x.n + " Top 10 grants you marked (" + Math.round(100 * x.keep / x.n) + "%)"; }).join("; ") + ". "));
+      sp.appendChild(el("span", "note", "Your marks (no name or email) also go to the project team, so a pilot can count how many Top 10 grants people keep."));
+      box.appendChild(sp);
+    }
     if (HIST.length) {
       var rc = el("details", "mg-recent"); rc.open = !!window.__rcOpen; rc.addEventListener("toggle", function () { window.__rcOpen = rc.open; }); rc.appendChild(el("summary", null, "Recent decisions (" + HIST.length + ")"));
       var ul = el("ol", "rc-list"), WORD = { Pursue: "Saved", Maybe: "Maybe", Pass: "Skipped", "": "Removed" };
@@ -2963,7 +2990,7 @@ body.proj .tour-card { font-size:1.2rem; }
     ul(["Grants: Grants.gov.", "Fit: each agency's strategic plan, published by OSBM.", "Past wins: USAspending (federal award records).", "Federal program budgets: SAM.gov program listings. State agency budgets: OSBM's budget summary.", "County need (County need map tab): CDC PLACES, ACS, HRSA, NCHS and OpenFEMA."]);
     p(fmtAsOf(P.data_as_of) + ". A daily refresh is built; switching it on needs a storage permission from the Azure owner.");
     h("What it does not do");
-    ul(["It does not decide for you. It ranks and explains; you choose Pursue or Skip.", "It does not let an AI model set rank or eligibility.", "It does not use past awards to rank, so new programs are not buried.", "Your saved grants stay in this browser. Feedback you choose to send goes to the project team only."]);
+    ul(["It does not decide for you. It ranks and explains; you choose Pursue or Skip.", "It does not let an AI model set rank or eligibility.", "It does not use past awards to rank, so new programs are not buried.", "Your saved grants stay in this browser. Your Pursue, Maybe and Skip marks (no name or email) and any feedback you send go to the project team only, to measure the pilot."]);
     h("Extra features built into this tool");
     ul(["Measure your reach: the Reach line on Find grants says how many grants were read for your agency and how the top 10 compared with a newest-posted alert in the award backtest.", "Race the clock: grants you mark Pursue or Maybe that close within " + CSD + " days appear as a red alert at the top of every tab (for example, Closes in 10 days). Pursue also adds the deadline to a calendar file.", "Learn from the users: Good match, Wrong agency, We can't apply and Not useful buttons on each card go to the project team. Your Pursue and Skip marks also re-sort your own list, for this agency in this browser (turn it off under More options)."]);
     h("A pilot, and how it could grow (proposed, not decided)");
@@ -4082,7 +4109,7 @@ body.proj .tour-card { font-size:1.2rem; }
       { t: "3. Look at the top 3 first", b: "These are the best open matches for what you typed, ranked against the agency's own plan. Use the sort buttons to reorder them by due date, impact score or biggest award.", sel: "#start" },
       { t: "Or swipe through them", b: "Short on time? Start swiping shows one grant at a time with a short summary and the big numbers. Right adds it to My grants, left skips it, up sets it aside as maybe. Undo if you change your mind.", sel: "#swipe-cta" },
       { t: "4. Read a card in 5 seconds", b: "Big number on the left: days left to apply. Right: the most money one award can be. Under the title: the funder, then one plain line that says whether your agency can apply and who has to sign. Open \"Why it fits, odds and details\" for everything else.", sel: "#start li" },
-      { t: "5. Like it? Press Pursue", b: "Pursue puts the grant in My grants and opens your application plan. Maybe or Skip if not. Nothing is sent anywhere; it stays in this browser.", sel: "#start li" },
+      { t: "5. Like it? Press Pursue", b: "Pursue puts the grant in My grants and opens your application plan. Maybe or Skip if not. Your list stays in this browser; the mark itself (no name or email) goes to the project team to measure the pilot.", sel: "#start li" },
       { t: "6. Your application plan", b: "The plan gives you the link to the full grant announcement, a timeline worked back from the deadline (read, check logins, gather, draft, sign-off, submit two days early), and a checklist of what you will need. You can add the deadline to your calendar or print a one-page brief for your manager.", sel: "#start li", act: ["Open an example plan", function () { if (window.ffmOpenFirstPlan) window.ffmOpenFirstPlan(); close(false); var d = $("plan-dlg"), resume = idx + 1, iv2 = setInterval(function () { if (d && d.open) return; clearInterval(iv2); idx = Math.min(resume, steps.length - 1); render(); }, 300); }] },
       { t: "7. My grants", b: "Everything you Pursue goes to My grants (the tab with the count): open each plan, compare grants side by side, save the list or download it as a spreadsheet. Maybe and Skipped grants live there too.", sel: "#tab-marks" },
       { t: "8. The More tabs", b: "Click More to open three more views: Needs by county (a map of North Carolina), All agencies (OSBM overview), and How it works (where the numbers come from).", sel: "#tab-more", act: ["Open the More tabs", function () { $("tab-more").click(); }] },

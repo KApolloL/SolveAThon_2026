@@ -13,7 +13,7 @@ invisible(Sys.setlocale("LC_CTYPE", "en_US.UTF-8"))
 # =============================================================================
 # FILL IN AT RELEASE
 # =============================================================================
-PROJECT_TITLE <- "Federal Funds Matchmaker"
+PROJECT_TITLE <- "grantHub"
 PROJECT_SUB   <- "Solve-A-Thon 2026 Final Quest"
 
 ID_COL     <- "id"                                   # unique key of one item

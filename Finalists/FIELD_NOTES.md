@@ -1,4 +1,4 @@
-# Solution Design and GenAI Field Notes: Federal Funds Matchmaker
+# Solution Design and GenAI Field Notes: grantHub (Federal Funds Matchmaker)
 
 Solve-A-Thon 2026 Final Quest, sponsor NC Office of State Budget and Management (OSBM).
 Team: Kent Lee, Everett Foo, Marco Gullotto, Matthew Martin, Noah Goldblatt.
@@ -61,8 +61,8 @@ How to read this. Every number comes from [src/docs/fact_sheet.md](src/docs/fact
 2. **Build agency profiles.** We downloaded 34 strategic plans from OSBM [row 1] and extracted the text, with OCR for image-only pages. Goals were recorded with quotes that a test checks against the source page. After merging duplicates, 32 agencies remain [row 2], carrying 153 plan goals [row 19].
 3. **Filter, score, rank.** Each opportunity is scored against each agency's plan: 50,432 pairs [row 4]. The filters hide 5,394 pairs that are clearly ineligible, run by a U.S. embassy abroad, or limited to tribal programs [row 7]. The fit score is keyword overlap with the plan text. A title naming another state or region halves the fit [row 13]. Every rule is one row in `criteria.csv`, and every threshold is in `src/R/00_config.R`.
 4. **Summarize.** Azure OpenAI `gpt-4o-mini` writes a two-sentence plain summary of each notice, plus one exact quote. A summary is kept only if its quote is found in the notice text (`src/R/31_swipe_summary.R`).
-5. **Show.** A one-page tool (`src/tool/matchmaker.html`) reads one file, `payload.json`. It shows the Top 10, Coming up and Hidden lists, deadline alerts, a county map, a match board of plan goals, Pursue / Maybe / Pass marks, CSV export and a feedback form.
-6. **Host.** Azure Container Apps serves the page. `payload.json` comes from Blob Storage, with a baked-in fallback copy. A daily refresh job (`app/job.R`) exists in Azure but runs in dry-run mode (see Part 3).
+5. **Show.** A one-page tool, grantHub (`src/tool/matchmaker.html`), reads one file, `payload.json`. It shows the Top 10, Coming up and Hidden lists, deadline alerts, a county map, a match board of plan goals, Pursue / Maybe / Skip marks, CSV export and a feedback form. Each grant can also say **who it reaches**: a population group (children, veterans, older adults and others) from keyword rules on the announcement, with the matching quote, and where that group lives in NC (top counties, rural or urban, congressional districts, a map layer). The population data is reused from our qualifier work (ACS 2023). It is display only and never enters the rank.
+6. **Host.** Azure Container Apps serves the page. `payload.json` comes from Blob Storage, with a baked-in fallback copy. A daily refresh job (`app/job.R`) runs in Azure in dry-run mode (see Part 3). **What is not automated yet:** fetching new postings from Grants.gov is a manual step, and the job cannot write a new payload until it has a storage write role. Both are pilot step 1.
 
 ### 1.5 Main design decisions and tradeoffs
 
@@ -73,7 +73,7 @@ How to read this. Every number comes from [src/docs/fact_sheet.md](src/docs/fact
 | All 32 agencies, not one | Matches the cross-agency need | Breadth over depth; the evaluation covers 12 to 18 agencies, not all |
 | Unknown stays visible ("Ask"), never silently dropped | A wrong eligibility code must not hide a real opportunity | Longer lists to scan |
 | Award history shown, never scored | Avoids rewarding only repeat winners | The tool cannot yet learn from past wins |
-| Marks saved in the browser only | No accounts or personal data needed for a prototype | Nothing is shared across a team yet; saving centrally is pilot work |
+| Marks saved in the browser, and each mark logged without personal data | No accounts needed, and the team can still measure use | A team cannot yet share one list; marks do not yet change the ranking |
 | Static page plus one JSON file | Fast load, easy to host, no database to secure | Refreshing data means rebuilding the file |
 
 ### 1.6 What we tested with people, and what we did not
@@ -161,6 +161,8 @@ Marco approved every Azure create. Kent chose every design option in the plannin
 - *False negatives.* The pilot keeps manual monitoring running beside the tool and counts what each catches. Recall is the headline measure.
 - *Uneven agency documentation.* Match quality depends on plan wording. Four plans are older. Only DHHS and DMVA have a capability table [row 23]. A standard agency-profile template is part of the scale plan.
 - *Inconsistent data quality.* 488 open items have no usable close date and 887 have no usable award ceiling [rows 5, 6]. The tool shows "not listed" and never makes up a value.
+
+**Evaluation built into the solution.** Every Pursue / Maybe / Skip mark is sent to the app's feedback log (agency, grant, rank, mark and a random browser code; no name or email). `app/pilot_scorecard.sh` turns that log into the pilot's running measure: of the Top 10 grants people marked, the share they kept, by agency. Each user sees their own version in My grants. With manual monitoring kept running beside it, this gives both precision (how many Top 10 grants are worth keeping) and, from what manual monitoring finds that we did not show, recall. No real user has produced marks yet, so we report no hit rate.
 
 **Not verified.** The Azure daily refresh job exists but runs in dry-run mode (`JOB_DRY_RUN=1`): it re-scores cached data and does not fetch new postings. We do not claim a live daily refresh. Measured Azure spend is not in the fact sheet.
 

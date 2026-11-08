@@ -1,4 +1,4 @@
-# Federal Funds Matchmaker (Solve-A-Thon 2026 Final Quest)
+# grantHub: Federal Funds Matchmaker (Solve-A-Thon 2026 Final Quest)
 
 A tool that helps a North Carolina agency grant coordinator see which open federal grants fit the agency's own strategic plan, early enough to apply. A person makes every decision; the tool ranks, filters and explains. Built for the NC Office of State Budget and Management (OSBM).
 
@@ -24,7 +24,7 @@ Try the demo: open [the live tool with `?demo=1`](https://ffm-app.bluepebble-2cb
 
 | Requirement | Where |
 |---|---|
-| Runs on Azure in the provided environment | Azure Container Apps (`ffm-app`) serves the tool; Blob Storage holds `payload.json`; Container Registry holds the images; Azure OpenAI (`gpt-4o-mini`) writes notice summaries; a Container Apps Job holds the daily refresh. See [azure_setup.md](Finalists/src/docs/azure_setup.md) |
+| Runs on Azure in the provided environment (and what does not) | Azure Container Apps (`ffm-app`) serves the tool; Blob Storage holds `payload.json`; Container Registry holds the images; Azure OpenAI (`gpt-4o-mini`) writes notice summaries; a Container Apps Job (`ffm-daily-refresh`) runs the refresh step daily in dry-run mode. **Boundary:** ranking, payload and page run on Azure; fetching new postings from Grants.gov is still a manual step (`R/02*`), and the job does not write until it gets a storage write role. Automating both is pilot step 1. See [azure_setup.md](Finalists/src/docs/azure_setup.md) |
 | Load federal opportunity data | Grants.gov, Simpler.Grants.gov, Federal Register, USAspending, SAM.gov Assistance Listings: `Finalists/src/R/02*`, `03_merge_opportunities.R`, `05b_sam_listings.R`; 1,576 open opportunities |
 | Agency profiles from real NC strategic plans | 34 OSBM plan PDFs in `Finalists/data/raw/agency_plans/`, text and quoted goals for 32 agencies (`04_plan_text_extract.R`, `src/docs/agency_goal_summaries.csv`) |
 | Score and rank against those profiles | `10_run_ranking.R`, rules in [criteria.csv](Finalists/data/manual/criteria.csv), settings in [00_config.R](Finalists/src/R/00_config.R) |
@@ -34,7 +34,8 @@ Try the demo: open [the live tool with `?demo=1`](https://ffm-app.bluepebble-2cb
 | Humans decide | The model never sets rank, eligibility or tier; unclear eligibility shows "Ask" with the quote |
 | Bonus 1, reach | Reach test against a newest-posted stand-in for manual alerts (fact sheet row 31) |
 | Bonus 2, deadline alerts | Days left and a closing-soon flag on every row; deadline alerts in the tool |
-| Bonus 3, learn from users | Pursue / Maybe / Skip marks, adjustable weights, and a feedback form sent to the app's `/feedback` log (`app/read_feedback.sh`). Feedback does not yet retrain the ranking |
+| Bonus 3, learn from users | Pursue / Maybe / Skip marks, adjustable weights, and a feedback form. Every mark is also sent (agency, grant, rank, mark and a random browser code; no personal data) to the app's `/feedback` log. Feedback does not yet retrain the ranking |
+| Evaluation built into the solution | `app/pilot_scorecard.sh` turns the logged marks into the pilot's measure: of the Top 10 grants people marked, the share they kept (Pursue or Maybe), by agency. The same number shows to each user in My grants ("Pilot measure") |
 | Reproducible | From `Finalists/src`: `Rscript R/10_run_ranking.R`, then `Rscript tests/run_tests.R` (89 of 89 pass) and `Rscript R/check_facts.R` (49 of 49 rows pass). No keys or network needed: caches are committed |
 
 ## Repository layout
