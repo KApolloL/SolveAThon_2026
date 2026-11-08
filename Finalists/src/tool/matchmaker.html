@@ -482,8 +482,8 @@ details.more .dd { border-top:none; margin-top:6px; padding-top:4px; }
 .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
 /* ---- swipe call to action ---- */
-.swipe-cta { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:16px 0 0; padding:14px 16px; border-radius:var(--radius); background:var(--accent-soft); }
-.swipe-cta button { display:inline-flex; align-items:center; gap:10px; font:inherit; font-size:1.05rem; font-weight:800; padding:12px 24px; border-radius:999px; border:none; background:var(--accent); color:var(--on-accent); cursor:pointer; min-height:52px; box-shadow:0 4px 14px rgba(0,0,0,.15); }
+.swipe-cta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:14px 0 0; padding:0; background:none; }
+.swipe-cta button { display:inline-flex; align-items:center; gap:8px; font:inherit; font-size:.95rem; font-weight:800; padding:8px 18px; border-radius:999px; border:none; background:var(--accent); color:var(--on-accent); cursor:pointer; min-height:44px; box-shadow:0 3px 10px rgba(0,0,0,.12); }
 .swipe-cta span { color:var(--text-secondary); font-size:.92rem; flex:1; min-width:220px; }
 
 /* ---- swipe mode ---- */
@@ -824,6 +824,7 @@ table.ship-t td:first-child { font-weight:700; white-space:nowrap; } .ship-dot {
 .rip-toast button:hover { background:rgba(255,255,255,.12); }
 .rip-toast button:focus-visible { outline:3px solid #f2c14e; outline-offset:2px; }
 body.proj .rip-toast { display:none !important; }
+.dispmenu-pop button[aria-pressed="true"] { background:var(--accent-soft) !important; color:var(--text-primary) !important; border-color:var(--accent) !important; }
 /* Pass: rubber stamp */
 .pass-stamp { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; z-index:5; }
 .pass-stamp span { --ink:#c8372d; color:var(--ink); border:4px solid var(--ink); outline:2px solid var(--ink); outline-offset:3px; border-radius:8px; padding:4px 18px; font-weight:900; font-size:clamp(1.6rem, 1rem + 2.4vw, 2.6rem); letter-spacing:.18em; text-indent:.18em; transform:rotate(-14deg); opacity:.88; background:rgba(200,55,45,.06);
@@ -938,7 +939,7 @@ body.proj .tour-card { font-size:1.2rem; }
       </details>
       <div class="frow"><span id="f-count" role="status"></span><button type="button" id="f-reset" hidden>Clear filters</button></div>
     </section>
-    <div class="swipe-cta" id="swipe-cta" hidden><button type="button" id="swipe-go"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="17" rx="2"/><path d="M3 8l3-2M21 8l-3-2"/></svg>Start swiping</button><span>Go through your matches one card at a time. Right: save to My grants. Left: pass. Up: maybe.</span></div>
+    <div class="swipe-cta" id="swipe-cta" hidden><button type="button" id="swipe-go"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="17" rx="2"/><path d="M3 8l3-2M21 8l-3-2"/></svg>Start swiping</button><span>One card at a time. → save &nbsp;·&nbsp; ← pass &nbsp;·&nbsp; ↑ maybe</span></div>
     <div class="tiles" id="tiles" hidden role="group" aria-label="Views of this agency's list"></div>
     <div id="start" class="start" hidden></div>
     <section id="matrix" class="chartbox mx" hidden aria-labelledby="mx-h">
@@ -2821,7 +2822,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var g = groups(id);
     if (ag && ag.plan_stale) banner.appendChild(el("div", "banner", "This agency's plan may be out of date. Treat matches with care."));
     if (ag && ag.plan_thin) banner.appendChild(el("div", "banner", "This agency's plan has little text, so matches are weaker."));
-    if (first) banner.appendChild(el("div", "banner", "First visit here. Next time, anything added since will be marked New."));
+    // first visit: no banner (it pushed the matches down); New marks still appear on later visits
     var tiles = $("tiles"); tiles.innerHTML = "";
     TILES.forEach(function (t) {
       var b = el("button", "tile"); b.type = "button"; b.setAttribute("aria-pressed", cur.tile === t[0] ? "true" : "false");
