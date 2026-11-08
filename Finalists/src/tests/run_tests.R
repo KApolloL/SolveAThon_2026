@@ -19,6 +19,14 @@ check <- function(section, name, ok, got = "") {
 fails <- function(expr) inherits(try(expr, silent = TRUE), "try-error")
 ref <- as.Date("2026-11-06")
 
+# ---- 0. Unit: who a grant reaches (tag_groups, display only) --------------------------
+g <- "unit: reach tags"
+tg <- tag_groups(c("Supportive Services for Veteran Families", "Clean diesel buses", "Bridge repair"),
+                 c("Serves older adults too.", "Researchers with disabilities and senior/key personnel; protect American children.", "Replaces aging infrastructure."))
+check(g, "title match first, quote is the title", identical(tg[[1]]$id, c("veterans", "older_adults")) && tg[[1]]$quote[1] == "Supportive Services for Veteran Families")
+check(g, "boilerplate ignored (no disability, senior or children tag)", nrow(tg[[2]]) == 0)
+check(g, "aging infrastructure is not older adults", nrow(tg[[3]]) == 0)
+
 # ---- 1. Unit: every rule on known input ---------------------------------------------
 u <- "unit: rules"
 check(u, "eq", identical(rule_eval(c("a", "b", NA), "eq", "a", ref), c(TRUE, FALSE, NA)))

@@ -29,12 +29,13 @@ Try the demo: open [the live tool with `?demo=1`](https://ffm-app.bluepebble-2cb
 | Agency profiles from real NC strategic plans | 34 OSBM plan PDFs in `Finalists/data/raw/agency_plans/`, text and quoted goals for 32 agencies (`04_plan_text_extract.R`, `src/docs/agency_goal_summaries.csv`) |
 | Score and rank against those profiles | `10_run_ranking.R`, rules in [criteria.csv](Finalists/data/manual/criteria.csv), settings in [00_config.R](Finalists/src/R/00_config.R) |
 | Summarize relevant information | Plain two-sentence summary per notice by Azure OpenAI, kept only when its quote is found in the notice (`31_swipe_summary.R`); matched plan goal and a one-line "why" on every row |
+| Who a grant reaches (like the qualifier) | Each grant is tagged with the population it serves (children, veterans, older adults and others) by keyword rules that keep the matching quote (`GROUP_RULES` in `00_config.R`, `tag_groups()` in `helpers_rank.R`). The card (Detailed view) and details panel show where that group lives in NC: top counties, rural/suburban/urban split, congressional districts, and a map button. Population data is reused from the qualifier (ACS 2023). Display only; never enters the rank |
 | Simple interface for a state employee | One page: pick an agency, see the Top 10, Coming up and Hidden lists; mark Pursue / Maybe / Skip; export CSV ([src/tool/matchmaker.html](Finalists/src/tool/matchmaker.html)) |
 | Humans decide | The model never sets rank, eligibility or tier; unclear eligibility shows "Ask" with the quote |
 | Bonus 1, reach | Reach test against a newest-posted stand-in for manual alerts (fact sheet row 31) |
 | Bonus 2, deadline alerts | Days left and a closing-soon flag on every row; deadline alerts in the tool |
 | Bonus 3, learn from users | Pursue / Maybe / Skip marks, adjustable weights, and a feedback form sent to the app's `/feedback` log (`app/read_feedback.sh`). Feedback does not yet retrain the ranking |
-| Reproducible | From `Finalists/src`: `Rscript R/10_run_ranking.R`, then `Rscript tests/run_tests.R` (86 of 86 pass) and `Rscript R/check_facts.R` (49 of 49 rows pass). No keys or network needed: caches are committed |
+| Reproducible | From `Finalists/src`: `Rscript R/10_run_ranking.R`, then `Rscript tests/run_tests.R` (89 of 89 pass) and `Rscript R/check_facts.R` (49 of 49 rows pass). No keys or network needed: caches are committed |
 
 ## Repository layout
 

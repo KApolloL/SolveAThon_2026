@@ -116,6 +116,9 @@ rows <- sel |>
     signature_tier, tier_source, tier_reason, rank_note,
     nc_won_before = as.logical(nc_won_before), url,
     funder, award_floor = award_floor_ctx, est_total_funding, n_awards, cost_sharing = cost_sharing_ctx, applicant_types = applicant_types_ctx, need_type)
+# Who it reaches (display only): population groups by keyword rule on title then summary, each with its quote.
+rows$reach <- tag_groups(rows$title, clean_text(o$summary[match(rows$opp_id, o$opp_id)]))
+message("Reach: ", sum(lengths(lapply(rows$reach, `[[`, "id")) > 0), " of ", nrow(rows), " rows tagged with a population group")
 tr <- bind_rows(Map(function(ag, cf) as_tibble(track_one(ag, cf)), rows$agency_id, rows$cfda_list))
 rows <- bind_cols(rows, tr)
 message("Track record: ", sum(rows$ag_won_n > 0), " rows where the agency won the program before; federal budget on ", sum(!is.na(rows$fed_fy25)), " rows")
@@ -173,9 +176,17 @@ capabilities <- read_csv(CAPABILITIES_FILE, show_col_types = FALSE, col_types = 
   mutate(agency_id = unname(CAPABILITY_AGENCY_IDS[agency])) |>
   filter(!is.na(agency_id), agency_id %in% active$agency_id) |>
   transmute(agency_id, capability_id, label = capability_label, control_level, notes, source_url, to_resolve)
+# Where each population lives (from the qualifier payload): county and congressional-district counts, county rurality.
+reach <- NULL
+if (file.exists(QUALIFIER_PAYLOAD)) {
+  qp <- fromJSON(QUALIFIER_PAYLOAD, simplifyVector = FALSE)
+  keep <- intersect(names(GROUP_RULES), names(qp$populations))
+  reach <- c(list(groups = unname(lapply(qp$populations[keep], function(g) g[c("id", "label", "n", "source", "county", "district")]))),
+             qp$community[c("county_pop", "county_rurality", "rurality_rule", "district_names", "district_note", "caveat")])
+}
 payload <- list(data_as_of = PAYLOAD_AS_OF, window_days = WINDOW_DEFAULT_WEEKS * 7L,
                 closing_soon_days = as.integer(CLOSING_SOON_DAYS), agencies = agencies, goals = goals,
-                counties = shapes, county_need = county_need, capabilities = capabilities, rows = rows)
+                counties = shapes, county_need = county_need, capabilities = capabilities, reach = reach, rows = rows)
 write_json(payload, PAYLOAD_JSON, auto_unbox = TRUE, null = "null", na = "null", pretty = TRUE, digits = NA)
 message("Wrote payload.json: ", length(agencies), " agencies, ", nrow(rows), " rows (",
         sum(rows$in_top10), " top 10, ", sum(!rows$in_top10 & rows$eligibility != "no"), " coming up, ",

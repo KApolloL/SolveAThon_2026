@@ -123,6 +123,32 @@ PAYLOAD_JSON <- file.path(DIR_PROCESSED, "payload.json")
 COUNTY_NEED_FILE   <- file.path(DIR_PROCESSED, "county_need.csv")      # from 05a (qualifier caches)
 COUNTY_SHAPES_FILE <- file.path(DIR_PROCESSED, "county_shapes.csv")    # from 05c (qualifier tigris cache)
 CAPABILITIES_FILE  <- here("..", "QualifierChallenge", "data", "manual", "agency_capabilities.csv")  # hand-built in the qualifier; DHHS and DMVA only
+
+# Who a grant reaches (display only; never enters fit, rank, eligibility or tier).
+# Population geography (county, congressional district, rurality) comes from the qualifier's payload, built from
+# ACS 2023 5-year, CDC PLACES, HRSA and OpenFEMA caches. Tags are keyword rules on the title, then the summary;
+# each tag carries the sentence it matched as its quote. Ids match the qualifier's POPULATIONS.
+QUALIFIER_PAYLOAD <- here("..", "QualifierChallenge", "data", "processed", "payload.json")
+REACH_MAX_GROUPS  <- 2L     # at most this many groups per grant (title matches first)
+REACH_QUOTE_CHARS <- 220L   # quote length cap
+# Phrases removed before matching: agency boilerplate and non-population uses of a group word.
+GROUP_IGNORE <- paste0("(protect american children|aging (infrastructure|facilit(y|ies)|equipment|systems?|assets?|fleets?|bridges?|roads?|pipes?|water)|aging-related infrastructure|blind spots?",
+  "|mother-to-child|senior[ /-]?(key|u\\.?s\\.?|foreign|personnel|officials?|level|investigators?|scientists?|research(ers)?|staff|leaders?|leadership|executives?|advisors?|management)",
+  "|(service[- ])?disabled[- ]veteran[- ]owned|veteran[- ]owned|(race|color|religion|sex|age|national origin),? (or |and )?disability|disability shall",
+  "|(researchers|scientists|investigators|engineers|faculty) with disabilities|economically disadvantaged wom[ae]n[- ]owned)")
+GROUP_RULES <- c(
+  children               = "\\b(child|children|childhood|youth|juveniles?|adolescents?|teens?|k-12|kindergarten|elementary|middle schools?|high schools?|school-age|preschool|head start|foster care)\\b",
+  older_adults           = "\\b(older adults?|older americans|elderly|aging|seniors?|geriatric|alzheimer'?s|dementia)\\b",
+  people_with_disability = "\\b(disabilit(y|ies)|disabled|deaf|blind|hard of hearing|developmental disabilit(y|ies)|vocational rehabilitation)\\b",
+  people_in_poverty      = "\\b(low-income|low income|poverty|economically disadvantaged|homeless|homelessness)\\b",
+  uninsured              = "\\b(uninsured|underinsured)\\b",
+  snap_households        = "\\b(snap|supplemental nutrition assistance|food insecurity|food assistance|wic)\\b",
+  recent_births          = "\\b(maternal|prenatal|perinatal|postpartum|pregnan(t|cy)|newborns?|infants?)\\b",
+  veterans               = "\\b(veterans?|service members?|military families)\\b",
+  adults_mental_distress = "\\b(mental health|behavioral health|suicide|serious mental illness|psychiatric)\\b",
+  shortage_area_residents = "\\b(health professional shortage|hpsas?|medically underserved|rural health)\\b",
+  hazard_exposed         = "\\b(disasters?|hazard mitigation|flood(s|ing)?|wildfires?|hurricanes?|emergency management)\\b"
+)
 CAPABILITY_AGENCY_IDS <- c(DHHS = "dhhs", DMVA = "dmva")
 NOTICE_READER_CSV  <- file.path(DIR_PROCESSED, "notice_reader.csv")  # from 30_notice_reader.R; optional, merged into payload rows
 RANKING_CSV  <- file.path(DIR_PROCESSED, "ranking.csv")

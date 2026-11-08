@@ -264,3 +264,37 @@ rank_by_agency <- function(items, cr) {
   tag <- function(part) bind_rows(lapply(names(res), function(a) mutate(res[[a]][[part]], agency_id = a, .before = 1)))
   list(ranked = tag("ranked"), dropped = tag("dropped"))
 }
+
+
+# ---- Who a grant reaches (display only) ------------------------------------------------------
+# tag_groups(title, summary): for each grant, up to REACH_MAX_GROUPS population groups from GROUP_RULES,
+# title matches first, each with the words it matched as a quote. Phrases in GROUP_IGNORE (boilerplate,
+# "aging infrastructure") are blanked before matching. Returns a list of data frames (id, quote).
+mask_ignored <- function(x, ignore = GROUP_IGNORE) {
+  m <- gregexpr(ignore, x, ignore.case = TRUE, perl = TRUE)
+  regmatches(x, m) <- lapply(regmatches(x, m), function(v) strrep(" ", nchar(v)))
+  x
+}
+tag_groups <- function(title, summary, rules = GROUP_RULES, max_n = REACH_MAX_GROUPS, qchars = REACH_QUOTE_CHARS, ignore = GROUP_IGNORE) {
+  hits <- function(x) { mx <- mask_ignored(x, ignore); names(rules)[vapply(rules, function(r) grepl(r, mx, ignore.case = TRUE, perl = TRUE), logical(1))] }
+  quote_from <- function(txt, pat) {
+    ss <- trimws(unlist(strsplit(txt, "(?<=[.!?])\\s+", perl = TRUE)))
+    ms <- mask_ignored(ss, ignore)
+    k <- which(grepl(pat, ms, ignore.case = TRUE, perl = TRUE))[1]
+    if (is.na(k)) return(NA_character_)
+    hit <- ss[k]
+    if (nchar(hit) <= qchars) return(hit)
+    # long sentence: a window centred on the matched words, so the evidence is visible
+    m <- regexpr(pat, ms[k], ignore.case = TRUE, perl = TRUE); half <- (qchars - attr(m, "match.length")) %/% 2
+    from <- max(1L, m - half); to <- min(nchar(hit), from + qchars - 1L); from <- max(1L, to - qchars + 1L)
+    paste0(if (from > 1) "\u2026" else "", trimws(substr(hit, from, to)), if (to < nchar(hit)) "\u2026" else "")
+  }
+  Map(function(ti, su) {
+    ti <- ifelse(is.na(ti), "", ti); su <- ifelse(is.na(su), "", su)
+    in_title <- hits(ti); in_sum <- setdiff(hits(su), in_title)
+    ids <- head(c(in_title, in_sum), max_n)
+    if (!length(ids)) return(data.frame(id = character(0), quote = character(0)))
+    q <- vapply(ids, function(g) if (g %in% in_title) ti else quote_from(su, rules[[g]]), character(1))
+    data.frame(id = ids, quote = unname(q))
+  }, title, summary, USE.NAMES = FALSE)
+}
