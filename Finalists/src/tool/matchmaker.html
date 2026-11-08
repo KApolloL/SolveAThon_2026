@@ -606,6 +606,204 @@ fieldset.fb-q { border:none; padding:0; margin:12px 0; display:flex; gap:8px; fl
 .fb-x { font:inherit; font-size:1.2rem; background:none; border:none; color:inherit; cursor:pointer; padding:0 4px; }
 body.proj .fb-match, body.proj .fbbtn { display:none !important; }
 @media (max-width:560px) { .fbbtn { font-size:0 !important; gap:0 !important; padding:6px 10px !important; } .fbbtn svg { width:18px; height:18px; } .appbar .fbbtn { display:inline-flex !important; } }
+
+/* Quick declutter (Sat evening, before user feedback): show only what the operator needs */
+#quick-h, #quick, #evidence-home, #glance, #chartbox { display:none !important; }
+.welcome { grid-template-columns:1fr !important; }
+.chips2 .est, .chips2 .c-fed, .chips2 .c-track.s0, .chips2 .c-track.s1, .chips2 .c-track.s2 { display:none !important; }
+.rbody > .fb-match { display:none !important; }
+:root { --paper:#ffffff; --surface-0:#ffffff; --shadow:none; }
+
+/* ---- Round 5: simple, only what the operator needs ---- */
+.vh { position:absolute !important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; padding:0; }
+.agpick { position:relative; flex:1; min-width:0; }
+.ag-btn { display:flex; align-items:center; justify-content:space-between; gap:12px; width:100%; max-width:640px; font:inherit; font-size:clamp(1.3rem, 1rem + 1.4vw, 2rem); font-weight:700; letter-spacing:-.015em; color:var(--accent); background:transparent; border:none; border-bottom:3px solid var(--accent); padding:2px 4px 6px 0; cursor:pointer; text-align:left; }
+.ag-btn span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ag-btn:hover { color:var(--accent-strong); border-bottom-color:var(--accent-strong); }
+.ag-btn.empty { color:var(--text-muted); }
+.ag-pop { position:absolute; z-index:50; top:calc(100% + 6px); left:0; width:min(440px, 100%); background:var(--surface-2); border:1px solid var(--border); border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,.18); padding:8px; }
+.ag-pop input { width:100%; font:inherit; font-size:.95rem; padding:9px 12px; border:1px solid var(--border); border-radius:8px; background:var(--paper); color:var(--text-primary); margin-bottom:6px; }
+.ag-pop ul { list-style:none; margin:0; padding:0; max-height:300px; overflow:auto; }
+.ag-pop li[role=option] { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; cursor:pointer; font-size:.95rem; font-weight:500; color:var(--text-primary); }
+.ag-pop li[role=option]:hover, .ag-pop li.act { background:var(--accent-soft); }
+.ag-pop li[aria-selected=true] { font-weight:700; color:var(--accent); }
+.ag-li-ic { display:inline-grid; place-items:center; width:28px; height:28px; border-radius:8px; background:var(--surface-3); color:var(--text-secondary); flex:none; }
+.ag-none { padding:10px; color:var(--text-muted); font-size:.9rem; }
+.picker .selwrap::after { display:none; }
+/* cards: four things */
+li.row { box-shadow:none; border-color:var(--rule); }
+.status { display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:8px; font-size:.92rem; color:var(--text-secondary); }
+.status span { display:inline-flex; align-items:center; gap:6px; }
+.st-elig::before { content:""; width:9px; height:9px; border-radius:50%; background:currentColor; }
+.st-elig.yes { color:var(--good); font-weight:650; } .st-elig.ask { color:var(--warn); font-weight:650; } .st-elig.no { color:var(--bad); font-weight:650; }
+.st-won { color:#9a6b00; font-weight:650; } .st-later { color:var(--accent); font-weight:650; }
+.days .rk { position:absolute; top:6px; left:8px; font-style:normal; font-size:.72rem; font-weight:800; color:var(--text-muted); }
+.act { gap:10px; align-items:center; }
+.act button.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
+.act button.primary[aria-pressed="true"] { background:var(--good); border-color:var(--good); }
+.act .passbtn { color:var(--text-muted); font-weight:500; font-size:.88rem; min-height:36px !important; border:none; padding:0 6px; background:none; text-decoration:underline; }
+.act .passbtn[aria-pressed="true"] { color:var(--text-primary); background:none; }
+details.drawer > summary { color:var(--accent); text-decoration:underline; text-underline-offset:3px; }
+li.row.hl { outline:3px solid var(--accent); outline-offset:-1px; }
+.wrongmatch { margin-top:10px; } .wrongmatch .fb-match { border-top:none; padding-top:0; }
+#refine { display:none !important; }
+.dd label:has(#f-odds), .dd label:has(#f-need), .dd label:has(#f-region), #f-focus-wrap, .dd label:has(#f-matchamt), .dd label:has(#f-funder) { display:none !important; }
+/* chart in the right column */
+@media (min-width: 1100px) { #v-opps:not([hidden]) { grid-template-columns:minmax(0,1fr) 440px !important; } #desk-panel { padding:16px 18px !important; } #desk-panel .mx { border:none; padding:0; margin:0; box-shadow:none; } }
+.mx-head { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; } .mx-head h2 { margin:0; font-size:1.05rem; }
+.mx-tog { display:inline-flex; border:1px solid var(--border); border-radius:999px; padding:2px; background:var(--surface-3); }
+.mx-tog button { font:inherit; font-size:.85rem; font-weight:650; border:none; background:transparent; color:var(--text-secondary); padding:6px 12px; border-radius:999px; cursor:pointer; min-height:34px; }
+.mx-tog button[aria-pressed="true"] { background:var(--surface-2); color:var(--accent); box-shadow:0 1px 3px rgba(0,0,0,.12); }
+#mx-svg .grid { stroke:var(--rule); } #mx-svg .mx-sep { stroke:var(--border); stroke-dasharray:3 3; }
+#mx-svg .ax { fill:var(--text-muted); font-size:11px; font-family:var(--font); }
+#mx-svg .mx-zone { fill:var(--bad-soft); opacity:.7; } #mx-svg .mx-quick { fill:var(--good-soft); opacity:.8; }
+#mx-svg .mx-zl { fill:var(--bad); font-size:11px; font-weight:700; font-family:var(--font); } #mx-svg .mx-zl.good { fill:var(--good); }
+#mx-svg g.mx-pt { cursor:pointer; outline:none; }
+#mx-svg g.mx-pt circle { fill:var(--accent); stroke:var(--surface-2); stroke-width:2; }
+#mx-svg g.mx-pt.urgent circle { fill:var(--bad); }
+
+#mx-svg g.mx-pt text { fill:#fff; font-size:11px; font-weight:800; font-family:var(--font); pointer-events:none; }
+#mx-svg g.mx-pt:hover circle, #mx-svg g.mx-pt:focus circle, #mx-svg g.mx-pt.hl circle { stroke:var(--text-primary); stroke-width:3; stroke-dasharray:none; }
+.mx-hint { margin:6px 0 0; } .mx-back { margin-bottom:8px; }
+/* display menu */
+.dispmenu { position:relative; } .dispmenu > summary { list-style:none; cursor:pointer; font-size:.86rem; color:#fff; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:6px 14px; min-height:36px; display:inline-flex; align-items:center; }
+.dispmenu > summary::-webkit-details-marker { display:none; }
+.dispmenu-pop { position:absolute; right:0; top:calc(100% + 6px); z-index:60; background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:6px; display:grid; gap:4px; min-width:180px; box-shadow:0 10px 28px rgba(0,0,0,.2); }
+.dispmenu-pop button { color:var(--text-primary) !important; border-color:var(--border) !important; text-align:left; }
+body.proj .dispmenu { display:none !important; }
+@media (max-width:560px) { .dispmenu { display:none; } }
+/* cart groups */
+ul.cart-list li.cl-group { display:block; border:none; padding:10px 2px 0; font-weight:800; font-size:.9rem; color:var(--text-secondary); }
+.cl-more > summary { cursor:pointer; color:var(--accent); font-size:.85rem; font-weight:600; margin-top:6px; }
+
+/* ---- Round 6: meeting notes ---- */
+.say-status { margin:8px 0 0; font-weight:700; color:var(--good); min-height:1.2em; }
+.say-status.pulse { animation:sayp 1.2s ease; } @keyframes sayp { 0% { background:var(--good-soft); } 100% { background:transparent; } }
+.say.used .examples { display:none; }
+.flash-box { outline:3px solid var(--accent); outline-offset:4px; border-radius:10px; transition:outline-color .6s; }
+.st-also { color:var(--accent); font-weight:600; cursor:help; text-decoration:underline dotted; text-underline-offset:3px; }
+li.row > details.drawer-row { grid-column:1 / -1; margin:0 18px 14px; padding-top:10px; border-top:1px dashed var(--rule); }
+details.drawer dl { width:100%; grid-template-columns:minmax(150px, 220px) minmax(0,1fr) !important; }
+@media (max-width:760px) { li.row > details.drawer-row { grid-column:1 / -1; margin:0 14px 12px; } }
+.drawer-also, .drawer-help { margin:10px 0 0; font-size:.9rem; color:var(--text-secondary); }
+ul.helplinks { margin:4px 0 0; padding-left:18px; } ul.helplinks li { margin:3px 0; }
+.trust { margin:4px 0 12px; font-size:.92rem; } .trust > summary { cursor:pointer; color:var(--accent); font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+.trust ul { margin:8px 0; padding-left:18px; color:var(--text-secondary); } .trust p { color:var(--text-secondary); max-width:75ch; }
+.sw-desc { margin:6px 20px 0; color:var(--text-secondary); font-size:.95rem; line-height:1.45; }
+.osbm-ex { background:var(--accent-soft); border-radius:10px; padding:12px 14px; margin:0 0 12px; color:var(--text-primary); max-width:80ch; }
+ol.timeline li.team::before { border-width:3px; } ol.timeline li.blue::before { border-color:#2a6fb0; background:#2a6fb0; } ol.timeline li.pink::before { border-color:#d16aa0; background:#d16aa0; } ol.timeline li.red::before { border-color:#c0392b; background:#c0392b; } ol.timeline li.green::before { border-color:#2e8b57; background:#2e8b57; } ol.timeline li.gold::before { border-color:#c99a1e; background:#c99a1e; } ol.timeline li.white::before { border-color:var(--text-muted); background:#fff; }
+.plan-prop { display:grid; gap:8px; margin:14px 0 4px; padding:12px 14px; border:1px dashed var(--border); border-radius:10px; }
+.plan-prop label { display:grid; gap:2px; margin:0; font-weight:400; } .plan-prop label span { color:var(--text-secondary); font-size:.9rem; }
+.plan-prop select { font:inherit; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); color:var(--text-primary); }
+.plan-prop .btn-primary { justify-self:start; font:inherit; font-weight:700; padding:9px 16px; border-radius:999px; border:1px solid var(--accent); background:var(--accent); color:var(--on-accent); cursor:pointer; min-height:44px; }
+.fbbtn b { display:none !important; }
+/* My grants page */
+#v-marks > .toolbar, #marks-ics-msg, #marks-brief-box, #marks-count, #marks-loop, #marks-list, #v-marks > p.note { display:none !important; }
+.mg-head h2 { margin:0 0 4px; font-size:1.5rem; } .mg-lede { margin:0 0 8px; color:var(--text-secondary); }
+.mg-help { margin:0 0 14px; } .mg-help > summary { cursor:pointer; color:var(--accent); font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+.mg-help dl { display:grid; grid-template-columns:max-content 1fr; gap:6px 14px; margin:10px 0 0; font-size:.92rem; } .mg-help dt { font-weight:700; } .mg-help dd { margin:0; color:var(--text-secondary); }
+.mg-bar { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 16px; }
+.mg-bar button { font:inherit; font-weight:700; padding:9px 18px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); cursor:pointer; min-height:44px; }
+.mg-bar button.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); } .mg-bar button:disabled { opacity:.55; cursor:default; }
+.mg-sec { margin:0 0 18px; } .mg-sec > h3, .mg-sec > summary { font-size:1.05rem; margin:0 0 8px; } details.mg-sec > summary { cursor:pointer; color:var(--text-secondary); }
+ul.mg-list { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+li.mg-item { display:grid; grid-template-columns:22px 80px minmax(0,1fr); gap:6px 14px; align-items:start; border:1px solid var(--rule); border-radius:var(--radius); padding:14px; background:var(--surface-2); }
+li.mg-item.passed { grid-template-columns:80px minmax(0,1fr); opacity:.8; }
+.mg-ck { width:20px; height:20px; margin:4px 0 0; accent-color:var(--accent); }
+.mg-days { text-align:center; } .mg-days b { display:block; font-size:2rem; font-weight:800; line-height:1; color:var(--accent); font-variant-numeric:tabular-nums; } .mg-days.urgent b { color:var(--bad); } .mg-days span { font-size:.76rem; color:var(--text-muted); }
+.mg-act { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:10px; }
+.mg-act button { font:inherit; font-size:.9rem; font-weight:650; padding:7px 14px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); cursor:pointer; min-height:40px; }
+.mg-act button.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); } .mg-act button.linkbtn { border:none; background:none; text-decoration:underline; color:var(--text-muted); }
+@media (max-width:560px) { li.mg-item { grid-template-columns:22px 60px minmax(0,1fr); } .mg-days b { font-size:1.5rem; } }
+#mx-svg .axl { fill:var(--text-secondary); font-weight:700; font-size:11.5px; }
+
+/* ---- Round 7 ---- */
+.cartbtn { display:none !important; }
+.ag-li-n { flex:1; } .ag-li-a { font-size:.75rem; font-weight:800; color:var(--text-muted); background:var(--surface-3); border-radius:6px; padding:2px 6px; }
+details.impact { margin-top:10px; border:1px solid var(--rule); border-radius:10px; padding:0; background:var(--surface-2); max-width:520px; }
+details.impact > summary { list-style:none; cursor:pointer; display:grid; grid-template-columns:auto 1fr; grid-template-rows:auto auto; gap:2px 10px; align-items:center; padding:8px 12px; }
+details.impact > summary::-webkit-details-marker { display:none; }
+.imp-n { grid-row:1 / span 2; font-size:1.6rem; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums; min-width:2ch; text-align:center; }
+.imp-t { font-size:.86rem; color:var(--text-secondary); } .imp-t b { color:var(--text-primary); }
+.imp-t span::after { content:" ▸"; color:var(--accent); } details.impact[open] .imp-t span::after { content:" ▾"; }
+.imp-bar { display:block; height:8px; background:var(--surface-3); border-radius:4px; overflow:hidden; } .imp-bar i { display:block; height:100%; background:var(--accent); border-radius:4px; }
+.imp-bar.sm { height:6px; }
+.imp-body { padding:0 12px 10px; font-size:.86rem; }
+.imp-row { display:grid; grid-template-columns:90px 1fr 90px; gap:10px; align-items:center; margin-top:8px; } .imp-l { font-weight:700; } .imp-v { text-align:right; font-variant-numeric:tabular-nums; color:var(--text-secondary); }
+.imp-note { margin:2px 0 0; color:var(--text-muted); } .imp-sum { margin:8px 0 2px; font-weight:700; }
+.sw-num.imp b { color:var(--accent); }
+.sw-desc { font-size:1rem !important; color:var(--text-primary) !important; margin:8px 20px 0 !important; }
+.sw-btns { width:min(460px, 100%); display:grid !important; grid-template-columns:1fr 1fr 1.4fr; gap:10px; }
+.sw-btns button { width:auto !important; height:56px !important; border-radius:14px !important; font:inherit !important; font-size:1rem !important; font-weight:800 !important; flex-direction:row !important; gap:8px !important; box-shadow:0 4px 12px rgba(0,0,0,.12) !important; border:1px solid var(--border) !important; }
+.sw-btns .sw-pass { color:var(--bad); background:var(--surface-2); } .sw-btns .sw-maybe { color:var(--warn); background:var(--surface-2); } .sw-btns .sw-yes { color:#fff; background:var(--good) !important; border-color:var(--good) !important; }
+.sw-btns span { font-size:1.15rem; }
+.sw-stack { max-height:520px !important; }
+@media (max-width:560px) { .sw-btns button { height:50px !important; font-size:.92rem !important; } .sw-btns { grid-template-columns:1fr 1fr 1.3fr; } }
+.dm-row { display:grid; grid-template-columns:72px 40px 1fr 40px; gap:6px; align-items:center; font-size:.88rem; color:var(--text-secondary); padding:2px 4px; }
+.dm-row button { min-height:36px; padding:0; text-align:center !important; font-weight:800; }
+.dm-v { text-align:center; font-weight:700; color:var(--text-primary); font-variant-numeric:tabular-nums; }
+/* things that open */
+.planbtn::after, .mg-act button.primary::after, #swipe-go::after, .plan-prop .btn-primary::after, #fb-open::after, .ag-btn::after { }
+.planbtn::after, .mg-act button.primary::after, .plan-prop .btn-primary::after, .mg-bar button:not(.primary)::after { content:" ›"; font-weight:800; }
+#swipe-go::after { content:" ›"; font-weight:800; margin-left:2px; }
+.trust > summary::before, .mg-help > summary::before, details.mg-sec > summary::before, .cl-more > summary::before, details.osbm-together > summary::before { content:"▸ "; display:inline-block; transition:transform .15s; }
+.trust[open] > summary::before, .mg-help[open] > summary::before, details.mg-sec[open] > summary::before, .cl-more[open] > summary::before, details.osbm-together[open] > summary::before { transform:rotate(90deg); }
+details.osbm-together { margin:12px 0; background:var(--surface-2); border:1px solid var(--rule); border-radius:10px; padding:10px 14px; } details.osbm-together > summary { cursor:pointer; font-weight:700; color:var(--accent); }
+/* county map */
+.map-head h2 { margin:0 0 4px; font-size:1.3rem; } .map-pick { display:inline-flex; align-items:center; gap:8px; font-weight:700; margin:6px 0; }
+.map-pick select { font:inherit; font-weight:500; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); color:var(--text-primary); max-width:100%; }
+.map-grid { display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; align-items:start; }
+@media (max-width:900px) { .map-grid { grid-template-columns:1fr; } }
+.map-wrap { position:relative; } #map-svg { width:100%; height:auto; display:block; }
+#map-svg .cty { stroke:var(--surface-2); stroke-width:1.2; cursor:pointer; outline:none; } #map-svg .cty:hover, #map-svg .cty:focus { stroke:var(--text-primary); stroke-width:2; } #map-svg .cty.sel { stroke:var(--warn); stroke-width:3; }
+.map-lg { display:grid; grid-template-columns:auto 1fr auto; gap:8px; align-items:center; font-size:.82rem; color:var(--text-secondary); margin-top:8px; font-variant-numeric:tabular-nums; }
+.map-lg-bar { height:10px; border-radius:5px; background:linear-gradient(90deg, color-mix(in srgb, var(--accent) 12%, transparent), var(--accent)); }
+.map-lg-t { margin:4px 0 0; }
+.map-side { background:var(--surface-2); border:1px solid var(--rule); border-radius:12px; padding:14px; } .map-side h3 { font-size:.95rem; margin:14px 0 6px; }
+.map-sel h3 { margin:0 0 4px; font-size:1.1rem; } .ms-big { margin:0 0 4px; } .ms-big b { font-size:1.8rem; font-weight:800; color:var(--accent); } .ms-big span { color:var(--text-secondary); font-size:.88rem; }
+ol.map-top { list-style:none; margin:0; padding:0; display:grid; gap:2px; }
+.map-lg-bar { position:relative; } #map-lg-mid { position:absolute; left:50%; top:12px; transform:translateX(-50%); font-style:normal; font-size:.75rem; color:var(--text-muted); } .map-lg { margin-bottom:14px; }
+.mt-row { width:100%; display:grid; grid-template-columns:20px 1fr auto; gap:8px; align-items:center; font:inherit; font-size:.86rem; background:none; border:none; padding:5px 4px; border-radius:6px; cursor:pointer; color:var(--text-primary); text-align:left; }
+.mt-row:hover { background:var(--surface-3); } .mt-n { color:var(--text-muted); font-weight:700; } .mt-v { font-variant-numeric:tabular-nums; font-weight:650; }
+/* evidence axis */
+.bars-axis { display:grid; grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 5.6em; gap:10px; margin-top:4px; } .bars-axis .ticks { position:relative; height:16px; border-top:1px solid var(--border); } .bars-axis .ticks span { position:absolute; top:2px; transform:translateX(-50%); font-size:.8rem; color:var(--text-muted); } .bars li { grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 8.5em !important; } .bars-axis { grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 8.5em !important; }
+.bars-axis-t { font-size:.8rem; color:var(--text-secondary); margin:2px 0 0; text-align:center; }
+@media (max-width:560px) { .bars-axis { grid-template-columns:1fr 4.6em; } .bars-axis > span:first-child { display:none; } }
+.how-h1 { font-size:1.6rem; margin:0 0 8px; } #v-how .evidence > h2 { display:none; } #v-how .evidence { max-width:760px; }
+
+/* ---- Round 8 ---- */
+summary { list-style:none; } summary::-webkit-details-marker { display:none; }
+.panel > summary::before { content:"▸"; display:inline-block; margin-right:8px; color:var(--accent); transition:transform .15s; } .panel[open] > summary::before { transform:rotate(90deg); }
+.curve-svg { max-width:600px; }
+.imp-w { margin-top:14px; padding-top:12px; border-top:1px solid var(--rule); }
+.imp-w h4 { margin:0 0 2px; font-size:.95rem; } .imp-w p { margin:0 0 8px; }
+.imp-w-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:8px 18px; }
+.imp-w label { display:grid; grid-template-columns:1fr auto; gap:2px 8px; font-size:.86rem; font-weight:600; color:var(--text-secondary); margin:0; }
+.imp-w input[type=range] { grid-column:1 / -1; accent-color:var(--accent); width:100%; }
+.imp-w output { font-variant-numeric:tabular-nums; color:var(--text-primary); }
+.imp-w .imp-w-act { display:flex; gap:10px; align-items:center; margin-top:8px; font-size:.86rem; color:var(--text-muted); }
+.imp-w .imp-w-act button { font:inherit; font-weight:600; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); border-radius:999px; padding:5px 14px; cursor:pointer; min-height:34px; }
+.imp-change { font:inherit; font-size:.82rem; background:none; border:none; color:var(--accent); text-decoration:underline; cursor:pointer; padding:0; margin-top:6px; }
+/* match board */
+.mb-head h2 { margin:0 0 4px; font-size:1.3rem; } .mb-head p { margin:0 0 10px; color:var(--text-secondary); max-width:70ch; }
+.mb-head label { display:inline-flex; align-items:center; gap:8px; font-weight:700; margin:0 0 14px; } .mb-head select { font:inherit; font-weight:500; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); color:var(--text-primary); }
+.board { grid-template-columns:minmax(0, 5fr) minmax(0, 7fr) !important; gap:22px !important; }
+.mb-step { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1rem; margin:0 0 10px; }
+.mb-step span { display:inline-grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--accent); color:var(--on-accent); font-size:.9rem; }
+.mb-box { background:var(--surface-2); border:1px solid var(--rule); border-radius:12px; padding:12px 14px; margin:0 0 12px; }
+.mb-box h3 { margin:0 0 8px !important; font-size:.95rem !important; }
+.mb-row { display:flex; gap:8px; } .mb-row input { flex:1; min-width:0; margin:0 !important; }
+.mb-row button { font:inherit; font-weight:700; border:none; background:var(--accent); color:var(--on-accent); border-radius:999px; padding:0 16px; cursor:pointer; min-height:40px; }
+details.mb-box > summary { cursor:pointer; font-weight:700; font-size:.95rem; } details.mb-box > summary::before { content:"▸"; display:inline-block; margin-right:8px; color:var(--accent); transition:transform .15s; } details.mb-box[open] > summary::before { transform:rotate(90deg); }
+details.mb-box ul { margin-top:8px !important; max-height:420px; overflow:auto; }
+.mb-right { background:var(--surface-2); border:1px solid var(--rule); border-radius:12px; padding:12px 14px; }
+.mb-right #b-right-h { margin:0 0 8px; font-size:.95rem; }
+.board li.item { border-color:var(--rule) !important; }
+@media (max-width:760px) { .board { grid-template-columns:1fr !important; } }
+
+table.ship-t { border-collapse:collapse; width:100%; font-size:.9rem; margin:8px 0 10px; } table.ship-t th, table.ship-t td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--rule); vertical-align:top; } table.ship-t th { background:var(--surface-3); font-size:.82rem; color:var(--text-secondary); }
+table.ship-t td:first-child { font-weight:700; white-space:nowrap; } .ship-dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:8px; vertical-align:-1px; border:2px solid var(--border); }
+.ship-dot.blue { background:#2a6fb0; border-color:#2a6fb0; } .ship-dot.pink { background:#d16aa0; border-color:#d16aa0; } .ship-dot.red { background:#c0392b; border-color:#c0392b; } .ship-dot.green { background:#2e8b57; border-color:#2e8b57; } .ship-dot.gold { background:#c99a1e; border-color:#c99a1e; } .ship-dot.white { background:#fff; border-color:var(--text-muted); }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -639,20 +837,23 @@ body.proj .tour-card { font-size:1.2rem; }
     <span class="fresh" title="When the opportunity data was last refreshed"><span class="dot" aria-hidden="true"></span><span id="asof">Loading data...</span></span>
     <button type="button" id="fb-open" class="fbbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Give feedback<b id="fb-n" hidden>0</b></button>
     <button type="button" id="theme" class="themebtn">Dark mode</button>
-    <button type="button" id="large" aria-pressed="false" title="Enlarge text">Larger text</button>
-    <button type="button" id="proj" aria-pressed="false" title="Show only the best matches in very large type (shortcut: p)">Projector view</button>
+    <details class="dispmenu"><summary>Display ▾</summary><div class="dispmenu-pop">
+      <div class="dm-row"><span>Text size</span><button type="button" id="txt-dn" aria-label="Smaller text">A−</button><span id="txt-v" class="dm-v">Normal</span><button type="button" id="txt-up" aria-label="Larger text">A+</button></div>
+      <div class="dm-row"><span>Zoom</span><button type="button" id="zm-dn" aria-label="Zoom out">−</button><span id="zm-v" class="dm-v">100%</span><button type="button" id="zm-up" aria-label="Zoom in">+</button></div>
+      <button type="button" id="large" aria-pressed="false" hidden>Larger text</button>
+      <button type="button" id="proj" aria-pressed="false" title="Show only the best matches in very large type (shortcut: p)">Projector view</button></div></details>
   </div>
 </header>
 <main id="main" tabindex="-1">
   <div class="tabs" role="tablist" aria-label="Views">
     <button type="button" role="tab" id="tab-opps" aria-selected="true" data-tab="opps">Opportunities</button>
-    <button type="button" role="tab" id="tab-osbm" aria-selected="false" data-tab="osbm">OSBM overview</button>
-    <button type="button" role="tab" id="tab-marks" aria-selected="false" data-tab="marks">My decisions</button>
+    <button type="button" role="tab" id="tab-marks" aria-selected="false" data-tab="marks">My grants</button>
     <button type="button" id="tab-more" aria-expanded="false" aria-controls="more-tabs">More ▾</button>
     <span id="more-tabs" hidden>
+    <button type="button" role="tab" id="tab-how" aria-selected="false" data-tab="how">How this works</button>
+    <button type="button" role="tab" id="tab-osbm" aria-selected="false" data-tab="osbm">OSBM overview</button>
     <button type="button" role="tab" id="tab-board" aria-selected="false" data-tab="board">Match board</button>
     <button type="button" role="tab" id="tab-map" aria-selected="false" data-tab="map">County map</button>
-    <button type="button" role="tab" id="tab-how" aria-selected="false" data-tab="how">How this works</button>
     </span>
   </div>
 
@@ -663,7 +864,9 @@ body.proj .tour-card { font-size:1.2rem; }
     <div class="picker">
       <label for="agency">Show federal funding for</label>
       <div class="pickrow"><span class="ag-icon" id="ag-icon" hidden></span>
-      <span class="selwrap"><select id="agency"><option value="">choose your agency</option></select></span></div>
+      <div class="agpick"><button type="button" id="ag-btn" class="ag-btn empty" aria-haspopup="listbox" aria-expanded="false" aria-controls="ag-pop"><span id="ag-btn-t">choose your agency</span><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+        <div id="ag-pop" class="ag-pop" hidden><input type="search" id="ag-q" placeholder="Type a name or abbreviation (DPI, DHHS, DOT…)" aria-label="Find your agency" autocomplete="off"><ul id="ag-list" role="listbox" aria-label="Agencies"></ul></div>
+        <select id="agency" class="vh" tabindex="-1" aria-hidden="true"><option value="">choose your agency</option></select></div></div>
       <p class="ag-budget" id="ag-budget" hidden></p>
     </div>
     <div id="welcome" class="welcome">
@@ -682,6 +885,7 @@ body.proj .tour-card { font-size:1.2rem; }
         <div class="sayrow"><input type="text" id="scenario" placeholder="e.g. rural broadband for schools, 4 weeks, no matching money, at least $250k" autocomplete="off"><button type="button" id="scn-go">Apply</button></div>
         <div class="examples" id="examples"></div>
         <div class="chips" id="chips" aria-live="polite"></div>
+        <p class="say-status" id="say-status" role="status"></p>
       </div>
       <details class="more" id="more-filters"><summary>More options: keyword search, sort, who signs, money, time, odds, funder</summary>
       <div class="dd">
@@ -698,16 +902,21 @@ body.proj .tour-card { font-size:1.2rem; }
         <label>Matching money we can commit<input type="number" id="f-matchamt" min="0" step="1000" placeholder="$ amount, blank = not sure"></label>
         <label class="dd-f">Funder<select id="f-funder"><option value="">Any funder</option></select></label>
       </div>
+      <div class="imp-w" id="imp-w"><h4>Impact score weights</h4><p class="note">Choose what matters most to you. The impact score on every card updates. It only changes the order if you sort by Highest impact.</p>
+        <div class="imp-w-grid" id="imp-w-grid"></div>
+        <div class="imp-w-act"><button type="button" id="imp-w-reset">Reset to our default</button><span id="imp-w-sum"></span></div></div>
       </details>
       <div class="frow"><span id="f-count" role="status"></span><button type="button" id="f-reset" hidden>Clear filters</button></div>
     </section>
-    <div class="swipe-cta" id="swipe-cta" hidden><button type="button" id="swipe-go"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="17" rx="2"/><path d="M3 8l3-2M21 8l-3-2"/></svg>Start swiping</button><span>Go through your matches one card at a time. Right: add to cart. Left: pass. Up: maybe.</span></div>
+    <div class="swipe-cta" id="swipe-cta" hidden><button type="button" id="swipe-go"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="3" width="12" height="17" rx="2"/><path d="M3 8l3-2M21 8l-3-2"/></svg>Start swiping</button><span>Go through your matches one card at a time. Right: save to My grants. Left: pass. Up: maybe.</span></div>
+    <div class="tiles" id="tiles" hidden role="group" aria-label="Views of this agency's list"></div>
     <div id="start" class="start" hidden></div>
-    <section id="matrix" class="chartbox" hidden aria-labelledby="mx-h">
-      <div class="chart-head"><h2 id="mx-h">Where each grant lands: impact vs. work</h2>
-        <div class="legend"><span><i class="lg-dot"></i>A grant</span><span><i class="lg-dot big"></i>Bigger award</span><span><i class="lg-dot urg"></i>Closing soon</span><span><i class="lg-dot later"></i>Not open yet</span></div></div>
+    <section id="matrix" class="chartbox mx" hidden aria-labelledby="mx-h">
+      <div class="mx-head"><h2 id="mx-h">Your grants at a glance</h2>
+        <div class="mx-tog" role="group" aria-label="Chart view"><button type="button" data-m="effort">By effort</button><button type="button" data-m="deadline">By deadline</button></div></div>
       <p class="note" id="mx-note"></p>
-      <div class="chart-wrap"><svg id="mx-svg" role="img" aria-label="Scatter chart: impact score against how much work it takes to apply, one dot per grant" width="100%"></svg><div id="mx-tip" class="ctip" hidden></div></div>
+      <div class="chart-wrap"><svg id="mx-svg" role="img" aria-label="Chart of your grants, one numbered dot per grant" width="100%"></svg><div id="mx-tip" class="ctip" hidden></div></div>
+      <p class="note mx-hint">Click a number to jump to that grant. Click a grant's card to see its full record here.</p>
     </section>
     <section id="glance" class="glance" hidden aria-labelledby="glance-h"><h2 id="glance-h">At a glance</h2><div id="glance-body" class="gl-grid"></div></section>
     <section id="chartbox" class="chartbox" hidden aria-labelledby="chart-h">
@@ -718,12 +927,12 @@ body.proj .tour-card { font-size:1.2rem; }
       <details class="drawer"><summary>Table view</summary><div id="chart-table" class="tablewrap"></div></details>
     </section>
     <h2 class="list-h" id="list-h" hidden>All matches for this agency</h2>
-    <div class="tiles" id="tiles" hidden role="group" aria-label="Views of this agency's list"></div>
     <div class="toolbar" id="toolbar" hidden>
       <button type="button" id="csv">Save this list…</button>
       <button type="button" id="gloss-open" class="help">What do these words mean?</button>
     </div>
     <p class="counts" id="counts" role="status"></p>
+    <details class="trust" id="trust" hidden><summary>Where does this list come from, and can I trust it?</summary><div id="trust-body"></div></details>
     <p class="banner" id="learn-note" hidden></p>
     <ol id="top"></ol>
     <details class="panel" id="gloss"><summary>Words used here</summary>
@@ -735,7 +944,7 @@ body.proj .tour-card { font-size:1.2rem; }
         <dt>Closing soon</dt><dd>14 days or fewer left to apply.</dd>
         <dt>Coming up</dt><dd>Forecasts: the funder says it plans to post this. You cannot apply yet, but you can plan.</dd>
         <dt>Rolling</dt><dd>No close date is listed. Check the announcement for how long it stays open.</dd>
-        <dt>Pursue, Maybe, Pass</dt><dd>Your own marks, saved only in this browser. Pursue puts the grant in your cart and opens a plan. Nothing is sent anywhere.</dd>
+        <dt>Pursue, Maybe, Pass</dt><dd>Your own marks, saved only in this browser. Pursue puts the grant in My grants and opens a plan. Nothing is sent anywhere.</dd>
         <dt>Tier 1, 2, 3</dt><dd>Who has to sign, as in the qualifier tool. Tier 1: you can start. Tier 2: your boss signs (matching money). Tier 3: leadership signs (matching money on an award of $1M or more).</dd>
         <dt>Impact (≈)</dt><dd>A 0 to 100 score: 60% how well the grant fits your agency's plan, 40% how big one award can be ($10K scores 0, $100M or more scores 100). Plan fit only when no amount is listed. Our estimate; it never changes the ranking.</dd>
         <dt>Past wins</dt><dd>From federal award records. ★★★ your agency has won this program before; ★★ another NC group has; ★ your agency has won other grants from the same federal department. No stars means "New to NC": no NC win on record, which is not a bad sign.</dd>
@@ -772,32 +981,43 @@ body.proj .tour-card { font-size:1.2rem; }
   </section>
 
   <section id="v-board" role="tabpanel" aria-labelledby="tab-board" hidden>
-    <label for="b-agency">Agency</label>
-    <select id="b-agency" aria-label="Board agency"></select>
-    <p class="note">Click a plan goal or one of your projects to rank grants. Click a grant to see which goals and projects it fits. Fit bars compare items inside one list only; they are never compared across the two directions. Grants here are the best matches loaded for each agency, not every open grant.</p>
+    <div class="mb-head"><h2>Match board</h2>
+      <p>Start from an idea and see which grants fit it. Type a project, or pick one of your agency's plan goals. You can also click a grant to see which goals it fits.</p>
+      <label for="b-agency">Agency <select id="b-agency" aria-label="Board agency"></select></label></div>
     <div class="board">
-      <div>
-        <h3>Plan goals</h3><ul id="b-goals"></ul>
-        <h3>Your projects</h3>
-        <input type="text" id="b-new" placeholder="Describe a project in a few words" aria-label="New project">
-        <button type="button" id="b-add" class="act" style="font:inherit;padding:3px 10px">Add project</button>
-        <ul id="b-projects"></ul>
+      <div class="mb-col">
+        <div class="mb-step"><span>1</span>Start from an idea</div>
+        <div class="mb-box"><h3>Describe a project</h3>
+          <div class="mb-row"><input type="text" id="b-new" placeholder="e.g. mobile mental health crisis teams" aria-label="New project"><button type="button" id="b-add">Add</button></div>
+          <ul id="b-projects"></ul></div>
+        <details class="mb-box" open><summary>Or pick one of your plan goals</summary><ul id="b-goals"></ul></details>
       </div>
-      <div><h3 id="b-right-h">Grants</h3><ul id="b-grants"></ul></div>
+      <div class="mb-col">
+        <div class="mb-step"><span>2</span>See the grants that fit</div>
+        <div class="mb-right"><h3 id="b-right-h">Grants</h3><ul id="b-grants"></ul>
+        <p class="note">Bars compare grants inside this list only. These are the best matches loaded for each agency, not every open grant.</p></div>
+      </div>
     </div>
   </section>
 
   <section id="v-map" role="tabpanel" aria-labelledby="tab-map" hidden>
-    <p class="note">County indicators from public sources (CDC PLACES, ACS 2023, HRSA, NCHS, OpenFEMA). Darker means a higher value among the 100 NC counties. This shows where a measure is high; it does not say a grant reaches that county.</p>
-    <div class="toolbar"><label for="map-ind" style="margin:0">Measure</label><select id="map-ind"></select></div>
-    <p class="counts" id="map-readout" aria-live="polite">Choose a county for its value.</p>
-    <svg id="map-svg" role="img" aria-label="Map of North Carolina counties shaded by the chosen measure" viewBox="0 0 1000 381" style="width:100%;max-width:900px;height:auto"></svg>
-    <h2 style="font-size:1.05rem">Ten highest counties</h2><ol id="map-top"></ol>
+    <div class="map-head"><h2>Where the need is: North Carolina counties</h2>
+      <p class="note">Pick a measure. Darker counties have higher values. Use it to show where help is needed in a proposal. It does not say which counties a grant reaches.</p>
+      <label class="map-pick" for="map-ind">Measure <select id="map-ind"></select></label></div>
+    <p class="counts" id="map-readout" aria-live="polite"></p>
+    <div class="map-grid">
+      <div class="map-main"><div class="map-wrap"><svg id="map-svg" role="img" aria-label="Map of North Carolina counties shaded by the chosen measure" viewBox="0 0 1000 381"></svg><div id="map-tip" class="ctip" hidden></div></div>
+        <div class="map-lg" aria-hidden="true"><span id="map-lg-lo"></span><span class="map-lg-bar"><i id="map-lg-mid"></i></span><span id="map-lg-hi"></span></div>
+        <p class="note map-lg-t">Color scale: <span id="map-lg-lab"></span>, lowest to highest county.</p></div>
+      <aside class="map-side"><div id="map-sel" class="map-sel"></div><h3>Ten highest counties</h3><ol id="map-top" class="map-top"></ol></aside>
+    </div>
+    <p class="note">Sources: CDC PLACES, ACS 2023, HRSA, NCHS, OpenFEMA (public county data from the qualifier round).</p>
   </section>
 
   <section id="v-osbm" role="tabpanel" aria-labelledby="tab-osbm" hidden></section>
 
   <section id="v-marks" role="tabpanel" aria-labelledby="tab-marks" hidden>
+    <div id="mg-body"></div>
     <p class="note">Saved in this browser only. Nothing is sent anywhere.</p>
     <div class="toolbar"><button type="button" id="marks-csv">Export decisions CSV</button><button type="button" id="marks-clear">Clear all</button><button type="button" id="marks-brief">Copy briefs for all Pursue items</button><button type="button" id="marks-ics">Download deadlines (.ics)</button></div>
     <p class="note" id="marks-ics-msg" role="status"></p>
@@ -810,12 +1030,12 @@ body.proj .tour-card { font-size:1.2rem; }
   <section id="v-how" role="tabpanel" aria-labelledby="tab-how" hidden class="prose"></section>
 </main>
 <dialog id="plan-dlg" class="sheet" aria-labelledby="plan-title"><button type="button" class="x" id="plan-x" aria-label="Close plan">×</button><div id="plan-body"></div></dialog>
-<dialog id="cart-dlg" class="sheet side" aria-labelledby="cart-h"><button type="button" class="x" id="cart-x" aria-label="Close cart">×</button><h2 id="cart-h">My grant cart</h2><div id="cart-body"></div></dialog>
+<dialog id="cart-dlg" class="sheet side" aria-labelledby="cart-h"><button type="button" class="x" id="cart-x" aria-label="Close cart">×</button><h2 id="cart-h">My grants</h2><div id="cart-body"></div></dialog>
 <div id="swipe" class="swipe" hidden role="dialog" aria-modal="true" aria-label="Swipe through grants">
   <div class="sw-top"><button type="button" id="sw-exit">Exit swiping</button><span id="sw-count"></span><button type="button" id="sw-undo">↶ Undo</button></div>
   <div class="sw-stack" id="sw-stack"></div>
-  <div class="sw-btns" id="sw-btns"><button type="button" class="sw-pass" id="sw-left" aria-label="Pass">✕<small>Pass</small></button><button type="button" class="sw-maybe" id="sw-up" aria-label="Maybe">?<small>Maybe</small></button><button type="button" class="sw-yes" id="sw-right" aria-label="Add to cart">♥<small>Add to cart</small></button></div>
-  <p class="sw-keys">Keys: ← pass · ↑ maybe · → add to cart · Backspace undo · Esc exit</p>
+  <div class="sw-btns" id="sw-btns"><button type="button" class="sw-pass" id="sw-left"><span aria-hidden="true">✕</span> Pass</button><button type="button" class="sw-maybe" id="sw-up"><span aria-hidden="true">?</span> Maybe</button><button type="button" class="sw-yes" id="sw-right"><span aria-hidden="true">♥</span> Save to My grants</button></div>
+  <p class="sw-keys">Keys: ← pass · ↑ maybe · → save to My grants · Backspace undo · Esc exit</p>
   <div class="sr-only" id="sw-live" aria-live="polite"></div>
 </div>
 <dialog id="cmp-dlg" class="sheet wide" aria-labelledby="cmp-h"><button type="button" class="x" id="cmp-x" aria-label="Close compare">×</button><div style="padding:18px 22px"><h2 id="cmp-h">Compare side by side</h2><div id="cmp-body"></div></div></dialog>
@@ -880,14 +1100,15 @@ body.proj .tour-card { font-size:1.2rem; }
   function actions(r) {
     var box = el("div", "act"), key = r.agency_id + "|" + r.opp_id;
     box.setAttribute("role", "group"); box.setAttribute("aria-label", "Your decision"); box.dataset.key = key; box.dataset.mark = marks[key] || "";
-    ["Pursue", "Maybe", "Pass"].forEach(function (name) {
-      var b = el("button", name === "Pursue" ? "primary" : null, name === "Pursue" ? (marks[key] === "Pursue" ? "✓ In my cart" : "Pursue: add to cart") : name); b.type = "button"; b.dataset.m = name;
+    ["Pursue", "Pass"].forEach(function (name) {
+      var b = el("button", name === "Pursue" ? "primary" : "linkbtn passbtn", name === "Pursue" ? (marks[key] === "Pursue" ? "✓ In My grants" : "Pursue: save to My grants") : name); b.type = "button"; b.dataset.m = name;
       b.setAttribute("aria-pressed", marks[key] === name ? "true" : "false");
       b.addEventListener("click", function () {
         var on = marks[key] !== name;
         if (on) marks[key] = name; else delete marks[key];
         saveMarks(); syncMarkButtons(key); renderMarks();
         if (on && name === "Pursue") { openPlan(r); setTimeout(function () { quickAsk("Pursue"); }, 400); }
+        if (name === "Pass" && box.closest("#v-opps")) show(true);
       });
       box.appendChild(b);
     });
@@ -928,7 +1149,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var b = EV.backtest, card = el("section", "evidence"); card.setAttribute("aria-labelledby", box.id + "-h");
     var h = el("h2", null, "Does the ranking work?"); h.id = box.id + "-h"; card.appendChild(h);
     card.appendChild(el("p", "q", b.question));
-    var ul = el("ul", "bars"), mx = Math.max.apply(null, b.rows.map(function (x) { return x.pct; }));
+    var ul = el("ul", "bars"), mx = Math.max(50, Math.ceil(Math.max.apply(null, b.rows.map(function (x) { return x.pct; })) / 10) * 10);
     b.rows.forEach(function (x) {
       var li = el("li", x.ours ? "ours" : null), tr = el("div", "track"), f = el("div", "fill");
       var pct = x.pct % 1 ? x.pct.toFixed(1) : String(Math.round(x.pct));
@@ -936,10 +1157,12 @@ body.proj .tour-card { font-size:1.2rem; }
       f.style.width = (x.pct / mx * 100).toFixed(1) + "%"; tr.appendChild(f);
       var tip = x.label + ": " + (x.count != null ? x.count + " of " + b.won_programs + " (" + pct + "%)" : pct + "% of " + b.won_programs) + (x.note ? ". " + x.note : "");
       li.title = tip; tr.setAttribute("role", "img"); tr.setAttribute("aria-label", tip);
-      li.appendChild(el("span", "lab", x.label)); li.appendChild(tr); li.appendChild(el("span", "val", (x.count != null ? x.count + " · " : "") + pct + "%"));
+      li.appendChild(el("span", "lab", x.label)); li.appendChild(tr); li.appendChild(el("span", "val", pct + "%" + (x.count != null ? " (" + x.count + " of " + b.won_programs + ")" : "")));
       ul.appendChild(li);
     });
     card.appendChild(ul);
+    var ax = el("div", "bars-axis"); ax.appendChild(el("span")); var ticks = el("div", "ticks"); for (var tk = 0; tk <= mx; tk += 10) { var sp = el("span", null, tk + "%"); sp.style.left = (tk / mx * 100) + "%"; ticks.appendChild(sp); } ax.appendChild(ticks); ax.appendChild(el("span")); card.appendChild(ax);
+    card.appendChild(el("p", "bars-axis-t", "Share of the " + b.won_programs + " won programs found in the top 10, four weeks before closing"));
     if (EV.intime) card.appendChild(curveEl(EV.intime, box.id));
     var fl = el("p", "fails"); fl.appendChild(el("b", null, "Where it falls short")); fl.appendChild(document.createTextNode(b.fails.replace(/^Where it fails:\s*/, ""))); card.appendChild(fl);
     card.appendChild(el("p", "src", b.source + " Alert baseline: " + b.rows[1].note));
@@ -949,15 +1172,16 @@ body.proj .tour-card { font-size:1.2rem; }
     var wrap = el("div", "curve"), NS = "http://www.w3.org/2000/svg";
     wrap.appendChild(el("h3", null, "Finding it early matters"));
     wrap.appendChild(el("p", "q", c.say));
-    var W = 460, H = 190, ml = 40, mr = 120, mt = 14, mb = 34, ymax = 40;
+    var W = 520, H = 210, ml = 62, mr = 120, mt = 14, mb = 40, ymax = 40;
     var svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("class", "curve-svg"); svg.setAttribute("role", "img");
     svg.setAttribute("aria-label", "Line chart. Won programs reaching the top 10, all versus with " + c.days + " or more days left: " + c.points.map(function (p) { return p.weeks + "-week checks " + p.all + " and " + p.intime; }).join("; ") + ", of " + c.won + ".");
     function mk(tag, a, t) { var e = document.createElementNS(NS, tag); Object.keys(a).forEach(function (k) { e.setAttribute(k, a[k]); }); if (t != null) e.textContent = t; svg.appendChild(e); return e; }
     var X = function (w) { return ml + (W - ml - mr) * (w - 2) / 4; }, Y = function (n) { return mt + (H - mt - mb) * (1 - (n / c.won * 100) / ymax); };
     [0, 10, 20, 30, 40].forEach(function (v) { var y = mt + (H - mt - mb) * (1 - v / ymax); mk("line", { x1: ml, x2: W - mr, y1: y, y2: y, "class": "grid" }); mk("text", { x: ml - 6, y: y + 4, "text-anchor": "end", "class": "ax" }, v + "%"); });
     c.points.forEach(function (p) { mk("text", { x: X(p.weeks), y: H - mb + 18, "text-anchor": "middle", "class": "ax" }, "every " + p.weeks + " wks"); });
-    mk("text", { x: (ml + W - mr) / 2, y: H - 2, "text-anchor": "middle", "class": "ax" }, "How often someone checks for new grants");
-    [["all", "Found at all", "l-all"], ["intime", "Found with " + c.days + "+ days left", "l-in"]].forEach(function (L) {
+    mk("text", { x: (ml + W - mr) / 2, y: H - 2, "text-anchor": "middle", "class": "ax" }, "How often someone checks (less often to the right)");
+    mk("text", { x: 14, y: mt + (H - mt - mb) / 2, "text-anchor": "middle", "class": "ax", transform: "rotate(-90 14 " + (mt + (H - mt - mb) / 2) + ")" }, "Share found");
+    [["all", "Found at all", "l-all"], ["intime", c.days + "+ days left", "l-in"]].forEach(function (L) {
       mk("polyline", { points: c.points.map(function (p) { return X(p.weeks) + "," + Y(p[L[0]]); }).join(" "), "class": "ln " + L[2] });
       c.points.forEach(function (p) { var d = mk("circle", { cx: X(p.weeks), cy: Y(p[L[0]]), r: 5, "class": "pt " + L[2] }); var t = document.createElementNS(NS, "title"); t.textContent = L[1] + ", checking every " + p.weeks + " weeks: " + p[L[0]] + " of " + c.won + " (" + Math.round(p[L[0]] / c.won * 100) + "%)"; d.appendChild(t); });
       var last = c.points[c.points.length - 1]; mk("text", { x: X(last.weeks) + 10, y: Y(last[L[0]]) + 4, "class": "lab " + L[2] }, L[1] + ": " + last[L[0]]);
@@ -969,7 +1193,7 @@ body.proj .tour-card { font-size:1.2rem; }
   function fmtAsOf(s) {
     var d = s ? new Date(s) : null; if (!d || isNaN(d)) return "Data as of " + (s || "unknown");
     var when = d.toLocaleDateString(undefined, { month: "short", day: "numeric" }) + ", " + d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-    return "Data updated " + when + (/azurecontainerapps\.io$/.test(location.hostname) ? " · live on Azure" : "");
+    return "Data updated " + when;
   }
 
   // ---- money, odds, effort, payoff: shown to help a person choose. They never change fit, rank, eligibility or tier. ----
@@ -1102,7 +1326,8 @@ body.proj .tour-card { font-size:1.2rem; }
       if (n >= 1000) { F.min = n; chips.push("At least " + usd(n)); }
     }
     if (/no match|no matching|can.?t match|cannot match|without match|no cost.?shar/.test(low)) { F.match = "no"; chips.push("No matching money"); }
-    if (/easy|quick|myself|on my own|no sign|without sign/.test(low)) { F.sign = "1"; chips.push("Only ones I can start myself"); }
+    if (/easy|quick|little work/.test(low)) { F.work = 2; chips.push("Easy ones (about 2 weeks of work)"); }
+    if (/myself|on my own|no sign|without sign/.test(low)) { F.sign = "1"; chips.push("Only ones I can start myself"); }
     else if (/boss|supervisor/.test(low)) { F.sign = "2"; chips.push("Me or my boss can sign"); }
     if (/good odds|likely|shoo|shoe|sure thing|best chance|odds/.test(low)) { F.odds = "good"; chips.push("Good odds only"); }
     if (/payoff|worth|bang for/.test(low)) { cur.order = "payoff"; chips.push("Sorted by best payoff"); }
@@ -1165,27 +1390,33 @@ body.proj .tour-card { font-size:1.2rem; }
   var checks = lsGet("ffm_check_v1", {});
   function fmtDay(d) { return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }); }
   function refDate() { var s = K.ref || (P && P.data_as_of ? String(P.data_as_of).slice(0, 10) : ""); var d = s ? new Date(s + "T00:00:00") : new Date(); return isNaN(d) ? new Date() : d; }
+  // Timeline worked back from the deadline, with Shipley color-team reviews (Shipley Associates, "Color Team Reviews";
+  // timing for grants from CASRAI's guide: Pink several weeks out, Red 1-2 weeks out at 2/3-3/4 complete, Gold in the final days).
   function planSteps(r) {
     var ef = effort(r), ti = tierInfo(r)[0], cs = r.cost_sharing === "Yes";
     var D = r.days_left != null && r.days_left >= 0 ? r.days_left : null, own = D == null;
     if (own) D = (ef.weeks || 4) * 7 + 14;
+    var work = Math.max(14, (ef.weeks || 4) * 7), start = Math.max(Math.min(4, D), D - SUBMIT_EARLY_DAYS - work), endW = Math.max(start, D - 3), span = endW - start;
+    var at = function (f, fromDeadline) { var d = Math.round(start + span * f); return fromDeadline != null ? Math.max(d, D - fromDeadline) : d; };
+    var signer = ti === 3 ? "leadership" : ti === 2 ? "your boss" : "the person who signs";
     var S = [
-      [0, "Decide to go for it", "Tell your boss you plan to apply. Mark it Pursue (done)."],
-      [0.1, "Read the whole grant announcement", "Confirm your agency can apply. Write down page limits, required forms and the exact closing time."],
-      [0.2, "Check your logins", "Make sure your agency's SAM.gov registration (its federal ID number, called a UEI) and your Grants.gov account are active. Fixing these can take weeks."],
-      [0.45, "Gather the pieces", "Partners, letters of support and budget numbers" + (cs ? ", plus a written commitment of the matching money" : "") + "."],
-      [0.7, "Write the first draft", "Project narrative, budget and budget justification."],
-      [0.85, ti === 3 ? "Leadership review and signature" : ti === 2 ? "Your boss reviews and signs" : "Someone else proofreads", ti === 3 ? "Book this early: leadership calendars fill up." : "Fix what they find."],
-      [-1, "Submit on Grants.gov", "Aim " + SUBMIT_EARLY_DAYS + " days early. The system is slow on deadline day."],
-      [-2, own ? "Your target date" : "Deadline", own ? "No fixed deadline is listed, so this plan sets one for you." : "Closes " + r.close_date + ". Check the announcement for the exact time."]
+      [0, "Decide to go for it (bid or no-bid)", "Tell your boss you plan to apply. You marked it Pursue.", ""],
+      [Math.min(1, D), "Read the announcement and list every requirement", "Make a checklist of every required section, form, page limit, scoring criterion and the exact closing time.", ""],
+      [Math.min(3, D), "Check your logins", "Make sure your agency's SAM.gov registration (its federal ID, called a UEI) and your Grants.gov account are active. Fixing these can take weeks.", ""],
+      [at(0), "Blue Team: agree on the plan", "Kickoff. Agree why your agency should win, what you will do, who writes which part" + (cs ? ", and where the matching money comes from" : "") + ".", "blue"],
+      [at(0.3, 21), "Pink Team: check the outline", "A small group, including someone who is not writing it, checks the outline or early draft against every requirement in the announcement. Fix gaps now, while changes are cheap.", "pink"],
+      [at(0.6, 10), "Red Team: score it like the funder", "Readers who did not write it score the nearly finished draft (about two-thirds to three-quarters done) using the announcement's own review criteria, then list what to fix.", "red"],
+      [at(0.72, 8), "Green Team: check the budget", "Check the budget, the budget justification" + (cs ? " and the matching money" : "") + " against the announcement's rules and the award size.", "green"],
+      [at(0.85, 4), "Gold Team: final approval", "Confirm the Red and Green fixes are in. " + signer.charAt(0).toUpperCase() + signer.slice(1) + " approves and signs." + (ti === 3 ? " Book leadership time early." : ""), "gold"],
+      [Math.max(0, D - 3), "White glove check", "Last check of forms, page limits, file names, attachments and budget math before you submit.", "white"],
+      [Math.max(0, D - SUBMIT_EARLY_DAYS), "Submit on Grants.gov", "Aim " + SUBMIT_EARLY_DAYS + " days early. The system is slow on deadline day. Save the confirmation email.", ""],
+      [D, own ? "Your target date" : "Deadline", own ? "No fixed deadline is listed, so this plan sets one for you." : "Closes " + r.close_date + ". Check the announcement for the exact time. Afterwards, write down lessons learned for next time.", ""]
     ];
     var ref = refDate(); if (!own && /^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "")) { ref = new Date(r.close_date + "T00:00:00"); ref.setDate(ref.getDate() - D); }
     var prev = 0;
-    return S.map(function (s) {
-      var day = s[0] === -2 ? D : s[0] === -1 ? Math.max(0, D - SUBMIT_EARLY_DAYS) : Math.round(D * s[0]);
-      day = Math.max(prev, Math.min(day, D)); prev = day;
-      var dt = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() + day);
-      return { day: day, date: dt, title: s[1], text: s[2], own: own };
+    return S.map(function (x) {
+      var day = Math.max(prev, Math.min(x[0], D)); prev = day;
+      return { day: day, date: new Date(ref.getFullYear(), ref.getMonth(), ref.getDate() + day), title: x[1], text: x[2], color: x[3], own: own };
     });
   }
   function reqs(r) {
@@ -1216,10 +1447,18 @@ body.proj .tour-card { font-size:1.2rem; }
     var btns = el("div", "plan-btns"), u = safeUrl(r.url);
     if (u) { var a = el("a", "btn-primary", "Open the grant announcement on Grants.gov"); a.href = u; a.target = "_blank"; a.rel = "noopener"; btns.appendChild(a); }
     if (/^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "")) { var cb = el("button", null, "Add deadline to my calendar"); cb.type = "button"; cb.addEventListener("click", function () { saveFile("deadline_" + r.opp_id + ".ics", icsText([r]), "text/calendar;charset=utf-8"); }); btns.appendChild(cb); }
-    var pb = el("button", null, "Save or print my plan…"); pb.type = "button"; pb.addEventListener("click", function () { saveGrant(r, true); }); btns.appendChild(pb);
+    var pb = el("button", null, "Save or print my plan…"); pb.type = "button"; pb.title = "Timeline and checklist as PDF, Word or text"; pb.addEventListener("click", function () { saveGrant(r, true); }); btns.appendChild(pb);
+    var bb = el("button", null, "Save a brief for my boss…"); bb.type = "button"; bb.title = "A one-page summary to get approval"; bb.addEventListener("click", function () { saveGrant(r, false); }); btns.appendChild(bb);
     box.appendChild(btns);
+    var prop = el("div", "plan-prop"), pl0 = el("label"); pl0.htmlFor = "prop-measure";
+    pl0.appendChild(el("b", null, "Start a proposal")); pl0.appendChild(el("span", null, "A Word or PDF outline with this grant's facts, your plan goal, the review schedule and county need data. Pick the county measure to include:"));
+    prop.appendChild(pl0); var msel = measurePicker("prop-measure"); prop.appendChild(msel);
+    var pgo = el("button", "btn-primary", "Start a proposal…"); pgo.type = "button"; pgo.addEventListener("click", function () { startProposal(r, msel.value); }); prop.appendChild(pgo);
+    box.appendChild(prop);
     if (tight(r) && r.days_left > 2) box.appendChild(el("p", "plan-warn", "Tight: this usually takes about " + effort(r).weeks + " weeks of work, and only " + r.days_left + " days are left. Decide today, or pass."));
     box.appendChild(el("h3", null, "Your timeline"));
+    var shn = el("p", "note"); shn.appendChild(document.createTextNode("The colored steps are review rounds from the Shipley proposal method: Blue (the plan), Pink (outline check), Red (score it like the funder), Green (budget), Gold (approval), White glove (final check). For a small grant, one person can do two rounds at once. "));
+    var shl = el("button", "linkbtn", "More about this method"); shl.type = "button"; shl.addEventListener("click", function () { $("plan-dlg").close(); tab("how"); setTimeout(function () { var h = $("how-shipley"); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80); }); shn.appendChild(shl); box.appendChild(shn);
     var steps = planSteps(r), tl = el("ol", "timeline");
     if (!steps[0].own && steps[steps.length - 1].day <= 2) {
       var dd0 = steps[steps.length - 1].day;
@@ -1228,7 +1467,7 @@ body.proj .tour-card { font-size:1.2rem; }
     }
     if (steps[0].own) box.appendChild(el("p", "note", (r.status === "forecasted" ? "This grant is not posted yet" + (r.date_note ? " (" + r.date_note.toLowerCase() + ")" : "") + ", so" : "No deadline is listed, so") + " these dates count back from a target " + steps[steps.length - 1].day + " days out. Change it once you read the grant announcement."));
     if (tl) steps.forEach(function (s, i) {
-      var li = el("li", i === steps.length - 1 ? "last" : i === 0 ? "first" : null);
+      var li = el("li", (i === steps.length - 1 ? "last" : i === 0 ? "first" : "") + (s.color ? " team " + s.color : ""));
       li.appendChild(el("time", null, fmtDay(s.date) + (s.day ? " · day " + s.day : " · today")));
       li.appendChild(el("b", null, s.title)); li.appendChild(el("span", null, s.text)); tl.appendChild(li);
     });
@@ -1242,6 +1481,7 @@ body.proj .tour-card { font-size:1.2rem; }
       li.appendChild(cbx); li.appendChild(lab); cl.appendChild(li);
     });
     box.appendChild(cl);
+    box.appendChild(el("h3", null, "Where to get help")); box.appendChild(helpList(r));
     box.appendChild(el("p", "note", "Requirements come from the Grants.gov listing. The grant announcement has the full list. Your ticks stay in this browser only."));
     if (dlg.showModal) { if (!dlg.open) dlg.showModal(); } else dlg.setAttribute("open", "");
     dlg.scrollTop = 0;
@@ -1252,28 +1492,30 @@ body.proj .tour-card { font-size:1.2rem; }
   function renderCart() {
     if (!P) return;
     var rows = cartRows(), n = rows.length;
-    $("cart-n").textContent = String(n); $("cart-n").hidden = !n;
+    $("cart-n").textContent = String(n); $("cart-n").hidden = !n; $("tab-marks").textContent = "My grants" + (n ? " (" + n + ")" : "");
     $("cart-open").setAttribute("aria-label", "My grant cart, " + n + (n === 1 ? " grant" : " grants"));
     var box = $("cart-body"); if (!box) return; box.innerHTML = "";
-    if (!n) { var em = el("div", "cart-empty"); em.appendChild(el("b", null, "Your cart is empty")); em.appendChild(document.createTextNode("Press Pursue on a grant to add it here. You get a timeline and a checklist for each one.")); box.appendChild(em); return; }
+    if (!n) { var em = el("div", "cart-empty"); em.appendChild(el("b", null, "My grants is empty")); em.appendChild(document.createTextNode("Press Pursue on a grant to add it here. You get a timeline and a checklist for each one.")); box.appendChild(em); return; }
     var uniq = {}, ur = rows.filter(function (r) { if (uniq[r.opp_id]) return false; uniq[r.opp_id] = 1; return true; });
     var tot = ur.reduce(function (s, r) { return s + (money(r).max || 0); }, 0), unk = ur.filter(function (r) { return !money(r).max; }).length;
     var wks = ur.reduce(function (s, r) { return s + (effort(r).weeks || 0); }, 0);
     var dated = rows.filter(function (r) { return r.days_left != null && r.days_left >= 0; }).sort(function (a, b) { return a.days_left - b.days_left; });
     var sum = el("div", "cart-sum");
-    ; [[usd(tot) || "$0", "up to, if every one is won" + (unk ? " (" + unk + " with no amount)" : "")], [wks ? "~" + wks + " wks" : "?", "of work, roughly"], [dated.length ? dated[0].days_left + " days" : "None", "until the next deadline"]].forEach(function (s) { var d = el("div"); d.appendChild(el("b", null, s[0])); d.appendChild(el("span", null, s[1])); sum.appendChild(d); });
+    ; [[String(ur.length), ur.length === 1 ? "grant" : "grants"], [wks ? "~" + wks + " wks" : "?", "of work, roughly"], [dated.length ? dated[0].days_left + " days" : "None", "until the next deadline"]].forEach(function (s) { var d = el("div"); d.appendChild(el("b", null, s[0])); d.appendChild(el("span", null, s[1])); sum.appendChild(d); });
     box.appendChild(sum);
     var ul = el("ul", "cart-list");
-    rows.sort(function (a, b) { return (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left); }).forEach(function (r) {
+    var lastAg = null;
+    rows.sort(function (a, b) { return (agName(a.agency_id) < agName(b.agency_id) ? -1 : agName(a.agency_id) > agName(b.agency_id) ? 1 : 0) || (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left); }).forEach(function (r) {
+      if (r.agency_id !== lastAg) { lastAg = r.agency_id; var grp = rows.filter(function (x) { return x.agency_id === r.agency_id; }), gt = grp.reduce(function (s2, x) { return s2 + (money(x).max || 0); }, 0); ul.appendChild(el("li", "cl-group", agName(r.agency_id) + " · " + grp.length + (grp.length === 1 ? " grant" : " grants") + (gt ? " · up to " + usd(gt) + " if all are won" : ""))); }
       var li = el("li"), dd = el("div", "cl-days" + (r.days_left != null && r.days_left <= CSD ? " urgent" : ""));
       dd.appendChild(el("b", null, r.days_left != null ? String(r.days_left) : "–")); dd.appendChild(el("span", null, r.days_left != null ? "days" : "no date")); li.appendChild(dd);
-      var mid = el("div", "cl-mid"); mid.appendChild(el("b", null, r.title || r.opp_id)); mid.appendChild(el("span", null, (usd(money(r).max) || "Amount not listed") + " · " + (r.funder || "") + " · " + agName(r.agency_id)));
+      var mid = el("div", "cl-mid"); mid.appendChild(el("b", null, r.title || r.opp_id)); mid.appendChild(el("span", null, (usd(money(r).max) || "Amount not listed") + " · " + (r.funder || "")));
       var det = el("dl", "cl-det"), tk = track(r), ft = fedTrend(r), ef = effort(r);
       [["Past wins", trackText(tk) + (tk.why[0] ? ". " + tk.why[0] : "")], ["Impact", "≈ " + impact(r).score + " of 100"], ["Who signs", tierInfo(r)[1]], ["Chance", odds(r).label], ["Effort", ef.label + (ef.weeks ? " (~" + ef.weeks + " wks)" : "")], ["Matching money", r.cost_sharing === "Yes" ? "Required" : r.cost_sharing === "No" ? "Not required" : "Not stated"], ["Federal budget", ft ? (ft.fy26 != null ? usd(ft.fy26) + " planned for 2026" : usd(ft.fy25) + " in FY 25") + (ft.dir ? " (" + ft.dir + ")" : "") : "Not reported"], ["Vs. agency budget", shareOfBudget(r) || "Unknown"]].forEach(function (x) { det.appendChild(el("dt", null, x[0])); det.appendChild(el("dd", null, x[1])); });
-      mid.appendChild(det); li.appendChild(mid);
+      var more = el("details", "cl-more"); more.appendChild(el("summary", null, "Show details")); more.appendChild(det); mid.appendChild(more); li.appendChild(mid);
       var ck = el("input"); ck.type = "checkbox"; ck.className = "cl-ck"; ck.setAttribute("aria-label", "Pick " + (r.title || "grant") + " to compare"); ck.dataset.key = r.agency_id + "|" + r.opp_id; li.insertBefore(ck, li.firstChild);
       var act = el("div", "cl-act"), op = el("button", "primary", "Plan"); op.type = "button"; op.addEventListener("click", function () { $("cart-dlg").close(); openPlan(r); });
-      var rm = el("button", null, "Remove"); rm.type = "button"; rm.setAttribute("aria-label", "Remove " + (r.title || "grant") + " from the cart");
+      var rm = el("button", null, "Remove"); rm.type = "button"; rm.setAttribute("aria-label", "Remove " + (r.title || "grant") + " from My grants");
       rm.addEventListener("click", function () { delete marks[r.agency_id + "|" + r.opp_id]; saveMarks(); syncMarkButtons(r.agency_id + "|" + r.opp_id); renderMarks(); });
       act.appendChild(op); act.appendChild(rm); li.appendChild(act); ul.appendChild(li);
     });
@@ -1287,14 +1529,14 @@ body.proj .tour-card { font-size:1.2rem; }
     var mr = maybeRows(); if (mr.length) { var mb = el("button", null, "Compare my " + mr.length + " maybes"); mb.type = "button"; mb.className = "cmp-go"; mb.addEventListener("click", function () { $("cart-dlg").close(); openCompare(mr); }); box.appendChild(mb); }
     var needM = ur.filter(function (r) { return r.cost_sharing === "Yes"; }).length; if (needM) box.appendChild(el("p", "plan-warn", needM + (needM === 1 ? " grant here needs" : " grants here need") + " matching money" + (F.matchAmt != null ? "; you said you can commit " + usd(F.matchAmt) : "") + ". Check each grant announcement for the share."));
     var bar = el("div", "cart-btns");
-    var sv = el("button", "primary", "Save my cart… (PDF, Word, Excel, calendar)"); sv.type = "button"; sv.addEventListener("click", function () { saveRows("my grant cart", ur); }); bar.appendChild(sv);
+    var sv = el("button", "primary", "Save my grants… (PDF, Word, Excel, calendar)"); sv.type = "button"; sv.addEventListener("click", function () { saveRows("my grant cart", ur); }); bar.appendChild(sv);
     box.appendChild(bar);
     box.appendChild(el("p", "note", "Saved in this browser only. Nothing is sent anywhere."));
   }
   function syncMarkButtons(key) {
     Array.prototype.forEach.call(document.querySelectorAll(".act"), function (bx) {
       if (bx.dataset.key !== key) return; bx.dataset.mark = marks[key] || "";
-      Array.prototype.forEach.call(bx.querySelectorAll("button[data-m]"), function (c) { c.setAttribute("aria-pressed", marks[key] === c.dataset.m ? "true" : "false"); if (c.dataset.m === "Pursue") c.textContent = marks[key] === "Pursue" ? "✓ In my cart" : "Pursue: add to cart"; });
+      Array.prototype.forEach.call(bx.querySelectorAll("button[data-m]"), function (c) { c.setAttribute("aria-pressed", marks[key] === c.dataset.m ? "true" : "false"); if (c.dataset.m === "Pursue") c.textContent = marks[key] === "Pursue" ? "✓ In My grants" : "Pursue: save to My grants"; });
     });
   }
 
@@ -1362,11 +1604,11 @@ body.proj .tour-card { font-size:1.2rem; }
   var darkMQ = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : { matches: false };
   function applyLook(id) {
     var lk = LOOK[id] || LOOK[""], t = THEME[lk[1]], dark = isDark() && !document.body.classList.contains("proj"), rs = document.documentElement.style;
-    rs.setProperty("--accent-strong", dark ? t[3] : t[0]); rs.setProperty("--accent", dark ? t[3] : t[1]); rs.setProperty("--accent-soft", dark ? t[4] : t[2]);
+    // Only the top band and the picker tile take the agency's color; buttons, links and status colors stay fixed.
     rs.setProperty("--bar", dark ? t[5] : t[0]);
     var nm = id && P ? agName(id) : "Federal Funds Matchmaker";
     var b = $("brand-icon"); if (b) b.innerHTML = iconSvg(lk[0], 22, null);
-    var a = $("ag-icon"); if (a) { a.innerHTML = iconSvg(lk[0], 34, nm + " icon"); a.hidden = !id; }
+    var a = $("ag-icon"); if (a) { a.innerHTML = iconSvg(lk[0], 34, nm + " icon"); a.hidden = !id; a.style.color = dark ? t[3] : t[1]; a.style.background = dark ? t[4] : t[2]; }
     var fav = document.querySelector('link[rel="icon"]'); if (!fav) { fav = document.createElement("link"); fav.rel = "icon"; document.head.appendChild(fav); }
     fav.href = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="' + t[0] + '"/><g transform="translate(3 3) scale(.75)" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + (ICON[lk[0]] || ICON.funds).replace(/currentColor/g, "#fff") + '</g></svg>');
     var mt = document.querySelector('meta[name="theme-color"]'); if (mt) mt.content = t[0];
@@ -1384,7 +1626,7 @@ body.proj .tour-card { font-size:1.2rem; }
     if (!s) why.push("No NC award for this program on record. That does not mean you cannot win it; it is just new to us");
     return { stars: s, label: ["New to NC", "Won from this department", "NC has won it", "Won this before"][s], why: why };
   }
-  function trackText(t) { return t.stars ? starStr(t.stars) + " " + t.label : t.label; }
+  function trackText(t) { return t.label; }
   function titleCase(x) { return String(x).toLowerCase().replace(/\b[a-z]/g, function (c) { return c.toUpperCase(); }).replace(/\bNc\b/g, "NC"); }
   function starStr(n) { return "★★★".slice(0, n) + "☆☆☆".slice(0, 3 - n); }
   var FED_SWING = 5; // [assumed] year-to-year ratio above which a change is called unusual, not a trend
@@ -1410,13 +1652,8 @@ body.proj .tour-card { font-size:1.2rem; }
   function deptOf(r) { var p = String(r.cfda_list || "").slice(0, 2); return { code: p, name: DEPT[p] || null }; }
   function fundColor(r) { var k = deptOf(r).code || r.funder || "x", h = 0; for (var i = 0; i < k.length; i++) h = (h * 31 + k.charCodeAt(i)) % 997; return FUND_PAL[h % FUND_PAL.length]; }
   var SW = { deck: [], i: 0, hist: [], added: 0, maybes: 0 };
-  function deckFor() {
-    var g = groups(cur.id), open = listFor(g).filter(function (r) { return r.status !== "forecasted" && r.eligibility !== "no"; });
-    var seen = {}; open.forEach(function (r) { seen[r.opp_id] = 1; });
-    var fc = sortRows(g.coming.filter(passF).filter(function (r) { return !seen[r.opp_id]; }));
-    var ok = function (r) { return !limitedTo(r); };
-    return open.filter(ok).concat(fc.filter(ok), open.filter(function (r) { return !ok(r); }));
-  }
+  function deckFor() { return LAST_ROWS.filter(function (r) { return r.eligibility !== "no"; }); } // exactly the list on the page, in the same order
+  function oneLine(t) { t = String(t || "").replace(/\s+/g, " ").trim(); if (!t) return ""; var m = t.match(/^.{20,180}?[.!?](\s|$)/); t = m ? m[0].trim() : t.slice(0, 160).replace(/\s+\S*$/, "") + "…"; return t; }
   function startSwipe() {
     if (!cur.id) return;
     SW = { deck: deckFor(), i: 0, hist: [], added: 0, maybes: 0 };
@@ -1430,11 +1667,13 @@ body.proj .tour-card { font-size:1.2rem; }
     var band = el("div", "sw-band"); band.appendChild(el("span", "sw-fund", r.funder || "Federal funder not listed")); if (d.name) band.appendChild(el("span", "sw-dept", d.name)); c.appendChild(band);
     if (r.status === "forecasted") c.appendChild(el("div", "sw-flag", "Not open yet: coming up"));
     c.appendChild(el("h3", "sw-title", r.title || r.opp_number || r.opp_id));
+    var ol1 = oneLine(r.opp_snippet) || (r.goal_snippet ? "Matches your plan goal: " + r.goal_snippet.replace(/^Goal\s*\S*\s*[–-]?\s*/i, "") : "Open the announcement for a summary.");
+    c.appendChild(el("p", "sw-desc", ol1));
     var g4 = el("div", "sw-nums");
     function num(big, small, cls) { var x = el("div", "sw-num" + (cls ? " " + cls : "")); x.appendChild(el("b", null, big)); x.appendChild(el("span", null, small)); g4.appendChild(x); }
     num(r.days_left != null ? String(r.days_left) : "–", r.days_left != null ? (r.days_left === 1 ? "day left" : "days left") : (cap(r.date_note) || "No fixed date"), r.days_left != null && r.days_left <= CSD && r.status !== "forecasted" ? "urgent" : null);
     num(usd(money(r).max) || "Not listed", "max per award", money(r).max ? null : "na");
-    num(tr.stars ? starStr(tr.stars) : "New", tr.stars ? tr.label : "no NC wins on record", tr.stars ? "stars" : "na");
+    num(String(impact(r).score), "impact score (of 100)", "imp");
     num(ti[0] ? ["", "You", "Your boss", "Leadership"][ti[0]] : "?", ti[0] ? (ti[0] === 1 ? "can start it" : "signs") + " · Tier " + ti[0] : "who signs not stated", "who");
     c.appendChild(g4);
     if (r.eligibility === "ask") c.appendChild(el("p", "sw-note", limitedTo(r) ? "May be only for " + limitedTo(r) + ". Check eligibility." : "Check eligibility in the announcement."));
@@ -1443,14 +1682,15 @@ body.proj .tour-card { font-size:1.2rem; }
   function renderSwipe() {
     var stack = $("sw-stack"); stack.innerHTML = "";
     var n = SW.deck.length, left = n - SW.i;
-    $("sw-count").textContent = left > 0 ? (SW.i + 1) + " of " + n : "Done";
+    var nOpen = SW.deck.filter(function (r) { return r.status !== "forecasted"; }).length;
+    $("sw-count").textContent = left > 0 ? (SW.i + 1) + " of " + n + (nOpen < n ? " (" + nOpen + " open now)" : "") : "Done";
     $("sw-undo").disabled = !SW.hist.length;
     $("sw-btns").hidden = left <= 0;
     if (left <= 0) {
       var end = el("div", "sw-end"); end.appendChild(el("h3", null, n ? "That is every match" : "No grants to swipe"));
-      end.appendChild(el("p", null, n ? "You added " + SW.added + " to your cart and set " + SW.maybes + " aside as maybe." : "Change your situation or clear filters, then try again."));
+      end.appendChild(el("p", null, n ? "You added " + SW.added + " to My grants and set " + SW.maybes + " aside as maybe." : "Change your situation or clear filters, then try again."));
       var b1 = el("button", "primary", "Compare my maybes"); b1.type = "button"; b1.addEventListener("click", function () { openCompare(maybeRows()); });
-      var b2 = el("button", null, "Open my cart"); b2.type = "button"; b2.addEventListener("click", function () { exitSwipe(); $("cart-open").click(); });
+      var b2 = el("button", null, "Open My grants"); b2.type = "button"; b2.addEventListener("click", function () { exitSwipe(); tab("marks"); window.scrollTo(0, 0); });
       var b3 = el("button", null, "Back to the list"); b3.type = "button"; b3.addEventListener("click", exitSwipe);
       [b1, b2, b3].forEach(function (b) { end.appendChild(b); }); stack.appendChild(end); return;
     }
@@ -1467,7 +1707,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var card = document.querySelector("#sw-stack .sw-card:not(.behind)");
     var go = function () { SW.i++; SW.busy = false; renderMarks(); renderSwipe(); };
     if (card && !matchMedia("(prefers-reduced-motion: reduce)").matches) { SW.busy = true; card.classList.add("fly-" + kind); setTimeout(go, 220); } else go();
-    $("sw-live").textContent = name === "Pursue" ? "Added to cart" : name === "Maybe" ? "Set aside as maybe" : "Passed";
+    $("sw-live").textContent = name === "Pursue" ? "Saved to My grants" : name === "Maybe" ? "Set aside as maybe" : "Passed";
   }
   function swUndo() {
     if (SW.busy) return;
@@ -1495,8 +1735,8 @@ body.proj .tour-card { font-size:1.2rem; }
   // ---- compare: 2 to 4 grants side by side ----
   function openCompare(rows) {
     var box = $("cmp-body"); box.innerHTML = ""; var total = rows.length; rows = rows.slice(0, 4);
-    if (total > 4) box.appendChild(el("p", "note", "Showing the first 4 of " + total + ". Pass on some to bring in the rest, or tick the ones you want in your cart."));
-    if (!rows.length) { box.appendChild(el("p", "cart-empty", "Nothing to compare yet. Swipe up (Maybe) on grants you are unsure about, or tick them in your cart.")); }
+    if (total > 4) box.appendChild(el("p", "note", "Showing the first 4 of " + total + ". Pass on some to bring in the rest, or tick the ones you want in My grants."));
+    if (!rows.length) { box.appendChild(el("p", "cart-empty", "Nothing to compare yet. Swipe up (Maybe) on grants you are unsure about, or tick them in My grants.")); }
     else {
       var wrap = el("div", "tablewrap"), t = el("table", "cmp"), lines = [
         ["Funder", function (r) { return r.funder || "Not listed"; }],
@@ -1517,9 +1757,9 @@ body.proj .tour-card { font-size:1.2rem; }
       rows.forEach(function (r) { var th = el("th"); th.style.borderTop = "6px solid " + fundColor(r); th.appendChild(el("span", null, r.title)); hr.appendChild(th); }); t.appendChild(hr);
       lines.forEach(function (L) { var tr = el("tr"); tr.appendChild(el("th", null, L[0])); rows.forEach(function (r) { tr.appendChild(el("td", null, L[1](r))); }); t.appendChild(tr); });
       var ar = el("tr"); ar.appendChild(el("th", null, ""));
-      rows.forEach(function (r) { var td = el("td"), key = r.agency_id + "|" + r.opp_id, b = el("button", "primary", marks[key] === "Pursue" ? "✓ In my cart" : "Add to cart"); b.type = "button";
-        b.addEventListener("click", function () { marks[key] = "Pursue"; saveMarks(); syncMarkButtons(key); renderMarks(); b.textContent = "✓ In my cart"; });
-        var x = el("button", null, marks[key] === "Pursue" ? "Pass (removes from cart)" : "Pass"); x.type = "button"; x.addEventListener("click", function () { marks[key] = "Pass"; saveMarks(); syncMarkButtons(key); renderMarks(); openCompare(rows.filter(function (q) { return q !== r; })); });
+      rows.forEach(function (r) { var td = el("td"), key = r.agency_id + "|" + r.opp_id, b = el("button", "primary", marks[key] === "Pursue" ? "✓ In My grants" : "Save to My grants"); b.type = "button";
+        b.addEventListener("click", function () { marks[key] = "Pursue"; saveMarks(); syncMarkButtons(key); renderMarks(); b.textContent = "✓ In My grants"; });
+        var x = el("button", null, marks[key] === "Pursue" ? "Pass (removes from My grants)" : "Pass"); x.type = "button"; x.addEventListener("click", function () { marks[key] = "Pass"; saveMarks(); syncMarkButtons(key); renderMarks(); openCompare(rows.filter(function (q) { return q !== r; })); });
         td.appendChild(b); td.appendChild(x); ar.appendChild(td); }); t.appendChild(ar);
       wrap.appendChild(t); box.appendChild(wrap);
     }
@@ -1589,13 +1829,26 @@ body.proj .tour-card { font-size:1.2rem; }
 
   // ---- impact score (0-100, our estimate): 60% plan fit, 40% award size; plan fit only when no amount is listed ----
   var IMPACT_FIT_W = 0.6, IMPACT_MONEY_W = 0.4, IMPACT_MONEY_LO = 1e4, IMPACT_MONEY_HI = 1e8; // [assumed] team judgment
-  function impact(r) {
+  // Impact (our estimate, 0-100): a weighted mix of plan fit, award size, chance of winning and less work.
+  // Weights are the user's own (More options); a factor with no data (e.g. no amount listed) drops out and the rest are rescaled.
+  var IMPACT_W0 = { fit: 50, money: 30, odds: 10, ease: 10 }; // [assumed] team default
+  var IMPACT_W = lsGet("ffm_impw_v1", null) || JSON.parse(JSON.stringify(IMPACT_W0));
+  var ODDS_PART = { good: 1, fair: 0.6, unknown: 0.5, long: 0.2 }, EASE_PART = { easy: 1, medium: 0.6, hard: 0.25 };
+  var IMP_LABEL = { fit: "Plan fit", money: "Award size", odds: "Chance of winning", ease: "Less work" };
+  function impactPartsRaw(r) {
     var fit = Math.max(0, Math.min(1, Number(r.fit_score) || 0)), m = money(r).max, ms = null;
     if (m) ms = Math.max(0, Math.min(1, (Math.log10(m) - Math.log10(IMPACT_MONEY_LO)) / (Math.log10(IMPACT_MONEY_HI) - Math.log10(IMPACT_MONEY_LO))));
-    var score = Math.round(100 * (ms == null ? fit : IMPACT_FIT_W * fit + IMPACT_MONEY_W * ms));
-    var why = "Plan fit " + Math.round(fit * 100) + " of 100" + (ms == null ? ". No award amount listed, so this is plan fit only." : " (60%) and award size " + Math.round(ms * 100) + " of 100 (40%; $10K scores 0, $100M or more scores 100).");
-    return { score: score, why: why, partial: ms == null };
+    var lv = effort(r).level;
+    return { fit: fit, money: ms, odds: ODDS_PART[odds(r).level], ease: lv ? EASE_PART[lv] : 0.5 };
   }
+  function impact(r) {
+    var p = impactPartsRaw(r), tw = 0, sum = 0, used = [];
+    Object.keys(IMPACT_W).forEach(function (k) { var w = Number(IMPACT_W[k]) || 0; if (!w || p[k] == null) return; tw += w; sum += w * p[k]; used.push(k); });
+    var score = tw ? Math.round(100 * sum / tw) : 0;
+    var why = used.map(function (k) { return IMP_LABEL[k] + " " + Math.round(p[k] * 100) + " (weight " + Math.round(IMPACT_W[k] / tw * 100) + "%)"; }).join(", ") + (p.money == null && IMPACT_W.money ? ". No award amount is listed, so award size is left out." : "") + ".";
+    return { score: score, why: why, partial: p.money == null, parts: p, used: used, tw: tw };
+  }
+
 
   // ---- light / dark switch (follows the computer until the user picks) ----
   function isDark() { var t = document.documentElement.dataset.theme; return t ? t === "dark" : darkMQ.matches; }
@@ -1677,7 +1930,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var base = safeName(what);
     opt("PDF", "Opens the print window: choose Save as PDF", "PDF", function () { printDoc(getDoc()); });
     opt("Word (.docx)", "Opens in Microsoft Word or Google Docs", "DOC", function () { var bl = docToDocx(getDoc()), a = document.createElement("a"); a.href = URL.createObjectURL(bl); a.download = base + ".docx"; document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500); });
-    if (opts.rows && opts.rows.length) opt("Excel (.csv)", "A spreadsheet, one grant per row", "XLS", function () { download(base + ".csv", [CSVH].concat(opts.rows.map(csvRow))); });
+    if (opts.rows && opts.rows.length) opt("Excel (.csv)", "A spreadsheet, one grant per row", "CSV", function () { download(base + ".csv", [CSVH].concat(opts.rows.map(csvRow))); });
     var dated = (opts.ics || []).filter(function (r) { return /^\d{4}-\d{2}-\d{2}$/.test(r.close_date || ""); });
     if (dated.length) opt("Calendar (.ics)", dated.length + (dated.length === 1 ? " deadline" : " deadlines") + " for Outlook or Google Calendar", "CAL", function () { saveFile(base + "_deadlines.ics", icsText(dated), "text/calendar;charset=utf-8"); });
     opt("Plain text (.txt)", "For email or notes", "TXT", function () { saveFile(base + ".txt", docToText(getDoc()), "text/plain;charset=utf-8"); });
@@ -1691,50 +1944,13 @@ body.proj .tour-card { font-size:1.2rem; }
     saveChooser(what, function () { return { title: what.charAt(0).toUpperCase() + what.slice(1), sub: (cur.id ? agName(cur.id) + " · " : "") + rows.length + " grants · prepared " + new Date().toLocaleDateString(), sections: [].concat.apply([], rows.map(function (r) { return grantSection(r, false); })) }; }, { rows: rows, ics: rows });
   }
 
-  // ---- impact vs effort: every grant in the list on one picture ----
-  function renderMatrix(rows) {
-    var box = $("matrix"), svg = $("mx-svg"), tip = $("mx-tip"), NS = "http://www.w3.org/2000/svg";
-    box.hidden = !rows.length || document.body.classList.contains("proj"); if (box.hidden) return;
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
-    var W = Math.max(320, Math.min(svg.parentNode.clientWidth || 700, 900)), H = W < 520 ? 300 : 360, ml = 44, mr = 14, mt = 14, mb = 44;
-    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
-    var cols = [["easy", "Easy (~2 wks)"], ["medium", "Medium (~4 wks)"], ["hard", "Hard (~8 wks)"], [null, "Not known"]], cw = (W - ml - mr) / 4;
-    var X = function (lv, jit) { var i = cols.findIndex(function (c) { return c[0] === lv; }); if (i < 0) i = 3; return ml + cw * i + cw * (0.18 + 0.64 * jit); };
-    var Y = function (v) { return mt + (H - mt - mb) * (1 - v / 100); };
-    function mk(tag, a, t) { var e = document.createElementNS(NS, tag); Object.keys(a).forEach(function (k) { e.setAttribute(k, a[k]); }); if (t != null) e.textContent = t; svg.appendChild(e); return e; }
-    mk("rect", { x: ml, y: mt, width: cw * 1, height: (H - mt - mb) / 2, "class": "mx-q good" });
-    [0, 25, 50, 75, 100].forEach(function (v) { mk("line", { x1: ml, x2: W - mr, y1: Y(v), y2: Y(v), "class": v === 50 ? "mx-mid" : "grid" }); mk("text", { x: ml - 6, y: Y(v) + 4, "text-anchor": "end", "class": "ax" }, String(v)); });
-    cols.forEach(function (c, i) { if (i) mk("line", { x1: ml + cw * i, x2: ml + cw * i, y1: mt, y2: H - mb, "class": i === 3 ? "mx-sep" : "grid" }); mk("text", { x: ml + cw * (i + .5), y: H - mb + 18, "text-anchor": "middle", "class": "ax" }, c[1]); });
-    mk("text", { x: (ml + W - mr) / 2, y: H - 4, "text-anchor": "middle", "class": "ax" }, "How much work it takes to apply (our estimate)");
-    mk("text", { x: 12, y: mt + (H - mt - mb) / 2, "text-anchor": "middle", "class": "ax", transform: "rotate(-90 12 " + (mt + (H - mt - mb) / 2) + ")" }, "Impact score");
-    mk("text", { x: ml + 8, y: mt + 16, "class": "mx-lab good" }, "Quick wins");
-    mk("text", { x: ml + cw * 2.5, y: mt + 16, "text-anchor": "middle", "class": "mx-lab" }, "Big bets");
-    mk("text", { x: ml + 8, y: H - mb - 8, "class": "mx-lab" }, "Small extras");
-    mk("text", { x: ml + cw * 2.5, y: H - mb - 8, "text-anchor": "middle", "class": "mx-lab" }, "Probably skip");
-    var seed = function (s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 1000; return h / 1000; };
-    rows.forEach(function (r) {
-      var im = impact(r), ef = effort(r), m = money(r).max, rad = m ? (m >= 1e6 ? 9 : m >= 1e5 ? 7 : 5) : 5;
-      var urgent = r.days_left != null && r.days_left <= CSD && r.status !== "forecasted";
-      var c = mk("circle", { cx: X(ef.level, seed(String(r.opp_id))), cy: Y(im.score), r: rad, "class": "mx-dot" + (urgent ? " urgent" : "") + (r.status === "forecasted" ? " later" : ""), tabindex: 0 });
-      var label = (r.title || r.opp_id) + ". Impact " + im.score + ", " + ef.label.toLowerCase() + ", " + (m ? usd(m) + " per award" : "amount not listed") + ", " + (r.days_left != null ? r.days_left + " days left" : "no fixed date") + (r.status === "forecasted" ? ", not open yet" : "");
-      c.setAttribute("aria-label", label);
-      var show1 = function () { tip.hidden = false; tip.textContent = label; var bb = svg.getBoundingClientRect(), s = bb.width / W; tip.style.left = Math.min(Number(c.getAttribute("cx")) * s, bb.width - 230) + "px"; tip.style.top = (Number(c.getAttribute("cy")) * s - 12) + "px"; };
-      c.addEventListener("mouseenter", show1); c.addEventListener("focus", show1);
-      c.addEventListener("mouseleave", function () { tip.hidden = true; }); c.addEventListener("blur", function () { tip.hidden = true; });
-      var go = function () { var li = document.querySelector('#top li.row[data-opp="' + r.opp_id + '"]'); if (!li) return; li.scrollIntoView({ block: "center", behavior: "smooth" }); li.classList.add("flash"); setTimeout(function () { li.classList.remove("flash"); }, 1600); if (deskMQ.matches) deskSelect(li); };
-      c.addEventListener("click", go); c.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
-    });
-    var qw = rows.filter(function (r) { return impact(r).score >= 50 && effort(r).level === "easy"; }).length;
-    $("mx-note").textContent = "Each dot is one grant in your list. Higher means more impact (plan fit and money). Left means less work. Bigger dots mean bigger awards; red outline means closing within " + CSD + " days. " + (qw ? qw + (qw === 1 ? " grant is a quick win." : " grants are quick wins.") : "No quick wins in this list right now.") + " Click a dot to jump to it.";
-  }
-
   // ---- feedback: whole tool, each grant match, and one quick question after Pursue or a save ----
   // Where it goes: kept in this browser, and the person can send it by email or through the team's form.
   // Set these two when they exist; an empty value hides that button.
   var FEEDBACK_EMAIL = "";   // e.g. a team inbox; mailto opens the person's own email with everything filled in
-  var FEEDBACK_FORM = "https://claude.ai/artifact/CzWWSuBv8vsQurdWdDjiLa"; // team feedback form (claude.ai page; responses visible to its owner and editors only). It must be shared before others can open it.
+  var FEEDBACK_FORM = ""; // the claude.ai form needed a Claude login; feedback now goes to the team through our own site (see sendFeedback)
   var fbAll = lsGet("ffm_feedback_v1", []);
-  function fbSave(item) { item.when = new Date().toISOString(); item.agency = cur.id ? agName(cur.id) : ""; fbAll.push(item); lsSet("ffm_feedback_v1", fbAll); renderFbCount(); return item; }
+  function fbSave(item, noSend) { item.when = new Date().toISOString(); item.agency = cur.id ? agName(cur.id) : ""; fbAll.push(item); lsSet("ffm_feedback_v1", fbAll); if (!noSend) sendFeedback(item); return item; }
   function renderFbCount() { var n = $("fb-n"); if (n) { n.textContent = String(fbAll.length); n.hidden = !fbAll.length; } }
   function fbText(items) {
     return items.map(function (x) {
@@ -1755,23 +1971,27 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function fbThanks(box, items, msg) {
     box.innerHTML = ""; var t = el("div", "fb-thanks"); t.appendChild(el("b", null, msg || "Thank you. Your feedback is saved in this browser."));
-    t.appendChild(el("span", null, FEEDBACK_EMAIL || FEEDBACK_FORM ? "Send it to the team so it counts:" : "To share it, copy it into an email to the team.")); box.appendChild(t); fbSendRow(box, items);
+    box.appendChild(t); if (!/sent to the project team/.test(msg || "")) { t.appendChild(el("span", null, "Copy it into an email to the team instead:")); fbSendRow(box, items); }
   }
   // whole-tool form
   function openFeedback() {
     var box = $("fb-body"); box.innerHTML = "";
-    box.appendChild(el("p", "note", "Three quick questions. Do not include personal or private information."));
-    if (FEEDBACK_FORM && safeUrl(FEEDBACK_FORM)) { var fl = el("p", "note"); fl.appendChild(document.createTextNode("Prefer a full form? ")); var fa = el("a", null, "Open the team feedback form"); fa.href = FEEDBACK_FORM; fa.target = "_blank"; fa.rel = "noopener"; fl.appendChild(fa); box.appendChild(fl); }
+    box.appendChild(el("p", "note", "A few quick questions. Answers go to the project team only. Please leave out personal or private information."));
     var q1 = el("fieldset", "fb-q"); q1.appendChild(el("legend", null, "Was this tool helpful today?"));
     var pick = "";
     ["Yes", "Somewhat", "No"].forEach(function (v) { var b = el("button", "fb-choice", v); b.type = "button"; b.setAttribute("aria-pressed", "false"); b.addEventListener("click", function () { pick = v; [].forEach.call(q1.querySelectorAll(".fb-choice"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); }); q1.appendChild(b); });
     box.appendChild(q1);
+    var q2 = el("fieldset", "fb-q"); q2.appendChild(el("legend", null, "Did it save you time?")); var pick2 = "";
+    ["Yes", "A little", "No"].forEach(function (v) { var b = el("button", "fb-choice", v); b.type = "button"; b.setAttribute("aria-pressed", "false"); b.addEventListener("click", function () { pick2 = v; [].forEach.call(q2.querySelectorAll(".fb-choice"), function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); }); }); q2.appendChild(b); });
+    box.appendChild(q2);
+    var lr = el("label", "fb-field"); lr.appendChild(el("span", null, "Your role (optional)")); var role = el("select"); ["", "Grant writer or coordinator", "Supervisor or leader", "Budget or finance", "Other"].forEach(function (v) { var o = el("option", null, v || "Choose one"); o.value = v; role.appendChild(o); }); lr.appendChild(role); box.appendChild(lr);
     var l2 = el("label", "fb-field"); l2.appendChild(el("span", null, "What were you trying to do?")); var task = el("input"); task.type = "text"; task.maxLength = 300; task.placeholder = "e.g. find school bus money closing this month"; l2.appendChild(task); box.appendChild(l2);
     var l3 = el("label", "fb-field"); l3.appendChild(el("span", null, "What got in the way, or what should we add?")); var note = el("textarea"); note.maxLength = 1500; note.rows = 4; l3.appendChild(note); box.appendChild(l3);
-    var go = el("button", "fb-btn primary", "Save feedback"); go.type = "button";
-    go.addEventListener("click", function () { if (!pick && !task.value.trim() && !note.value.trim()) { go.textContent = "Answer at least one question"; return; } var it = fbSave({ kind: "Whole tool", rating: pick, task: task.value.trim(), note: note.value.trim() }); fbThanks(box, [it]); });
+    var go = el("button", "fb-btn primary", "Send feedback"); go.type = "button";
+    go.addEventListener("click", function () { if (!pick && !pick2 && !task.value.trim() && !note.value.trim()) { go.textContent = "Answer at least one question"; return; } go.disabled = true; go.textContent = "Sending...";
+      var it = fbSave({ kind: "Whole tool", rating: pick, savedTime: pick2, role: role.value, task: task.value.trim(), note: note.value.trim() }, true);
+      sendFeedback(it).then(function (ok) { fbThanks(box, [it], ok ? "Thank you. Your feedback was sent to the project team." : "Thank you. It is saved in this browser, but it could not be sent right now."); }); });
     box.appendChild(go);
-    if (fbAll.length) { var all = el("p", "note fb-past"); all.appendChild(document.createTextNode(fbAll.length + (fbAll.length === 1 ? " piece" : " pieces") + " of feedback saved in this browser. ")); var dl = el("button", "linkbtn", "Download all"); dl.type = "button"; dl.addEventListener("click", function () { saveFile("matchmaker_feedback.txt", fbText(fbAll), "text/plain;charset=utf-8"); }); all.appendChild(dl); box.appendChild(all); }
     var d = $("fb-dlg"); if (d.showModal) { if (!d.open) d.showModal(); } else d.setAttribute("open", "");
   }
   // "Is this match right?" on each grant
@@ -1782,7 +2002,7 @@ body.proj .tour-card { font-size:1.2rem; }
     function draw() {
       wrap.innerHTML = "";
       if (fbByKey[key]) { var done = el("span", "fb-done", "Thanks: you said “" + fbByKey[key] + "”"); var ch = el("button", "linkbtn", "Change"); ch.type = "button"; ch.addEventListener("click", function () { delete fbByKey[key]; lsSet("ffm_fb_match_v1", fbByKey); draw(); }); wrap.appendChild(done); wrap.appendChild(ch); return; }
-      wrap.appendChild(el("span", "fb-ask", "Is this match right?"));
+      wrap.appendChild(el("span", "fb-ask", "Wrong match? Tell us:"));
       FB_MATCH.forEach(function (v) { var b = el("button", "fb-mini", v); b.type = "button"; b.addEventListener("click", function () {
         fbByKey[key] = v; lsSet("ffm_fb_match_v1", fbByKey); var it = fbSave({ kind: "Grant match", rating: v, grant: r.title, opp: r.opp_number || r.opp_id, note: "" }); draw();
         var add = el("button", "linkbtn", "Add a note"); add.type = "button"; add.addEventListener("click", function () {
@@ -1795,11 +2015,364 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   // one question after Pursue or a save (asked at most once a day)
   function quickAsk(where) {
+    return; // turned off: keep feedback to the top-bar button
     var last = lsGet("ffm_fb_quick_v1", 0); if (Date.now() - last < 864e5) return;
     var bar = $("fb-toast"); bar.innerHTML = ""; bar.hidden = false;
     bar.appendChild(el("span", null, "Did this save you time?"));
     ["Yes", "A little", "No"].forEach(function (v) { var b = el("button", "fb-mini", v); b.type = "button"; b.addEventListener("click", function () { lsSet("ffm_fb_quick_v1", Date.now()); var it = fbSave({ kind: "Quick question after " + where, rating: v }); bar.innerHTML = ""; bar.appendChild(el("span", null, "Thanks!")); var more = el("button", "linkbtn", "Tell us more"); more.type = "button"; more.addEventListener("click", function () { bar.hidden = true; openFeedback(); }); bar.appendChild(more); setTimeout(function () { bar.hidden = true; }, 6000); }); bar.appendChild(b); });
     var x = el("button", "fb-x", "×"); x.type = "button"; x.setAttribute("aria-label", "Close"); x.addEventListener("click", function () { lsSet("ffm_fb_quick_v1", Date.now()); bar.hidden = true; }); bar.appendChild(x);
+  }
+
+  // ---- one chart, right column: "By effort" (default: money x work, best = top left) / "By deadline" (money x days left) ----
+  var MXEL = null, MX_MODE = lsGet("ffm_mx_mode_v2", "effort") === "deadline" ? "deadline" : "effort", NUM = {};
+  function mxQ(sel) { return MXEL ? MXEL.querySelector(sel) : null; }
+  function renderMatrix(rows) {
+    if (!MXEL) return;
+    var svg = mxQ("#mx-svg"), tip = mxQ("#mx-tip"), NS = "http://www.w3.org/2000/svg";
+    rows = rows.filter(function (r) { return r.status === "posted"; });
+    MXEL.hidden = !rows.length || document.body.classList.contains("proj"); if (MXEL.hidden) return;
+    [].forEach.call(MXEL.querySelectorAll(".mx-tog button"), function (b) { b.setAttribute("aria-pressed", b.dataset.m === MX_MODE ? "true" : "false"); });
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var W = Math.max(300, Math.min(svg.parentNode.clientWidth || 380, 900)), H = Math.min(420, Math.round(W * 0.92)), ml = 62, mr = 12, mt = 14, mb = 44;
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    function mk(tag, a, t) { var e = document.createElementNS(NS, tag); Object.keys(a).forEach(function (k) { e.setAttribute(k, a[k]); }); if (t != null) e.textContent = t; svg.appendChild(e); return e; }
+    var pw = W - ml - mr, ph = H - mt - mb, strip = 22, phm = ph - strip - 6, pos = {};
+    // money axis (shared): log scale, plus a strip at the bottom for "amount not listed"
+    var ms = rows.map(function (r) { return money(r).max; }).filter(Boolean);
+    var y0 = ms.length ? Math.floor(Math.log10(Math.min.apply(null, ms))) : 4, y1 = ms.length ? Math.ceil(Math.log10(Math.max.apply(null, ms))) : 7; if (y1 <= y0) y1 = y0 + 1;
+    var Y = function (m) { return m ? mt + phm * (1 - (Math.log10(m) - y0) / (y1 - y0)) : mt + phm + 6 + strip / 2; };
+    for (var e = y0; e <= y1; e++) { mk("line", { x1: ml, x2: W - mr, y1: Y(Math.pow(10, e)), y2: Y(Math.pow(10, e)), "class": "grid" }); mk("text", { x: ml - 6, y: Y(Math.pow(10, e)) + 4, "text-anchor": "end", "class": "ax" }, usd(Math.pow(10, e))); }
+    mk("line", { x1: ml, x2: W - mr, y1: mt + phm + 3, y2: mt + phm + 3, "class": "mx-sep" });
+    mk("text", { x: ml - 6, y: mt + phm + 6 + strip / 2 + 4, "text-anchor": "end", "class": "ax" }, "Not listed");
+    var ly = mt + phm / 2; mk("text", { x: 13, y: ly, "text-anchor": "middle", "class": "ax axl", transform: "rotate(-90 13 " + ly + ")" }, "Money per award (each step is 10×)");
+    if (MX_MODE === "deadline") {
+      var XMAX = 90, X = function (d) { return d == null ? ml + pw - 8 : ml + (pw - 24) * Math.min(d, XMAX) / XMAX; };
+      mk("rect", { x: ml, y: mt, width: (pw - 24) * CSD / XMAX, height: ph, "class": "mx-zone" });
+      mk("text", { x: ml + 4, y: mt + 12, "class": "mx-zl" }, "Closing soon");
+      [0, 30, 60, 90].forEach(function (d) { mk("text", { x: X(d), y: H - mb + 16, "text-anchor": "middle", "class": "ax" }, d === 90 ? "90+" : String(d)); });
+      mk("text", { x: ml + (pw - 24) / 2, y: H - 8, "text-anchor": "middle", "class": "ax axl" }, "Days left to apply →");
+      rows.forEach(function (r) { pos[r.opp_id] = [X(r.days_left), Y(money(r).max)]; });
+    } else {
+      var cols = [["easy", "Easy (~2 wks)"], ["medium", "Medium (~4 wks)"], ["hard", "Hard (~8 wks)"], [null, "Not known"]], cw = pw / 4;
+      mk("rect", { x: ml, y: mt, width: cw, height: phm / 2, "class": "mx-quick" });
+      mk("text", { x: ml + 4, y: mt + 12, "class": "mx-zl good" }, "Best: big money, little work");
+      cols.forEach(function (c, i) { if (i) mk("line", { x1: ml + cw * i, x2: ml + cw * i, y1: mt, y2: mt + ph, "class": "grid" }); mk("text", { x: ml + cw * (i + .5), y: H - mb + 16, "text-anchor": "middle", "class": "ax" }, c[1]); });
+      mk("text", { x: ml + pw / 2, y: H - 8, "text-anchor": "middle", "class": "ax axl" }, "Work to apply (our estimate) →");
+      var inCol = {};
+      rows.forEach(function (r) { var lv = effort(r).level, i = cols.findIndex(function (c) { return c[0] === lv; }); if (i < 0) i = 3; inCol[i] = (inCol[i] || 0) + 1; var k = inCol[i]; pos[r.opp_id] = [ml + cw * i + cw * (0.14 + 0.72 * ((k * 0.618) % 1)), Y(money(r).max)]; });
+    }
+    var placed = [], GAP = 24;
+    rows.forEach(function (r) {
+      var p = pos[r.opp_id]; if (!p) return; var x = p[0], y = p[1], k = 0;
+      function hit() { return placed.some(function (q) { return Math.hypot(q[0] - x, q[1] - y) < GAP; }); }
+      while (hit() && k < 40) { k++; var ang = k * 2.4, rad = GAP * Math.sqrt(k) * 0.75; x = p[0] + Math.cos(ang) * rad; y = p[1] + Math.sin(ang) * rad; x = Math.max(ml + 12, Math.min(W - mr - 12, x)); y = Math.max(mt + 12, Math.min(mt + ph - 4, y)); }
+      pos[r.opp_id] = [x, y]; placed.push([x, y]);
+    });
+    rows.slice().reverse().forEach(function (r) {
+      var p = pos[r.opp_id]; if (!p) return;
+      var urgent = r.days_left != null && r.days_left <= CSD, n = NUM[r.opp_id] || "";
+      var g = document.createElementNS(NS, "g"); g.setAttribute("class", "mx-pt" + (urgent ? " urgent" : "")); g.setAttribute("tabindex", "0"); g.dataset.opp = r.opp_id;
+      var c = document.createElementNS(NS, "circle"); c.setAttribute("cx", p[0]); c.setAttribute("cy", p[1]); c.setAttribute("r", 11); g.appendChild(c);
+      var t = document.createElementNS(NS, "text"); t.setAttribute("x", p[0]); t.setAttribute("y", p[1] + 4); t.setAttribute("text-anchor", "middle"); t.textContent = String(n); g.appendChild(t);
+      var label = "#" + n + " " + (r.title || r.opp_id) + ". " + (money(r).max ? usd(money(r).max) + " per award" : "amount not listed") + ", " + (r.days_left != null ? r.days_left + " days left" : "no fixed date") + ", " + effort(r).label.toLowerCase();
+      g.setAttribute("aria-label", label); g.setAttribute("role", "button");
+      var on = function () { tip.hidden = false; tip.textContent = label; var bb = svg.getBoundingClientRect(), s = bb.width / W; tip.style.left = Math.max(0, Math.min(p[0] * s - 100, bb.width - 220)) + "px"; tip.style.top = (p[1] * s - 16) + "px"; hlCard(r.opp_id, true); };
+      var off = function () { tip.hidden = true; hlCard(r.opp_id, false); };
+      g.addEventListener("mouseenter", on); g.addEventListener("focus", on); g.addEventListener("mouseleave", off); g.addEventListener("blur", off);
+      var go = function () { var li = document.querySelector('#start li.row[data-opp="' + r.opp_id + '"]') || document.querySelector('#top li.row[data-opp="' + r.opp_id + '"]'); if (!li) return; li.scrollIntoView({ block: "center", behavior: "smooth" }); li.classList.add("flash"); setTimeout(function () { li.classList.remove("flash"); }, 1400); };
+      g.addEventListener("click", go); g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); go(); } });
+      svg.appendChild(g);
+    });
+    mxQ("#mx-note").textContent = MX_MODE === "deadline" ? "Each number is a grant in your list. Up = more money per award. Left = closing sooner. Red: closes within " + CSD + " days. Green: more time." : "Each number is a grant in your list. Up = more money per award. Left = less work to apply. The best ones sit top left. Red: closes within " + CSD + " days. Green: more time.";
+  }
+  function hlCard(opp, on) { [].forEach.call(document.querySelectorAll('li.row[data-opp="' + opp + '"]'), function (li) { li.classList.toggle("hl", on); }); }
+  function hlDot(opp, on) { if (!MXEL) return; var g = MXEL.querySelector('g.mx-pt[data-opp="' + opp + '"]'); if (g) g.classList.toggle("hl", on); }
+  function placeMatrix() {
+    if (!MXEL) return;
+    if (deskMQ.matches) { var pn = $("desk-panel"); if (!deskSel && MXEL.parentNode !== pn) { pn.innerHTML = ""; pn.appendChild(MXEL); } }
+    else { var lh = $("list-h"); if (MXEL.parentNode !== lh.parentNode) lh.parentNode.insertBefore(MXEL, lh); }
+  }
+
+  // ---- compact agency picker: a big button that opens a normal-size, searchable list ----
+  function buildPicker() {
+    var sel = $("agency"), btn = $("ag-btn"), pop = $("ag-pop"), q = $("ag-q"), list = $("ag-list"), act = -1;
+    function items() { return [].slice.call(sel.options).filter(function (o) { return o.value; }); }
+    function render() {
+      var t = q.value.trim().toLowerCase(); list.innerHTML = ""; act = -1;
+      items().filter(function (o) { return !t || o.text.toLowerCase().indexOf(t) >= 0 || (ABBR[o.value] || [o.value]).some(function (a) { return a.toLowerCase().indexOf(t) === 0; }); }).forEach(function (o) {
+        var li = el("li"); li.setAttribute("role", "option"); li.dataset.v = o.value; li.setAttribute("aria-selected", o.value === sel.value ? "true" : "false");
+        var lk = LOOK[o.value] || LOOK[""]; li.innerHTML = '<span class="ag-li-ic">' + iconSvg(lk[0], 18, null) + '</span>'; li.appendChild(el("span", "ag-li-n", o.text)); li.appendChild(el("span", "ag-li-a", abbrOf(o.value)));
+        li.addEventListener("click", function () { choose(o.value); }); list.appendChild(li);
+      });
+      if (!list.children.length) list.appendChild(el("li", "ag-none", "No agency matches that."));
+    }
+    function open() { pop.hidden = false; btn.setAttribute("aria-expanded", "true"); q.value = ""; render(); q.focus(); }
+    function close() { pop.hidden = true; btn.setAttribute("aria-expanded", "false"); }
+    function choose(v) { close(); if (sel.value !== v) { sel.value = v; sel.dispatchEvent(new Event("change", { bubbles: true })); } syncPickerLabel(); btn.focus(); }
+    btn.addEventListener("click", function () { if (pop.hidden) open(); else close(); });
+    q.addEventListener("input", render);
+    q.addEventListener("keydown", function (e) {
+      var opts = [].slice.call(list.querySelectorAll("li[data-v]"));
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); act = Math.max(0, Math.min(opts.length - 1, act + (e.key === "ArrowDown" ? 1 : -1))); opts.forEach(function (o, i) { o.classList.toggle("act", i === act); }); if (opts[act]) opts[act].scrollIntoView({ block: "nearest" }); }
+      else if (e.key === "Enter") { e.preventDefault(); var o = opts[act >= 0 ? act : 0]; if (o) choose(o.dataset.v); }
+      else if (e.key === "Escape") { e.preventDefault(); close(); btn.focus(); }
+    });
+    document.addEventListener("click", function (e) { if (!pop.hidden && !pop.contains(e.target) && !btn.contains(e.target)) close(); });
+  }
+  function syncPickerLabel() { var sel = $("agency"), o = sel.options[sel.selectedIndex]; $("ag-btn-t").textContent = sel.value && o ? o.text : "choose your agency"; $("ag-btn").classList.toggle("empty", !sel.value); }
+
+  // ---- card status: one plain line instead of a row of chips ----
+  var SIGN_WORD = { writer: "You can start it", supervisor: "Your boss signs", leadership: "Leadership signs" };
+  function statusLine(r) {
+    var box = el("div", "status"), e = r.eligibility || "ask", lim = limitedTo(r);
+    if (r.status === "forecasted") box.appendChild(el("span", "st-later", "Not open yet"));
+    var elig = el("span", "st-elig " + (e === "no" ? "no" : e === "yes" && !lim ? "yes" : "ask"), e === "no" ? "Your agency can't apply" : lim ? "May be only for " + lim : e === "yes" ? "You can apply" : "Check eligibility first");
+    box.appendChild(elig);
+    box.appendChild(el("span", "st-sign", SIGN_WORD[r.signature_tier] || "Who signs: not stated"));
+    var tk = track(r); if (tk.stars === 3) box.appendChild(el("span", "st-won", "Won this before"));
+    return box;
+  }
+
+  // ---- apply together: other NC agencies whose best matches include the same grant ----
+  var ALSO = null;
+  function alsoFor(r) {
+    if (!ALSO) { ALSO = {}; P.rows.forEach(function (x) { if (x.in_top10 && x.eligibility !== "no") (ALSO[x.opp_id] = ALSO[x.opp_id] || []).push(x.agency_id); }); }
+    return (ALSO[r.opp_id] || []).filter(function (a) { return a !== r.agency_id; });
+  }
+  function shortAg(id) { return agName(id).replace(/^Department of (the )?/, "").replace(/^Office of (the )?State /, "").replace(/^NC /, "").replace(/^Office of /, ""); }
+
+  // ---- where to get help with a grant (links only; checked to resolve) ----
+  function helpLinks(r) {
+    var L = [["Grants.gov help for applicants", "https://www.grants.gov/applicants"], ["SAM.gov: register or renew your agency (needed for every federal grant)", "https://sam.gov/content/entity-registration"], ["NC OSBM grants: state rules and support for agencies that apply for federal grants", "https://www.osbm.nc.gov/grants"]];
+    var cf = String(r.cfda_list || "").split("|")[0].trim(); if (/^\d{2}\.\d{3}$/.test(cf)) L.push(["The federal program's listing on SAM.gov (" + cf + ")", "https://sam.gov/search/?index=cfda&keywords=" + cf]);
+    return L;
+  }
+  function helpList(r) { var ul = el("ul", "helplinks"); helpLinks(r).forEach(function (h) { var li = el("li"), a = el("a", null, h[0]); a.href = h[1]; a.target = "_blank"; a.rel = "noopener"; li.appendChild(a); ul.appendChild(li); }); return ul; }
+
+  // ---- proposal starter: a fill-in outline from this grant's facts and the county map (no AI) ----
+  function topCounties(measureId, n) {
+    var CN = P.county_need; if (!CN || !P.counties) return null;
+    var ind = CN.indicators.filter(function (i) { return i.id === measureId; })[0] || CN.indicators[0]; if (!ind) return null;
+    var nm = {}; P.counties.forEach(function (c) { nm[c.fips] = c.county; });
+    var vals = CN.values.filter(function (v) { return v.id === ind.id && nm[v.fips]; }).sort(function (a, b) { return b.v - a.v; }).slice(0, n || 10);
+    return { label: ind.label, list: vals.map(function (v) { return nm[v.fips] + " (" + v.v + ")"; }) };
+  }
+  function proposalDoc(r, measureId) {
+    var m = money(r), tc = topCounties(measureId, 10), also = alsoFor(r), W = "[Write here: ";
+    var S = [];
+    S.push({ h: "About this grant", lines: ["Grant: " + (r.title || r.opp_id) + (r.opp_number ? " (" + r.opp_number + ")" : ""), "Funder: " + (r.funder || "not listed"), "Applicant: " + agName(r.agency_id), "Deadline: " + (r.close_date || r.date_note || "no fixed date"), "Money: " + (m.max ? "up to " + usd(m.max) + " per award" + (m.min ? ", at least " + usd(m.min) : "") : "amount not listed") + (m.n ? ", about " + m.n + " awards" : ""), "Announcement: " + (safeUrl(r.url) || "see Grants.gov")] });
+    S.push({ h: "1. Statement of need", lines: [W + "the problem in North Carolina, with numbers and who it affects.]"].concat(tc ? ["Need data from the County map, " + tc.label + ". Highest 10 counties: " + tc.list.join(", ") + ". Source: public county data (CDC PLACES, ACS, HRSA, NCHS, OpenFEMA) used in this tool."] : []).concat(["How this connects to our strategic plan: " + (r.goal_snippet || W + "the plan goal this supports.]")]) });
+    S.push({ h: "2. Goals and objectives", lines: ["Plan goal: " + (r.goal_snippet || W + "goal]"), W + "two or three measurable objectives, each with a number and a date.]"] });
+    S.push({ h: "3. Approach", lines: [W + "what you will do, for whom, where, and why this approach works.]", tc ? "Where to focus first (from the County map): " + tc.list.slice(0, 5).join(", ") + "." : W + "where you will work.]"] });
+    S.push({ h: "4. Staffing and partners", lines: ["Who has to sign: " + tierInfo(r)[1].replace(/^Tier \d: /, ""), W + "project lead, team, partners and letters of support.]"].concat(also.length ? ["Other NC agencies this grant also fits (consider applying together): " + also.map(agName).join(", ") + "."] : []) });
+    S.push({ h: "5. Evaluation", lines: [W + "how you will measure results and report them to the funder.]"] });
+    S.push({ h: "6. Budget", lines: ["Award: " + (m.max ? "up to " + usd(m.max) : "amount not listed"), "Matching money: " + (r.cost_sharing === "Yes" ? "required (check the announcement for the share)" : r.cost_sharing === "No" ? "not required" : "not stated"), W + "budget lines and justification.]"] });
+    S.push({ h: "7. Schedule and reviews (Shipley color teams)", lines: planSteps(r).map(function (s) { return fmtDay(s.date) + ": " + s.title + ". " + s.text; }) });
+    S.push({ h: "8. Compliance checklist", lines: reqs(r).map(function (q) { return "[ ] " + q[0] + ": " + q[1]; }) });
+    S.push({ h: "Where to get help", lines: helpLinks(r).map(function (h) { return h[0] + ": " + h[1]; }) });
+    return { title: "Proposal starter", sub: agName(r.agency_id) + " · prepared " + new Date().toLocaleDateString() + " · replace every [Write here] with your own text", sections: S };
+  }
+  function startProposal(r, measureId) { saveChooser("a proposal starter", function () { return proposalDoc(r, measureId); }, {}); }
+  function measurePicker(id) {
+    var s = el("select"); s.id = id; s.setAttribute("aria-label", "County need measure for the proposal");
+    (P.county_need && P.county_need.indicators || []).forEach(function (i) { var o = el("option", null, i.label); o.value = i.id; s.appendChild(o); });
+    return s;
+  }
+
+  // ---- My grants: its own page (Pursuing, Maybe, Passed), with plain help for each button ----
+  function renderMyGrants() {
+    var box = $("mg-body"); if (!box || !P) return; box.innerHTML = "";
+    var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
+    var groupsM = { Pursue: [], Maybe: [], Pass: [] };
+    Object.keys(marks).forEach(function (k) { if (by[k] && groupsM[marks[k]]) groupsM[marks[k]].push(by[k]); });
+    Object.keys(groupsM).forEach(function (k) { groupsM[k].sort(function (a, b) { return (a.days_left == null ? 1e9 : a.days_left) - (b.days_left == null ? 1e9 : b.days_left); }); });
+    var head = el("div", "mg-head");
+    head.appendChild(el("h2", null, "My grants"));
+    head.appendChild(el("p", "mg-lede", groupsM.Pursue.length ? "You are pursuing " + groupsM.Pursue.length + (groupsM.Pursue.length === 1 ? " grant" : " grants") + (groupsM.Maybe.length ? " and thinking about " + groupsM.Maybe.length : "") + ". Everything is saved in this browser only." : "Nothing saved yet. Press Pursue on a grant, or swipe right, and it shows up here with a plan."));
+    var help = el("details", "mg-help"); help.appendChild(el("summary", null, "What do these buttons do?"));
+    var hl = el("dl"); [["Open plan", "Your step-by-step timeline back from the deadline, with the review steps, and a checklist of what you need."], ["Save a brief", "A one-page summary for your boss to approve: deadline, money, can we apply, why it fits, who signs."], ["Start a proposal", "A Word or PDF outline filled with this grant's facts and county need data. You write the parts marked [Write here]."], ["Save my list", "Every grant you are pursuing, as PDF, Word, Excel or calendar deadlines."], ["Compare", "Tick 2 to 4 grants to see them side by side."]].forEach(function (x) { hl.appendChild(el("dt", null, x[0])); hl.appendChild(el("dd", null, x[1])); });
+    help.appendChild(hl); head.appendChild(help);
+    box.appendChild(head);
+    var keep = groupsM.Pursue.concat(groupsM.Maybe);
+    if (keep.length) {
+      var bar = el("div", "mg-bar");
+      var sv = el("button", "primary", "Save my list…"); sv.type = "button"; sv.title = "PDF, Word, Excel or calendar"; sv.addEventListener("click", function () { saveRows("my grants", groupsM.Pursue.length ? groupsM.Pursue : keep); }); bar.appendChild(sv);
+      var cmp = el("button", null, "Compare ticked"); cmp.type = "button"; cmp.disabled = true; cmp.addEventListener("click", function () { var pick = [].slice.call(box.querySelectorAll(".mg-ck:checked")).map(function (c) { return by[c.dataset.key]; }); if (pick.length >= 2) openCompare(pick); }); bar.appendChild(cmp);
+      box.addEventListener("change", function (e) { if (e.target.classList && e.target.classList.contains("mg-ck")) { var k2 = box.querySelectorAll(".mg-ck:checked").length; cmp.disabled = k2 < 2; cmp.textContent = k2 >= 2 ? "Compare " + Math.min(k2, 4) + " ticked" : "Compare ticked (tick 2 to 4)"; } });
+      cmp.textContent = "Compare ticked (tick 2 to 4)";
+      box.appendChild(bar);
+    }
+    function item(r, kind) {
+      var key = r.agency_id + "|" + r.opp_id, li = el("li", "mg-item" + (kind === "Pass" ? " passed" : ""));
+      if (kind !== "Pass") { var ck = el("input"); ck.type = "checkbox"; ck.className = "mg-ck"; ck.dataset.key = key; ck.setAttribute("aria-label", "Pick " + (r.title || "grant") + " to compare"); li.appendChild(ck); }
+      var dd = el("div", "mg-days" + (r.days_left != null && r.days_left <= CSD ? " urgent" : "")); dd.appendChild(el("b", null, r.days_left != null ? String(r.days_left) : "–")); dd.appendChild(el("span", null, r.days_left != null ? "days left" : (r.status === "forecasted" ? "not open" : "no date"))); li.appendChild(dd);
+      var mid = el("div", "mg-mid"), t = el("div", "title"), u = safeUrl(r.url);
+      if (u) { var a = el("a", null, r.title || r.opp_id); a.href = u; a.target = "_blank"; a.rel = "noopener"; t.appendChild(a); } else t.textContent = r.title || r.opp_id;
+      mid.appendChild(t); mid.appendChild(el("div", "funder", (usd(money(r).max) || "Amount not listed") + " · " + (r.funder || "") + " · for " + agName(r.agency_id)));
+      mid.appendChild(statusLine(r));
+      var act = el("div", "mg-act");
+      function btn(label, cls, fn, title) { var b = el("button", cls, label); b.type = "button"; if (title) b.title = title; b.addEventListener("click", fn); act.appendChild(b); }
+      if (kind === "Pursue") {
+        btn("Open plan", "primary", function () { openPlan(r); }, "Timeline, reviews and checklist");
+        btn("Save a brief", null, function () { saveGrant(r, false); }, "One-page summary for your boss");
+        btn("Start a proposal", null, function () { startProposal(r, null); }, "Word or PDF outline to fill in");
+        btn("Remove", "linkbtn", function () { delete marks[key]; saveMarks(); syncMarkButtons(key); renderMarks(); });
+      } else if (kind === "Maybe") {
+        btn("Pursue", "primary", function () { marks[key] = "Pursue"; saveMarks(); syncMarkButtons(key); renderMarks(); openPlan(r); });
+        btn("Pass", "linkbtn", function () { marks[key] = "Pass"; saveMarks(); syncMarkButtons(key); renderMarks(); });
+      } else btn("Bring back", "linkbtn", function () { delete marks[key]; saveMarks(); syncMarkButtons(key); renderMarks(); });
+      mid.appendChild(act);
+      if (kind !== "Pass") mid.appendChild(drawer(r));
+      li.appendChild(mid); return li;
+    }
+    [["Pursue", "Pursuing"], ["Maybe", "Maybe (from swiping)"], ["Pass", "Passed"]].forEach(function (sec) {
+      var rows = groupsM[sec[0]]; if (!rows.length) return;
+      var wrap = sec[0] === "Pass" ? el("details", "mg-sec") : el("section", "mg-sec");
+      var hh = el(sec[0] === "Pass" ? "summary" : "h3", null, sec[1] + " (" + rows.length + ")"); wrap.appendChild(hh);
+      var ul = el("ul", "mg-list"); rows.forEach(function (r) { ul.appendChild(item(r, sec[0])); }); wrap.appendChild(ul); box.appendChild(wrap);
+    });
+  }
+
+  // ---- "can I trust this list?" panel: sources and everything left out, never silently ----
+  function renderTrust(g, shownN, baseN, nPass) {
+    var b = $("trust-body"); if (!b) return; b.innerHTML = "";
+    var ag = P.agencies.filter(function (a) { return a.agency_id === cur.id; })[0], nh = ag && ag.n_hidden_ineligible != null ? ag.n_hidden_ineligible : g.hidden.length;
+    var ul = el("ul");
+    [["Grants", "Grants.gov, the federal list of open and coming-up grants."], ["Fit", "This agency's own strategic plan (from OSBM), matched by shared words."], ["Who can apply", "The listing's applicant types, then fixed wording checks. Unclear ones stay visible as “Check eligibility first”."], ["Past wins", "USAspending, the federal record of awards to NC organizations."], ["Budgets", "SAM.gov program listings (federal) and OSBM's budget summary (state)."]].forEach(function (x) { var li = el("li"); li.appendChild(el("b", null, x[0] + ": ")); li.appendChild(document.createTextNode(x[1])); ul.appendChild(li); });
+    b.appendChild(ul);
+    b.appendChild(el("p", null, "Nothing is dropped without saying so: " + nh + " grants this agency cannot apply for are left out (examples under “Hidden as not eligible” at the bottom)" + (baseN - shownN > 0 ? "; " + (baseN - shownN) + " are hidden by your filters" : "") + (nPass ? "; " + nPass + " you passed" : "") + ". A person makes every decision."));
+    b.appendChild(el("p", "note", fmtAsOf(P.data_as_of) + ". A daily refresh is built; switching it on needs a storage permission we are waiting for."));
+  }
+
+  // ---- agency abbreviations for the picker search ----
+  var ABBR = { dpi: ["DPI", "NCDPI", "Public Instruction"], dhhs: ["DHHS", "NCDHHS", "HHS"], deq: ["DEQ", "NCDEQ"], ncdot: ["DOT", "NCDOT"], dncr: ["DNCR"], dacs: ["DACS", "NCDA", "NCDA&CS", "Agriculture"], dps: ["DPS"], dac: ["DAC"], sbi: ["SBI"], shp: ["SHP", "Highway Patrol"], doj: ["DOJ"], doi: ["DOI"], dol: ["DOL"], dor: ["DOR"], doa: ["DOA"], dst: ["DST", "Treasurer"], ncdit: ["DIT", "NCDIT"], dmva: ["DMVA", "Veterans"], osbm: ["OSBM"], oshr: ["OSHR"], osa: ["OSA", "Auditor"], osc: ["OSC", "Controller"], osfm: ["OSFM", "Fire Marshal"], oah: ["OAH"], ids: ["IDS"], hfa: ["NCHFA", "HFA"], ncccs: ["NCCCS", "Community Colleges"], unc: ["UNC", "UNC System"], sos: ["SOS"], ncsbe: ["NCSBE", "SBE", "Elections"], wrc: ["WRC", "NCWRC", "Wildlife"], commerce: ["DOC", "Commerce"] };
+  function abbrOf(id) { return (ABBR[id] || [String(id).toUpperCase()])[0]; }
+
+  // ---- impact score breakdown, shown on every card ----
+  function impactParts(r) {
+    var fit = Math.max(0, Math.min(1, Number(r.fit_score) || 0)), m = money(r).max, ms = null;
+    if (m) ms = Math.max(0, Math.min(1, (Math.log10(m) - Math.log10(IMPACT_MONEY_LO)) / (Math.log10(IMPACT_MONEY_HI) - Math.log10(IMPACT_MONEY_LO))));
+    return { fit: Math.round(fit * 100), money: ms == null ? null : Math.round(ms * 100), score: impact(r).score };
+  }
+  function impactBox(r) {
+    var im = impact(r), d = el("details", "impact");
+    var s0 = el("summary"); s0.appendChild(el("span", "imp-n", String(im.score))); var t = el("span", "imp-t"); t.appendChild(el("b", null, "Impact score")); t.appendChild(el("span", null, " out of 100 · how it is worked out")); s0.appendChild(t);
+    var bar = el("span", "imp-bar"); var f = el("i"); f.style.width = im.score + "%"; bar.appendChild(f); s0.appendChild(bar); d.appendChild(s0);
+    var body = el("div", "imp-body"), NOTE = { fit: "How many words from your agency's plan goals appear in this grant.", money: "The most one award can be: $10K scores 0, $100M or more scores 100.", odds: "From how many awards are made and who else can apply.", ease: "From who has to sign and whether matching money is needed." };
+    var sumTxt = [];
+    im.used.forEach(function (k) {
+      var v = Math.round(im.parts[k] * 100), w = Math.round(IMPACT_W[k] / im.tw * 100);
+      var row = el("div", "imp-row"); row.appendChild(el("span", "imp-l", IMP_LABEL[k])); var b2 = el("span", "imp-bar sm"); var f2 = el("i"); f2.style.width = v + "%"; b2.appendChild(f2); row.appendChild(b2); row.appendChild(el("span", "imp-v", v + " × " + w + "%")); body.appendChild(row);
+      body.appendChild(el("p", "imp-note", NOTE[k])); sumTxt.push(v + " × " + w + "%");
+    });
+    if (im.partial && IMPACT_W.money) body.appendChild(el("p", "imp-note", "No award amount is listed, so award size is left out and the other weights are rescaled."));
+    body.appendChild(el("p", "imp-sum", "Impact = " + sumTxt.join(" + ") + " = " + im.score + "."));
+    body.appendChild(el("p", "imp-note", "Not included: which counties or people a grant reaches, because the grant data does not say. It is our estimate and does not change the order of the list unless you sort by impact."));
+    var ch = el("button", "imp-change", "Change how impact is weighted"); ch.type = "button"; ch.addEventListener("click", function () { var mo = $("more-filters"); if (mo) { mo.open = true; var iw = $("imp-w"); if (iw) iw.scrollIntoView({ block: "center", behavior: "smooth" }); } }); body.appendChild(ch);
+    d.appendChild(body); return d;
+  }
+
+
+  // ---- display controls: text size and zoom ----
+  var TXT = [0.9, 1, 1.15, 1.3], ZM = [0.8, 0.9, 1, 1.1, 1.25, 1.5];
+  var txtI = Math.max(0, TXT.indexOf(lsGet("ffm_txt_v1", 1))), zmI = Math.max(0, ZM.indexOf(lsGet("ffm_zoom_v1", 1)));
+  if (TXT.indexOf(lsGet("ffm_txt_v1", 1)) < 0) txtI = 1; if (ZM.indexOf(lsGet("ffm_zoom_v1", 1)) < 0) zmI = 2;
+  function applyDisplay() {
+    document.documentElement.style.fontSize = (TXT[txtI] * 100) + "%"; document.body.style.zoom = ZM[zmI];
+    var z = $("zm-v"); if (z) z.textContent = Math.round(ZM[zmI] * 100) + "%"; var tv = $("txt-v"); if (tv) tv.textContent = ["Small", "Normal", "Large", "Largest"][txtI];
+    lsSet("ffm_txt_v1", TXT[txtI]); lsSet("ffm_zoom_v1", ZM[zmI]);
+  }
+
+  // ---- send feedback to the team (our Azure app logs it; only people with the team's Azure access can read it) ----
+  var FEEDBACK_ENDPOINT = "feedback";
+  function sendFeedback(item) {
+    var j = JSON.stringify(item); if (j.length > 3500) j = j.slice(0, 3500);
+    try { return fetch(FEEDBACK_ENDPOINT + "?d=" + encodeURIComponent(j), { method: "GET", cache: "no-store", keepalive: true }).then(function (r) { return r.ok; }, function () { return false; }); }
+    catch (e) { return Promise.resolve(false); }
+  }
+
+  // ---- county map: map, legend, hover, selected county, top 10 bars ----
+  var MAPINIT2 = false, NEEDBY2 = {}, MAPSEL = null;
+  function renderMap() {
+    var CN = P.county_need, svg = $("map-svg");
+    if (!CN || !P.counties) { $("map-readout").textContent = "County data is not in this payload."; return; }
+    var sel = $("map-ind");
+    if (!MAPINIT2) { MAPINIT2 = true; CN.values.forEach(function (v) { (NEEDBY2[v.id] = NEEDBY2[v.id] || {})[v.fips] = v; }); CN.indicators.forEach(function (i) { var o = el("option", null, i.label); o.value = i.id; sel.appendChild(o); }); sel.addEventListener("change", function () { MAPSEL = null; renderMap(); }); }
+    var id = sel.value || CN.indicators[0].id, lab = CN.indicators.filter(function (i) { return i.id === id; })[0].label, by = NEEDBY2[id] || {};
+    var vals = Object.keys(by).map(function (k) { return by[k].v; }), lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var ranked = P.counties.map(function (c) { return { c: c, v: by[c.fips] }; }).filter(function (x) { return x.v; }).sort(function (a, b) { return b.v.v - a.v.v; });
+    var rankOf = {}; ranked.forEach(function (x, i) { rankOf[x.c.fips] = i + 1; });
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var NS = "http://www.w3.org/2000/svg", tip = $("map-tip");
+    function showCounty(c) {
+      var v = by[c.fips], box = $("map-sel"); box.innerHTML = "";
+      box.appendChild(el("h3", null, c.county + " County"));
+      if (!v) { box.appendChild(el("p", "note", "No value for this measure.")); return; }
+      var big = el("p", "ms-big"); big.appendChild(el("b", null, String(v.v) + (/%|percent/i.test(lab) ? "%" : ""))); big.appendChild(el("span", null, " " + lab)); box.appendChild(big);
+      box.appendChild(el("p", null, "Ranks #" + rankOf[c.fips] + " of " + ranked.length + " counties (higher than " + Math.round(v.pct * 100) + "% of them)."));
+      var pb = el("span", "imp-bar"); var f = el("i"); f.style.width = Math.round(v.pct * 100) + "%"; pb.appendChild(f); box.appendChild(pb);
+    }
+    P.counties.forEach(function (c) {
+      var v = by[c.fips], pa = document.createElementNS(NS, "path");
+      pa.setAttribute("d", c.path); pa.setAttribute("class", "cty" + (MAPSEL === c.fips ? " sel" : ""));
+      pa.setAttribute("fill", v ? "var(--accent)" : "var(--surface-3)"); pa.setAttribute("fill-opacity", v ? (0.12 + 0.88 * v.pct).toFixed(2) : "1");
+      pa.setAttribute("tabindex", "0"); pa.setAttribute("role", "button"); pa.setAttribute("aria-label", c.county + " County: " + (v ? v.v + ", rank " + rankOf[c.fips] + " of " + ranked.length : "no value"));
+      var move = function (e) { tip.hidden = false; tip.textContent = c.county + ": " + (v ? v.v + " (#" + rankOf[c.fips] + ")" : "no value"); var bb = svg.parentNode.getBoundingClientRect(); var x = (e && e.clientX ? e.clientX - bb.left : bb.width / 2), y = (e && e.clientY ? e.clientY - bb.top : 20); tip.style.left = Math.min(x + 12, bb.width - 180) + "px"; tip.style.top = (y + 12) + "px"; };
+      pa.addEventListener("mousemove", move); pa.addEventListener("focus", function () { move(null); showCounty(c); });
+      pa.addEventListener("mouseleave", function () { tip.hidden = true; });
+      pa.addEventListener("click", function () { MAPSEL = c.fips; [].forEach.call(svg.querySelectorAll(".cty.sel"), function (x) { x.classList.remove("sel"); }); pa.classList.add("sel"); svg.appendChild(pa); showCounty(c); });
+      svg.appendChild(pa);
+    });
+    var unit = /%|percent/i.test(lab) ? "%" : ""; var fmtv = function (x) { return (Math.round(x * 10) / 10) + unit; };
+    $("map-lg-lo").textContent = fmtv(lo); $("map-lg-hi").textContent = fmtv(hi); $("map-lg-mid").textContent = fmtv((lo + hi) / 2); $("map-lg-lab").textContent = lab;
+    var ol = $("map-top"); ol.innerHTML = "";
+    ranked.slice(0, 10).forEach(function (x, i) {
+      var li = el("li"), b = el("button", "mt-row"); b.type = "button";
+      b.appendChild(el("span", "mt-n", String(i + 1))); b.appendChild(el("span", "mt-c", x.c.county + " County")); b.appendChild(el("span", "mt-v", fmtv(x.v.v)));
+      b.addEventListener("click", function () { MAPSEL = x.c.fips; renderMap(); showCounty(x.c); }); li.appendChild(b); ol.appendChild(li);
+    });
+    $("map-readout").textContent = "Showing " + lab + ". Darker counties have higher values. Hover or click a county.";
+    var chosen = MAPSEL ? P.counties.filter(function (c) { return c.fips === MAPSEL; })[0] : ranked[0] && ranked[0].c; if (chosen) showCounty(chosen);
+  }
+
+  // ---- How this works (rewritten: short, plain, current) ----
+  function renderHow() {
+    var v = $("v-how"); v.innerHTML = "";
+    function p(t) { v.appendChild(el("p", null, t)); } function h(t) { v.appendChild(el("h2", null, t)); } function ul(items) { var u = el("ul"); items.forEach(function (t) { u.appendChild(el("li", null, t)); }); v.appendChild(u); }
+    v.appendChild(el("h1", "how-h1", "How this works"));
+    p("The Federal Funds Matchmaker helps a North Carolina agency find federal grants worth applying for, early enough to apply. It ranks grants against the agency's own strategic plan. A person makes every decision.");
+    h("How it picks grants");
+    var ol = el("ol"); ["It reads open and coming-up federal grants from Grants.gov.", "It hides grants your agency clearly cannot apply for, and keeps unclear ones visible as “Check eligibility first”.", "It ranks the rest by how many words they share with your agency's plan goals. No AI model sets the order."].forEach(function (t) { ol.appendChild(el("li", null, t)); }); v.appendChild(ol);
+    h("What each card shows");
+    ul(["Big number: days left to apply (red when 14 or fewer).", "Right: the most money one award can be.", "One line: can your agency apply, and who has to sign (you, your boss, or leadership).", "“Won this before” when federal records show your agency has won this program.", "Impact score: a mix of plan fit, award size, chance of winning and less work (you can change the weights under More options). Open it on any card to see the numbers.", "“Why it fits, odds and details”: the plan goal it matches, effort, matching money, help links and more."]);
+    var hs = el("h2", null, "How the plan's timeline works (Shipley color-team reviews)"); hs.id = "how-shipley"; v.appendChild(hs);
+    p("When you press Pursue, the plan works back from the deadline. Its review steps follow the Shipley method: a set of color-coded reviews from Shipley Associates, widely used for federal proposals. University research offices adapted it for grant proposals. Each review happens at a set stage, by people who look at the proposal with fresh eyes.");
+    var tbl = el("table", "ship-t"), hr = el("tr"); ["Review", "What happens", "When"].forEach(function (x) { hr.appendChild(el("th", null, x)); }); tbl.appendChild(hr);
+    [["Blue Team", "Agree on the plan and strategy: why your agency, what you will do, who writes what.", "At kickoff", "blue"], ["Pink Team", "A small group, including someone not writing it, checks the outline or early draft against every requirement.", "Several weeks before the deadline", "pink"], ["Red Team", "Readers who did not write it score the nearly finished draft with the funder's own review criteria, then list fixes.", "1 to 2 weeks before, when the draft is about 2/3 to 3/4 done", "red"], ["Green Team", "Check the budget, budget justification and any matching money.", "After Red Team", "green"], ["Gold Team", "The people who sign confirm the fixes are in and approve.", "Final days", "gold"], ["White glove", "Final check of forms, page limits, files and budget math.", "Just before you submit", "white"], ["Lessons learned", "Write down what to do better next time (Shipley calls this a White Hat review).", "After you submit", ""]].forEach(function (x) { var tr = el("tr"); var td0 = el("td"); var sw = el("i", "ship-dot " + x[3]); td0.appendChild(sw); td0.appendChild(document.createTextNode(x[0])); tr.appendChild(td0); tr.appendChild(el("td", null, x[1])); tr.appendChild(el("td", null, x[2])); tbl.appendChild(tr); });
+    var tw = el("div", "tablewrap"); tw.appendChild(tbl); v.appendChild(tw);
+    p("Scale it to the grant: Shipley advises fitting the reviews to the size of the bid. For a small grant one or two people can combine Pink and Red. For a large or multi-agency grant, keep every round and choose Red Team readers who know the funder.");
+    var src = el("p", "note"); src.appendChild(document.createTextNode("Sources: "));
+    [["Shipley Associates, Color Team Reviews", "https://www.shipleywins.com/blogs/color-team-reviews"], ["CASRAI, Pink Team, Red Team, Gold Team proposal review (adapting it for grants)", "https://www.casrai.org/guides/pink-team-red-team-gold-team-proposal-review"]].forEach(function (x, i) { if (i) src.appendChild(document.createTextNode("; ")); var a = el("a", null, x[0]); a.href = x[1]; a.target = "_blank"; a.rel = "noopener"; src.appendChild(a); });
+    src.appendChild(document.createTextNode(". The White glove step is common practice described by proposal guides rather than a named Shipley team.")); v.appendChild(src);
+    h("How well it works");
+    var evb = el("div"); evb.id = "evidence-how"; v.appendChild(evb); renderEvidence(evb);
+    h("Where the data comes from");
+    ul(["Grants: Grants.gov.", "Fit: each agency's strategic plan, published by OSBM.", "Past wins: USAspending (federal award records).", "Federal program budgets: SAM.gov program listings. State agency budgets: OSBM's budget summary.", "County need (County map): CDC PLACES, ACS, HRSA, NCHS and OpenFEMA."]);
+    p(fmtAsOf(P.data_as_of) + ". A daily refresh is built; switching it on needs a storage permission from the Azure owner.");
+    h("What it does not do");
+    ul(["It does not decide for you. It ranks and explains; you choose Pursue or Pass.", "It does not let an AI model set rank or eligibility.", "It does not use past awards to rank, so new programs are not buried.", "Your saved grants stay in this browser. Feedback you choose to send goes to the project team only."]);
+    h("Coming next (not built yet)");
+    ul(["Cities, counties and school districts: many have no strategic plan online, so the match would start from eligibility and local priorities.", "Grants that go straight from a federal agency to local groups (for example some Department of Education programs).", "Switching on the daily data refresh.", "An AI writing helper on the state's Azure service, after a data-handling review. Today there is a proposal starter outline."]);
+  }
+
+  // ---- OSBM: put "who should apply together" under a dropdown ----
+  function foldTogether() {
+    var v = $("v-osbm"); if (!v) return;
+    var h = [].filter.call(v.querySelectorAll("h3"), function (x) { return /apply together/i.test(x.textContent); })[0]; if (!h) return;
+    var det = el("details", "osbm-together"), sm = el("summary", null, "Who should apply together? (grants that fit more than one agency)");
+    det.appendChild(sm); v.insertBefore(det, h);
+    var n = h.nextSibling; h.remove();
+    while (n && !(n.tagName === "H3")) { var nx = n.nextSibling; det.appendChild(n); n = nx; }
   }
 
   // ---- row ----
@@ -1840,9 +2413,12 @@ body.proj .tour-card { font-size:1.2rem; }
     add("Federal program number", r.cfda_list);
     add("NC has won this program before", r.nc_won_before == null ? null : (r.nc_won_before ? "Yes (shown only; not part of the ranking)" : "No record"));
     add("Keyword fit", r.fit_score != null ? Math.round(Number(r.fit_score) * 100) + " of 100 (title and summary against the plan goals; compare only inside one agency's list)" : null);
-    add("Why it is ranked here", r.rank_note || r.map_note || (r.goal_snippet ? "Keyword match to the plan goal above" : "No plan goal matched"));
     add("Summary", r.opp_snippet);
-    det.appendChild(dl); return det;
+    det.appendChild(dl);
+    var al2 = alsoFor(r); if (al2.length) { var at2 = el("p", "drawer-also"); at2.appendChild(el("b", null, "Apply together? ")); at2.appendChild(document.createTextNode("This grant is also a top match for " + al2.map(agName).join(", ") + ". Talk to their grant contact; one joint application can be stronger.")); det.appendChild(at2); }
+    var hp = el("div", "drawer-help"); hp.appendChild(el("b", null, "Where to get help")); hp.appendChild(helpList(r)); det.appendChild(hp);
+    var wm = el("div", "wrongmatch"); wm.appendChild(matchFeedback(r)); det.appendChild(wm);
+    return det;
   }
   function moneyBlock(r) {
     var m = money(r), d = el("div", "money");
@@ -1880,11 +2456,13 @@ body.proj .tour-card { font-size:1.2rem; }
     else t.textContent = r.title || r.opp_number || r.opp_id;
     body.appendChild(t);
     body.appendChild(el("div", "funder", r.funder || "Federal funder not listed"));
-    body.appendChild(chipsFor(r));
-    body.appendChild(drawer(r));
-    body.appendChild(actions(r));
-    body.appendChild(matchFeedback(r));
+    body.appendChild(statusLine(r));
+    if (r.eligibility !== "no") body.appendChild(impactBox(r));
+    if (r.eligibility !== "no") body.appendChild(actions(r));
     li.appendChild(body); li.appendChild(moneyBlock(r));
+    var dw = drawer(r); dw.classList.add("drawer-row"); li.appendChild(dw);
+    if (NUM[r.opp_id]) li.querySelector(".days").insertBefore(el("i", "rk", String(NUM[r.opp_id])), li.querySelector(".days").firstChild);
+    li.addEventListener("mouseenter", function () { hlDot(r.opp_id, true); }); li.addEventListener("mouseleave", function () { hlDot(r.opp_id, false); });
     return li;
   }
   function fill(list, rows) { list.innerHTML = ""; rows.forEach(function (r) { list.appendChild(rowEl(r)); }); }
@@ -1951,7 +2529,7 @@ body.proj .tour-card { font-size:1.2rem; }
     ["Planning ahead", function () { $("opt-forecast").checked = true; }],
     ["Only what I can start now", function () { K.run = 14; K.hide = true; }]
   ];
-  var cur = { id: "", tile: "top", order: "rank" };
+  var cur = { id: "", tile: "top", order: "rank" }, SHOW_PASSED = false;
   function groups(id) {
     var mine = P.rows.filter(function (r) { return r.agency_id === id; });
     var open = mine.filter(function (r) { return r.status === "posted"; });
@@ -1965,7 +2543,7 @@ body.proj .tour-card { font-size:1.2rem; }
     g.notices = mine.filter(function (r) { return r.status === "notice"; }).length;
     return g;
   }
-  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "soonest first"], ["fresh", "New", "since your last visit"], ["ask", "Check eligibility", "not sure we can apply"], ["coming", "Coming up", "not open yet"]];
+  var TILES = [["top", "Best matches", "open now"], ["soon", "Closing soon", "14 days or fewer"], ["coming", "Coming up", "not open yet"]];
   function listFor(g) {
     var rows = { top: g.top, soon: g.soon, fresh: g.fresh, ask: g.ask, coming: g.coming }[cur.tile] || g.top;
     if ($("opt-forecast").checked && cur.tile === "top") rows = rows.concat(g.coming);
@@ -1974,6 +2552,7 @@ body.proj .tour-card { font-size:1.2rem; }
     if (K.hide) rows = rows.filter(function (r) { return !failsK(r).length; });
     if (K.res) rows = rows.filter(function (r) { return !isResearch(r); });
     rows = sortRows(rows.filter(passF));
+    if (!SHOW_PASSED) rows = rows.filter(function (r) { return marks[r.agency_id + "|" + r.opp_id] !== "Pass"; });
     return learnSort(rows);
   }
 
@@ -2038,19 +2617,18 @@ body.proj .tour-card { font-size:1.2rem; }
   function filt(rows, q) { q = String(q || "").toLowerCase().trim(); if (!q) return rows; return rows.filter(function (r) { return ((r.title || "") + " " + (r.opp_number || "") + " " + (r.goal_snippet || "")).toLowerCase().indexOf(q) >= 0; }); }
 
   // ---- Start here: the three best open matches, one next step each ----
-  function renderStart(g, id) {
+  function renderStart(pick) {
     var box = $("start"); box.innerHTML = "";
-    var pick = sortRows(g.top.filter(function (r) { return r.eligibility === "yes" || r.eligibility === "ask"; }).filter(function (r) { return r.days_left == null || r.days_left >= 1; }).filter(function (r) { return !K.hide || !failsK(r).length; }).filter(function (r) { return !K.res || !isResearch(r); }).filter(passF)).slice(0, document.body.classList.contains("proj") ? 5 : 3);
-    box.hidden = (cur.tile !== "top" && !document.body.classList.contains("proj")) || !pick.length; if (box.hidden) return;
+    box.hidden = !pick.length; if (box.hidden) return;
     box.appendChild(el("h2", null, cur.order === "rank" ? (pick.length === 1 ? "Start here: your best open match" : "Start here: your " + pick.length + " best open matches") : "Start here: top " + pick.length + " by " + ORDER_LABEL[cur.order]));
-    box.appendChild(el("p", "note", "Big number on the left: days left. Right: the most money one award can be. Both come from Grants.gov, as does who signs. Chips marked ≈ (odds, effort, payoff, stars) are our own estimates. Press Pursue to add a grant to your cart and get a step-by-step plan."));
+    box.appendChild(el("p", "note", "Big number: days left to apply. Right: the most one award can be. Press Pursue to get a step-by-step plan."));
     var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
   }
   function show(keepW) {
     var id = cur.id, banner = $("banner"); banner.innerHTML = "";
     applyLook(id);
     ["coming", "hidden", "refine", "caps"].forEach(function (k) { $(k).hidden = true; });
-    $("tiles").hidden = $("toolbar").hidden = $("list-h").hidden = $("finder").hidden = !id; if (!id) { $("chartbox").hidden = true; $("matrix").hidden = true; $("glance").hidden = true; $("swipe-cta").hidden = true; $("ag-budget").hidden = true; } $("gloss").hidden = !id; if (!id) $("start").hidden = true;
+    $("tiles").hidden = $("toolbar").hidden = $("finder").hidden = !id; if (!id) $("list-h").hidden = true; if (!id) { $("trust").hidden = true; $("chartbox").hidden = true; $("matrix").hidden = true; $("glance").hidden = true; $("swipe-cta").hidden = true; $("ag-budget").hidden = true; } $("gloss").hidden = !id; if (!id) $("start").hidden = true;
     $("welcome").hidden = !!id; $("v-opps").classList.toggle("nopick", !id);
     try { var qs = new URLSearchParams(location.search); if (id) qs.set("agency", id); else qs.delete("agency"); var s = qs.toString(); history.replaceState(null, "", location.pathname + (s ? "?" + s : "") + location.hash); } catch (e) {}
     if (!id) { $("top").innerHTML = ""; $("learn-note").hidden = true; $("counts").textContent = ""; return; }
@@ -2084,16 +2662,27 @@ body.proj .tour-card { font-size:1.2rem; }
     if (keep && !fl[keep]) F.funder = ""; fs.value = F.funder;
     var nF = ["q", "sign", "match", "min", "max", "work", "weeks", "odds", "funder", "need", "region", "focus", "when"].filter(function (k) { return F[k]; }).length + (F.topic.length ? 1 : 0) + (F.exact !== "" ? 1 : 0) + (F.stars !== "" ? 1 : 0);
     var cft = chartFilterText();
-    $("f-count").textContent = nF ? nF + (nF === 1 ? " filter" : " filters") + " on: showing " + shown.length + (shown.length === 1 ? " grant." : " grants.") + (cft ? " From the charts: " + cft + "." : "") + (cft ? " Chart filters show only exact matches." : " Grants with an unknown amount, date or signer are kept.") : "";
+    var Fs = F; F = { q: "", sign: "", match: "", min: 0, max: 0, weeks: 0, work: 0, odds: "", funder: "", topic: [], need: "", region: "", focus: "", matchAmt: null, exact: "", when: "", stars: "" }; var baseN = listFor(g).length; F = Fs;
+    var nPass = g.open.concat(g.coming).filter(function (r) { return marks[r.agency_id + "|" + r.opp_id] === "Pass"; }).length;
+    $("f-count").textContent = nF ? (baseN - shown.length > 0 ? (baseN - shown.length) + (baseN - shown.length === 1 ? " grant is" : " grants are") + " hidden by your filters. " : "") + nF + (nF === 1 ? " filter" : " filters") + " on: showing " + shown.length + (shown.length === 1 ? " grant." : " grants.") + (cft ? " From the charts: " + cft + "." : "") + (cft ? " Chart filters show only exact matches." : " Grants with an unknown amount, date or signer are kept.") : "";
     $("f-reset").hidden = !nF && !$("scenario").value;
+    $("trust").hidden = false; renderTrust(g, shown.length, baseN, nPass);
+    var cn = $("counts"); if (nPass) { var sp = el("button", "linkbtn", SHOW_PASSED ? "Hide the " + nPass + " you passed" : "Show the " + nPass + " you passed"); sp.type = "button"; sp.addEventListener("click", function () { SHOW_PASSED = !SHOW_PASSED; show(true); }); cn.appendChild(document.createTextNode(" ")); cn.appendChild(sp); }
     renderExamples();
     $("swipe-cta").hidden = false;
     var bud = agBudget(id); $("ag-budget").hidden = false; $("ag-budget").textContent = bud ? "State General Fund budget: " + usd(bud) + " (FY 2025-26 base, OSBM). Federal grants add to this." : "No separate state General Fund line for this agency in OSBM's table (it may run on the Highway Fund).";
-    renderMatrix(shown.concat(g.coming.filter(function (r) { return passF(r) && shown.indexOf(r) < 0; })));
+    var nStart = document.body.classList.contains("proj") ? 5 : 3;
+    var pick = cur.tile === "top" ? shown.filter(function (r) { return r.status === "posted" && r.eligibility !== "no" && (r.days_left == null || r.days_left >= 1); }).slice(0, nStart) : [];
+    var rest = shown.filter(function (r) { return pick.indexOf(r) < 0; });
+    NUM = {}; pick.concat(rest).forEach(function (r, i) { NUM[r.opp_id] = i + 1; });
+    LAST_ROWS = pick.concat(rest);
+    $("list-h").textContent = pick.length ? (rest.length ? "More matches" : "") : TILES.filter(function (t) { return t[0] === cur.tile; })[0][1];
+    $("list-h").hidden = !$("list-h").textContent;
+    placeMatrix(); renderMatrix(LAST_ROWS);
     renderGlance(shown);
-    renderStart(g, id);
+    renderStart(pick);
     renderChart(shown);
-    fill($("top"), shown); renderLearn();
+    fill($("top"), rest); renderLearn();
     if (!shown.length) { var em = el("li", "empty-list"); em.appendChild(el("b", null, "No grants match all of that.")); em.appendChild(document.createTextNode(" Remove a filter or try a shorter keyword.")); if (nF) { var cl = el("button", null, "Clear filters"); cl.type = "button"; cl.addEventListener("click", function () { $("f-reset").click(); }); em.appendChild(cl); } $("top").appendChild(em); }
     $("refine").hidden = false; renderCaps(cur.id); if (!keepW) renderWeights();
     if (cur.tile !== "coming" && g.coming.length && !$("opt-forecast").checked) { $("coming").hidden = false; $("coming-h").textContent = "Coming up (not open yet): " + g.coming.length; fill($("coming-l"), filt(g.coming, $("coming-q").value)); }
@@ -2148,6 +2737,7 @@ body.proj .tour-card { font-size:1.2rem; }
 
   // ---- decisions tab ----
   function renderMarks() {
+    renderMyGrants();
     var keys = Object.keys(marks), list = $("marks-list"); list.innerHTML = "";
     var by = {}; P.rows.forEach(function (r) { by[r.agency_id + "|" + r.opp_id] = r; });
     var rows = keys.map(function (k) { return by[k]; }).filter(Boolean);
@@ -2265,53 +2855,6 @@ body.proj .tour-card { font-size:1.2rem; }
   }
 
   // ---- how this works (counts come from the loaded payload, not typed in) ----
-  function renderHow() {
-    var v = $("v-how"), n = P.rows.length, hid = P.rows.filter(function (r) { return r.eligibility === "no"; }).length;
-    function p(t) { v.appendChild(el("p", null, t)); } function h(t) { v.appendChild(el("h2", null, t)); }
-    h("What this is"); p("A list builder for an agency grant coordinator. It reads federal funding opportunities and ranks them against the agency's own strategic plan. A person makes every decision.");
-    h("How the list is ranked"); p("Each opportunity is scored by keyword overlap between its title and summary and the agency's plan goals. No AI model decides rank. Award history is shown in the details but never changes the order.");
-    h("Eligibility"); p("Yes, No or Ask comes from the applicant-type codes first, then fixed text rules. An item is hidden only when a code or quote says state agencies cannot apply. Anything unclear stays visible as Ask. Hidden items stay one click away.");
-    h("What is loaded right now"); p(n + " rows are loaded across " + P.agencies.length + " agencies: the best matches per agency, not every open opportunity. " + hid + " of these rows are marked not eligible. " + fmtAsOf(P.data_as_of) + ".");
-    h("Closing soon, New, and your decisions"); p("Closing soon means " + CSD + " days or fewer left. New since last visit and your Pursue, Maybe and Pass marks live only in this browser. Nothing is sent to a server or by email.");
-    h("Limits"); p("Keyword matching misses grants that use different words than the plan. Some plans are old or short; the list says so. Signature needed comes from two fields in the Grants.gov listing only, cost share and award size; it does not check whether the agency has the staff or capabilities, and it reads Unknown when the announcement does not state cost share. Items with no listed close date read as no date listed. The match board covers the loaded rows only.");
-    h("How well it works"); var evb = el("div"); evb.id = "evidence-how"; v.appendChild(evb); renderEvidence(evb);
-    h("What it deliberately does not do"); var nd = el("ul");
-    ["Decide for you. It ranks and explains; a person marks Pursue, Maybe or Pass.", "Let an AI model set rank or eligibility. Model labels are advisory and must quote the announcement.", "Use past awards to rank. Award history is shown for context only, so new programs are not buried.", "Send anything anywhere. Your marks stay in this browser.", "Check staff capacity or matching funds. The notices do not carry that, so it reads Unknown rather than guessing."].forEach(function (t) { nd.appendChild(el("li", null, t)); });
-    v.appendChild(nd);
-    h("County map and capabilities"); p("The County map tab shows 18 public county measures from the qualifier round. The capability table appears for DHHS and DMVA only, the two agencies where we built it. Per-grant county reach, impact sliders and a scatter are not shown: the payload carries no county list per grant, and we do not guess one.");
-  }
-
-  // ---- county map (qualifier county data) ----
-  var MAPINIT = false, NEEDBY = {};
-  function renderMap() {
-    var CN = P.county_need, svg = $("map-svg");
-    if (!CN || !P.counties) { $("map-readout").textContent = "County data is not in this payload."; return; }
-    var sel = $("map-ind");
-    if (!MAPINIT) {
-      MAPINIT = true;
-      CN.values.forEach(function (v) { (NEEDBY[v.id] = NEEDBY[v.id] || {})[v.fips] = v; });
-      CN.indicators.forEach(function (i) { var o = el("option", null, i.label); o.value = i.id; sel.appendChild(o); });
-      sel.addEventListener("change", renderMap);
-    }
-    var id = sel.value || CN.indicators[0].id, lab = CN.indicators.filter(function (i) { return i.id === id; })[0].label, by = NEEDBY[id] || {};
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
-    var NS = "http://www.w3.org/2000/svg";
-    P.counties.forEach(function (c) {
-      var v = by[c.fips], pa = document.createElementNS(NS, "path");
-      pa.setAttribute("d", c.path); pa.setAttribute("fill", "var(--accent)");
-      pa.setAttribute("fill-opacity", v ? (0.1 + 0.9 * v.pct).toFixed(2) : "0.03");
-      pa.setAttribute("stroke", "var(--surface-2)"); pa.setAttribute("stroke-width", "1.5"); pa.setAttribute("tabindex", "0");
-      var say = function () { $("map-readout").textContent = c.county + " County: " + (v ? v.v + " (" + Math.round(v.pct * 100) + "th percentile of 100 counties)" : "no value") + ". " + lab; };
-      pa.addEventListener("mouseenter", say); pa.addEventListener("focus", say); pa.addEventListener("click", say);
-      var t = document.createElementNS(NS, "title"); t.textContent = c.county + (v ? ": " + v.v : ""); pa.appendChild(t);
-      svg.appendChild(pa);
-    });
-    var rows = P.counties.map(function (c) { return { c: c, v: by[c.fips] }; }).filter(function (x) { return x.v; }).sort(function (a, b) { return b.v.v - a.v.v; }).slice(0, 10);
-    var ol = $("map-top"); ol.innerHTML = "";
-    rows.forEach(function (x) { ol.appendChild(el("li", null, x.c.county + " County: " + x.v.v)); });
-    $("map-readout").textContent = lab + ". Choose a county for its value.";
-  }
-
   // ---- capabilities (DHHS and DMVA only; hand-built in the qualifier) ----
   function renderCaps(id) {
     var rows = (P.capabilities || []).filter(function (c) { return c.agency_id === id; }), box = $("caps");
@@ -2330,6 +2873,7 @@ body.proj .tour-card { font-size:1.2rem; }
   var osbmSort = "soon";
   function renderOsbm() {
     var v = $("v-osbm"); v.innerHTML = ""; if (!P) return;
+    var ex = el("div", "osbm-ex"); ex.appendChild(el("b", null, "What is OSBM? ")); ex.appendChild(document.createTextNode("The NC Office of State Budget and Management. It prepares the state budget, helps agencies manage federal grants, and is the sponsor of this tool. This page shows all 32 agencies at once, so OSBM can see which agencies have grants closing soon and which grants several agencies could apply for together.")); v.appendChild(ex);
     var rows = P.rows, open = rows.filter(function (r) { return r.status === "posted"; });
     var elig = open.filter(function (r) { return r.eligibility !== "no"; });
     var soon = elig.filter(function (r) { return r.in_top10 && r.days_left != null && r.days_left >= 0 && r.days_left <= CSD; });
@@ -2373,15 +2917,18 @@ body.proj .tour-card { font-size:1.2rem; }
     var hit = P && P.rows.filter(function (r) { return r.agency_id === li.dataset.ag && String(r.opp_id) === li.dataset.opp; });
     return hit && hit[0];
   }
+  var LAST_ROWS = [];
   function deskClear() {
-    deskSel = null; var pn = $("desk-panel"); pn.innerHTML = "";
-    var em = el("div", "empty"); em.appendChild(el("b", null, "Select a grant to see the full record")); em.appendChild(document.createTextNode("Eligibility evidence, who signs, award size and why it ranks where it does.")); pn.appendChild(em);
+    var had = !!deskSel; deskSel = null; var pn = $("desk-panel");
     Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row.desk-sel"), function (x) { x.classList.remove("desk-sel"); });
+    if (MXEL && deskMQ.matches) { if (MXEL.parentNode !== pn) { pn.innerHTML = ""; pn.appendChild(MXEL); } if (had) renderMatrix(LAST_ROWS); }
+    else if (!MXEL) pn.innerHTML = "";
   }
   function deskSelect(li) {
     var r = deskRowFor(li); if (!r) return;
     deskClear(); deskSel = li; li.classList.add("desk-sel");
-    var pn = $("desk-panel"); pn.innerHTML = "";
+    var pn = $("desk-panel"); if (MXEL && MXEL.parentNode === pn) pn.removeChild(MXEL); pn.innerHTML = "";
+    var back = el("button", "linkbtn mx-back", "← Back to the chart"); back.type = "button"; back.addEventListener("click", function () { var prev = deskSel; deskClear(); if (prev) prev.focus(); }); pn.appendChild(back);
     pn.appendChild(el("h2", null, r.title || r.opp_number || r.opp_id));
     var u = safeUrl(r.url); if (u) { var a = el("a", "open", "Open the grant announcement on Grants.gov"); a.href = u; a.target = "_blank"; a.rel = "noopener"; pn.appendChild(a); }
     var top2 = el("div", "desk-top"); top2.appendChild(daysBlock(r)); top2.appendChild(moneyBlock(r)); pn.appendChild(top2);
@@ -2414,13 +2961,16 @@ body.proj .tour-card { font-size:1.2rem; }
   function tab(name) {
     ["opps", "board", "map", "osbm", "marks", "how"].forEach(function (k) {
       $("v-" + k).hidden = k !== name; $("tab-" + k).setAttribute("aria-selected", k === name ? "true" : "false"); });
-    if (["board", "map", "how"].indexOf(name) >= 0) setMore(true);
-    if (name === "map") renderMap(); if (name === "osbm") renderOsbm(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
+    if (["board", "map", "how", "osbm"].indexOf(name) >= 0) setMore(true);
+    if (name === "map") renderMap(); if (name === "osbm") { renderOsbm(); foldTogether(); } if (name === "how") renderHow(); if (name === "board") { if (cur.id && $("b-agency").value === "ALL") { $("b-agency").value = cur.id; B.sel = null; } renderBoard(); } if (name === "marks") renderMarks();
   }
   Array.prototype.forEach.call(document.querySelectorAll(".tabs button[data-tab]"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
   // the old 3-step strip is replaced by the tour (Tour button)
   $("steps-x").addEventListener("click", function () { $("steps").hidden = true; lsSet("ffm_steps_v1", true); });
   $("tab-more").addEventListener("click", function () { setMore($("more-tabs").hidden); });
+  $("txt-dn").addEventListener("click", function () { txtI = Math.max(0, txtI - 1); applyDisplay(); }); $("txt-up").addEventListener("click", function () { txtI = Math.min(TXT.length - 1, txtI + 1); applyDisplay(); });
+  $("zm-dn").addEventListener("click", function () { zmI = Math.max(0, zmI - 1); applyDisplay(); }); $("zm-up").addEventListener("click", function () { zmI = Math.min(ZM.length - 1, zmI + 1); applyDisplay(); });
+  applyDisplay();
   $("theme").addEventListener("click", function () { setTheme(isDark() ? "light" : "dark"); });
   setTheme(lsGet("ffm_theme_v1", "") || "");
   if (darkMQ.addEventListener) darkMQ.addEventListener("change", function () { if (!document.documentElement.dataset.theme) setTheme(""); });
@@ -2437,7 +2987,15 @@ body.proj .tour-card { font-size:1.2rem; }
   $("k-hide").addEventListener("change", function () { K.hide = this.checked; saveK(); show(true); });
   $("k-res").addEventListener("change", function () { K.res = this.checked; saveK(); show(true); });
   $("k-reset").addEventListener("click", resetAll);
-  function applySay() { renderSayChips(parseSay($("scenario").value)); syncF(); show(true); }
+  function applySay() {
+    var had = $("scenario").value.trim(); renderSayChips(parseSay($("scenario").value)); syncF(); show(true);
+    var n = LAST_ROWS.length, st = $("say-status");
+    st.textContent = had ? (n ? "Done: showing " + n + (n === 1 ? " grant" : " grants") + " for what you typed. Your best match is first." : "No grants match all of that. Try fewer words, or Clear filters.") : "Showing all matches again.";
+    st.classList.remove("pulse"); void st.offsetWidth; st.classList.add("pulse");
+    var tgt = !$("start").hidden ? $("start") : $("top");
+    if (tgt) { setTimeout(function () { tgt.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60); tgt.classList.add("flash-box"); setTimeout(function () { tgt.classList.remove("flash-box"); }, 1500); }
+    var sy = document.querySelector(".say"); if (sy) sy.classList.toggle("used", !!had);
+  }
   $("scn-go").addEventListener("click", applySay);
   $("scenario").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); applySay(); } });
   // example chips follow the agency: the first one uses a topic word from that agency's own top grants
@@ -2450,7 +3008,7 @@ body.proj .tour-card { font-size:1.2rem; }
   function renderExamples() {
     if (!cur.id || exFor === cur.id) return; exFor = cur.id;
     var t = agencyTopic(cur.id), box = $("examples"); box.innerHTML = "";
-    (t ? [[t.charAt(0).toUpperCase() + t.slice(1) + ", 4 weeks", t + ", I have 4 weeks"]] : []).concat([["Easy ones I can start myself", "easy ones I can do myself"], ["At least $500K, good odds", "at least $500k with good odds"], ["No matching money, best payoff", "no matching money, best payoff"]]).forEach(function (x) {
+    (t ? [[t.charAt(0).toUpperCase() + t.slice(1) + ", 4 weeks", t + ", I have 4 weeks"]] : []).concat([["Easy ones I can do myself", "easy ones I can do myself"], ["At least $500K, good odds", "at least $500k with good odds"], ["No matching money, best payoff", "no matching money, best payoff"]]).forEach(function (x) {
       var b = el("button", null, x[0]); b.type = "button"; b.addEventListener("click", function () { $("scenario").value = x[1]; applySay(); }); box.appendChild(b); });
   }
   var fq; $("f-q").addEventListener("input", function () { clearTimeout(fq); var v = this.value; fq = setTimeout(function () { F.q = v.trim(); show(true); }, 150); });
@@ -2473,12 +3031,19 @@ body.proj .tour-card { font-size:1.2rem; }
     if (e.key === "ArrowRight") { e.preventDefault(); swDecide("right"); } else if (e.key === "ArrowLeft") { e.preventDefault(); swDecide("left"); }
     else if (e.key === "ArrowUp") { e.preventDefault(); swDecide("up"); } else if (e.key === "Backspace" || e.key === "z") { e.preventDefault(); swUndo(); } else if (e.key === "Escape") { e.preventDefault(); exitSwipe(); }
   }, true);
+  (function () {
+    var grid = $("imp-w-grid");
+    function sync() { var tw = Object.keys(IMPACT_W).reduce(function (a, k) { return a + (Number(IMPACT_W[k]) || 0); }, 0); [].forEach.call(grid.querySelectorAll("input"), function (inp) { inp.value = IMPACT_W[inp.dataset.k]; inp.parentNode.querySelector("output").textContent = tw ? Math.round(IMPACT_W[inp.dataset.k] / tw * 100) + "%" : "0%"; }); $("imp-w-sum").textContent = tw ? "Shares add up to 100%." : "Set at least one weight above zero."; }
+    Object.keys(IMP_LABEL).forEach(function (k) { var lab = el("label"); lab.appendChild(el("span", null, IMP_LABEL[k])); lab.appendChild(el("output")); var inp = el("input"); inp.type = "range"; inp.min = 0; inp.max = 100; inp.step = 5; inp.dataset.k = k; inp.setAttribute("aria-label", IMP_LABEL[k] + " weight"); inp.addEventListener("input", function () { IMPACT_W[k] = Number(inp.value); lsSet("ffm_impw_v1", IMPACT_W); sync(); clearTimeout(grid._t); grid._t = setTimeout(function () { show(true); }, 120); }); lab.appendChild(inp); grid.appendChild(lab); });
+    $("imp-w-reset").addEventListener("click", function () { IMPACT_W = JSON.parse(JSON.stringify(IMPACT_W0)); lsSet("ffm_impw_v1", IMPACT_W); sync(); show(true); });
+    sync();
+  })();
   $("save-x").addEventListener("click", function () { $("save-dlg").close(); });
   $("fb-open").addEventListener("click", openFeedback); $("fb-x").addEventListener("click", function () { $("fb-dlg").close(); });
   $("fb-dlg").addEventListener("click", function (e) { if (e.target === this) this.close(); });
   renderFbCount();
   $("save-dlg").addEventListener("click", function (e) { if (e.target === this) this.close(); });
-  $("cart-open").addEventListener("click", function () { renderCart(); var d = $("cart-dlg"); if (d.showModal) d.showModal(); else d.setAttribute("open", ""); });
+  $("cart-open").addEventListener("click", function () { tab("marks"); renderMyGrants(); window.scrollTo(0, 0); });
 
   PRESETS.forEach(function (pr) { var b = el("button", null, pr[0]); b.type = "button"; b.addEventListener("click", function () { pr[1](); saveK(); syncK(); show(true); }); $("presets").appendChild(b); });
   [["Days left are counted from the data date unless you set a reference date", 0], ["Keyword fit comes from the stored scores; priorities only re-order your own view", 0], ["Items with no listed award or date are never hidden by a constraint", 0], ["Matching funds, staff, impact and county reach are not in this payload", 0]].forEach(function (a) { $("assumptions").appendChild(el("li", null, a[0])); });
@@ -2544,7 +3109,12 @@ body.proj .tour-card { font-size:1.2rem; }
     var sel = $("agency");
     p.agencies.slice().sort(function (a, b) { return a.agency_name < b.agency_name ? -1 : 1; }).forEach(function (a) {
       var o = el("option", null, a.agency_name); o.value = a.agency_id; sel.appendChild(o); });
-    sel.addEventListener("change", function () { cur.id = sel.value; cur.tile = "top"; show(); });
+    sel.addEventListener("change", function () {
+      cur.id = sel.value; cur.tile = "top"; cur.order = "rank"; SHOW_PASSED = false;
+      F = { q: "", sign: "", match: "", min: 0, max: 0, weeks: 0, work: 0, odds: "", funder: "", topic: [], need: "", region: "", focus: "", matchAmt: null, exact: "", when: "", stars: "" };
+      $("scenario").value = ""; $("chips").innerHTML = ""; try { syncF(); } catch (e) {}
+      syncPickerLabel(); show();
+    });
     // home screen: evidence card, plain counts, quick picks (agencies with the most top-10 items closing soon)
     renderEvidence($("evidence-home"));
     if (EV && EV.open_ranked) { var lede = $("welcome-lede"); lede.innerHTML = ""; lede.appendChild(document.createTextNode("This scores ")); lede.appendChild(el("b", null, EV.open_ranked.value.toLocaleString() + " open federal opportunities")); lede.appendChild(document.createTextNode(" against the strategic plans of ")); lede.appendChild(el("b", null, p.agencies.length + " NC agencies")); lede.appendChild(document.createTextNode(". Pick yours to see its best matches, days left to apply, whether a state agency can apply, and who has to sign.")); }
@@ -2554,7 +3124,11 @@ body.proj .tour-card { font-size:1.2rem; }
     applyRef(); syncK(); buildIdf(); initBoard(); renderHow();
     var want = new URLSearchParams(location.search).get("agency");
     if (want && p.agencies.some(function (a) { return a.agency_id === want; })) { sel.value = want; cur.id = want; }
-    deskClear(); show(); renderCart();
+    MXEL = document.getElementById("matrix");
+    [].forEach.call(MXEL.querySelectorAll(".mx-tog button"), function (b) { b.addEventListener("click", function () { MX_MODE = b.dataset.m; lsSet("ffm_mx_mode_v2", MX_MODE); renderMatrix(LAST_ROWS); }); });
+    if (deskMQ.addEventListener) deskMQ.addEventListener("change", function () { placeMatrix(); renderMatrix(LAST_ROWS); });
+    buildPicker(); syncPickerLabel();
+    deskClear(); placeMatrix(); show(); renderCart();
   }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
 })();
 </script>
@@ -2568,14 +3142,14 @@ body.proj .tour-card { font-size:1.2rem; }
   function build() {
     steps = [
       { t: "Find grants in about a minute", b: "This tool reads every open federal grant and ranks them against your agency's own strategic plan. You tell it your situation, it shows the best bets, and you decide. Here is how, in a few short steps.", sel: null },
-      { t: "1. Start here: tell us your situation", b: "Remember the school bus money North Carolina missed because nobody saw it in time? Type what you need the way you would say it, for example: clean diesel school buses, I have 4 weeks. Press Apply. We turn your words into filters and show each one as a chip.", sel: ".say", act: ["Try the school bus example", function () { var i = $("scenario"); if (i) { i.value = "clean diesel school buses, I have 4 weeks"; $("scn-go").click(); } }] },
+      { t: "1. Start here: tell us your situation", b: "Remember the school bus money North Carolina missed because nobody saw it in time? Type what you need the way you would say it, for example: clean diesel school buses, I have 4 weeks. Press Apply. We turn your words into filters and show each one as a chip.", sel: ".say", act: ["Try the school bus example", function () { demoAgency(); var i = $("scenario"); if (i) { i.value = "clean diesel school buses, I have 4 weeks"; $("scn-go").click(); } }] },
       { t: "2. Check your agency", b: "We picked Public Schools for this example. The icon and colors change with the agency so you always know whose list you are looking at. Change it any time.", sel: ".picker" },
       { t: "3. Look at the top 3 first", b: "These are the best open matches for what you typed, ranked against the agency's own plan. For the bus example, the top match is EPA's Diesel Emissions Reduction Act grant, which pays to upgrade or retire old diesel engines, with weeks left to apply.", sel: "#start" },
-      { t: "Or swipe through them", b: "Short on time? Start swiping shows one grant at a time with just the big numbers: who is giving the money, days left, money per award, past wins (stars only when NC has won it before), and who signs. Right adds it to your cart, left passes, up sets it aside as maybe. Undo if you change your mind; Exit any time.", sel: "#swipe-cta" },
-      { t: "4. Read a card in 5 seconds", b: "Big number on the left: days left to apply. Big number on the right: the most money one award can be. In the middle: the funder, who has to sign (Tier 1: you, Tier 2: your boss, Tier 3: leadership), your chance of winning, the effort, and the payoff for the work. Open \"Why it fits\" for the reasons.", sel: "#start li" },
-      { t: "5. Like it? Press Pursue", b: "Pursue puts the grant in your cart and opens your application plan. Maybe or Pass if not. Nothing is sent anywhere; it stays in this browser.", sel: "#start li" },
+      { t: "Or swipe through them", b: "Short on time? Start swiping shows one grant at a time with just the big numbers: who is giving the money, days left, money per award, past wins (stars only when NC has won it before), and who signs. Right adds it to My grants, left passes, up sets it aside as maybe. Undo if you change your mind; Exit any time.", sel: "#swipe-cta" },
+      { t: "4. Read a card in 5 seconds", b: "Big number on the left: days left to apply. Right: the most money one award can be. Under the title: the funder, then one plain line that says whether your agency can apply and who has to sign. Open \"Why it fits, odds and details\" for everything else.", sel: "#start li" },
+      { t: "5. Like it? Press Pursue", b: "Pursue puts the grant in My grants and opens your application plan. Maybe or Pass if not. Nothing is sent anywhere; it stays in this browser.", sel: "#start li" },
       { t: "6. Your application plan", b: "The plan gives you the link to the full grant announcement, a timeline worked back from the deadline (read, check logins, gather, draft, sign-off, submit two days early), and a checklist of what you will need. You can add the deadline to your calendar or print a one-page brief for your boss.", sel: "#start li", act: ["Open an example plan", function () { if (window.ffmOpenFirstPlan) window.ffmOpenFirstPlan(); close(false); var d = $("plan-dlg"), resume = idx + 1, iv2 = setInterval(function () { if (d && d.open) return; clearInterval(iv2); idx = Math.min(resume, steps.length - 1); render(); }, 300); }] },
-      { t: "7. Your grant cart", b: "Everything you Pursue lands here with the details: impact, past wins, who signs, matching money, federal budget trend, and size against your agency's budget. Tick two to four to compare side by side, and download every deadline to Outlook in one click.", sel: "#cart-open" },
+      { t: "7. My grants", b: "Everything you Pursue goes to My grants, its own page: open each plan, save a one-page brief for your boss, start a proposal outline, compare two to four side by side, or save the whole list. Maybe and Passed grants live there too.", sel: "#cart-open" },
       { t: "8. Want more control?", b: "Open More options for keyword search, sort order (best payoff, biggest money, soonest deadline), who signs, smallest award, time you need, odds and funder.", sel: "#more-filters" },
       { t: "That is it", b: "Describe your situation, look at the top 3, Pursue the good ones, follow the plan. Replay this tour any time with the Tour button at the top.", sel: null }
     ].filter(function (s) { return !s.sel || visible(document.querySelector(s.sel)); });
@@ -2603,8 +3177,8 @@ body.proj .tour-card { font-size:1.2rem; }
     next.focus({ preventScroll: true });
   }
   function demoAgency() { // the home screen has no list yet: pick Environmental Quality so the tour has real rows to point at
-    var sel = $("agency"); if (!sel || sel.value) return;
-    var o = [].slice.call(sel.options).filter(function (x) { return /Public Schools/i.test(x.text); })[0];
+    var sel = $("agency"); if (!sel || sel.value === "dpi") return;
+    var o = [].slice.call(sel.options).filter(function (x) { return x.value === "dpi"; })[0];
     if (o) { sel.value = o.value; sel.dispatchEvent(new Event("change", { bubbles: true })); }
   }
   function start() { close(false); if (document.body.classList.contains("proj")) return; demoAgency(); build(); idx = 0; if (steps.length) render(); }

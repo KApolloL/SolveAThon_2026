@@ -209,3 +209,14 @@ Read-only from a laptop without the `az` CLI, so no Azure query was possible and
 - Fix for Blob writes: `Storage Blob Data Contributor` on `ffmdatateam15` for the deployer (Owner must grant), or a write SAS passed as `BLOB_WRITE_SAS`. Not needed for the demo.
 - Judge snapshot (`app/make_snapshot.sh`): now also excludes `archive/stale`, `stale/`, `graphify-out/`. Built and checked: no key file or key value, no `.git`, `.RData`, `.Renviron`; 23,419 files, 461 MB (193 MB zip; `data/` is most of it, no file over 25 MB). On that snapshot with no keys: `10_run_ranking.R`, then 84 of 84 tests and 49 of 49 fact rows, and `11_build_payload.R` rebuilt `payload.json` byte-identical.
 - Exact order for tonight and Sunday: `saturday/deploy_checklist_sun.md`.
+
+## Deploy Sat Nov 7, ~6:05 pm ET (Marco's machine, Marco's Claude)
+- Built `ffm-app:v20` with `az acr build` (az 2.92.0, containerapp 1.3.0b5) from `main` at `39048df` (PR 111 merged). Run status: Succeeded.
+- `az containerapp update --image ffmacrteam15.azurecr.io/ffm-app:v20` → revision `ffm-app--0000025`, provisioning Succeeded. Min replicas already 1 (left as is).
+- Blob upload skipped (no write role); the baked payload in the image is served. Live `/payload.json` is byte-for-byte equal to the repo's `data/processed/payload.json` (960 rows, data_as_of 2026-11-07 11:00).
+- Check: live `/` contains "Start swiping" (new tool). The 7 "U.S. Embassy The Hague" rows are eligibility "no" (hidden examples only), not matches.
+- Not done: daily job (still dry run), spend not read.
+- Sat ~6:20 pm: quick declutter deployed as `ffm-app:v21` (home quick-picks, evidence card, at-a-glance and money-vs-time charts, estimate chips and per-card feedback row hidden; pop-up off; white page). Live page checked.
+- Sat evening: simplified tool (commit a4d88eb) deployed as `ffm-app:v22`, revision ffm-app--0000027, after Marco checked it locally. Live page checked (new agency picker present).
+- Sat night: v23 deployed (revision ffm-app--0000028): adjustable impact weights, Match board, single arrows, feedback form sent to GET /feedback (logged as FEEDBACK lines; read with app/read_feedback.sh). Live page and /feedback checked.
+- Sat night: v24 deployed (revision ffm-app--0000029): Shipley color-team timeline and How this works section. Live page checked.
