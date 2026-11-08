@@ -131,4 +131,4 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - [ ] Read aloud with all five speakers at 5:45 or less.
 - [ ] Every "live on Azure" claim checked on the URL Sunday morning.
 
-_The stale v1 slide block (old "Slide 1: The ask" to "Slide 6: Next step", pre-filter numbers) moved to `archive/stale/slide_brief_v1_block_20261107.md` on Sat Nov 7 (Kent). Build only from the v2 slides above._
+_The stale v1 slide block (old "Slide 1: The ask" to "Slide 6: Next step", pre-filter numbers) moved to `_team/archive/stale/slide_brief_v1_block_20261107.md` on Sat Nov 7 (Kent). Build only from the v2 slides above._

@@ -29,7 +29,7 @@ Source of truth for what we build. Anything here overrides the "chosen option" l
 - Marco's branch needs main pulled in.
 
 ## Order of work
-1. Fri night: roles recorded in `docs/RUNBOOK.md`; Marco's Azure steps.
+1. Fri night: roles recorded in `_team/docs/RUNBOOK.md`; Marco's Azure steps.
 2. Sat morning: pool rules and label sheet; `data/manual/criteria.csv`; `Rscript R/01_profile.R`; the pipeline (embeddings, score table, flag rule, hide-ineligible, unknown handling, notice rows, rolling dates); `Rscript R/check_facts.R` and tests. Teammates label the pools in parallel.
 3. Sat 1:00 PM gate: working ranking per agency, recall number, Clean School Bus (CFDA 66.045 [uncertain]) appears for education and environment, deterministic rerun.
 4. Sat 1:00 to 7:00 PM: Azure reasons with the quote check; the JS tool with agency picker, sliders and breakdown; tiers; presets; feedback button only if time holds. Fact sheet, field notes, slide brief, Q&A sheet from verified numbers only.

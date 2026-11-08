@@ -1079,7 +1079,7 @@ body.proj .tour-card { font-size:1.2rem; }
       <div><h1>Federal Funds Matchmaker</h1><div class="for">State of North Carolina · federal grants ranked against each agency's own plan</div></div>
     </div>
     <div class="spacer"></div>
-    <button type="button" id="start-over" title="Clear the agency and filters and go back to the first screen. Your saved grants are kept.">Start over</button>
+    <button type="button" id="start-over" title="Clear everything and go back to the first screen: agency, filters and all saved grants (Pursue, Maybe, Skip).">Start over</button>
     <button type="button" id="cart-open" class="cartbtn" aria-label="My grant cart"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.2a2 2 0 0 0 2 1.6h8.1a2 2 0 0 0 2-1.5L22 8H6"/></svg><span>My grants</span><b id="cart-n" hidden>0</b></button>
     <span class="fresh" title="When the opportunity data was last refreshed"><span class="dot" aria-hidden="true"></span><span id="asof">Loading data...</span></span>
     <button type="button" id="fb-open" class="fbbtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Give feedback<b id="fb-n" hidden>0</b></button>
@@ -3223,7 +3223,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var box = $("start"); box.innerHTML = "";
     box.hidden = !pick.length; if (box.hidden) return;
     box.appendChild(el("h2", null, cur.order === "rank" ? (pick.length === 1 ? "Start here: your best open match" : "Start here: your " + pick.length + " best open matches") : "Start here: top " + pick.length + " by " + ORDER_LABEL[cur.order]));
-    box.appendChild(el("p", "note", "Big number: days left to apply. Right: the most one award can be. Pursue tears off the stub and saves the grant; See my plan gives a step-by-step plan."));
+    box.appendChild(el("p", "note", "Big number: days left to apply. Right: the most one award can be. Pursue tears off the stub and saves the grant. See my plan gives a step-by-step plan."));
     var lg = el("p", "stub-legend"); lg.innerHTML = '<i class="sl red"></i>14 days or fewer <i class="sl amber"></i>30 days or fewer <i class="sl calm"></i>more time'; box.appendChild(lg);
     var ol = el("ol"); pick.forEach(function (r) { ol.appendChild(rowEl(r)); }); box.appendChild(ol);
     var why = el("p", "note start-why", "Why only " + pick.length + "? These are the best fits, so you can start without reading everything. The full list is in the tabs below (Best matches, Closing soon, Coming up).");
@@ -3437,14 +3437,14 @@ body.proj .tour-card { font-size:1.2rem; }
     "veteran veterans military service",
     "environment environmental pollution emissions diesel air climate conservation",
     "disability disabilities accessible accessibility"
-  ], SYN = {};
-  SYN_GROUPS.forEach(function (g, i) { g.split(" ").forEach(function (w) { SYN[w] = "g" + i; }); });
+  ], SYN_G = {};
+  SYN_GROUPS.forEach(function (g, i) { g.split(" ").forEach(function (w) { SYN_G[w] = "g" + i; }); });
   function stem(w) { if (w.length > 4) { if (/ies$/.test(w)) return w.slice(0, -3) + "y"; if (/(ing|ers)$/.test(w)) return w.slice(0, -3); if (/(es|ed|ly)$/.test(w)) return w.slice(0, -2); if (/s$/.test(w) && !/ss$/.test(w)) return w.slice(0, -1); } else if (w.length === 4 && /s$/.test(w) && !/ss$/.test(w)) return w.slice(0, -1); return w; }
   function tokens(t) {
     var out = [];
     String(t || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).forEach(function (w) {
       if (w.length < 3 || STOP[w]) return;
-      var st = stem(w); out.push(st); var g = SYN[w] || SYN[st]; if (g) out.push(g);
+      var st = stem(w); out.push(st); var g = SYN_G[w] || SYN_G[st]; if (g) out.push(g);
     });
     return out;
   }
@@ -3456,7 +3456,7 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   function vec(text) { var v = {}, n = 0; tokens(text).forEach(function (w) { v[w] = (v[w] || 0) + 1; });
     Object.keys(v).forEach(function (w) { v[w] = (1 + Math.log(v[w])) * Math.log(1 + NDOC / (DF[w] || 1)); n += v[w] * v[w]; }); v.__n = Math.sqrt(n) || 1; return v; }
-  function concepts(t) { var o = {}, n = 0; String(t || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).forEach(function (w) { if (w.length < 3 || STOP[w]) return; var st = stem(w), k = SYN[w] || SYN[st] || st; if (!o[k]) { o[k] = 1; n++; } }); o.__n = n; return o; }
+  function concepts(t) { var o = {}, n = 0; String(t || "").toLowerCase().replace(/[^a-z0-9\s]/g, " ").split(/\s+/).forEach(function (w) { if (w.length < 3 || STOP[w]) return; var st = stem(w), k = SYN_G[w] || SYN_G[st] || st; if (!o[k]) { o[k] = 1; n++; } }); o.__n = n; return o; }
   // Rank by word overlap, then favor grants that cover more of what the user asked (all of "old people" AND "transportation", not just one).
   var CDF = null, RCON = {};
   function rowConcepts(r) { var k = r.opp_id; return RCON[k] || (RCON[k] = concepts(rowText(r))); }
@@ -3731,7 +3731,7 @@ body.proj .tour-card { font-size:1.2rem; }
   $("k-hide").addEventListener("change", function () { K.hide = this.checked; saveK(); show(true); });
   $("k-res").addEventListener("change", function () { K.res = this.checked; saveK(); show(true); });
   $("k-reset").addEventListener("click", resetAll);
-  // ---- navigation: brand = back to the top; Start over = clear agency and filters (saved grants stay) ----
+  // ---- navigation: brand = back to the top; Start over = clear agency, filters and all saved grants ----
   function goHome() { tab("opps"); window.scrollTo({ top: 0, behavior: calm() ? "auto" : "smooth" }); }
   $("brand-home").addEventListener("click", goHome);
   $("brand-home").addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); goHome(); } });
@@ -3743,8 +3743,9 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   window.ffmReset = resetToChooser;
   $("start-over").addEventListener("click", function () {
-    if (!confirm("Start over? This clears your agency and filters and goes back to the first screen. Your saved grants (Pursue, Maybe, Skip) are kept.")) return;
-    resetToChooser();
+    if (!confirm("Start over? This clears your agency, your filters and every saved grant in My grants (Pursue, Maybe, Skip), then goes back to the first screen. This cannot be undone.")) return;
+    marks = {}; saveMarks(); checks = {}; lsSet("ffm_check_v1", checks); HIST = []; lsSet("ffm_hist_v1", HIST);
+    resetToChooser(); try { renderMarks(); renderCart(); } catch (e) {}
   });
   // ---- hide parts you do not want to see (remembered in this browser) ----
   (function () {

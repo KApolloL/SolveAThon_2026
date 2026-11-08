@@ -9,7 +9,7 @@ UNC Solve-a-thon Final Quest, Fri Nov 6 to Sun Nov 8, 2026, in person. A 5-perso
 You do small, bounded tasks that Claude (the planner and drafter) hands you in a task brief. You write the output to a file. Claude then polishes and checks it. You do not plan the project, choose the user, the metric or the criteria, drop data, or decide what goes on a slide. If a task needs one of those, write `NEEDS KENT` and stop.
 
 ## How a task works
-1. Read the task brief (a file in `tasks/` or the text Kent pastes). It names the inputs, the output path, and what done means.
+1. Read the task brief (a file in `_team/tasks/` or the text Kent pastes). It names the inputs, the output path, and what done means.
 2. Write your output only to the named path. If none is named, write to `drafts/<tool>/<task-name>.<ext>`. Never overwrite a file outside that path.
 3. Run the checks named in the brief. For code, run `Rscript tests/run_tests.R` from `src/`; it must print "N of N tests pass".
 4. Reply with: files written, what you did, what you did not do, assumptions, and how you verified it. Do not claim a check passed unless you ran it and read the output.
@@ -37,7 +37,7 @@ Do not commit, push, merge, rebase or force-push unless the brief says to. Never
 ## Safety
 - No personal, participant or patient data in any file. If you see some, stop and tell Kent.
 - No API keys or secrets in files you write.
-- Do not run commands that delete files. Move to a dated `archive/stale/` folder instead.
+- Do not run commands that delete files. Move to a dated `_team/archive/stale/` folder instead.
 
 ## Logging
 Add one row to `AI_USAGE_LOG.md`: when, tool and model, what for, whether the output was used, and what a human checked. The team must disclose AI use and name at least one place an AI was wrong.

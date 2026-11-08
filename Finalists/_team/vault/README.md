@@ -5,10 +5,10 @@ Copies of the Solveathon notes from Kent's Obsidian vault (`Projects/Competition
 | Copy | What it holds | Repo doc it feeds |
 |---|---|---|
 | [Solveathon.md](Solveathon.md) | Hub: team, schedule, goals, log | [../../handoff.md](../../handoff.md) |
-| [Solveathon_DiscoverySession.md](Solveathon_DiscoverySession.md) | Organized notes from the Fri Nov 6 kickoff and client discovery session (Kent, Everett, Marco) | [../../planning/07_discovery_findings.md](../../planning/07_discovery_findings.md) |
+| [Solveathon_DiscoverySession.md](../../notes/vault/Solveathon_DiscoverySession.md) | Organized notes from the Fri Nov 6 kickoff and client discovery session (Kent, Everett, Marco) | [../../planning/07_discovery_findings.md](../../planning/07_discovery_findings.md) |
 | [Solveathon_DeloitteTraining.md](Solveathon_DeloitteTraining.md) | Deloitte training, rubric map, weekend timeline | [../../planning/README.md](../../planning/README.md) |
-| [Solveathon_FinalsChecklist.md](Solveathon_FinalsChecklist.md) | Before, at release, and during the finals | [../../docs/RUNBOOK.md](../../docs/RUNBOOK.md) |
-| [Solveathon_Runbook.md](Solveathon_Runbook.md) | Kent's tool routing, roles, checkpoints | [../../docs/RUNBOOK.md](../../docs/RUNBOOK.md) |
+| [Solveathon_FinalsChecklist.md](Solveathon_FinalsChecklist.md) | Before, at release, and during the finals | [../../docs/RUNBOOK.md](../docs/RUNBOOK.md) |
+| [Solveathon_Runbook.md](Solveathon_Runbook.md) | Kent's tool routing, roles, checkpoints | [../../docs/RUNBOOK.md](../docs/RUNBOOK.md) |
 | [Solveathon_TeamMeetings.md](Solveathon_TeamMeetings.md) | Team meeting log (empty so far) | |
 | [Solveathon_WeekendLog.md](Solveathon_WeekendLog.md) | Nov 6 to 8 log template | [../../AI_USAGE_LOG.md](../../AI_USAGE_LOG.md) |
 | [Solveathon_QualifierRetro.md](Solveathon_QualifierRetro.md) | Qualifier retrospective | [../../../QualifierChallenge/README.md](../../../QualifierChallenge/README.md) |

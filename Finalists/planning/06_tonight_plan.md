@@ -2,7 +2,7 @@
 
 Written at about 6:15 pm. Workshop 6:30 pm, sprint 7:30 to 8:45 pm, mentor check-ins from 8:45 pm.
 
-Related: [docs/QUEST_BRIEF.md](../docs/QUEST_BRIEF.md) (challenge text) | [handoff.md](../handoff.md) (status) | [organizer materials notes](../src/docs/organizer_materials_notes.md) (Starter Kit, Azure guide, template, zip) | [01 discovery questions](01_discovery_questions.md) | [02 framing worksheet](02_framing_worksheet.md) | [05 user criteria and feedback](05_user_criteria_and_feedback.md) | [07 discovery findings](07_discovery_findings.md) | [vault note copies](../notes/vault/README.md) | [agency plans](../data/raw/agency_plans/) and [MANIFEST.csv](../data/raw/agency_plans/MANIFEST.csv)
+Related: [docs/QUEST_BRIEF.md](../docs/QUEST_BRIEF.md) (challenge text) | [handoff.md](../handoff.md) (status) | [organizer materials notes](../src/docs/organizer_materials_notes.md) (Starter Kit, Azure guide, template, zip) | [01 discovery questions](01_discovery_questions.md) | [02 framing worksheet](02_framing_worksheet.md) | [05 user criteria and feedback](05_user_criteria_and_feedback.md) | [07 discovery findings](07_discovery_findings.md) | [vault note copies](../_team/vault/README.md) | [agency plans](../data/raw/agency_plans/) and [MANIFEST.csv](../data/raw/agency_plans/MANIFEST.csv)
 
 ## Goal for tonight
 1. Framing gate ticked ([02_framing_worksheet.md](02_framing_worksheet.md)).

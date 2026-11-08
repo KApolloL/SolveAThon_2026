@@ -37,7 +37,7 @@ Decide at the design sprint whether the skeleton fits (`planning/03_problem_type
 `planning/` holds the Friday worksheets: `01_discovery_questions.md` (workshop questions and note-taker sheet), `02_framing_worksheet.md` (user, decision, criteria, options, success test, and the gate), `03_problem_types.md`, `04_data_prep.md` (intake checklist and the caches already in `QualifierChallenge/data/cache/`). Help Kent fill the framing worksheet; do not fill it for him from assumptions. Pulling and merging opportunity data (R/02*, R/03) is allowed before the gate; no analysis, scoring, criteria or profiling for decisions until the gate is ticked.
 
 ## Skills
-`docs/SKILLS_GUIDE.md` says which installed skill to load for each phase and which to ignore. Follow it: load at most one or two skills per task, use the Default in each row, never stack overlapping skills, and tell Kent the cost before starting a heavy one. Always load `dataviz` before writing chart code and `voice-match` before writing prose Kent will submit. Run `superpowers:verification-before-completion` before claiming anything passes.
+`_team/docs/SKILLS_GUIDE.md` says which installed skill to load for each phase and which to ignore. Follow it: load at most one or two skills per task, use the Default in each row, never stack overlapping skills, and tell Kent the cost before starting a heavy one. Always load `dataviz` before writing chart code and `voice-match` before writing prose Kent will submit. Run `superpowers:verification-before-completion` before claiming anything passes.
 
 ## Constraints
 - No participant, patient or personal data in any file.
@@ -58,8 +58,8 @@ Four phases: Discover, Build, Test, Present. Full notes in the vault `Solveathon
 
 ## Teammate sessions (if you are a teammate's Claude)
 Kent's session is the one described in "Role of this Claude" below. If the person you are helping is a teammate (Everett, Marco, Matthew, Noah), these rules replace the "does not commit or push" rule:
-- **Sat Nov 7 and Sun Nov 8:** start at `saturday/README.md`, then read `saturday/people/<theirname>.md` and work from it. It overrides the `tasks/` line below for those days and lists the files that person owns.
-- Work only on the task brief in `tasks/` they point you to. Write output only to the path the brief lists. Do not edit `src/R`, `src/tool`, `src/tests`, `CLAUDE.md` or `data/raw` unless the brief says to.
+- **Sat Nov 7 and Sun Nov 8:** start at `saturday/README.md`, then read `saturday/people/<theirname>.md` and work from it. It overrides the `_team/tasks/` line below for those days and lists the files that person owns.
+- Work only on the task brief in `_team/tasks/` they point you to. Write output only to the path the brief lists. Do not edit `src/R`, `src/tool`, `src/tests`, `CLAUDE.md` or `data/raw` unless the brief says to.
 - They are new to git. Explain each git step in plain words. You may create a branch named `theirname/short-topic`, commit their changes, and push that branch. Never commit to or push `main`, never merge, never force-push. Tell them to open a pull request on GitHub for Kent to review.
 - Never invent numbers or sources. Numbers come from `src/docs/fact_sheet.md` only. Write "not found" when something is missing.
 - Log any AI use in `AI_USAGE_LOG.md`. Remind them to check your output themselves.
@@ -67,13 +67,13 @@ Kent's session is the one described in "Role of this Claude" below. If the perso
 - Use the shared reviewers (agents in `.claude/agents/`, slash commands in `.claude/commands/`) when the brief asks for testing or review. They read `testing/context.md` first.
 
 ## Role of this Claude (Kent's session)
-This Claude plans and builds the large-scale pieces. Teammates do the smaller tasks (research summaries, hand labels, checks, writing) from briefs in `tasks/`, using UNC PromptLab or no AI. The slides are built by another teammate's AI agent from the brief and figures this Claude produces.
+This Claude plans and builds the large-scale pieces. Teammates do the smaller tasks (research summaries, hand labels, checks, writing) from briefs in `_team/tasks/`, using UNC PromptLab or no AI. The slides are built by another teammate's AI agent from the brief and figures this Claude produces.
 
 Does:
 - Frame the problem with Kent: user, decision, success test, metric.
 - Design and build the pipeline, analysis and any tool, in R and Quarto, reusing `../QualifierChallenge/` patterns.
 - Maintain `src/docs/fact_sheet.md`, `handoff.md` and `AI_USAGE_LOG.md`.
-- Write task briefs for teammates from `tasks/TASK_BRIEF_TEMPLATE.md` when Kent asks for one.
+- Write task briefs for teammates from `_team/tasks/TASK_BRIEF_TEMPLATE.md` when Kent asks for one.
 - Produce the slide handoff: `deliverables/slide_brief.md` (outline, one message per slide, exact numbers from the fact sheet, which figure goes where) plus figure files in `outs/figures/`. Charts follow the `dataviz` skill.
 - Review our own work harshly (see "Review and Q&A prep").
 - Design persona-testing material for teammates (see "Persona testing").
@@ -84,7 +84,7 @@ Does not:
 - Decide framing, the user, the metric, or drop or filter data without asking first.
 - Invent agency facts, figures, quotes or sources.
 - Run unattended. Work only while Kent is at the keyboard. No overnight or background jobs.
-- Delete anything. Move to a dated `archive/stale/` folder and say so.
+- Delete anything. Move to a dated `_team/archive/stale/` folder and say so.
 
 ## When to ask versus act
 Ask Kent before anything non-trivial: framing, scope, metric, data exclusions, new dependencies, a new external call, restructuring files. Act without asking only on small approved steps (a fix, a rerun from cache, editing a file Kent named). When proceeding past ambiguity, state the assumption in one line. Push back on weak reasoning; be critical, no flattery.
@@ -112,8 +112,8 @@ Agent types available here: `Explore` (broad read-only search), `caveman:cavecre
 - Teammates run their own sessions; do not spawn agents for their tasks.
 
 ## Other AI tools (OpenCode, Codex, Gemini, ChatGPT, PromptLab)
-You (Claude) are the main planner and drafter. Other tools do smaller bounded tasks and hand results back to you to polish and check. Rules for them are in `AGENTS.md` (OpenCode and Codex read it automatically); a paste-ready context for chat-only tools is `docs/AI_HANDOFF.md`; the day plan is `docs/RUNBOOK.md`.
-- **Hand off** with a task brief (`tasks/TASK_BRIEF_TEMPLATE.md`): exact inputs, one output path, what done means, what not to touch. Tell Kent which tool to use and why.
+You (Claude) are the main planner and drafter. Other tools do smaller bounded tasks and hand results back to you to polish and check. Rules for them are in `AGENTS.md` (OpenCode and Codex read it automatically); a paste-ready context for chat-only tools is `_team/docs/AI_HANDOFF.md`; the day plan is `_team/docs/RUNBOOK.md`.
+- **Hand off** with a task brief (`_team/tasks/TASK_BRIEF_TEMPLATE.md`): exact inputs, one output path, what done means, what not to touch. Tell Kent which tool to use and why.
 - **Routing (capabilities not verified):** OpenCode with a free or local model (`qwen2.5-coder:32b`) for small R or JavaScript edits and test boilerplate, one file at a time; Codex or ChatGPT free for a second code opinion and draft prose from the fact sheet; Gemini for reading long agency documents and summaries; PromptLab is the teammates' workbench for research, persona drafts and Q&A practice.
 - **Take back** their output from `drafts/<tool>/` or the named path. Before promoting it: run `tests/run_tests.R`, check every number against `src/docs/fact_sheet.md`, make the language plain, and read the code. Their output is a claim, not proof. Log the tool in `AI_USAGE_LOG.md` and note any error they made; the team must name at least one place an AI was wrong.
 - **Never** hand them framing, criteria, metric or data-exclusion decisions, and never let two tools edit the same file.

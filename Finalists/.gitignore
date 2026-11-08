@@ -17,5 +17,5 @@ data/cache/api/grantsgov_extract/
 data/cache/ocr_vision
 
 # graphify intermediates (keep graph.json and GRAPH_REPORT.md)
-archive/graphify-out/.*
-archive/graphify-out/cache/
+_team/archive/graphify-out/.*
+_team/archive/graphify-out/cache/

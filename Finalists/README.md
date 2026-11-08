@@ -36,8 +36,8 @@ Run everything from `src/`. Start with the ranking, then the two checks:
 ```bash
 cd src
 Rscript R/10_run_ranking.R     # writes data/processed/items.csv and ranking.csv, and outs/top_results.csv
-Rscript tests/run_tests.R      # prints "83 of 83 tests pass"
-Rscript R/check_facts.R        # prints "47 of 47 rows pass"
+Rscript tests/run_tests.R      # prints "86 of 86 tests pass"
+Rscript R/check_facts.R        # prints "49 of 49 rows pass"
 ```
 
 `items.csv` and `ranking.csv` are not in git, so run `10_run_ranking.R` first. Without it the tests fall back to the fake toy data in `data/example/` and fail.
@@ -108,8 +108,10 @@ Rules to know:
 | [data/example/](data/example/) | Fake toy data, used only when real files are missing. |
 | [outs/](outs/) | Generated files. Safe to delete. |
 | [saturday/](saturday/) | Build-day decisions and the payload contract. |
-| [planning/](planning/), [docs/](docs/) | Framing worksheets, the organizer brief ([docs/QUEST_BRIEF.md](docs/QUEST_BRIEF.md)), team process docs. |
-| [handoff.md](handoff.md), [AI_USAGE_LOG.md](AI_USAGE_LOG.md) | Current team status and the log of AI use. |
+| [planning/](planning/), [docs/](docs/) | Discovery findings and framing worksheets; the organizer brief ([docs/QUEST_BRIEF.md](docs/QUEST_BRIEF.md)) and judging rubric. |
+| [FIELD_NOTES.md](FIELD_NOTES.md) | Solution Design and GenAI Field Notes (submission deliverable). |
+| [handoff.md](handoff.md), [AI_USAGE_LOG.md](AI_USAGE_LOG.md) | Team status notes and the log of AI use. |
+| `_team/` | Team-internal process files: task briefs, runbook, archived drafts, vault copies. Not needed to run or judge the work. |
 
 ## Deploy on Azure
 
@@ -127,7 +129,7 @@ DEPLOY=yes sh app/deploy_azure.sh      # asks before every step
 
 Steps in the script: stage assets and check no key is present, validate `payload.json` (needs python3), build the image with `az acr build`, upload `payload.json` to Blob, update the app, create the daily job, start the job once.
 
-Status: nothing in the latest tool version is confirmed deployed yet. The script itself has not been run for real by anyone.
+Status (Sat Nov 7, night): image `ffm-app:v24` is live, and the page it serves is byte-identical to `src/tool/matchmaker.html` on `main` at that time. Every deploy (image tag, revision, what changed) is logged in [src/docs/azure_setup.md](src/docs/azure_setup.md).
 
 ## Daily refresh
 
@@ -155,14 +157,14 @@ Status: the daily job running on its schedule is not verified. The job image (`D
 - Pursue, Maybe and Pass marks and the cart live in each browser only. There are no accounts and nothing is shared.
 - Four agency plans are old, and plan quality varies across agencies.
 - Only 2 agencies (DHHS and DMVA) have a capability table.
-- The daily job is not verified on its schedule, and the latest tool version is not confirmed deployed.
+- The daily job exists in Azure but runs with `JOB_DRY_RUN=1`, so it writes nothing yet, and it re-scores cached data rather than fetching new postings. Do not describe the refresh as live.
 - No evaluation with real agency staff has been done.
 - API keys: `api_keys.env` is tracked in git, so those keys are in history. Rotate them and remove the file from history before the repo is shared outside the team.
 
 ## Where the numbers come from
 
-Every number used in the tool text or slides is in [src/docs/fact_sheet.md](src/docs/fact_sheet.md) with the script that makes it. `R/check_facts.R` re-derives them from [data/manual/facts.csv](data/manual/facts.csv) and prints "47 of 47 rows pass". If a number is not in the fact sheet, do not trust it.
+Every number used in the tool text or slides is in [src/docs/fact_sheet.md](src/docs/fact_sheet.md) with the script that makes it. `R/check_facts.R` re-derives them from [data/manual/facts.csv](data/manual/facts.csv) and prints "49 of 49 rows pass". If a number is not in the fact sheet, do not trust it.
 
 ## More
 
-Organizer brief: [docs/QUEST_BRIEF.md](docs/QUEST_BRIEF.md). Team status: [handoff.md](handoff.md). AI use: [AI_USAGE_LOG.md](AI_USAGE_LOG.md).
+Field notes: [FIELD_NOTES.md](FIELD_NOTES.md). Organizer brief: [docs/QUEST_BRIEF.md](docs/QUEST_BRIEF.md). Team status: [handoff.md](handoff.md). AI use: [AI_USAGE_LOG.md](AI_USAGE_LOG.md).
