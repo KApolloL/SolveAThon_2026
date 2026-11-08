@@ -855,6 +855,38 @@ li.mg-item.passed .mg-days b { color:var(--text-muted); }
 li.mg-item.passed .mg-days::after { content:"PASSED"; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-16deg); font-size:.7rem; font-weight:900; letter-spacing:.14em; color:#c8372d; border:2px solid #c8372d; border-radius:4px; padding:1px 5px; background:var(--surface-2); opacity:.9; }
 [data-theme="dark"] li.mg-item.passed .mg-days::after { color:#ff6b5e; border-color:#ff6b5e; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) li.mg-item.passed .mg-days::after { color:#ff6b5e; border-color:#ff6b5e; } }
+/* ---- first-use help ---- */
+.how3 { list-style:none; margin:0 0 14px; padding:0; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; }
+.how3 li { position:relative; background:var(--surface-2); border:1px solid var(--border); border-left:none; border-radius:0 var(--radius) var(--radius) 0; padding:12px 14px 12px 56px; display:flex; flex-direction:column; gap:2px; min-height:84px; box-shadow:var(--shadow); }
+.how3 li .h3n { position:absolute; left:0; top:0; bottom:0; width:42px; display:grid; place-items:center; background:var(--stub); border-right:2px dashed var(--border); border-radius:var(--radius) 0 0 var(--radius); font-weight:800; font-size:1.3rem; color:var(--accent); }
+.how3 li b { font-size:1rem; color:var(--text-primary); } .how3 li > span:not(.h3n) { font-size:.86rem; color:var(--text-secondary); line-height:1.35; }
+.how3 i { font-style:normal; font-weight:800; } .how3 .h3-tear { color:var(--accent); } .how3 .h3-pass { color:#c8372d; }
+[data-theme="dark"] .how3 .h3-pass { color:#ff6b5e; } @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .how3 .h3-pass { color:#ff6b5e; } }
+@media (max-width:760px) { .how3 { grid-template-columns:1fr; } }
+.try-ex { font:inherit; font-weight:700; color:var(--accent); background:var(--accent-soft); border:2px dashed var(--accent); border-radius:999px; padding:10px 18px; min-height:44px; cursor:pointer; margin:0 0 12px; }
+.try-ex:hover { background:var(--surface-3); }
+.coach { margin:10px 0 0; display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; background:var(--accent-soft); border:1px solid var(--accent); border-radius:12px; padding:10px 12px 10px 14px; position:relative; max-width:560px; animation:rtIn .25s ease-out; transform:none; }
+.coach::before { content:""; position:absolute; top:-7px; left:34px; width:12px; height:12px; background:var(--accent-soft); border-left:1px solid var(--accent); border-top:1px solid var(--accent); transform:rotate(45deg); }
+.coach b { flex-basis:100%; color:var(--text-primary); font-size:.92rem; } .coach span { flex:1; min-width:200px; color:var(--text-secondary); font-size:.88rem; line-height:1.4; }
+.coach button { font:inherit; font-weight:700; font-size:.86rem; padding:6px 14px; min-height:36px; border-radius:999px; border:1px solid var(--accent); background:var(--surface-2); color:var(--accent); cursor:pointer; }
+@keyframes ccIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } } .coach { animation:ccIn .25s ease-out; }
+li.row:focus { outline:3px solid var(--accent); outline-offset:2px; }
+.keys-dlg { max-width:440px; } .keys-dlg h2 { margin:0 0 10px; font-size:1.2rem; }
+dl.keys { display:grid; grid-template-columns:auto 1fr; gap:8px 16px; margin:0 0 12px; } dl.keys dt { white-space:nowrap; } dl.keys dd { margin:0; color:var(--text-secondary); }
+kbd { font:inherit; font-size:.82rem; font-weight:700; background:var(--surface-3); border:1px solid var(--border); border-bottom-width:2px; border-radius:6px; padding:1px 7px; }
+/* ticket badge on the My grants tab */
+.tix { display:inline-grid; place-items:center; min-width:24px; height:20px; margin-left:7px; padding:0 7px; font-size:.75rem; font-weight:800; color:#1d2a10; background:#f2c14e; vertical-align:1px; border-radius:3px;
+  -webkit-mask:radial-gradient(circle at 0 50%, transparent 4px, #000 4.5px) left/51% 100% no-repeat, radial-gradient(circle at 100% 50%, transparent 4px, #000 4.5px) right/51% 100% no-repeat; mask:radial-gradient(circle at 0 50%, transparent 4px, #000 4.5px) left/51% 100% no-repeat, radial-gradient(circle at 100% 50%, transparent 4px, #000 4.5px) right/51% 100% no-repeat; }
+/* empty My grants */
+.empty-ticket { display:grid; grid-template-columns:96px minmax(0,1fr); max-width:620px; margin:18px 0; border:2px dashed var(--border); border-radius:var(--radius); overflow:hidden; }
+.empty-ticket .et-stub { display:grid; place-items:center; font-size:2.6rem; font-weight:800; color:var(--text-muted); background:var(--stub); border-right:2px dashed var(--border); }
+.empty-ticket .et-body { padding:18px 20px; } .empty-ticket b { font-size:1.15rem; color:var(--text-primary); } .empty-ticket p { margin:6px 0 12px; color:var(--text-secondary); }
+.empty-ticket button { font:inherit; font-weight:700; padding:8px 18px; min-height:44px; border-radius:999px; border:none; background:var(--accent); color:var(--on-accent); cursor:pointer; }
+/* loading skeleton */
+.skel { display:grid; gap:10px; margin-top:16px; } .skel i { display:block; height:150px; border-radius:var(--radius); border:1px solid var(--border); background:linear-gradient(90deg, var(--surface-2) 0%, var(--surface-3) 50%, var(--surface-2) 100%) 0 0/200% 100%; animation:skelMove 1.3s linear infinite; }
+@keyframes skelMove { to { background-position:-200% 0; } }
+.skel-err { margin-top:16px; padding:16px 18px; border-radius:var(--radius); background:var(--bad-soft); color:var(--text-primary); }
+#v-opps.nopick .skel { display:none; }
 .dispmenu-pop button[aria-pressed="true"] { background:var(--accent-soft) !important; color:var(--text-primary) !important; border-color:var(--accent) !important; }
 /* Pass: rubber stamp */
 .pass-stamp { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; z-index:5; }
@@ -865,6 +897,11 @@ li.mg-item.passed .mg-days::after { content:"PASSED"; position:absolute; top:50%
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .pass-stamp span { --ink:#ff6b5e; } }
 @keyframes stampSlam { 0% { transform:rotate(-24deg) scale(2.4); opacity:0; } 60% { transform:rotate(-13deg) scale(.92); opacity:.95; } 100% { transform:rotate(-14deg) scale(1); opacity:.88; } }
 .sw-card .pass-stamp span { font-size:2.6rem; }
+/* Maybe: the top-right corner folds down like a bookmarked page */
+.sw-card::after, li.mg-item.maybe::after { content:""; position:absolute; top:0; right:0; width:0; height:0; z-index:6; pointer-events:none;
+  background:linear-gradient(225deg, var(--paper) 0 50%, var(--surface-3) 50% 100%); box-shadow:-3px 3px 6px rgba(0,0,0,.18); border-bottom-left-radius:6px; transition:width .3s cubic-bezier(.3,1.5,.5,1), height .3s cubic-bezier(.3,1.5,.5,1); }
+.sw-card.dogear::after { width:64px; height:64px; }
+li.mg-item.maybe { position:relative; overflow:hidden; } li.mg-item.maybe::after { width:28px; height:28px; transition:none; }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -933,12 +970,19 @@ body.proj .tour-card { font-size:1.2rem; }
     </div>
     <div id="welcome" class="welcome">
       <div>
+        <ol class="how3" aria-label="How it works in three steps">
+          <li><span class="h3n">1</span><b>Pick your agency</b><span>Grants are ranked against its own strategic plan.</span></li>
+          <li><span class="h3n">2</span><b>Say what you need</b><span>Plain words, like "school buses, 4 weeks". We set the filters.</span></li>
+          <li><span class="h3n">3</span><b>Tear or stamp</b><span><i class="h3-tear">Pursue</i> tears the ticket off into My grants. <i class="h3-pass">Pass</i> stamps it out.</span></li>
+        </ol>
+        <button type="button" class="try-ex" id="try-ex">Try an example: Public Schools, school buses →</button>
         <p class="lede" id="welcome-lede">Pick your agency. You get its best open federal grants, ranked against your own strategic plan, with days left to apply, whether a state agency can apply, and who has to sign.</p>
         <p class="quick-h" id="quick-h" hidden>Or start with an agency that has grants closing soon</p>
         <div class="quick" id="quick"></div>
       </div>
       <div id="evidence-home"></div>
     </div>
+    <div id="skel" class="skel" aria-hidden="true"><i></i><i></i><i></i></div>
     <div id="banner"></div>
     <section id="finder" class="finder" hidden aria-label="Narrow the list">
       <div class="say">
@@ -1189,7 +1233,7 @@ body.proj .tour-card { font-size:1.2rem; }
   function stubFor(box) { var host = box && (box.closest("li.row") || box.closest(".desk-card") || box.parentNode); return host ? host.querySelector(".days:not(.torn)") : null; }
   // a paper tear made in code: crackly noise through a rising band-pass filter, about a third of a second
   function tearSound() {
-    if (!SND_ON) return;
+    if (!SND_ON || document.body.classList.contains("proj")) return;
     try {
       var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
       AUD = AUD || new C(); if (AUD.state === "suspended") AUD.resume();
@@ -1217,7 +1261,7 @@ body.proj .tour-card { font-size:1.2rem; }
     document.body.appendChild(c); return c;
   }
   function ripTarget() {
-    var t = $("tab-marks"); if (t && t.getClientRects().length) { var r = t.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) return r; }
+    var t = $("tab-marks"); if (t && t.getClientRects().length) { var r = (t.querySelector(".tix") || t).getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) return r; }
     return { left: innerWidth - 90, top: 10, width: 60, height: 30 };
   }
   function ripGo(c) {
@@ -1278,7 +1322,7 @@ body.proj .tour-card { font-size:1.2rem; }
   }
   // Pass: a red PASSED rubber stamp slams onto the ticket, the card shudders, then folds away
   function thudSound() {
-    if (!SND_ON) return;
+    if (!SND_ON || document.body.classList.contains("proj")) return;
     try {
       var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
       AUD = AUD || new C(); if (AUD.state === "suspended") AUD.resume();
@@ -1290,6 +1334,18 @@ body.proj .tour-card { font-size:1.2rem; }
       for (var i = 0; i < n; i++) x[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 3);
       var s = AUD.createBufferSource(), f = AUD.createBiquadFilter(), g2 = AUD.createGain(); s.buffer = buf; f.type = "lowpass"; f.frequency.value = 900; g2.gain.value = 0.25;
       s.connect(f); f.connect(g2); g2.connect(AUD.destination); s.start(t0);
+    } catch (e) {}
+  }
+  // Maybe: a soft paper crease
+  function foldSound() {
+    if (!SND_ON || document.body.classList.contains("proj")) return;
+    try {
+      var C = window.AudioContext || window.webkitAudioContext; if (!C) return;
+      AUD = AUD || new C(); if (AUD.state === "suspended") AUD.resume();
+      var sr = AUD.sampleRate, n = Math.floor(sr * 0.12), buf = AUD.createBuffer(1, n, sr), x = buf.getChannelData(0);
+      for (var i = 0; i < n; i++) { var t = i / n; x[i] = (Math.random() * 2 - 1) * Math.sin(Math.PI * t) * (0.6 + 0.4 * Math.random()); }
+      var sN = AUD.createBufferSource(), f = AUD.createBiquadFilter(), g = AUD.createGain(); sN.buffer = buf; f.type = "highpass"; f.frequency.value = 2500; g.gain.value = 0.12;
+      sN.connect(f); f.connect(g); g.connect(AUD.destination); sN.start();
     } catch (e) {}
   }
   function stampOn(host) {
@@ -1704,7 +1760,7 @@ body.proj .tour-card { font-size:1.2rem; }
   function renderCart() {
     if (!P) return;
     var rows = cartRows(), n = rows.length;
-    $("cart-n").textContent = String(n); $("cart-n").hidden = !n; $("tab-marks").textContent = "My grants" + (n ? " (" + n + ")" : "");
+    $("cart-n").textContent = String(n); $("cart-n").hidden = !n; var tm = $("tab-marks"); tm.textContent = "My grants"; if (n) { var tx = el("span", "tix", String(n)); tx.setAttribute("aria-label", n + (n === 1 ? " grant" : " grants") + " saved"); tm.appendChild(tx); }
     $("cart-open").setAttribute("aria-label", "My grant cart, " + n + (n === 1 ? " grant" : " grants"));
     var box = $("cart-body"); if (!box) return; box.innerHTML = "";
     if (!n) { var em = el("div", "cart-empty"); em.appendChild(el("b", null, "My grants is empty")); em.appendChild(document.createTextNode("Press Pursue on a grant to add it here. You get a timeline and a checklist for each one.")); box.appendChild(em); return; }
@@ -1923,6 +1979,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var go = function () { SW.i++; SW.busy = false; renderMarks(); renderSwipe(); };
     if (name === "Pass") thudSound();
     if (card && !calm() && name === "Pass") { SW.busy = true; stampOn(card); setTimeout(function () { card.classList.add("fly-left"); setTimeout(go, 220); }, 380); }
+    else if (card && !calm() && name === "Maybe") { SW.busy = true; foldSound(); card.classList.add("dogear"); setTimeout(function () { card.classList.add("fly-up"); setTimeout(go, 220); }, 420); }
     else if (card && !calm()) { SW.busy = true; card.classList.add("fly-" + kind); setTimeout(go, 220); } else go();
     $("sw-live").textContent = name === "Pursue" ? "Saved to My grants" : name === "Maybe" ? "Set aside as maybe" : "Passed";
   }
@@ -2410,6 +2467,15 @@ body.proj .tour-card { font-size:1.2rem; }
     var hl = el("dl"); [["Open plan", "Your step-by-step timeline back from the deadline, with the review steps, and a checklist of what you need."], ["Save a brief", "A one-page summary for your boss to approve: deadline, money, can we apply, why it fits, who signs."], ["Start a proposal", "A Word or PDF outline filled with this grant's facts and county need data. You write the parts marked [Write here]."], ["Save my list", "Every grant you are pursuing, as PDF, Word, Excel or calendar deadlines."], ["Compare", "Tick 2 to 4 grants to see them side by side."]].forEach(function (x) { hl.appendChild(el("dt", null, x[0])); hl.appendChild(el("dd", null, x[1])); });
     help.appendChild(hl); head.appendChild(help);
     box.appendChild(head);
+    if (!groupsM.Pursue.length && !groupsM.Maybe.length && !groupsM.Pass.length) {
+      var et = el("div", "empty-ticket");
+      et.appendChild(el("div", "et-stub", "0"));
+      var eb = el("div", "et-body"); eb.appendChild(el("b", null, "No tickets yet"));
+      eb.appendChild(el("p", null, "On any grant card, press Pursue: the ticket stub tears off and lands here with a step-by-step plan. Press Pass to stamp it out of your list."));
+      var go = el("button", "primary", "Find grants →"); go.type = "button"; go.addEventListener("click", function () { tab("opps"); window.scrollTo(0, 0); }); eb.appendChild(go);
+      et.appendChild(eb); box.appendChild(et);
+      var ld = head.querySelector(".mg-lede"); if (ld) ld.remove();
+    }
     var keep = groupsM.Pursue.concat(groupsM.Maybe);
     if (keep.length) {
       var bar = el("div", "mg-bar");
@@ -2420,7 +2486,7 @@ body.proj .tour-card { font-size:1.2rem; }
       box.appendChild(bar);
     }
     function item(r, kind) {
-      var key = r.agency_id + "|" + r.opp_id, li = el("li", "mg-item" + (kind === "Pass" ? " passed" : ""));
+      var key = r.agency_id + "|" + r.opp_id, li = el("li", "mg-item" + (kind === "Pass" ? " passed" : kind === "Maybe" ? " maybe" : ""));
       if (kind !== "Pass") { var ck = el("input"); ck.type = "checkbox"; ck.className = "mg-ck"; ck.dataset.key = key; ck.setAttribute("aria-label", "Pick " + (r.title || "grant") + " to compare"); li.appendChild(ck); }
       var dd = el("div", "mg-days" + (r.days_left != null && r.days_left <= CSD ? " urgent" : "")); dd.appendChild(el("b", null, r.days_left != null ? String(r.days_left) : "–")); dd.appendChild(el("span", null, r.days_left != null ? "days left" : (r.status === "forecasted" ? "not open" : "no date"))); li.appendChild(dd);
       var mid = el("div", "mg-mid"), t = el("div", "title"), u = safeUrl(r.url);
@@ -3333,10 +3399,65 @@ body.proj .tour-card { font-size:1.2rem; }
   if (lsGet("ffm_proj_v1", false) || /[?&]present=1/.test(location.search)) { document.body.classList.add("proj"); $("proj").setAttribute("aria-pressed", "true"); $("proj-exit").hidden = false; }
   // ---- end PROJECTOR ----
 
+  // ---- first-use help: example button, one-time hint on the first card, keyboard shortcuts ----
+  $("try-ex").addEventListener("click", function () {
+    var sel = $("agency"); if (!P || !P.agencies.some(function (a) { return a.agency_id === "dpi"; })) return;
+    sel.value = "dpi"; cur.id = "dpi"; cur.tile = "top"; if (typeof syncPickerLabel === "function") syncPickerLabel(); deskClear(); show();
+    var sc = $("scenario"); if (sc) { sc.value = "clean diesel school buses, I have 4 weeks"; sc.focus(); }
+    var sst = $("say-status"); if (sst) sst.textContent = "Example typed in. Press Apply to see the matches for it.";
+  });
+  function tourDone() { try { return !!localStorage.getItem("ffm_tour_v1"); } catch (e) { return true; } }
+  function maybeCoach() {
+    if (lsGet("ffm_coach_v1", false) || !tourDone() || document.body.classList.contains("proj") || document.querySelector(".coach")) return;
+    var li = document.querySelector("#v-opps li.row:not(.torn-row)"); if (!li || !li.getClientRects().length) return;
+    var act = li.querySelector(".act"); if (!act) return;
+    var c = el("div", "coach"); c.setAttribute("role", "note");
+    c.appendChild(el("b", null, "Try it on this card"));
+    c.appendChild(el("span", null, "Pursue tears off the ticket and saves it to My grants. Pass stamps it out. Undo is always one click away. Keyboard: press ? for shortcuts."));
+    var x = el("button", null, "Got it"); x.type = "button"; x.addEventListener("click", function () { lsSet("ffm_coach_v1", true); c.remove(); }); c.appendChild(x);
+    act.parentNode.insertBefore(c, act.nextSibling);
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-m]"); if (b && b.closest("#v-opps")) { lsSet("ffm_coach_v1", true); Array.prototype.forEach.call(document.querySelectorAll(".coach"), function (c) { c.remove(); }); }
+    if (e.target.closest && e.target.closest(".tour-card")) setTimeout(maybeCoach, 400);
+  });
+  var showBase = show; show = function () { var r = showBase.apply(this, arguments); setTimeout(maybeCoach, 0); return r; };
+  // j / k move between cards, s saves (Pursue), x passes, ? lists the keys
+  function rowsNow() { return Array.prototype.filter.call(document.querySelectorAll("#v-opps li.row"), function (li) { return li.getClientRects().length; }); }
+  function curRow() { var a = document.activeElement; return a && a.closest ? a.closest("#v-opps li.row") : null; }
+  function focusRow(li) { if (!li) return; if (!li.hasAttribute("tabindex")) li.setAttribute("tabindex", "-1"); li.focus({ preventScroll: true }); li.scrollIntoView({ block: "center", behavior: calm() ? "auto" : "smooth" }); }
+  function keyHelp() {
+    var d = $("keys-dlg"); if (!d) {
+      d = el("dialog", "sheet keys-dlg"); d.id = "keys-dlg"; d.setAttribute("aria-labelledby", "keys-h");
+      d.innerHTML = '<h2 id="keys-h">Keyboard shortcuts</h2><dl class="keys"><dt><kbd>j</kbd> / <kbd>k</kbd></dt><dd>Next / previous grant</dd><dt><kbd>s</kbd></dt><dd>Save it (Pursue): tears the ticket off</dd><dt><kbd>x</kbd></dt><dd>Pass: stamps it out</dd><dt><kbd>u</kbd></dt><dd>Undo the last save</dd><dt><kbd>p</kbd></dt><dd>Projector view on or off</dd><dt><kbd>?</kbd></dt><dd>This list</dd></dl><p class="note">In swipe mode: → save, ← pass, ↑ maybe, Backspace undo.</p>';
+      var x = el("button", "primary", "Close"); x.type = "button"; x.addEventListener("click", function () { d.close(); }); d.appendChild(x); document.body.appendChild(d);
+    }
+    if (d.open) d.close(); else d.showModal();
+  }
+  document.addEventListener("keydown", function (e) {
+    var t = e.target, tag = t && t.tagName;
+    if (e.ctrlKey || e.metaKey || e.altKey || tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || (t && t.isContentEditable)) return;
+    if (document.body.classList.contains("swiping") || document.querySelector("dialog[open]:not(#keys-dlg)")) return;
+    if (e.key === "?") { e.preventDefault(); keyHelp(); return; }
+    if ($("v-opps").hidden) return;
+    var rows = rowsNow(), c = curRow(), i = c ? rows.indexOf(c) : -1;
+    if (e.key === "j") { e.preventDefault(); focusRow(rows[Math.min(rows.length - 1, i + 1)]); }
+    else if (e.key === "k") { e.preventDefault(); focusRow(rows[Math.max(0, i - 1)]); }
+    else if ((e.key === "s" || e.key === "x") && (c || rows[0])) {
+      e.preventDefault(); var li = c || rows[0], b = li.querySelector('button[data-m="' + (e.key === "s" ? "Pursue" : "Pass") + '"]');
+      if (b && !(e.key === "s" && b.getAttribute("aria-pressed") === "true")) {
+        var at = rows.indexOf(li), opp = li.dataset.opp; b.click();
+        // Pass redraws the list without that grant: focus whatever now sits in its place
+        if (e.key === "x") setTimeout(function () { var rs = rowsNow(); focusRow(rs.filter(function (q) { return q.dataset.opp !== opp; })[Math.min(at, rs.length - 2)] || rs[0]); }, calm() ? 50 : 1150);
+      }
+    }
+    else if (e.key === "u") { var tb = $("rip-toast"); if (tb && !tb.hidden && tb.dataset.key) { e.preventDefault(); unrip(tb.dataset.key); } }
+  });
+
   // the Azure container sleeps when idle: say so instead of looking broken
   var warm = setTimeout(function () { if (!P) $("asof").textContent = "Loading data... the server is waking up, this can take up to 40 seconds."; }, 4000);
   fetch(src, { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (p) {
-    P = p; CSD = p.closing_soon_days || 14; dropClosed();
+    P = p; CSD = p.closing_soon_days || 14; dropClosed(); var sk = $("skel"); if (sk) sk.remove();
     P.rows.forEach(function (r) { if (r.date_note === "date listed has passed") r.date_note = "Expected date passed; not posted yet"; });
     $("asof").textContent = fmtAsOf(p.data_as_of); $("asof").parentNode.title = "Data as of " + (p.data_as_of || "unknown");
     if (p.stub === true || /stub/i.test(String(p.data_as_of))) $("stub").hidden = false;
@@ -3358,12 +3479,17 @@ body.proj .tour-card { font-size:1.2rem; }
     applyRef(); syncK(); buildIdf(); initBoard(); renderHow();
     var want = new URLSearchParams(location.search).get("agency");
     if (want && p.agencies.some(function (a) { return a.agency_id === want; })) { sel.value = want; cur.id = want; }
+    // ?demo=1: pitch demo. Public Schools (unless ?agency= says otherwise) with the school-bus situation typed in, not applied: the presenter clicks Apply
+    if (/[?&]demo=1/.test(location.search)) {
+      if (!cur.id && p.agencies.some(function (a) { return a.agency_id === "dpi"; })) { sel.value = "dpi"; cur.id = "dpi"; }
+      var sc = $("scenario"); if (sc) sc.value = "clean diesel school buses, I have 4 weeks";
+    }
     MXEL = document.getElementById("matrix");
     [].forEach.call(MXEL.querySelectorAll(".mx-tog button"), function (b) { b.addEventListener("click", function () { MX_MODE = b.dataset.m; lsSet("ffm_mx_mode_v2", MX_MODE); renderMatrix(LAST_ROWS); }); });
     if (deskMQ.addEventListener) deskMQ.addEventListener("change", function () { placeMatrix(); renderMatrix(LAST_ROWS); });
     buildPicker(); syncPickerLabel();
     deskClear(); placeMatrix(); show(); renderCart();
-  }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; });
+  }).catch(function (e) { $("asof").textContent = "Could not load data (" + e.message + ")."; var sk = $("skel"); if (sk) { sk.className = "skel-err"; sk.removeAttribute("aria-hidden"); sk.textContent = "The grant list did not load (" + e.message + "). Reload the page; if the server was asleep it usually works the second time."; } });
 })();
 </script>
 <script id="tour-js">
@@ -3422,7 +3548,7 @@ body.proj .tour-card { font-size:1.2rem; }
   if (hdr) hdr.appendChild(btn);
   // Auto-start once for a new visitor, after data has loaded (the Azure container can take about 40 seconds to wake).
   var q = location.search, forced = /[?&]tour=1/.test(q), tries = 0;
-  if (!forced && (seen() || /[?&]present=1/.test(q))) return;
+  if (!forced && (seen() || /[?&](present|demo)=1/.test(q))) return;
   var iv = setInterval(function () {
     tries++; var ready = $("agency") && $("agency").options.length > 5;
     if (ready) { clearInterval(iv); var sx = $("steps"); if (sx) sx.hidden = true; start(); }
