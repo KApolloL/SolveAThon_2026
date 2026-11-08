@@ -49,6 +49,21 @@ An agency grant lead in NC state government, often not a grants specialist and s
   | A deadline was missed because nobody noticed | Days-to-deadline on every row and a closing-soon list |
   | Nobody knows which agency should apply | All 32 agencies ranked (row 2), plus a view across agencies |
 - **Left out on purpose (one line):** writing proposals, private foundations, a setup quiz, past awards in the score, AI labels in the ranking.
+- **Reframe line (rubric Frame 4, "reframed the problem as they learned"):** "We started with 'rank grants by plan fit for one agency.' Sponsors changed it twice: screen out what you can't apply for before ranking, and serve all 32 agencies, not one."
+- **Ranked requirements (backup or a side panel; full version with "where met" in `FIELD_NOTES.md` 1.3).** D# = numbered requirement in `planning/07_discovery_findings.md` (our notes, not quotes):
+  | Rank | Requirement | From sponsors | Status |
+  |---|---|---|---|
+  | 1 | Save time, never add work | D1 | Met: one required question |
+  | 2 | Fast and simple | D2 | Met |
+  | 3 | Tool sorts eligibility | D3 | Met (rows 7, 8) |
+  | 4 | Deadline on every row | School-bus example, D10 | Met |
+  | 5 | Cross-agency | D5 | Met: 32 agencies (row 2) |
+  | 6 | Public data, privacy | D6, D7 | Met |
+  | 7 | Explain every match, human decides | D10, organizers | Met |
+  | 8 | Payoff versus effort | D4 | Partly: shown and sortable, weights 0 by design |
+  | 9 | Beyond Grants.gov | D8 | Partly: 4 more sources; SAM postings, DOT, foundations not loaded |
+  | 10 | Draft the proposal | D9 | Left out on purpose |
+- **Scope held (one line, speaker only):** "We fixed a must-have for Saturday 1 pm, live on Azure, and wrote a cut order for everything else. When our AI labels failed a blind check, we kept them out."
 - **Speaker note:** Say requirements in priority order: save time, simple, eligibility, deadline, cross-agency, public data only. "Payoff versus effort" (award size, burden): say it before they ask. "Rank is plan fit only, by design, so a big award never outranks a real fit. Award size, cost share and time left are shown on every row and sortable (Sort: best payoff, biggest money); turning their weights on is a pilot setting." Check: `data/manual/criteria.csv` gives `award_size`, `no_cost_share` and `runway` weight 0.
 
 ### Slide 4: How it works (Solve, 1:15 to 1:35)
