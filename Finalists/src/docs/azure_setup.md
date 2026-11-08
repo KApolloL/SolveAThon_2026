@@ -218,3 +218,4 @@ Read-only from a laptop without the `az` CLI, so no Azure query was possible and
 - Not done: daily job (still dry run), spend not read.
 - Sat ~6:20 pm: quick declutter deployed as `ffm-app:v21` (home quick-picks, evidence card, at-a-glance and money-vs-time charts, estimate chips and per-card feedback row hidden; pop-up off; white page). Live page checked.
 - Sat evening: simplified tool (commit a4d88eb) deployed as `ffm-app:v22`, revision ffm-app--0000027, after Marco checked it locally. Live page checked (new agency picker present).
+- Sat night: v23 deployed (revision ffm-app--0000028): adjustable impact weights, Match board, single arrows, feedback form sent to GET /feedback (logged as FEEDBACK lines; read with app/read_feedback.sh). Live page and /feedback checked.
