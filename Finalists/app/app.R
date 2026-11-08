@@ -44,7 +44,23 @@ get_payload <- function() {
   payload_cache$body
 }
 
+# /feedback?d=<json>: the tool's "Give feedback" form. Each answer is written to the container log as one line
+# starting "FEEDBACK " (Container Apps sends logs to the team's Log Analytics workspace, so only people with the
+# team's Azure access can read them). No key, no storage write, nothing echoed back. Read with app/read_feedback.sh.
+feedback_handler <- function(req) {
+  q <- sub("^\\?", "", req$QUERY_STRING %||% "")
+  d <- sub("^.*(^|&)d=([^&]*).*$", "\\2", q)
+  if (!nzchar(q) || identical(d, q)) return(httpResponse(400, "text/plain", "missing d"))
+  txt <- tryCatch(utils::URLdecode(gsub("+", " ", d, fixed = TRUE)), error = function(e) "")
+  txt <- substr(gsub("[\r\n]+", " ", txt), 1, 4000)
+  if (!nzchar(txt) || !startsWith(trimws(txt), "{")) return(httpResponse(400, "text/plain", "bad feedback"))
+  cat("FEEDBACK ", format(Sys.time(), "%Y-%m-%dT%H:%M:%S%z"), " ", txt, "\n", sep = "", file = stderr())
+  httpResponse(200, "application/json", '{"ok":true}', headers = list("Cache-Control" = "no-store"))
+}
+`%||%` <- function(a, b) if (is.null(a)) b else a
+
 ui <- function(req) {
+  if (identical(req$PATH_INFO, "/feedback")) return(feedback_handler(req))
   if (identical(req$PATH_INFO, "/payload.json")) {
     b <- get_payload()
     if (is.null(b)) return(httpResponse(502, "text/plain", "payload unavailable"))
@@ -71,4 +87,4 @@ server <- function(input, output, session) {
   )
 }
 
-shinyApp(ui, server, uiPattern = "^/(shiny|payload\\.json)$")
+shinyApp(ui, server, uiPattern = "^/(shiny|payload\\.json|feedback)$")
