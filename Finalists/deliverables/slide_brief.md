@@ -11,7 +11,7 @@ Built from Noah's answers to 24 scoping questions and the printed judging rubric
 - Words: "would not have flagged", never "missed", for backtest results. Discovery content is "sponsors told us", never a quote. Simulated personas and mentor remarks are never "users said".
 
 ## Problem in one sentence
-An agency grant lead in NC state government, often not a grants specialist and short on time, cannot read every open federal opportunity. The Federal Funds Matchmaker ranks them against that agency's own strategic plan, shows the plan goal each one matches, flags the deadline and hides what the agency cannot apply for. A person makes the final decision.
+An agency grant lead in NC state government, often not a grants specialist and short on time, cannot read every open federal opportunity. grantHub (our Federal Funds Matchmaker) ranks them against that agency's own strategic plan, shows the plan goal each one matches, flags the deadline and hides what the agency cannot apply for. A person makes the final decision.
 
 ## Timing (one speaker per criterion; Starter Kit time map)
 | Clock | Criterion | Slides | Speaker [confirm] |
@@ -26,7 +26,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 ## Slides
 
 ### Slide 1: Title (on screen while Speaker 1 starts; no time of its own)
-- **On the slide:** "Federal Funds Matchmaker: the right federal grants to the right NC agency, in time to apply." Team Wasian: Kent, Marco, Everett, Noah, Matthew. Solve-a-thon 2026, Nov 8, 2026. Live product URL (NEEDED: final Azure URL, Marco).
+- **On the slide:** "grantHub: the right federal grants to the right NC agency, in time to apply." Team Wasian: Kent, Marco, Everett, Noah, Matthew. Solve-a-thon 2026, Nov 8, 2026. Live product URL (NEEDED: final Azure URL, Marco).
 
 ### Slide 2: Who we built it for (Understand, 0:00 to 0:45)
 - **Message:** We built for the agency grant lead, and for the people who would fund, approve and keep it running.
@@ -99,7 +99,7 @@ An agency grant lead in NC state government, often not a grants specialist and s
 - **On the slide:**
   - **Who:** grant leads at DEQ, DPI and DHHS [confirm agencies], one each. OSBM owns it (our proposal).
   - **Replaces:** each agency scanning Grants.gov alone, and the contact-and-survey approach that did not work.
-  - **Measure built in:** grant leads mark Pursue / Maybe / Pass and keep their usual manual checks; each week we report what the tool caught, what it would not have flagged, and what was pursued. Today the marks stay in the browser; saving them centrally is pilot work (say so).
+  - **Measure built in:** grant leads mark Pursue / Maybe / Pass and keep their usual manual checks; each week we report what the tool caught, what it would not have flagged, and what was pursued. Each mark already goes to the team's log (no personal data) and `app/pilot_scorecard.sh` turns it into the weekly hit rate; using the marks to retune the ranking is pilot work (say so).
   - **Cost:** NEEDED: measured Azure cost from Marco, added to the fact sheet first.
   - **Why now:** 71 Top 10 items close within 14 days, across 24 agencies (rows 17, 18).
 - **Speaker note:** One sentence: "We are asking for a yes on a 60-day pilot, an OSBM owner, and three grant leads."

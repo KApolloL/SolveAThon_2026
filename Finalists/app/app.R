@@ -1,4 +1,4 @@
-# Federal Funds Matchmaker: Azure proof. Display only: no scoring, ranking or LLM.
+# grantHub (Federal Funds Matchmaker): Azure proof. Display only: no scoring, ranking or LLM.
 library(shiny)
 library(data.table)
 library(DT)
@@ -70,7 +70,7 @@ ui <- function(req) {
 }
 
 proof_ui <- fluidPage(
-  titlePanel("Federal Funds Matchmaker: Azure proof"),
+  titlePanel("grantHub: Azure proof"),
   p(paste0("MODE = ", mode)),
   p("Display only: no scoring or ranking. Snapshot of opportunities.csv."),
   p(a(href = "/", "Open the matchmaker"), " | ", a(href = "/tool.html", "Open the qualifier tool (grant triage)")),

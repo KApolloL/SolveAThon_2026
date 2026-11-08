@@ -1,4 +1,4 @@
-# Federal Funds Matchmaker
+# grantHub (Federal Funds Matchmaker)
 
 A tool that helps a North Carolina agency decide which open federal grants to look at first. Built by a team of five for the Solve-A-Thon 2026 Final Quest. The sponsor is the NC Office of State Budget and Management (OSBM).
 
@@ -100,7 +100,7 @@ Rules to know:
 | [src/tests/](src/tests/) | `run_tests.R` is the runner. |
 | [src/docs/](src/docs/) | [fact_sheet.md](src/docs/fact_sheet.md), [azure_setup.md](src/docs/azure_setup.md), [daily_job.md](src/docs/daily_job.md), agency goal tables, notes. |
 | [src/report.qmd](src/report.qmd) | Quarto report template. |
-| [app/](app/) | The Azure container: `app.R` (Shiny), `job.R` (daily job), `Dockerfile`, `Dockerfile.job`, `entrypoint.sh`, `deploy_azure.sh`, `stage_proof_assets.sh`, `make_snapshot.sh`. |
+| [app/](app/) | The Azure container: `app.R` (Shiny), `job.R` (daily job), `Dockerfile`, `Dockerfile.job`, `entrypoint.sh`, `deploy_azure.sh`, `stage_proof_assets.sh`, `make_snapshot.sh`, `read_feedback.sh` (feedback form log), `pilot_scorecard.sh` (pilot measure from logged marks). |
 | [data/raw/](data/raw/) | Untouched inputs: 34 agency plan PDFs, the SAM.gov listings file, organizer files. Never modify. |
 | [data/manual/](data/manual/) | Hand-authored tables: `criteria.csv`, `agency_map.csv`, `program_map.csv`, `facts.csv`, `test_cases.csv`. |
 | [data/cache/](data/cache/) | Saved API, OCR and model responses, so reruns are free. |
@@ -154,7 +154,7 @@ Status: the daily job running on its schedule is not verified. The job image (`D
 - The "NC has won this before" track record undercounts. Only 31 recipient matches are confirmed.
 - SAM.gov shows $0 for many formula programs that do spend money. The tool treats an all-zero listing as unknown, not zero.
 - Missing dates and award amounts are common. The tool shows "not listed", never a made-up value.
-- Pursue, Maybe and Pass marks and the cart live in each browser only. There are no accounts and nothing is shared.
+- Pursue, Maybe and Skip marks and the cart live in each browser; there are no accounts. Each mark is also sent to the app's `/feedback` log (agency, grant, rank, mark, a random browser code; no personal data) so `app/pilot_scorecard.sh` can report the pilot measure. Marks do not yet change the ranking.
 - Four agency plans are old, and plan quality varies across agencies.
 - Only 2 agencies (DHHS and DMVA) have a capability table.
 - The daily job exists in Azure but runs with `JOB_DRY_RUN=1`, so it writes nothing yet, and it re-scores cached data rather than fetching new postings. Do not describe the refresh as live.
