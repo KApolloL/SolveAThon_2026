@@ -649,6 +649,7 @@ li.row { box-shadow:none; border-color:var(--rule); }
 .st-elig.yes { color:var(--good); font-weight:650; } .st-elig.ask { color:var(--warn); font-weight:650; } .st-elig.no { color:var(--bad); font-weight:650; }
 .st-won { color:#9a6b00; font-weight:650; } .st-later { color:var(--accent); font-weight:650; }
 .days .rk { position:absolute; top:6px; left:8px; font-style:normal; font-size:.72rem; font-weight:800; color:var(--text-muted); }
+.days.urgent .rk { color:var(--text-secondary); }
 .act { gap:10px; align-items:center; }
 .act button.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
 .act button.primary[aria-pressed="true"] { background:var(--good); border-color:var(--good); }
@@ -679,9 +680,10 @@ li.row.hl { outline:3px solid var(--accent); outline-offset:-1px; }
 /* display menu */
 .dispmenu { position:relative; } .dispmenu > summary { list-style:none; cursor:pointer; font-size:.86rem; color:#fff; border:1px solid rgba(255,255,255,.35); border-radius:999px; padding:6px 14px; min-height:36px; display:inline-flex; align-items:center; }
 .dispmenu > summary::-webkit-details-marker { display:none; }
-.dispmenu-pop { max-height:calc(100vh - 72px); overflow:auto; position:absolute; right:0; top:calc(100% + 6px); z-index:60; background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:6px; display:grid; gap:4px; min-width:180px; box-shadow:0 10px 28px rgba(0,0,0,.2); }
+.dispmenu-pop { max-height:calc(100vh - 72px); overflow:auto; position:absolute; right:0; top:calc(100% + 6px); z-index:95; color:var(--text-primary); background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:6px; display:grid; gap:4px; min-width:180px; box-shadow:0 10px 28px rgba(0,0,0,.2); }
 .dispmenu-pop button { color:var(--text-primary) !important; border-color:var(--border) !important; text-align:left; }
 body.proj .dispmenu { display:none !important; }
+.dispmenu.flip .dispmenu-pop { right:auto; left:0; }
 @media (max-width:560px) { .dispmenu { position:static; } .dispmenu-pop { position:fixed; left:8px; right:8px; top:56px; min-width:0; } }
 /* cart groups */
 ul.cart-list li.cl-group { display:block; border:none; padding:10px 2px 0; font-weight:800; font-size:.9rem; color:var(--text-secondary); }
@@ -828,6 +830,7 @@ summary { list-style:none; } summary::-webkit-details-marker { display:none; }
 .board li.item.ticket .tk-days.none b { font-size:.8rem; font-weight:600; color:var(--text-secondary); }
 .board li.item.ticket .tk-days.urgent { background:var(--stub-urgent); } .board li.item.ticket .tk-days.urgent b { color:var(--bad); }
 .board li.item.ticket .tk-days span { font-size:.7rem; color:var(--text-muted); margin-top:3px; }
+.board li.item.ticket .tk-days.urgent span { color:var(--text-secondary); }
 .board li.item.ticket .tk-ico { display:inline-block; vertical-align:-4px; margin-right:6px; color:var(--accent); }
 .board li.item.ticket .tk-body { padding:10px 12px; min-width:0; }
 .board li.item .it-ico { display:inline-block; vertical-align:-4px; margin-right:6px; color:var(--accent); }
@@ -3703,6 +3706,8 @@ body.proj .tour-card { font-size:1.2rem; }
   $("steps-x").addEventListener("click", function () { $("steps").hidden = true; lsSet("ffm_steps_v1", true); });
   $("tab-more").addEventListener("click", function () { setMore($("more-tabs").hidden); });
   $("txt-dn").addEventListener("click", function () { txtI = Math.max(0, txtI - 1); applyDisplay(); }); $("txt-up").addEventListener("click", function () { txtI = Math.min(TXT.length - 1, txtI + 1); applyDisplay(); });
+  // Display menu: when the header wraps and the button sits near the left edge, open the menu to the right so it stays on screen
+  (function () { var dm = document.querySelector(".dispmenu"); if (!dm) return; dm.addEventListener("toggle", function () { if (!dm.open) return; dm.classList.remove("flip"); var r = dm.querySelector(".dispmenu-pop").getBoundingClientRect(); if (r.left < 8) dm.classList.add("flip"); }); })();
   $("zm-dn").addEventListener("click", function () { zmI = Math.max(0, zmI - 1); applyDisplay(); }); $("zm-up").addEventListener("click", function () { zmI = Math.min(ZM.length - 1, zmI + 1); applyDisplay(); });
   applyDisplay();
   $("theme").addEventListener("click", function () { if (!calm()) { var tb = $("theme"); tb.classList.remove("spin"); void tb.offsetWidth; tb.classList.add("spin"); document.documentElement.classList.add("theme-anim"); setTimeout(function () { document.documentElement.classList.remove("theme-anim"); }, 450); } setTheme(isDark() ? "light" : "dark"); if ($("v-map") && !$("v-map").hidden) renderMap(); });
