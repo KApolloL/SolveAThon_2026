@@ -5,7 +5,7 @@ For all five of us. Kent fills the names in "Roles" by Thursday. Times are the o
 ## How work moves
 - **Kent** builds the pipeline with Claude as the main planner and drafter. Other AI tools do small tasks and return them to Claude to polish and check.
 - **Teammates** work in the shared Google Drive folder, one subfolder per role (`A_client`, `B_data`, `C_story`, `D_qa`). Save everything there. Kent copies what is needed into the repo. You do not need to use git. If you do, make a branch and never touch `main`.
-- **Each task** has a one-page brief (`tasks/TASK_BRIEF_TEMPLATE.md`): inputs, output file, what done means. Do only that task. Stuck for 20 minutes: ask Kent.
+- **Each task** has a one-page brief (`_team/tasks/TASK_BRIEF_TEMPLATE.md`): inputs, output file, what done means. Do only that task. Stuck for 20 minutes: ask Kent.
 - **Your AI** (ChatGPT or UNC PromptLab): paste `tasks/teammate_ai_rules.md` first, then your brief. Always check its output yourself. Log every use in `AI_USAGE_LOG.md` (ask Kent to add the row, or send him the line).
 - **Numbers:** only numbers from `src/docs/fact_sheet.md` go on slides. If a number is not there, ask Kent.
 - **No personal data. No keys or passwords in any file.**

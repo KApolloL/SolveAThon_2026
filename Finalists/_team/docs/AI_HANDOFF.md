@@ -25,7 +25,7 @@ Discover, Build, Test, Present.
 - **Kent Lee:** technical lead; the only person who merges code; makes the final call on framing, criteria and scope.
 - **Claude (main planner and drafter):** plans, designs the architecture, drafts prompts, tests and the slide brief, and does the final polish and check of everything other tools return.
 - **OpenCode, Codex, Gemini, ChatGPT, UNC PromptLab:** smaller bounded tasks Claude or Kent assigns (a function, a summary, a draft, a second opinion, a practice Q&A). They return the result to Claude to polish and check. They do not make decisions.
-- **Teammates (Everett, Marco, Matthew, Noah):** mostly use ChatGPT and PromptLab; they do research, labeling, testing, slides and Q&A prep. See `docs/RUNBOOK.md`.
+- **Teammates (Everett, Marco, Matthew, Noah):** mostly use ChatGPT and PromptLab; they do research, labeling, testing, slides and Q&A prep. See `_team/docs/RUNBOOK.md`.
 
 ## Rules for any AI reading this
 1. Do only the task you are given. Use only the inputs provided.

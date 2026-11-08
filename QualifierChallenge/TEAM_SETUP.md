@@ -164,7 +164,7 @@ If GitHub says there is a **conflict**, do not guess. Message Kent.
 
 ## Part 3: Using Claude Code or ChatGPT for your tasks
 
-You will get task briefs from Kent (one page each, saved in `Finalists/tasks/`). You can use an AI tool to help, and you must log it.
+You will get task briefs from Kent (one page each, saved in `Finalists/_team/tasks/`). You can use an AI tool to help, and you must log it.
 
 **If you have Claude Code:**
 1. Open a terminal in the `Finalists` folder inside your clone (in RStudio: Terminal tab, then `cd ../Finalists`) and type `claude`. Always start it from the `Finalists` folder: that is how it loads the project rules (`Finalists/CLAUDE.md`) and the shared reviewers.

@@ -13,9 +13,9 @@ rm -rf "$OUT" "$OUT.zip"; mkdir -p "$OUT"
 # Tracked files at HEAD only (so .RData, .Renviron, .git never come along).
 git archive HEAD -- . \
   ':(exclude)Finalists/api_keys.env' \
-  ':(exclude)Finalists/tasks/everett_api_keys.md' \
+  ':(exclude)Finalists/_team' \
   ':(exclude).claude' ':(exclude)Finalists/.claude' \
-  ':(exclude)comms' ':(exclude)Finalists/archive/graphify-out' ':(exclude)Finalists/archive/stale' \
+  ':(exclude)comms' \
   ':(exclude)Finalists/graphify-out' ':(exclude)Finalists/stale' \
   | tar -x -C "$OUT"
 
