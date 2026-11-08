@@ -917,6 +917,26 @@ ol.rc-list .rc-w.pursue { color:var(--good); } ol.rc-list .rc-w.pass { color:#c8
 ol.rc-list button { font:inherit; font-size:.82rem; font-weight:700; padding:4px 12px; min-height:32px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); cursor:pointer; }
 @media (max-width:560px) { ol.rc-list li { grid-template-columns:56px minmax(0,1fr) auto; } ol.rc-list .rc-w { display:none; } .viewsw { margin-left:0; } }
 /* ---- smoothness pass ---- */
+/* motion that explains a change */
+@keyframes cardIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+li.row.enter { animation:cardIn .32s cubic-bezier(.2,.8,.3,1) both; }
+@keyframes glowTop { 0% { box-shadow:0 0 0 0 rgba(242,193,78,0); } 25% { box-shadow:0 0 0 4px rgba(242,193,78,.85); } 100% { box-shadow:0 0 0 0 rgba(242,193,78,0); } }
+li.row.glow { animation:glowTop 1.6s ease-out 1; }
+@keyframes fadeDown { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:none; } }
+details[open] > :not(summary) { animation:fadeDown .2s ease-out; }
+@keyframes paneIn { from { opacity:0; } to { opacity:1; } }
+[role="tabpanel"]:not([hidden]) { animation:paneIn .18s ease-out; }
+html.theme-anim, html.theme-anim * { transition:background-color .35s ease, color .35s ease, border-color .35s ease !important; }
+/* phone: example chips wrap instead of running off the edge */
+@media (max-width: 760px) { .examples { flex-wrap:wrap !important; overflow:visible !important; } .examples button { white-space:normal; text-align:left; } }
+/* "Won this before" readable in dark mode */
+[data-theme="dark"] .st-won { color:#e5b45a; } @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .st-won { color:#e5b45a; } }
+/* long titles with no spaces wrap inside the card */
+li.row .title, li.mg-item a, .sw-title { overflow-wrap:anywhere; }
+/* capability table: scroll inside its box on narrow screens */
+#caps-b { overflow-x:auto; } #caps-b table { min-width:520px; }
+/* My grants tick boxes: easier to hit */
+.mg-ck { width:24px !important; height:24px !important; }
 body.proj button.tip, body.proj .tipbox, body.proj .stub-legend, body.proj .viewsw, body.proj .coach { display:none !important; }
 body.proj li.row p.why { font-size:1.15rem; -webkit-line-clamp:1; max-width:none; }
 body.cramped #v-opps:not([hidden]) { display:block !important; } body.cramped #v-opps > #desk-panel { display:none !important; }
@@ -3371,7 +3391,7 @@ body.proj .tour-card { font-size:1.2rem; }
   $("txt-dn").addEventListener("click", function () { txtI = Math.max(0, txtI - 1); applyDisplay(); }); $("txt-up").addEventListener("click", function () { txtI = Math.min(TXT.length - 1, txtI + 1); applyDisplay(); });
   $("zm-dn").addEventListener("click", function () { zmI = Math.max(0, zmI - 1); applyDisplay(); }); $("zm-up").addEventListener("click", function () { zmI = Math.min(ZM.length - 1, zmI + 1); applyDisplay(); });
   applyDisplay();
-  $("theme").addEventListener("click", function () { setTheme(isDark() ? "light" : "dark"); if ($("v-map") && !$("v-map").hidden) renderMap(); });
+  $("theme").addEventListener("click", function () { if (!calm()) { document.documentElement.classList.add("theme-anim"); setTimeout(function () { document.documentElement.classList.remove("theme-anim"); }, 450); } setTheme(isDark() ? "light" : "dark"); if ($("v-map") && !$("v-map").hidden) renderMap(); });
   function sndLabel() { var b = $("snd"); b.textContent = "Sound effects: " + (SND_ON ? "on" : "off"); b.setAttribute("aria-pressed", SND_ON ? "true" : "false"); }
   $("snd").addEventListener("click", function () { SND_ON = !SND_ON; lsSet("ffm_snd_v1", SND_ON); sndLabel(); if (SND_ON) tearSound(); });
   sndLabel();
@@ -3399,6 +3419,7 @@ body.proj .tour-card { font-size:1.2rem; }
   $("k-res").addEventListener("change", function () { K.res = this.checked; saveK(); show(true); });
   $("k-reset").addEventListener("click", resetAll);
   function applySay() {
+    GLOW_NEXT = true;
     var had = $("scenario").value.trim(); renderSayChips(parseSay($("scenario").value)); syncF(); show(true);
     var n = LAST_ROWS.length, st = $("say-status");
     st.textContent = had ? (n ? "Done: showing " + n + (n === 1 ? " grant" : " grants") + " for what you typed. Your best match is first." : "No grants match all of that. Try fewer words, or Clear filters.") : "Showing all matches again.";
@@ -3532,7 +3553,18 @@ body.proj .tour-card { font-size:1.2rem; }
     var b = e.target.closest && e.target.closest("button[data-m]"); if (b && b.closest("#v-opps")) { lsSet("ffm_coach_v1", true); Array.prototype.forEach.call(document.querySelectorAll(".coach"), function (c) { c.remove(); }); }
     if (e.target.closest && e.target.closest(".tour-card")) setTimeout(maybeCoach, 400);
   });
-  var showBase = show; show = function () { var r = showBase.apply(this, arguments); setTimeout(maybeCoach, 0); return r; };
+  // cards slide in (staggered) only when the list itself changes: agency, tile, order or filters; not after Pursue or Pass
+  var LIST_KEY = "", GLOW_NEXT = false;
+  var showBase = show; show = function () {
+    var r = showBase.apply(this, arguments); setTimeout(maybeCoach, 0);
+    var key = [cur.id, cur.tile, cur.order, JSON.stringify(F)].join("|");
+    if (key !== LIST_KEY && !calm()) {
+      LIST_KEY = key;
+      Array.prototype.forEach.call(document.querySelectorAll("#v-opps li.row"), function (li, i) { if (i > 9) return; li.classList.remove("enter"); void li.offsetWidth; li.style.animationDelay = (i * 35) + "ms"; li.classList.add("enter"); });
+    } else LIST_KEY = key;
+    if (GLOW_NEXT) { GLOW_NEXT = false; var first = document.querySelector("#v-opps li.row"); if (first && !calm()) { first.classList.remove("glow"); void first.offsetWidth; first.classList.add("glow"); } }
+    return r;
+  };
   // j / k move between cards, s saves (Pursue), x passes, ? lists the keys
   function rowsNow() { return Array.prototype.filter.call(document.querySelectorAll("#v-opps li.row"), function (li) { return li.getClientRects().length; }); }
   function curRow() { var a = document.activeElement; return a && a.closest ? a.closest("#v-opps li.row") : null; }
