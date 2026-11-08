@@ -42,18 +42,28 @@ How to read this. Every number comes from [src/docs/fact_sheet.md](src/docs/fact
 
 **Problem.** Agency grant coordinators find fitting federal opportunities late or not at all, because monitoring is manual, fragmented and uneven across agencies. The smallest agencies miss the most.
 
-**Requirements and where each is met:**
+**How the problem changed as we learned.** We first framed it as "rank grants by fit to the agency plan, for one agency." Discovery changed it twice: (1) screen out what the agency cannot apply for *before* ranking, and show payoff and effort on every row, because users don't know the eligibility rules and skip grants without a real payoff; (2) serve all 32 agencies, not one, because the need is cross-agency and OSBM has no team for it. A data check changed the named case: Clean School Bus (66.045) has 0 rows in our data, so DERA (66.039) became the example [row 14].
 
-| Requirement | Source | Where it is met |
-|---|---|---|
-| Save time and never add work; fast and simple | Sponsors | The page opens to an agency's Top 10 with one click; no onboarding questions |
-| The tool sorts eligibility | Sponsors | Eligibility filter, "Ask" badge, quoted reason ([src/R/helpers_rank.R](src/R/helpers_rank.R) `assign_eligibility()`) |
-| Payoff versus effort, not fit alone | Sponsors | Award, cost share and runway columns, signature tier, adjustable weights |
-| Explain every match | Sponsors and organizers | Matched plan goal in the plan's own words, a one-line "why", days left |
-| Public data only; protect privacy | Organizers and sponsors | Public sources only; keys kept out of the repo; only public text sent to the model |
-| Runs on Azure | Organizers | Container Apps, Blob Storage, Container Registry, Azure OpenAI (see 1.4) |
-| A human decides | Organizers | The model only summarizes, and only with a quote checked against the source |
-| Address false positives, false negatives, uneven documentation and data quality | Organizers | See Part 3 |
+**Requirements in priority order, traced to sponsor input.** "D#" is the numbered requirement in [planning/07_discovery_findings.md](planning/07_discovery_findings.md) (our merged notes of the Fri Nov 6 discovery session; paraphrases, not quotes). The order is the team's ranking: anything that adds work for the user loses to anything that saves it.
+
+| Rank | Requirement | Traced to | Where it is met | Status |
+|---|---|---|---|---|
+| 1 | Save time; never add work | Sponsors, D1 (time is the constraint; more questions is bad) | The page opens to an agency's Top 10. The only required question is the agency. The 10-grant onboarding quiz was cut | Met |
+| 2 | Fast and simple | Sponsors, D2 ("easy, quick, likely successful"; waiting minutes fails) | One static page reading one file (`payload.json`); no waiting on a model | Met |
+| 3 | The tool sorts eligibility, not the person | Sponsors, D3 | Eligibility filter with a quoted reason; clearly ineligible items hidden with a count; unclear items stay with an "Ask" badge ([src/R/helpers_rank.R](src/R/helpers_rank.R) `assign_eligibility()`) [rows 7, 8] | Met |
+| 4 | Deadline and time to act on every row | Sponsors' worked example (a school-bus deadline missed because nobody noticed); D10 (time stated throughout) | Days left, a closing-soon flag, deadline alerts, a "Coming up" list for forecasts [rows 17, 18] | Met |
+| 5 | Cross-agency by design | Sponsors, D5 (no OSBM team; likely a cross-agency partnership) | All 32 agencies in one tool with an agency picker and a match board across agencies [row 2] | Met |
+| 6 | Public data only; protect privacy | Sponsors, D6 and D7; organizers | Public sources only; only public text (notices, plans) goes to the model, which runs in our own Azure OpenAI resource | Met |
+| 7 | Explain every match; a human decides | Organizers; D10 (explain simply) | Matched plan goal in the plan's own words, a one-line "why", Pursue / Maybe / Pass. The model only summarizes, with a quote checked against the source | Met |
+| 8 | Payoff versus effort, not fit alone | Sponsors, D4 | Award, cost share and runway shown and sortable on every row, plus signature tier. **Their ranking weights are 0 by design** in [data/manual/criteria.csv](data/manual/criteria.csv), so a big award never outranks a real fit; turning them on is a pilot setting | Partly met |
+| 9 | Look beyond Grants.gov | Sponsors, D8 ("not comprehensive") | Added Simpler.Grants.gov, Federal Register, USAspending awards and the SAM.gov Assistance Listings catalog. SAM.gov postings, the DOT page and private foundations are not loaded | Partly met |
+| 10 | Draft the proposal | Sponsors, D9 ("top tier") | Not built. Each row has a short requirements summary and a color-team timeline as a starting point | Left out on purpose |
+| Must | Runs on Azure | Organizers (hard requirement) | Container Apps, Blob Storage, Container Registry, Azure OpenAI (see 1.4). The daily refresh job runs in dry-run mode (see Part 3) | Met, refresh not live |
+| Must | Address false positives, false negatives, uneven documentation and data quality | Organizers (named threats) | See Part 3 | Addressed |
+
+**Left out on purpose, and why.** Proposal drafting (too large for the weekend, and a person should own the application). Private foundations (no public feed we could load). The onboarding quiz (sponsors said no extra questions). Past awards in the score (it would favor repeat winners; award history is shown, never scored). AI relevance labels in the ranking (they failed a blind held-out check; see 2.3).
+
+**Scope held under pressure.** The must-have was fixed at Saturday 1:00 pm: the agency picker and a keyword Top 10 live on Azure, plus the award backtest number. Everything else had a written cut order ([saturday/02_decisions.md](saturday/02_decisions.md), decisions 1, 11 and 12). When the model labels failed validation, we kept them out of the product instead of shipping them.
 
 ### 1.4 How it works
 
