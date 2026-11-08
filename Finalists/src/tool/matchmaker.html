@@ -691,7 +691,7 @@ ul.helplinks { margin:4px 0 0; padding-left:18px; } ul.helplinks li { margin:3px
 .trust ul { margin:8px 0; padding-left:18px; color:var(--text-secondary); } .trust p { color:var(--text-secondary); max-width:75ch; }
 .sw-desc { margin:6px 20px 0; color:var(--text-secondary); font-size:.95rem; line-height:1.45; }
 .osbm-ex { background:var(--accent-soft); border-radius:10px; padding:12px 14px; margin:0 0 12px; color:var(--text-primary); max-width:80ch; }
-ol.timeline li.team::before { border-width:3px; } ol.timeline li.blue::before { border-color:#2a6fb0; background:#2a6fb0; } ol.timeline li.pink::before { border-color:#d16aa0; background:#d16aa0; } ol.timeline li.red::before { border-color:#c0392b; background:#c0392b; } ol.timeline li.gold::before { border-color:#c99a1e; background:#c99a1e; } ol.timeline li.white::before { border-color:var(--text-muted); background:#fff; }
+ol.timeline li.team::before { border-width:3px; } ol.timeline li.blue::before { border-color:#2a6fb0; background:#2a6fb0; } ol.timeline li.pink::before { border-color:#d16aa0; background:#d16aa0; } ol.timeline li.red::before { border-color:#c0392b; background:#c0392b; } ol.timeline li.green::before { border-color:#2e8b57; background:#2e8b57; } ol.timeline li.gold::before { border-color:#c99a1e; background:#c99a1e; } ol.timeline li.white::before { border-color:var(--text-muted); background:#fff; }
 .plan-prop { display:grid; gap:8px; margin:14px 0 4px; padding:12px 14px; border:1px dashed var(--border); border-radius:10px; }
 .plan-prop label { display:grid; gap:2px; margin:0; font-weight:400; } .plan-prop label span { color:var(--text-secondary); font-size:.9rem; }
 .plan-prop select { font:inherit; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); color:var(--text-primary); }
@@ -800,6 +800,10 @@ details.mb-box ul { margin-top:8px !important; max-height:420px; overflow:auto; 
 .mb-right #b-right-h { margin:0 0 8px; font-size:.95rem; }
 .board li.item { border-color:var(--rule) !important; }
 @media (max-width:760px) { .board { grid-template-columns:1fr !important; } }
+
+table.ship-t { border-collapse:collapse; width:100%; font-size:.9rem; margin:8px 0 10px; } table.ship-t th, table.ship-t td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--rule); vertical-align:top; } table.ship-t th { background:var(--surface-3); font-size:.82rem; color:var(--text-secondary); }
+table.ship-t td:first-child { font-weight:700; white-space:nowrap; } .ship-dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:8px; vertical-align:-1px; border:2px solid var(--border); }
+.ship-dot.blue { background:#2a6fb0; border-color:#2a6fb0; } .ship-dot.pink { background:#d16aa0; border-color:#d16aa0; } .ship-dot.red { background:#c0392b; border-color:#c0392b; } .ship-dot.green { background:#2e8b57; border-color:#2e8b57; } .ship-dot.gold { background:#c99a1e; border-color:#c99a1e; } .ship-dot.white { background:#fff; border-color:var(--text-muted); }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -1386,24 +1390,27 @@ body.proj .tour-card { font-size:1.2rem; }
   var checks = lsGet("ffm_check_v1", {});
   function fmtDay(d) { return d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }); }
   function refDate() { var s = K.ref || (P && P.data_as_of ? String(P.data_as_of).slice(0, 10) : ""); var d = s ? new Date(s + "T00:00:00") : new Date(); return isNaN(d) ? new Date() : d; }
-  // Timeline worked back from the deadline, with the Shipley color-team reviews used for federal proposals.
+  // Timeline worked back from the deadline, with Shipley color-team reviews (Shipley Associates, "Color Team Reviews";
+  // timing for grants from CASRAI's guide: Pink several weeks out, Red 1-2 weeks out at 2/3-3/4 complete, Gold in the final days).
   function planSteps(r) {
     var ef = effort(r), ti = tierInfo(r)[0], cs = r.cost_sharing === "Yes";
     var D = r.days_left != null && r.days_left >= 0 ? r.days_left : null, own = D == null;
     if (own) D = (ef.weeks || 4) * 7 + 14;
-    var work = Math.max(14, (ef.weeks || 4) * 7), start = Math.max(Math.min(4, D), D - SUBMIT_EARLY_DAYS - work), endW = Math.max(start, D - 3);
-    var at = function (f) { return Math.round(start + (endW - start) * f); };
+    var work = Math.max(14, (ef.weeks || 4) * 7), start = Math.max(Math.min(4, D), D - SUBMIT_EARLY_DAYS - work), endW = Math.max(start, D - 3), span = endW - start;
+    var at = function (f, fromDeadline) { var d = Math.round(start + span * f); return fromDeadline != null ? Math.max(d, D - fromDeadline) : d; };
+    var signer = ti === 3 ? "leadership" : ti === 2 ? "your boss" : "the person who signs";
     var S = [
       [0, "Decide to go for it (bid or no-bid)", "Tell your boss you plan to apply. You marked it Pursue.", ""],
-      [Math.min(1, D), "Read the announcement and list every requirement", "Make a checklist of every required section, form, page limit and the exact closing time.", ""],
+      [Math.min(1, D), "Read the announcement and list every requirement", "Make a checklist of every required section, form, page limit, scoring criterion and the exact closing time.", ""],
       [Math.min(3, D), "Check your logins", "Make sure your agency's SAM.gov registration (its federal ID, called a UEI) and your Grants.gov account are active. Fixing these can take weeks.", ""],
-      [at(0), "Kickoff and Blue Team review", "Agree on the plan: why your agency, what you will do, who writes which part" + (cs ? ", and where the matching money comes from" : "") + ".", "blue"],
-      [at(0.35), "Pink Team review", "Reviewers read the outline and first draft against the announcement's requirements and say what is missing.", "pink"],
-      [at(0.65), "Red Team review", "Reviewers score the full draft the way the federal reviewers will, using the announcement's scoring criteria. Fix the weak spots.", "red"],
-      [at(0.85), ti === 3 ? "Gold Team: leadership approves and signs" : ti === 2 ? "Gold Team: your boss approves and signs" : "Gold Team: final approval", ti === 3 ? "Book leadership time early; their calendars fill up." : "The person who signs reads the final version and approves it.", "gold"],
-      [Math.max(0, D - 3), "White glove check", "Last check of forms, page limits, attachments and budget math before you submit.", "white"],
-      [Math.max(0, D - SUBMIT_EARLY_DAYS), "Submit on Grants.gov", "Aim " + SUBMIT_EARLY_DAYS + " days early. The system is slow on deadline day.", ""],
-      [D, own ? "Your target date" : "Deadline", own ? "No fixed deadline is listed, so this plan sets one for you." : "Closes " + r.close_date + ". Check the announcement for the exact time.", ""]
+      [at(0), "Blue Team: agree on the plan", "Kickoff. Agree why your agency should win, what you will do, who writes which part" + (cs ? ", and where the matching money comes from" : "") + ".", "blue"],
+      [at(0.3, 21), "Pink Team: check the outline", "A small group, including someone who is not writing it, checks the outline or early draft against every requirement in the announcement. Fix gaps now, while changes are cheap.", "pink"],
+      [at(0.6, 10), "Red Team: score it like the funder", "Readers who did not write it score the nearly finished draft (about two-thirds to three-quarters done) using the announcement's own review criteria, then list what to fix.", "red"],
+      [at(0.72, 8), "Green Team: check the budget", "Check the budget, the budget justification" + (cs ? " and the matching money" : "") + " against the announcement's rules and the award size.", "green"],
+      [at(0.85, 4), "Gold Team: final approval", "Confirm the Red and Green fixes are in. " + signer.charAt(0).toUpperCase() + signer.slice(1) + " approves and signs." + (ti === 3 ? " Book leadership time early." : ""), "gold"],
+      [Math.max(0, D - 3), "White glove check", "Last check of forms, page limits, file names, attachments and budget math before you submit.", "white"],
+      [Math.max(0, D - SUBMIT_EARLY_DAYS), "Submit on Grants.gov", "Aim " + SUBMIT_EARLY_DAYS + " days early. The system is slow on deadline day. Save the confirmation email.", ""],
+      [D, own ? "Your target date" : "Deadline", own ? "No fixed deadline is listed, so this plan sets one for you." : "Closes " + r.close_date + ". Check the announcement for the exact time. Afterwards, write down lessons learned for next time.", ""]
     ];
     var ref = refDate(); if (!own && /^\d{4}-\d{2}-\d{2}$/.test(r.close_date || "")) { ref = new Date(r.close_date + "T00:00:00"); ref.setDate(ref.getDate() - D); }
     var prev = 0;
@@ -1450,7 +1457,8 @@ body.proj .tour-card { font-size:1.2rem; }
     box.appendChild(prop);
     if (tight(r) && r.days_left > 2) box.appendChild(el("p", "plan-warn", "Tight: this usually takes about " + effort(r).weeks + " weeks of work, and only " + r.days_left + " days are left. Decide today, or pass."));
     box.appendChild(el("h3", null, "Your timeline"));
-    box.appendChild(el("p", "note", "The colored steps are review rounds from the Shipley method used for federal proposals: Blue (the plan), Pink (first draft), Red (full draft scored like a reviewer), Gold (approval), White glove (final check)."));
+    var shn = el("p", "note"); shn.appendChild(document.createTextNode("The colored steps are review rounds from the Shipley proposal method: Blue (the plan), Pink (outline check), Red (score it like the funder), Green (budget), Gold (approval), White glove (final check). For a small grant, one person can do two rounds at once. "));
+    var shl = el("button", "linkbtn", "More about this method"); shl.type = "button"; shl.addEventListener("click", function () { $("plan-dlg").close(); tab("how"); setTimeout(function () { var h = $("how-shipley"); if (h) h.scrollIntoView({ behavior: "smooth", block: "start" }); }, 80); }); shn.appendChild(shl); box.appendChild(shn);
     var steps = planSteps(r), tl = el("ol", "timeline");
     if (!steps[0].own && steps[steps.length - 1].day <= 2) {
       var dd0 = steps[steps.length - 1].day;
@@ -2336,7 +2344,16 @@ body.proj .tour-card { font-size:1.2rem; }
     h("How it picks grants");
     var ol = el("ol"); ["It reads open and coming-up federal grants from Grants.gov.", "It hides grants your agency clearly cannot apply for, and keeps unclear ones visible as “Check eligibility first”.", "It ranks the rest by how many words they share with your agency's plan goals. No AI model sets the order."].forEach(function (t) { ol.appendChild(el("li", null, t)); }); v.appendChild(ol);
     h("What each card shows");
-    ul(["Big number: days left to apply (red when 14 or fewer).", "Right: the most money one award can be.", "One line: can your agency apply, and who has to sign (you, your boss, or leadership).", "“Won this before” when federal records show your agency has won this program.", "Impact score: plan fit (60%) plus award size (40%). Open it on any card to see the numbers.", "“Why it fits, odds and details”: the plan goal it matches, effort, matching money, help links and more."]);
+    ul(["Big number: days left to apply (red when 14 or fewer).", "Right: the most money one award can be.", "One line: can your agency apply, and who has to sign (you, your boss, or leadership).", "“Won this before” when federal records show your agency has won this program.", "Impact score: a mix of plan fit, award size, chance of winning and less work (you can change the weights under More options). Open it on any card to see the numbers.", "“Why it fits, odds and details”: the plan goal it matches, effort, matching money, help links and more."]);
+    var hs = el("h2", null, "How the plan's timeline works (Shipley color-team reviews)"); hs.id = "how-shipley"; v.appendChild(hs);
+    p("When you press Pursue, the plan works back from the deadline. Its review steps follow the Shipley method: a set of color-coded reviews from Shipley Associates, widely used for federal proposals. University research offices adapted it for grant proposals. Each review happens at a set stage, by people who look at the proposal with fresh eyes.");
+    var tbl = el("table", "ship-t"), hr = el("tr"); ["Review", "What happens", "When"].forEach(function (x) { hr.appendChild(el("th", null, x)); }); tbl.appendChild(hr);
+    [["Blue Team", "Agree on the plan and strategy: why your agency, what you will do, who writes what.", "At kickoff", "blue"], ["Pink Team", "A small group, including someone not writing it, checks the outline or early draft against every requirement.", "Several weeks before the deadline", "pink"], ["Red Team", "Readers who did not write it score the nearly finished draft with the funder's own review criteria, then list fixes.", "1 to 2 weeks before, when the draft is about 2/3 to 3/4 done", "red"], ["Green Team", "Check the budget, budget justification and any matching money.", "After Red Team", "green"], ["Gold Team", "The people who sign confirm the fixes are in and approve.", "Final days", "gold"], ["White glove", "Final check of forms, page limits, files and budget math.", "Just before you submit", "white"], ["Lessons learned", "Write down what to do better next time (Shipley calls this a White Hat review).", "After you submit", ""]].forEach(function (x) { var tr = el("tr"); var td0 = el("td"); var sw = el("i", "ship-dot " + x[3]); td0.appendChild(sw); td0.appendChild(document.createTextNode(x[0])); tr.appendChild(td0); tr.appendChild(el("td", null, x[1])); tr.appendChild(el("td", null, x[2])); tbl.appendChild(tr); });
+    var tw = el("div", "tablewrap"); tw.appendChild(tbl); v.appendChild(tw);
+    p("Scale it to the grant: Shipley advises fitting the reviews to the size of the bid. For a small grant one or two people can combine Pink and Red. For a large or multi-agency grant, keep every round and choose Red Team readers who know the funder.");
+    var src = el("p", "note"); src.appendChild(document.createTextNode("Sources: "));
+    [["Shipley Associates, Color Team Reviews", "https://www.shipleywins.com/blogs/color-team-reviews"], ["CASRAI, Pink Team, Red Team, Gold Team proposal review (adapting it for grants)", "https://www.casrai.org/guides/pink-team-red-team-gold-team-proposal-review"]].forEach(function (x, i) { if (i) src.appendChild(document.createTextNode("; ")); var a = el("a", null, x[0]); a.href = x[1]; a.target = "_blank"; a.rel = "noopener"; src.appendChild(a); });
+    src.appendChild(document.createTextNode(". The White glove step is common practice described by proposal guides rather than a named Shipley team.")); v.appendChild(src);
     h("How well it works");
     var evb = el("div"); evb.id = "evidence-how"; v.appendChild(evb); renderEvidence(evb);
     h("Where the data comes from");
