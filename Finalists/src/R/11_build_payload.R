@@ -130,6 +130,15 @@ if (file.exists(NOTICE_READER_CSV)) {
   message("Notice reader: ", sum(!is.na(rows$reader_label)), " rows labeled from ", basename(NOTICE_READER_CSV))
 }
 
+# Swipe-card summary (31_swipe_summary.R, advisory): plain-language ai_summary with a verified source quote.
+# Rows without a verified quote stay NA and the tool falls back to the first-sentence snippet. Never changes rank or tier.
+SWIPE_SUMMARY_CSV <- here::here("data", "processed", "swipe_summary.csv")
+if (file.exists(SWIPE_SUMMARY_CSV)) {
+  sw <- read_csv(SWIPE_SUMMARY_CSV, show_col_types = FALSE, col_types = cols(.default = "c")) |> filter(quote_ok %in% c("TRUE", "True", "true")) |> distinct(opp_id, .keep_all = TRUE)
+  rows$ai_summary <- na_if(sw$ai_summary[match(rows$opp_id, sw$opp_id)], "")
+  message("Swipe summaries: ", sum(!is.na(rows$ai_summary)), " rows with an AI summary")
+}
+
 # Closing soon: open Top 10 rows with CLOSING_SOON_DAYS or fewer days left (the tool's panel reads days_left itself;
 # this count lets it show a badge without scanning).
 soon <- rows[rows$in_top10 & !is.na(rows$days_left) & rows$days_left >= 0 & rows$days_left <= CLOSING_SOON_DAYS, ]
