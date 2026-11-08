@@ -762,10 +762,11 @@ details.osbm-together { margin:12px 0; background:var(--surface-2); border:1px s
 .map-side { background:var(--surface-2); border:1px solid var(--rule); border-radius:12px; padding:14px; } .map-side h3 { font-size:.95rem; margin:14px 0 6px; }
 .map-sel h3 { margin:0 0 4px; font-size:1.1rem; } .ms-big { margin:0 0 4px; } .ms-big b { font-size:1.8rem; font-weight:800; color:var(--accent); } .ms-big span { color:var(--text-secondary); font-size:.88rem; }
 ol.map-top { list-style:none; margin:0; padding:0; display:grid; gap:2px; }
-.mt-row { width:100%; display:grid; grid-template-columns:20px 1fr 70px auto; gap:8px; align-items:center; font:inherit; font-size:.86rem; background:none; border:none; padding:5px 4px; border-radius:6px; cursor:pointer; color:var(--text-primary); text-align:left; }
+.map-lg-bar { position:relative; } #map-lg-mid { position:absolute; left:50%; top:12px; transform:translateX(-50%); font-style:normal; font-size:.75rem; color:var(--text-muted); } .map-lg { margin-bottom:14px; }
+.mt-row { width:100%; display:grid; grid-template-columns:20px 1fr auto; gap:8px; align-items:center; font:inherit; font-size:.86rem; background:none; border:none; padding:5px 4px; border-radius:6px; cursor:pointer; color:var(--text-primary); text-align:left; }
 .mt-row:hover { background:var(--surface-3); } .mt-n { color:var(--text-muted); font-weight:700; } .mt-v { font-variant-numeric:tabular-nums; font-weight:650; }
 /* evidence axis */
-.bars-axis { display:grid; grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 5.6em; gap:10px; margin-top:4px; } .bars-axis .ticks { position:relative; height:16px; border-top:1px solid var(--border); } .bars-axis .ticks span { position:absolute; top:2px; transform:translateX(-50%); font-size:.72rem; color:var(--text-muted); }
+.bars-axis { display:grid; grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 5.6em; gap:10px; margin-top:4px; } .bars-axis .ticks { position:relative; height:16px; border-top:1px solid var(--border); } .bars-axis .ticks span { position:absolute; top:2px; transform:translateX(-50%); font-size:.8rem; color:var(--text-muted); } .bars li { grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 8.5em !important; } .bars-axis { grid-template-columns:minmax(120px, 13em) minmax(0,1fr) 8.5em !important; }
 .bars-axis-t { font-size:.8rem; color:var(--text-secondary); margin:2px 0 0; text-align:center; }
 @media (max-width:560px) { .bars-axis { grid-template-columns:1fr 4.6em; } .bars-axis > span:first-child { display:none; } }
 .how-h1 { font-size:1.6rem; margin:0 0 8px; } #v-how .evidence > h2 { display:none; } #v-how .evidence { max-width:760px; }
@@ -965,7 +966,7 @@ body.proj .tour-card { font-size:1.2rem; }
     <p class="counts" id="map-readout" aria-live="polite"></p>
     <div class="map-grid">
       <div class="map-main"><div class="map-wrap"><svg id="map-svg" role="img" aria-label="Map of North Carolina counties shaded by the chosen measure" viewBox="0 0 1000 381"></svg><div id="map-tip" class="ctip" hidden></div></div>
-        <div class="map-lg" aria-hidden="true"><span id="map-lg-lo"></span><span class="map-lg-bar"></span><span id="map-lg-hi"></span></div>
+        <div class="map-lg" aria-hidden="true"><span id="map-lg-lo"></span><span class="map-lg-bar"><i id="map-lg-mid"></i></span><span id="map-lg-hi"></span></div>
         <p class="note map-lg-t">Color scale: <span id="map-lg-lab"></span>, lowest to highest county.</p></div>
       <aside class="map-side"><div id="map-sel" class="map-sel"></div><h3>Ten highest counties</h3><ol id="map-top" class="map-top"></ol></aside>
     </div>
@@ -1115,7 +1116,7 @@ body.proj .tour-card { font-size:1.2rem; }
       f.style.width = (x.pct / mx * 100).toFixed(1) + "%"; tr.appendChild(f);
       var tip = x.label + ": " + (x.count != null ? x.count + " of " + b.won_programs + " (" + pct + "%)" : pct + "% of " + b.won_programs) + (x.note ? ". " + x.note : "");
       li.title = tip; tr.setAttribute("role", "img"); tr.setAttribute("aria-label", tip);
-      li.appendChild(el("span", "lab", x.label)); li.appendChild(tr); li.appendChild(el("span", "val", (x.count != null ? x.count + " · " : "") + pct + "%"));
+      li.appendChild(el("span", "lab", x.label)); li.appendChild(tr); li.appendChild(el("span", "val", pct + "%" + (x.count != null ? " (" + x.count + " of " + b.won_programs + ")" : "")));
       ul.appendChild(li);
     });
     card.appendChild(ul);
@@ -1137,9 +1138,9 @@ body.proj .tour-card { font-size:1.2rem; }
     var X = function (w) { return ml + (W - ml - mr) * (w - 2) / 4; }, Y = function (n) { return mt + (H - mt - mb) * (1 - (n / c.won * 100) / ymax); };
     [0, 10, 20, 30, 40].forEach(function (v) { var y = mt + (H - mt - mb) * (1 - v / ymax); mk("line", { x1: ml, x2: W - mr, y1: y, y2: y, "class": "grid" }); mk("text", { x: ml - 6, y: y + 4, "text-anchor": "end", "class": "ax" }, v + "%"); });
     c.points.forEach(function (p) { mk("text", { x: X(p.weeks), y: H - mb + 18, "text-anchor": "middle", "class": "ax" }, "every " + p.weeks + " wks"); });
-    mk("text", { x: (ml + W - mr) / 2, y: H - 2, "text-anchor": "middle", "class": "ax" }, "How often someone checks for new grants →");
+    mk("text", { x: (ml + W - mr) / 2, y: H - 2, "text-anchor": "middle", "class": "ax" }, "How often someone checks (less often to the right)");
     mk("text", { x: 10, y: mt + (H - mt - mb) / 2, "text-anchor": "middle", "class": "ax", transform: "rotate(-90 10 " + (mt + (H - mt - mb) / 2) + ")" }, "Share of won programs found");
-    [["all", "Found at all", "l-all"], ["intime", "Found with " + c.days + "+ days left", "l-in"]].forEach(function (L) {
+    [["all", "Found at all", "l-all"], ["intime", c.days + "+ days left", "l-in"]].forEach(function (L) {
       mk("polyline", { points: c.points.map(function (p) { return X(p.weeks) + "," + Y(p[L[0]]); }).join(" "), "class": "ln " + L[2] });
       c.points.forEach(function (p) { var d = mk("circle", { cx: X(p.weeks), cy: Y(p[L[0]]), r: 5, "class": "pt " + L[2] }); var t = document.createElementNS(NS, "title"); t.textContent = L[1] + ", checking every " + p.weeks + " weeks: " + p[L[0]] + " of " + c.won + " (" + Math.round(p[L[0]] / c.won * 100) + "%)"; d.appendChild(t); });
       var last = c.points[c.points.length - 1]; mk("text", { x: X(last.weeks) + 10, y: Y(last[L[0]]) + 4, "class": "lab " + L[2] }, L[1] + ": " + last[L[0]]);
@@ -1985,7 +1986,7 @@ body.proj .tour-card { font-size:1.2rem; }
     for (var e = y0; e <= y1; e++) { mk("line", { x1: ml, x2: W - mr, y1: Y(Math.pow(10, e)), y2: Y(Math.pow(10, e)), "class": "grid" }); mk("text", { x: ml - 6, y: Y(Math.pow(10, e)) + 4, "text-anchor": "end", "class": "ax" }, usd(Math.pow(10, e))); }
     mk("line", { x1: ml, x2: W - mr, y1: mt + phm + 3, y2: mt + phm + 3, "class": "mx-sep" });
     mk("text", { x: ml - 6, y: mt + phm + 6 + strip / 2 + 4, "text-anchor": "end", "class": "ax" }, "Not listed");
-    var ly = mt + phm / 2; mk("text", { x: 13, y: ly, "text-anchor": "middle", "class": "ax axl", transform: "rotate(-90 13 " + ly + ")" }, "Money per award (most one award can be)");
+    var ly = mt + phm / 2; mk("text", { x: 13, y: ly, "text-anchor": "middle", "class": "ax axl", transform: "rotate(-90 13 " + ly + ")" }, "Money per award (each step is 10×)");
     if (MX_MODE === "deadline") {
       var XMAX = 90, X = function (d) { return d == null ? ml + pw - 8 : ml + (pw - 24) * Math.min(d, XMAX) / XMAX; };
       mk("rect", { x: ml, y: mt, width: (pw - 24) * CSD / XMAX, height: ph, "class": "mx-zone" });
@@ -2002,6 +2003,13 @@ body.proj .tour-card { font-size:1.2rem; }
       var inCol = {};
       rows.forEach(function (r) { var lv = effort(r).level, i = cols.findIndex(function (c) { return c[0] === lv; }); if (i < 0) i = 3; inCol[i] = (inCol[i] || 0) + 1; var k = inCol[i]; pos[r.opp_id] = [ml + cw * i + cw * (0.14 + 0.72 * ((k * 0.618) % 1)), Y(money(r).max)]; });
     }
+    var placed = [], GAP = 24;
+    rows.forEach(function (r) {
+      var p = pos[r.opp_id]; if (!p) return; var x = p[0], y = p[1], k = 0;
+      function hit() { return placed.some(function (q) { return Math.hypot(q[0] - x, q[1] - y) < GAP; }); }
+      while (hit() && k < 40) { k++; var ang = k * 2.4, rad = GAP * Math.sqrt(k) * 0.75; x = p[0] + Math.cos(ang) * rad; y = p[1] + Math.sin(ang) * rad; x = Math.max(ml + 12, Math.min(W - mr - 12, x)); y = Math.max(mt + 12, Math.min(mt + ph - 4, y)); }
+      pos[r.opp_id] = [x, y]; placed.push([x, y]);
+    });
     rows.slice().reverse().forEach(function (r) {
       var p = pos[r.opp_id]; if (!p) return;
       var urgent = r.days_left != null && r.days_left <= CSD, n = NUM[r.opp_id] || "";
@@ -2017,7 +2025,7 @@ body.proj .tour-card { font-size:1.2rem; }
       g.addEventListener("click", go); g.addEventListener("keydown", function (ev) { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); go(); } });
       svg.appendChild(g);
     });
-    mxQ("#mx-note").textContent = MX_MODE === "deadline" ? "Each number is a grant in your list. Up = more money per award. Left = closing sooner. Red dots close within " + CSD + " days." : "Each number is a grant in your list. Up = more money per award. Left = less work to apply. The best ones sit top left. Red dots close within " + CSD + " days.";
+    mxQ("#mx-note").textContent = MX_MODE === "deadline" ? "Each number is a grant in your list. Up = more money per award. Left = closing sooner. Red: closes within " + CSD + " days. Green: more time." : "Each number is a grant in your list. Up = more money per award. Left = less work to apply. The best ones sit top left. Red: closes within " + CSD + " days. Green: more time.";
   }
   function hlCard(opp, on) { [].forEach.call(document.querySelectorAll('li.row[data-opp="' + opp + '"]'), function (li) { li.classList.toggle("hl", on); }); }
   function hlDot(opp, on) { if (!MXEL) return; var g = MXEL.querySelector('g.mx-pt[data-opp="' + opp + '"]'); if (g) g.classList.toggle("hl", on); }
@@ -2241,7 +2249,7 @@ body.proj .tour-card { font-size:1.2rem; }
       var v = by[c.fips], box = $("map-sel"); box.innerHTML = "";
       box.appendChild(el("h3", null, c.county + " County"));
       if (!v) { box.appendChild(el("p", "note", "No value for this measure.")); return; }
-      var big = el("p", "ms-big"); big.appendChild(el("b", null, String(v.v))); big.appendChild(el("span", null, " " + lab)); box.appendChild(big);
+      var big = el("p", "ms-big"); big.appendChild(el("b", null, String(v.v) + (/%|percent/i.test(lab) ? "%" : ""))); big.appendChild(el("span", null, " " + lab)); box.appendChild(big);
       box.appendChild(el("p", null, "Ranks #" + rankOf[c.fips] + " of " + ranked.length + " counties (higher than " + Math.round(v.pct * 100) + "% of them)."));
       var pb = el("span", "imp-bar"); var f = el("i"); f.style.width = Math.round(v.pct * 100) + "%"; pb.appendChild(f); box.appendChild(pb);
     }
@@ -2256,11 +2264,12 @@ body.proj .tour-card { font-size:1.2rem; }
       pa.addEventListener("click", function () { MAPSEL = c.fips; [].forEach.call(svg.querySelectorAll(".cty.sel"), function (x) { x.classList.remove("sel"); }); pa.classList.add("sel"); svg.appendChild(pa); showCounty(c); });
       svg.appendChild(pa);
     });
-    $("map-lg-lo").textContent = String(lo); $("map-lg-hi").textContent = String(hi); $("map-lg-lab").textContent = lab;
+    var unit = /%|percent/i.test(lab) ? "%" : ""; var fmtv = function (x) { return (Math.round(x * 10) / 10) + unit; };
+    $("map-lg-lo").textContent = fmtv(lo); $("map-lg-hi").textContent = fmtv(hi); $("map-lg-mid").textContent = fmtv((lo + hi) / 2); $("map-lg-lab").textContent = lab;
     var ol = $("map-top"); ol.innerHTML = "";
     ranked.slice(0, 10).forEach(function (x, i) {
       var li = el("li"), b = el("button", "mt-row"); b.type = "button";
-      b.appendChild(el("span", "mt-n", String(i + 1))); b.appendChild(el("span", "mt-c", x.c.county)); var tr = el("span", "imp-bar sm"); var f = el("i"); f.style.width = ((x.v.v - lo) / ((hi - lo) || 1) * 100).toFixed(0) + "%"; tr.appendChild(f); b.appendChild(tr); b.appendChild(el("span", "mt-v", String(x.v.v)));
+      b.appendChild(el("span", "mt-n", String(i + 1))); b.appendChild(el("span", "mt-c", x.c.county + " County")); b.appendChild(el("span", "mt-v", fmtv(x.v.v)));
       b.addEventListener("click", function () { MAPSEL = x.c.fips; renderMap(); showCounty(x.c); }); li.appendChild(b); ol.appendChild(li);
     });
     $("map-readout").textContent = "Showing " + lab + ". Darker counties have higher values. Hover or click a county.";
