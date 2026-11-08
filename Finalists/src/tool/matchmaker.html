@@ -770,6 +770,36 @@ ol.map-top { list-style:none; margin:0; padding:0; display:grid; gap:2px; }
 .bars-axis-t { font-size:.8rem; color:var(--text-secondary); margin:2px 0 0; text-align:center; }
 @media (max-width:560px) { .bars-axis { grid-template-columns:1fr 4.6em; } .bars-axis > span:first-child { display:none; } }
 .how-h1 { font-size:1.6rem; margin:0 0 8px; } #v-how .evidence > h2 { display:none; } #v-how .evidence { max-width:760px; }
+
+/* ---- Round 8 ---- */
+summary { list-style:none; } summary::-webkit-details-marker { display:none; }
+.panel > summary::before { content:"▸"; display:inline-block; margin-right:8px; color:var(--accent); transition:transform .15s; } .panel[open] > summary::before { transform:rotate(90deg); }
+.curve-svg { max-width:600px; }
+.imp-w { margin-top:14px; padding-top:12px; border-top:1px solid var(--rule); }
+.imp-w h4 { margin:0 0 2px; font-size:.95rem; } .imp-w p { margin:0 0 8px; }
+.imp-w-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(210px, 1fr)); gap:8px 18px; }
+.imp-w label { display:grid; grid-template-columns:1fr auto; gap:2px 8px; font-size:.86rem; font-weight:600; color:var(--text-secondary); margin:0; }
+.imp-w input[type=range] { grid-column:1 / -1; accent-color:var(--accent); width:100%; }
+.imp-w output { font-variant-numeric:tabular-nums; color:var(--text-primary); }
+.imp-w .imp-w-act { display:flex; gap:10px; align-items:center; margin-top:8px; font-size:.86rem; color:var(--text-muted); }
+.imp-w .imp-w-act button { font:inherit; font-weight:600; border:1px solid var(--border); background:var(--surface-2); color:var(--text-primary); border-radius:999px; padding:5px 14px; cursor:pointer; min-height:34px; }
+.imp-change { font:inherit; font-size:.82rem; background:none; border:none; color:var(--accent); text-decoration:underline; cursor:pointer; padding:0; margin-top:6px; }
+/* match board */
+.mb-head h2 { margin:0 0 4px; font-size:1.3rem; } .mb-head p { margin:0 0 10px; color:var(--text-secondary); max-width:70ch; }
+.mb-head label { display:inline-flex; align-items:center; gap:8px; font-weight:700; margin:0 0 14px; } .mb-head select { font:inherit; font-weight:500; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--surface-2); color:var(--text-primary); }
+.board { grid-template-columns:minmax(0, 5fr) minmax(0, 7fr) !important; gap:22px !important; }
+.mb-step { display:flex; align-items:center; gap:10px; font-weight:800; font-size:1rem; margin:0 0 10px; }
+.mb-step span { display:inline-grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--accent); color:var(--on-accent); font-size:.9rem; }
+.mb-box { background:var(--surface-2); border:1px solid var(--rule); border-radius:12px; padding:12px 14px; margin:0 0 12px; }
+.mb-box h3 { margin:0 0 8px !important; font-size:.95rem !important; }
+.mb-row { display:flex; gap:8px; } .mb-row input { flex:1; min-width:0; margin:0 !important; }
+.mb-row button { font:inherit; font-weight:700; border:none; background:var(--accent); color:var(--on-accent); border-radius:999px; padding:0 16px; cursor:pointer; min-height:40px; }
+details.mb-box > summary { cursor:pointer; font-weight:700; font-size:.95rem; } details.mb-box > summary::before { content:"▸"; display:inline-block; margin-right:8px; color:var(--accent); transition:transform .15s; } details.mb-box[open] > summary::before { transform:rotate(90deg); }
+details.mb-box ul { margin-top:8px !important; max-height:420px; overflow:auto; }
+.mb-right { background:var(--surface-2); border:1px solid var(--rule); border-radius:12px; padding:12px 14px; }
+.mb-right #b-right-h { margin:0 0 8px; font-size:.95rem; }
+.board li.item { border-color:var(--rule) !important; }
+@media (max-width:760px) { .board { grid-template-columns:1fr !important; } }
 </style>
 <style id="tour-css">
 /* First-visit walkthrough. Self-contained: ids and classes start with "tour". */
@@ -868,6 +898,9 @@ body.proj .tour-card { font-size:1.2rem; }
         <label>Matching money we can commit<input type="number" id="f-matchamt" min="0" step="1000" placeholder="$ amount, blank = not sure"></label>
         <label class="dd-f">Funder<select id="f-funder"><option value="">Any funder</option></select></label>
       </div>
+      <div class="imp-w" id="imp-w"><h4>Impact score weights</h4><p class="note">Choose what matters most to you. The impact score on every card updates. It only changes the order if you sort by Highest impact.</p>
+        <div class="imp-w-grid" id="imp-w-grid"></div>
+        <div class="imp-w-act"><button type="button" id="imp-w-reset">Reset to our default</button><span id="imp-w-sum"></span></div></div>
       </details>
       <div class="frow"><span id="f-count" role="status"></span><button type="button" id="f-reset" hidden>Clear filters</button></div>
     </section>
@@ -944,18 +977,22 @@ body.proj .tour-card { font-size:1.2rem; }
   </section>
 
   <section id="v-board" role="tabpanel" aria-labelledby="tab-board" hidden>
-    <label for="b-agency">Agency</label>
-    <select id="b-agency" aria-label="Board agency"></select>
-    <p class="note">Click a plan goal or one of your projects to rank grants. Click a grant to see which goals and projects it fits. Fit bars compare items inside one list only; they are never compared across the two directions. Grants here are the best matches loaded for each agency, not every open grant.</p>
+    <div class="mb-head"><h2>Match board</h2>
+      <p>Start from an idea and see which grants fit it. Type a project, or pick one of your agency's plan goals. You can also click a grant to see which goals it fits.</p>
+      <label for="b-agency">Agency <select id="b-agency" aria-label="Board agency"></select></label></div>
     <div class="board">
-      <div>
-        <h3>Plan goals</h3><ul id="b-goals"></ul>
-        <h3>Your projects</h3>
-        <input type="text" id="b-new" placeholder="Describe a project in a few words" aria-label="New project">
-        <button type="button" id="b-add" class="act" style="font:inherit;padding:3px 10px">Add project</button>
-        <ul id="b-projects"></ul>
+      <div class="mb-col">
+        <div class="mb-step"><span>1</span>Start from an idea</div>
+        <div class="mb-box"><h3>Describe a project</h3>
+          <div class="mb-row"><input type="text" id="b-new" placeholder="e.g. mobile mental health crisis teams" aria-label="New project"><button type="button" id="b-add">Add</button></div>
+          <ul id="b-projects"></ul></div>
+        <details class="mb-box" open><summary>Or pick one of your plan goals</summary><ul id="b-goals"></ul></details>
       </div>
-      <div><h3 id="b-right-h">Grants</h3><ul id="b-grants"></ul></div>
+      <div class="mb-col">
+        <div class="mb-step"><span>2</span>See the grants that fit</div>
+        <div class="mb-right"><h3 id="b-right-h">Grants</h3><ul id="b-grants"></ul>
+        <p class="note">Bars compare grants inside this list only. These are the best matches loaded for each agency, not every open grant.</p></div>
+      </div>
     </div>
   </section>
 
@@ -1131,7 +1168,7 @@ body.proj .tour-card { font-size:1.2rem; }
     var wrap = el("div", "curve"), NS = "http://www.w3.org/2000/svg";
     wrap.appendChild(el("h3", null, "Finding it early matters"));
     wrap.appendChild(el("p", "q", c.say));
-    var W = 460, H = 190, ml = 40, mr = 120, mt = 14, mb = 34, ymax = 40;
+    var W = 520, H = 210, ml = 62, mr = 120, mt = 14, mb = 40, ymax = 40;
     var svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("class", "curve-svg"); svg.setAttribute("role", "img");
     svg.setAttribute("aria-label", "Line chart. Won programs reaching the top 10, all versus with " + c.days + " or more days left: " + c.points.map(function (p) { return p.weeks + "-week checks " + p.all + " and " + p.intime; }).join("; ") + ", of " + c.won + ".");
     function mk(tag, a, t) { var e = document.createElementNS(NS, tag); Object.keys(a).forEach(function (k) { e.setAttribute(k, a[k]); }); if (t != null) e.textContent = t; svg.appendChild(e); return e; }
@@ -1139,7 +1176,7 @@ body.proj .tour-card { font-size:1.2rem; }
     [0, 10, 20, 30, 40].forEach(function (v) { var y = mt + (H - mt - mb) * (1 - v / ymax); mk("line", { x1: ml, x2: W - mr, y1: y, y2: y, "class": "grid" }); mk("text", { x: ml - 6, y: y + 4, "text-anchor": "end", "class": "ax" }, v + "%"); });
     c.points.forEach(function (p) { mk("text", { x: X(p.weeks), y: H - mb + 18, "text-anchor": "middle", "class": "ax" }, "every " + p.weeks + " wks"); });
     mk("text", { x: (ml + W - mr) / 2, y: H - 2, "text-anchor": "middle", "class": "ax" }, "How often someone checks (less often to the right)");
-    mk("text", { x: 10, y: mt + (H - mt - mb) / 2, "text-anchor": "middle", "class": "ax", transform: "rotate(-90 10 " + (mt + (H - mt - mb) / 2) + ")" }, "Share of won programs found");
+    mk("text", { x: 14, y: mt + (H - mt - mb) / 2, "text-anchor": "middle", "class": "ax", transform: "rotate(-90 14 " + (mt + (H - mt - mb) / 2) + ")" }, "Share found");
     [["all", "Found at all", "l-all"], ["intime", c.days + "+ days left", "l-in"]].forEach(function (L) {
       mk("polyline", { points: c.points.map(function (p) { return X(p.weeks) + "," + Y(p[L[0]]); }).join(" "), "class": "ln " + L[2] });
       c.points.forEach(function (p) { var d = mk("circle", { cx: X(p.weeks), cy: Y(p[L[0]]), r: 5, "class": "pt " + L[2] }); var t = document.createElementNS(NS, "title"); t.textContent = L[1] + ", checking every " + p.weeks + " weeks: " + p[L[0]] + " of " + c.won + " (" + Math.round(p[L[0]] / c.won * 100) + "%)"; d.appendChild(t); });
@@ -1784,13 +1821,26 @@ body.proj .tour-card { font-size:1.2rem; }
 
   // ---- impact score (0-100, our estimate): 60% plan fit, 40% award size; plan fit only when no amount is listed ----
   var IMPACT_FIT_W = 0.6, IMPACT_MONEY_W = 0.4, IMPACT_MONEY_LO = 1e4, IMPACT_MONEY_HI = 1e8; // [assumed] team judgment
-  function impact(r) {
+  // Impact (our estimate, 0-100): a weighted mix of plan fit, award size, chance of winning and less work.
+  // Weights are the user's own (More options); a factor with no data (e.g. no amount listed) drops out and the rest are rescaled.
+  var IMPACT_W0 = { fit: 50, money: 30, odds: 10, ease: 10 }; // [assumed] team default
+  var IMPACT_W = lsGet("ffm_impw_v1", null) || JSON.parse(JSON.stringify(IMPACT_W0));
+  var ODDS_PART = { good: 1, fair: 0.6, unknown: 0.5, long: 0.2 }, EASE_PART = { easy: 1, medium: 0.6, hard: 0.25 };
+  var IMP_LABEL = { fit: "Plan fit", money: "Award size", odds: "Chance of winning", ease: "Less work" };
+  function impactPartsRaw(r) {
     var fit = Math.max(0, Math.min(1, Number(r.fit_score) || 0)), m = money(r).max, ms = null;
     if (m) ms = Math.max(0, Math.min(1, (Math.log10(m) - Math.log10(IMPACT_MONEY_LO)) / (Math.log10(IMPACT_MONEY_HI) - Math.log10(IMPACT_MONEY_LO))));
-    var score = Math.round(100 * (ms == null ? fit : IMPACT_FIT_W * fit + IMPACT_MONEY_W * ms));
-    var why = "Plan fit " + Math.round(fit * 100) + " of 100" + (ms == null ? ". No award amount listed, so this is plan fit only." : " (60%) and award size " + Math.round(ms * 100) + " of 100 (40%; $10K scores 0, $100M or more scores 100).");
-    return { score: score, why: why, partial: ms == null };
+    var lv = effort(r).level;
+    return { fit: fit, money: ms, odds: ODDS_PART[odds(r).level], ease: lv ? EASE_PART[lv] : 0.5 };
   }
+  function impact(r) {
+    var p = impactPartsRaw(r), tw = 0, sum = 0, used = [];
+    Object.keys(IMPACT_W).forEach(function (k) { var w = Number(IMPACT_W[k]) || 0; if (!w || p[k] == null) return; tw += w; sum += w * p[k]; used.push(k); });
+    var score = tw ? Math.round(100 * sum / tw) : 0;
+    var why = used.map(function (k) { return IMP_LABEL[k] + " " + Math.round(p[k] * 100) + " (weight " + Math.round(IMPACT_W[k] / tw * 100) + "%)"; }).join(", ") + (p.money == null && IMPACT_W.money ? ". No award amount is listed, so award size is left out." : "") + ".";
+    return { score: score, why: why, partial: p.money == null, parts: p, used: used, tw: tw };
+  }
+
 
   // ---- light / dark switch (follows the computer until the user picks) ----
   function isDark() { var t = document.documentElement.dataset.theme; return t ? t === "dark" : darkMQ.matches; }
@@ -2197,22 +2247,23 @@ body.proj .tour-card { font-size:1.2rem; }
     return { fit: Math.round(fit * 100), money: ms == null ? null : Math.round(ms * 100), score: impact(r).score };
   }
   function impactBox(r) {
-    var p = impactParts(r), d = el("details", "impact");
-    var s = el("summary"); s.appendChild(el("span", "imp-n", String(p.score))); var t = el("span", "imp-t"); t.appendChild(el("b", null, "Impact score")); t.appendChild(el("span", null, " out of 100 · how it is worked out")); s.appendChild(t);
-    var bar = el("span", "imp-bar"); var f = el("i"); f.style.width = p.score + "%"; bar.appendChild(f); s.appendChild(bar);
-    d.appendChild(s);
-    var body = el("div", "imp-body");
-    function line(label, val, w, note) { var row = el("div", "imp-row"); row.appendChild(el("span", "imp-l", label)); var b2 = el("span", "imp-bar sm"); var f2 = el("i"); f2.style.width = (val == null ? 0 : val) + "%"; b2.appendChild(f2); row.appendChild(b2); row.appendChild(el("span", "imp-v", val == null ? "not listed" : val + " × " + w)); body.appendChild(row); if (note) body.appendChild(el("p", "imp-note", note)); }
-    if (p.money == null) {
-      line("Plan fit", p.fit, "100%", "How many words from your agency's plan goals appear in this grant. No award amount is listed, so the score is plan fit only.");
-    } else {
-      line("Plan fit", p.fit, "60%", "How many words from your agency's plan goals appear in this grant's title and summary.");
-      line("Award size", p.money, "40%", "The most one award can be: $10K scores 0, $100M or more scores 100.");
-    }
-    body.appendChild(el("p", "imp-sum", p.money == null ? "Impact = plan fit = " + p.score + "." : "Impact = " + p.fit + " × 0.6 + " + p.money + " × 0.4 = " + p.score + "."));
-    body.appendChild(el("p", "imp-note", "Goes up when more of your plan's words match and when one award can be bigger. It is our estimate and does not change the order of the list."));
+    var im = impact(r), d = el("details", "impact");
+    var s0 = el("summary"); s0.appendChild(el("span", "imp-n", String(im.score))); var t = el("span", "imp-t"); t.appendChild(el("b", null, "Impact score")); t.appendChild(el("span", null, " out of 100 · how it is worked out")); s0.appendChild(t);
+    var bar = el("span", "imp-bar"); var f = el("i"); f.style.width = im.score + "%"; bar.appendChild(f); s0.appendChild(bar); d.appendChild(s0);
+    var body = el("div", "imp-body"), NOTE = { fit: "How many words from your agency's plan goals appear in this grant.", money: "The most one award can be: $10K scores 0, $100M or more scores 100.", odds: "From how many awards are made and who else can apply.", ease: "From who has to sign and whether matching money is needed." };
+    var sumTxt = [];
+    im.used.forEach(function (k) {
+      var v = Math.round(im.parts[k] * 100), w = Math.round(IMPACT_W[k] / im.tw * 100);
+      var row = el("div", "imp-row"); row.appendChild(el("span", "imp-l", IMP_LABEL[k])); var b2 = el("span", "imp-bar sm"); var f2 = el("i"); f2.style.width = v + "%"; b2.appendChild(f2); row.appendChild(b2); row.appendChild(el("span", "imp-v", v + " × " + w + "%")); body.appendChild(row);
+      body.appendChild(el("p", "imp-note", NOTE[k])); sumTxt.push(v + " × " + w + "%");
+    });
+    if (im.partial && IMPACT_W.money) body.appendChild(el("p", "imp-note", "No award amount is listed, so award size is left out and the other weights are rescaled."));
+    body.appendChild(el("p", "imp-sum", "Impact = " + sumTxt.join(" + ") + " = " + im.score + "."));
+    body.appendChild(el("p", "imp-note", "Not included: which counties or people a grant reaches, because the grant data does not say. It is our estimate and does not change the order of the list unless you sort by impact."));
+    var ch = el("button", "imp-change", "Change how impact is weighted"); ch.type = "button"; ch.addEventListener("click", function () { var mo = $("more-filters"); if (mo) { mo.open = true; var iw = $("imp-w"); if (iw) iw.scrollIntoView({ block: "center", behavior: "smooth" }); } }); body.appendChild(ch);
     d.appendChild(body); return d;
   }
+
 
   // ---- display controls: text size and zoom ----
   var TXT = [0.9, 1, 1.15, 1.3], ZM = [0.8, 0.9, 1, 1.1, 1.25, 1.5];
@@ -2894,7 +2945,7 @@ body.proj .tour-card { font-size:1.2rem; }
     ["opps", "board", "map", "osbm", "marks", "how"].forEach(function (k) {
       $("v-" + k).hidden = k !== name; $("tab-" + k).setAttribute("aria-selected", k === name ? "true" : "false"); });
     if (["board", "map", "how", "osbm"].indexOf(name) >= 0) setMore(true);
-    if (name === "map") renderMap(); if (name === "osbm") { renderOsbm(); foldTogether(); } if (name === "how") renderHow(); if (name === "board") renderBoard(); if (name === "marks") renderMarks();
+    if (name === "map") renderMap(); if (name === "osbm") { renderOsbm(); foldTogether(); } if (name === "how") renderHow(); if (name === "board") { if (cur.id && $("b-agency").value === "ALL") { $("b-agency").value = cur.id; B.sel = null; } renderBoard(); } if (name === "marks") renderMarks();
   }
   Array.prototype.forEach.call(document.querySelectorAll(".tabs button[data-tab]"), function (b) { b.addEventListener("click", function () { tab(b.dataset.tab); }); });
   // the old 3-step strip is replaced by the tour (Tour button)
@@ -2963,6 +3014,13 @@ body.proj .tour-card { font-size:1.2rem; }
     if (e.key === "ArrowRight") { e.preventDefault(); swDecide("right"); } else if (e.key === "ArrowLeft") { e.preventDefault(); swDecide("left"); }
     else if (e.key === "ArrowUp") { e.preventDefault(); swDecide("up"); } else if (e.key === "Backspace" || e.key === "z") { e.preventDefault(); swUndo(); } else if (e.key === "Escape") { e.preventDefault(); exitSwipe(); }
   }, true);
+  (function () {
+    var grid = $("imp-w-grid");
+    function sync() { var tw = Object.keys(IMPACT_W).reduce(function (a, k) { return a + (Number(IMPACT_W[k]) || 0); }, 0); [].forEach.call(grid.querySelectorAll("input"), function (inp) { inp.value = IMPACT_W[inp.dataset.k]; inp.parentNode.querySelector("output").textContent = tw ? Math.round(IMPACT_W[inp.dataset.k] / tw * 100) + "%" : "0%"; }); $("imp-w-sum").textContent = tw ? "Shares add up to 100%." : "Set at least one weight above zero."; }
+    Object.keys(IMP_LABEL).forEach(function (k) { var lab = el("label"); lab.appendChild(el("span", null, IMP_LABEL[k])); lab.appendChild(el("output")); var inp = el("input"); inp.type = "range"; inp.min = 0; inp.max = 100; inp.step = 5; inp.dataset.k = k; inp.setAttribute("aria-label", IMP_LABEL[k] + " weight"); inp.addEventListener("input", function () { IMPACT_W[k] = Number(inp.value); lsSet("ffm_impw_v1", IMPACT_W); sync(); clearTimeout(grid._t); grid._t = setTimeout(function () { show(true); }, 120); }); lab.appendChild(inp); grid.appendChild(lab); });
+    $("imp-w-reset").addEventListener("click", function () { IMPACT_W = JSON.parse(JSON.stringify(IMPACT_W0)); lsSet("ffm_impw_v1", IMPACT_W); sync(); show(true); });
+    sync();
+  })();
   $("save-x").addEventListener("click", function () { $("save-dlg").close(); });
   $("fb-open").addEventListener("click", openFeedback); $("fb-x").addEventListener("click", function () { $("fb-dlg").close(); });
   $("fb-dlg").addEventListener("click", function (e) { if (e.target === this) this.close(); });
